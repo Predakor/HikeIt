@@ -1,0 +1,31 @@
+@HikeIt_HostAddress = http://localhost:5063
+
+
+GET {{HikeIt_HostAddress}}/trips
+
+###
+
+POST {{HikeIt_HostAddress}}/trips
+Content-Type: application/json
+{
+  "height": 0,
+  "length": 0,
+  "duration": 0,
+  "tripDay": "2025-05-12",
+  "regionID": 1
+}
+
+###
+
+@id=string
+DELETE {{HikeIt_HostAddress}}/trips/{{id}}
+
+###
+
+GET {{HikeIt_HostAddress}}/trips/{{id}}
+
+###
+
+PUT {{HikeIt_HostAddress}}/trips/{{id}}
+
+###
