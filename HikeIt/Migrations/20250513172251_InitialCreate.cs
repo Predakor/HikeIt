@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace HikeIt.Migrations
+namespace HikeIt.Api.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -27,10 +27,47 @@ namespace HikeIt.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BirthDay = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Peaks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Height = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RegionID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Peaks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Peaks_Regions_RegionID",
+                        column: x => x.RegionID,
+                        principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Trips",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Height = table.Column<float>(type: "real", nullable: false),
                     Length = table.Column<float>(type: "real", nullable: false),
                     Duration = table.Column<float>(type: "real", nullable: false),
@@ -81,13 +118,40 @@ namespace HikeIt.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "BirthDay", "Email", "Name" },
+                values: new object[,]
+                {
+                    { 1, new DateOnly(2002, 4, 15), "mistrzbiznesu@wp.pl", "Janusz" },
+                    { 2, new DateOnly(1995, 8, 20), "kasia.wandziak@wp.pl", "Kasia" },
+                    { 3, new DateOnly(1988, 3, 2), "marek.kowalski@gmail.com", "Marek" },
+                    { 4, new DateOnly(1990, 12, 11), "ewa.nowak@outlook.com", "Ewa" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Peaks",
+                columns: new[] { "Id", "Height", "Name", "RegionID" },
+                values: new object[,]
+                {
+                    { 1, 1603, "Śnieżka", 22 },
+                    { 2, 1346, "Rysy", 1 },
+                    { 3, 2050, "Giewont", 1 },
+                    { 4, 1367, "Czupel", 3 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Trips",
                 columns: new[] { "Id", "Duration", "Height", "Length", "RegionID", "TripDay" },
                 values: new object[,]
                 {
-                    { new Guid("c7e2f35f-e7ee-487d-bbc7-2e6fbb7c8c8a"), 8f, 1000f, 23.7f, 1, new DateOnly(2020, 12, 1) },
-                    { new Guid("c7e2f35f-e7ee-487d-bbc7-2e6fbb7c8c8b"), 4f, 620f, 14.2f, 22, new DateOnly(2023, 4, 7) }
+                    { 1, 8f, 1000f, 23.7f, 1, new DateOnly(2020, 12, 1) },
+                    { 2, 4f, 620f, 14.2f, 22, new DateOnly(2023, 4, 7) }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Peaks_RegionID",
+                table: "Peaks",
+                column: "RegionID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trips_RegionID",
@@ -99,7 +163,13 @@ namespace HikeIt.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Peaks");
+
+            migrationBuilder.DropTable(
                 name: "Trips");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Regions");

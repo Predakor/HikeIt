@@ -20,32 +20,30 @@ builder.Services.AddDbContext<TripDbContext>(options =>
 );
 
 builder.Services.AddScoped<IRepository<Trip>, SqlRepository<Trip>>();
+builder.Services.AddScoped<IRepository<Peak>, SqlRepository<Peak>>();
+
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
+using (var scope = app.Services.CreateScope()) {
     var services = scope.ServiceProvider;
-    try
-    {
+    try {
         var context = services.GetRequiredService<TripDbContext>();
         await context.Database.MigrateAsync();
     }
-    catch (Exception ex)
-    {
+    catch (Exception ex) {
         Console.WriteLine($"error {ex}");
     }
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.MapTripsEndpoint();
-
+app.MapPeaksEndpoint();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

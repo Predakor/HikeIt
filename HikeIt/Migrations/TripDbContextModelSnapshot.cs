@@ -4,19 +4,16 @@ using HikeIt.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace HikeIt.Migrations
+namespace HikeIt.Api.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250510181834_InitialCreate")]
-    partial class InitialCreate
+    partial class TripDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +22,61 @@ namespace HikeIt.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HikeIt.Entities.Region", b =>
+            modelBuilder.Entity("HikeIt.Api.Entities.Peak", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RegionID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegionID");
+
+                    b.ToTable("Peaks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Height = 1603,
+                            Name = "Śnieżka",
+                            RegionID = 22
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Height = 1346,
+                            Name = "Rysy",
+                            RegionID = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Height = 2050,
+                            Name = "Giewont",
+                            RegionID = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Height = 1367,
+                            Name = "Czupel",
+                            RegionID = 3
+                        });
+                });
+
+            modelBuilder.Entity("HikeIt.Api.Entities.Region", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,11 +220,13 @@ namespace HikeIt.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HikeIt.Entities.Trip", b =>
+            modelBuilder.Entity("HikeIt.Api.Entities.Trip", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<float>("Duration")
                         .HasColumnType("real");
@@ -199,7 +252,7 @@ namespace HikeIt.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("c7e2f35f-e7ee-487d-bbc7-2e6fbb7c8c8a"),
+                            Id = 1,
                             Duration = 8f,
                             Height = 1000f,
                             Length = 23.7f,
@@ -208,7 +261,7 @@ namespace HikeIt.Migrations
                         },
                         new
                         {
-                            Id = new Guid("c7e2f35f-e7ee-487d-bbc7-2e6fbb7c8c8b"),
+                            Id = 2,
                             Duration = 4f,
                             Height = 620f,
                             Length = 14.2f,
@@ -217,9 +270,74 @@ namespace HikeIt.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HikeIt.Entities.Trip", b =>
+            modelBuilder.Entity("HikeIt.Api.Entities.User", b =>
                 {
-                    b.HasOne("HikeIt.Entities.Region", "Region")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("BirthDay")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDay = new DateOnly(2002, 4, 15),
+                            Email = "mistrzbiznesu@wp.pl",
+                            Name = "Janusz"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BirthDay = new DateOnly(1995, 8, 20),
+                            Email = "kasia.wandziak@wp.pl",
+                            Name = "Kasia"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BirthDay = new DateOnly(1988, 3, 2),
+                            Email = "marek.kowalski@gmail.com",
+                            Name = "Marek"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BirthDay = new DateOnly(1990, 12, 11),
+                            Email = "ewa.nowak@outlook.com",
+                            Name = "Ewa"
+                        });
+                });
+
+            modelBuilder.Entity("HikeIt.Api.Entities.Peak", b =>
+                {
+                    b.HasOne("HikeIt.Api.Entities.Region", "Region")
+                        .WithMany()
+                        .HasForeignKey("RegionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Region");
+                });
+
+            modelBuilder.Entity("HikeIt.Api.Entities.Trip", b =>
+                {
+                    b.HasOne("HikeIt.Api.Entities.Region", "Region")
                         .WithMany()
                         .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)

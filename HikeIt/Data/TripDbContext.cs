@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HikeIt.Api.Data;
 
-public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(options)
-{
+public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(options) {
     public DbSet<Trip> Trips { get; set; }
     public DbSet<Region> Regions { get; set; }
+    public DbSet<Peak> Peaks { get; set; }
+    public DbSet<User> Users { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder
             .Entity<Region>()
             .HasData(
@@ -42,23 +42,77 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
         modelBuilder
             .Entity<Trip>()
             .HasData(
-                new Trip
-                {
-                    Id = new Guid("c7e2f35f-e7ee-487d-bbc7-2e6fbb7c8c8a"),
+                new Trip {
+                    Id = 1,
                     TripDay = new DateOnly(2020, 12, 1),
                     Duration = 8,
                     Height = 1000,
                     Length = 23.7f,
                     RegionID = 1,
                 },
-                new Trip
-                {
-                    Id = new Guid("c7e2f35f-e7ee-487d-bbc7-2e6fbb7c8c8b"),
+                new Trip {
+                    Id = 2,
                     TripDay = new DateOnly(2023, 4, 7),
                     Duration = 4,
                     Height = 620,
                     Length = 14.2f,
                     RegionID = 22,
+                }
+            );
+        modelBuilder
+            .Entity<Peak>()
+            .HasData(
+                new Peak {
+                    Id = 1,
+                    Height = 1603,
+                    Name = "Śnieżka",
+                    RegionID = 22,
+                },
+                new Peak {
+                    Id = 2,
+                    Height = 1346,
+                    Name = "Rysy",
+                    RegionID = 1,
+                },
+                new Peak {
+                    Id = 3,
+                    Height = 2050,
+                    Name = "Giewont",
+                    RegionID = 1,
+                },
+                new Peak {
+                    Id = 4,
+                    Height = 1367,
+                    Name = "Czupel",
+                    RegionID = 3,
+                }
+            );
+        modelBuilder
+            .Entity<User>()
+            .HasData(
+                new User {
+                    Id = 1,
+                    Name = "Janusz",
+                    Email = "mistrzbiznesu@wp.pl",
+                    BirthDay = new DateOnly(2002, 4, 15),
+                },
+                new User {
+                    Id = 2,
+                    Name = "Kasia",
+                    Email = "kasia.wandziak@wp.pl",
+                    BirthDay = new DateOnly(1995, 8, 20),
+                },
+                new User {
+                    Id = 3,
+                    Name = "Marek",
+                    Email = "marek.kowalski@gmail.com",
+                    BirthDay = new DateOnly(1988, 3, 2),
+                },
+                new User {
+                    Id = 4,
+                    Name = "Ewa",
+                    Email = "ewa.nowak@outlook.com",
+                    BirthDay = new DateOnly(1990, 12, 11),
                 }
             );
     }
