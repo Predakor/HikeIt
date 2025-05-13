@@ -3,8 +3,7 @@
 public interface IConfiguration<in T> { }
 
 public class SqlConfiguration(string connectionString, string container)
-    : IConfiguration<SqlConfiguration>
-{
+    : IConfiguration<SqlConfiguration> {
     public string ConnectionString { get; } = connectionString;
     public string Container { get; } = container;
 }

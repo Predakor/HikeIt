@@ -1,40 +1,34 @@
-﻿using System.Collections;
-using HikeIt.Api.Data;
+﻿using HikeIt.Api.Data;
 using HikeIt.Api.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 
 namespace HikeIt.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RegionController(TripDbContext context) : ControllerBase
-{
+public class RegionController(TripDbContext context) : ControllerBase {
     readonly TripDbContext _dbContext = context;
-    DbSet<Entities.Region> Regions => _dbContext.Regions;
+    DbSet<Region> Regions => _dbContext.Regions;
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
+    public async Task<IActionResult> GetAll() {
         var results = await Regions.ToListAsync();
         return ApiResponseResolver.Resolve(results);
     }
 
     [HttpGet("{id}")]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Get(int id)
-    {
+    public async Task<IActionResult> Get(int id) {
         var result = await Regions.FindAsync(id);
         return ApiResponseResolver.Resolve(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Region region)
-    {
+    public async Task<IActionResult> Create([FromBody] Region region) {
         Region newRegion = new() { Name = region.Name };
 
-        if (newRegion == null)
-        {
+        if (newRegion == null) {
             return BadRequest();
         }
 
@@ -44,20 +38,15 @@ public class RegionController(TripDbContext context) : ControllerBase
     }
 }
 
-public static class ApiResponseResolver
-{
-    public static IActionResult Resolve<T>(T? result)
-    {
-        if (result is null)
-        {
+public static class ApiResponseResolver {
+    public static IActionResult Resolve<T>(T? result) {
+        if (result is null) {
             return new NotFoundResult();
         }
 
-        if (result is IEnumerable collection and not string)
-        {
+        if (result is IEnumerable collection and not string) {
             var enumerator = collection.GetEnumerator();
-            if (!enumerator.MoveNext())
-            {
+            if (!enumerator.MoveNext()) {
                 return new NotFoundResult();
             }
         }
