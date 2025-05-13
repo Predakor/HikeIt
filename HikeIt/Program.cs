@@ -23,7 +23,21 @@ builder.Services.AddScoped<IRepository<Trip>, SqlRepository<Trip>>();
 builder.Services.AddScoped<IRepository<Peak>, SqlRepository<Peak>>();
 
 
+string corsPolicyName = "AllowLocalhost";
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+builder.Services.AddCors(options => {
+    options.AddPolicy(corsPolicyName, policy => {
+        policy.WithOrigins(allowedOrigins) // The frontend's origin
+              .AllowAnyMethod()    // Allow all HTTP methods (GET, POST, etc.)
+              .AllowAnyHeader();   // Allow all headers
+    });
+});
+
+
+
 var app = builder.Build();
+
+app.UseCors(corsPolicyName);
 
 using (var scope = app.Services.CreateScope()) {
     var services = scope.ServiceProvider;
