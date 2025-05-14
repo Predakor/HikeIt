@@ -1,4 +1,4 @@
-using HikeIt.Api.Configuration;
+using HikeIt.Api.Configuration.Cors.Factories;
 using HikeIt.Api.Data;
 using HikeIt.Api.Endpoints;
 using HikeIt.Api.Entities;
@@ -23,11 +23,9 @@ builder.Services.AddDbContext<TripDbContext>(options =>
 builder.Services.AddScoped<IRepository<Trip>, SqlRepository<Trip>>();
 builder.Services.AddScoped<IRepository<Peak>, SqlRepository<Peak>>();
 
-string prodCorsPolicy = "AllowLocalhost";
-string devCorsPolicy = "DevCors";
 
-CorsConfiguration cors = new(prodCorsPolicy, devCorsPolicy);
-cors.Configure(builder, builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>());
+var corsConfig = CorsConfigFactory.Create(builder.Environment, builder.Configuration);
+CorsPolicyFactory.Create(corsConfig).ApplyCorsPolicy(builder.Services);
 
 var app = builder.Build();
 
@@ -42,16 +40,13 @@ using (var scope = app.Services.CreateScope()) {
     }
 }
 
-if (app.Environment.IsProduction()) {
-    app.UseCors(prodCorsPolicy);
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors(devCorsPolicy);
 }
+
+app.UseCors(corsConfig.Name);
 
 app.MapTripsEndpoint();
 app.MapPeaksEndpoint();
