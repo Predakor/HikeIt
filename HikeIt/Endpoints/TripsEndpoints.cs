@@ -4,8 +4,6 @@ using HikeIt.Api.Repository;
 namespace HikeIt.Api.Endpoints;
 
 public static class TripsEndpoints {
-    //extension Method
-
     public static RouteGroupBuilder MapTripsEndpoint(this WebApplication app) {
         var group = app.MapGroup("trips").WithParameterValidation();
 

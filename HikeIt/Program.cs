@@ -20,9 +20,7 @@ builder.Services.AddDbContext<TripDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TripDbCS"))
 );
 
-builder.Services.AddScoped<IRepository<Trip>, SqlRepository<Trip>>();
-builder.Services.AddScoped<IRepository<Peak>, SqlRepository<Peak>>();
-
+InjectRepositories(builder);
 
 var corsConfig = CorsConfigFactory.Create(builder.Environment, builder.Configuration);
 CorsPolicyFactory.Create(corsConfig).ApplyCorsPolicy(builder.Services);
@@ -48,8 +46,8 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseCors(corsConfig.Name);
 
-app.MapTripsEndpoint();
-app.MapPeaksEndpoint();
+MapEndpoints(app);
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -57,3 +55,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static void MapEndpoints(WebApplication app) {
+    app.MapTripsEndpoint();
+    app.MapPeaksEndpoint();
+    app.MapUserEndpoints();
+}
+
+static void InjectRepositories(WebApplicationBuilder builder) {
+    builder.Services.AddScoped<IRepository<Trip>, SqlRepository<Trip>>();
+    builder.Services.AddScoped<IRepository<Peak>, SqlRepository<Peak>>();
+    builder.Services.AddScoped<IRepository<User>, SqlRepository<User>>();
+}
