@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const apiPath = "http://localhost:5063/";
 
-interface FetchResponse<T> {
+export interface FetchResponse<T> {
   data: T | null;
   error: string | null;
   loading: boolean;

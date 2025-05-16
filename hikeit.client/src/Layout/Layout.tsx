@@ -1,4 +1,4 @@
-import { Box, Center, Flex, Heading, Span, Stack } from "@chakra-ui/react";
+import { Center, Heading, Span, Stack } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import Nav from "./Nav/Nav";
 
