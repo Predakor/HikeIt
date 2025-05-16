@@ -1,18 +1,20 @@
 import Trips from "@/components/Trips/Trips";
-import { Grid, GridItem, Heading } from "@chakra-ui/react";
+import { Grid, GridItem, Heading, Stack } from "@chakra-ui/react";
 
-function tripsPage() {
+function TripsPage() {
   return (
-    <Grid gap={10}>
-      <GridItem>
-        <Heading size={"5xl"}>Your trips</Heading>
-      </GridItem>
+    <>
+      <Stack gap={10}>
+        <GridItem placeItems={"center"}>
+          <Heading size={"5xl"}>Your trips</Heading>
+        </GridItem>
 
-      <GridItem>
-        <Trips></Trips>
-      </GridItem>
-    </Grid>
+        <GridItem>
+          <Trips></Trips>
+        </GridItem>
+      </Stack>
+    </>
   );
 }
 
-export default tripsPage;
+export default TripsPage;

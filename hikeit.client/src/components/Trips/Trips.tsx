@@ -46,7 +46,7 @@ function Trips() {
         const formatedDate = formatDate(trip.tripDay as string);
 
         return (
-          <Card.Root>
+          <Card.Root key={trip.id}>
             <Card.Header></Card.Header>
             <Card.Body>
               <Stat.Root>
