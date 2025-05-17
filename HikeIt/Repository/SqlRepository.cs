@@ -28,11 +28,13 @@ public class SqlRepository<T>(TripDbContext context) : IRepository<T>
         }
     }
 
-    public async Task UpdateAsync(int id, T updatedEntity) {
+    public async Task<bool> UpdateAsync(int id, T updatedEntity) {
         var entity = await _context.Set<T>().FindAsync(id);
         if (entity is not null) {
             _context.Entry(entity).CurrentValues.SetValues(updatedEntity);
             await _context.SaveChangesAsync();
+            return true;
         }
+        return false;
     }
 }

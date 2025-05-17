@@ -1,8 +1,10 @@
+using HikeIt.Api.ApiResolver;
 using HikeIt.Api.Configuration.Cors.Factories;
 using HikeIt.Api.Data;
 using HikeIt.Api.Endpoints;
 using HikeIt.Api.Entities;
 using HikeIt.Api.Repository;
+using HikeIt.Api.ResourceManager;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,9 +23,10 @@ builder.Services.AddDbContext<TripDbContext>(options =>
 );
 
 InjectRepositories(builder);
+InjectResourceServices(builder);
 
-var corsConfig = CorsConfigFactory.Create(builder.Environment, builder.Configuration);
-CorsPolicyFactory.Create(corsConfig).ApplyCorsPolicy(builder.Services);
+
+var corsConfig = ConfigureCors(builder);
 
 var app = builder.Build();
 
@@ -60,10 +63,36 @@ static void MapEndpoints(WebApplication app) {
     app.MapTripsEndpoint();
     app.MapPeaksEndpoint();
     app.MapUserEndpoints();
+    app.MapRegionsEndpoints();
 }
 
 static void InjectRepositories(WebApplicationBuilder builder) {
     builder.Services.AddScoped<IRepository<Trip>, SqlRepository<Trip>>();
     builder.Services.AddScoped<IRepository<Peak>, SqlRepository<Peak>>();
     builder.Services.AddScoped<IRepository<User>, SqlRepository<User>>();
+    builder.Services.AddScoped<IRepository<Region>, SqlRepository<Region>>();
+}
+
+static void InjectResourceServices(WebApplicationBuilder builder) {
+    builder.Services.AddScoped<IRequestResolver<IResult>, MinimalAPiResolver>();
+    builder.Services.AddScoped(
+        sp => new ResourceServiceConfig<Peak, IResult>(
+            sp.GetRequiredService<IRepository<Peak>>(),
+            sp.GetRequiredService<IRequestResolver<IResult>>()
+        )
+    );
+
+    builder.Services.AddScoped<ResourceService<Peak, IResult>>();
+
+    //builder.Services.AddScoped<ResourceService<Trip, IResult>>();
+    //builder.Services.AddScoped<ResourceService<User, IResult>>();
+    //builder.Services.AddScoped<ResourceService<Region, IResult>>();
+
+}
+
+
+static HikeIt.Api.Configuration.Cors.Models.CorsConfig ConfigureCors(WebApplicationBuilder builder) {
+    var corsConfig = CorsConfigFactory.Create(builder.Environment, builder.Configuration);
+    CorsPolicyFactory.Create(corsConfig).ApplyCorsPolicy(builder.Services);
+    return corsConfig;
 }

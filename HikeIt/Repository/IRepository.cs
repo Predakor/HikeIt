@@ -7,6 +7,6 @@ public interface IRepository<T>
     Task<T?> GetByIDAsync(int id);
     Task<IEnumerable<T>> GetAllAsync();
     Task AddAsync(T entity);
-    Task UpdateAsync(int id, T updatedEntity);
+    Task<bool> UpdateAsync(int id, T updatedEntity);
     Task RemoveAsync(int id);
 }

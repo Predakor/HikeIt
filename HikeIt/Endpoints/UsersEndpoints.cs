@@ -6,7 +6,7 @@ namespace HikeIt.Api.Endpoints;
 
 public static class UsersEndpoints {
     public static RouteGroupBuilder MapUserEndpoints(this WebApplication app) {
-        var group = app.MapGroup("users");
+        var group = app.MapGroup("api/users");
 
         group.MapGet("/", GetAll);
         group.MapGet("/{id}", GetById);

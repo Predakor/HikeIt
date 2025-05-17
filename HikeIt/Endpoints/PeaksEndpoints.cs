@@ -6,7 +6,7 @@ namespace HikeIt.Api.Endpoints;
 
 public static class PeaksEndpoints {
     public static RouteGroupBuilder MapPeaksEndpoint(this WebApplication app) {
-        var group = app.MapGroup("peaks");
+        var group = app.MapGroup("api/peaks");
 
         group.MapGet("/", GetAll);
         group.MapGet("/{id}", GetById);

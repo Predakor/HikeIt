@@ -27,12 +27,15 @@ public class MemoryRepository<T> : IRepository<T>
         await Task.CompletedTask;
     }
 
-    public async Task UpdateAsync(int id, T updatedEntity) {
+    public async Task<bool> UpdateAsync(int id, T updatedEntity) {
         var entity = _items.FirstOrDefault(e => (e as dynamic).Id == id);
         if (entity is not null) {
             _items.Remove(entity);
             _items.Add(updatedEntity);
+            return true;
+
         }
         await Task.CompletedTask;
+        return false;
     }
 }

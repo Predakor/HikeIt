@@ -5,7 +5,7 @@ namespace HikeIt.Api.Endpoints;
 
 public static class TripsEndpoints {
     public static RouteGroupBuilder MapTripsEndpoint(this WebApplication app) {
-        var group = app.MapGroup("trips").WithParameterValidation();
+        var group = app.MapGroup("api/trips").WithParameterValidation();
 
         group.MapGet("/", GetAll);
 
