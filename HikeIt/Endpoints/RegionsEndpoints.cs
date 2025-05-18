@@ -9,7 +9,6 @@ public static class RegionsEndpoints {
 
         group.MapGet("/", GetAll);
         group.MapGet("/{id}", GetById);
-        group.MapPost("/", CreateRegion).Produces<Region>();
 
         return group;
     }
@@ -29,10 +28,6 @@ public static class RegionsEndpoints {
         return Results.Ok(result);
     }
 
-    static async Task<IResult> CreateRegion(IRepository<Region> repo, Region region) {
-        await repo.AddAsync(region);
-        return Results.Ok();
-    }
 
 }
 

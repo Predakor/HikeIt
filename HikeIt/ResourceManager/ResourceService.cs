@@ -6,16 +6,18 @@ namespace HikeIt.Api.ResourceManager;
 public record ResourceServiceConfig<T, TResponse>(
     IRepository<T> Repository,
     IRequestResolver<TResponse> Resolver
-) where T : class, IRepositoryObject;
+)
+    where T : class, IRepositoryObject;
 
 public record ProtectedResourceServiceConfig<T, TResponse>(
     IRepository<T> Repository,
     IRequestResolver<TResponse> Resolver,
     string User
-) where T : class, IRepositoryObject;
+)
+    where T : class, IRepositoryObject;
 
-public class ResourceService<T, TResponse> : IResourceManager<T, TResponse> where T : class, IRepositoryObject {
-
+public class ResourceService<T, TResponse> : IResourceManager<T, TResponse>
+    where T : class, IRepositoryObject {
     readonly IRepository<T> _repository;
     readonly IRequestResolver<TResponse> _resolver;
 
@@ -52,7 +54,12 @@ public class ResourceService<T, TResponse> : IResourceManager<T, TResponse> wher
 
 
 
-public static class ResourceManagerFactory {
+public static class ResourceServiceFactory {
+    public static ResourceService<T, TResponse> Create<T, TResponse>(
+        ResourceServiceConfig<T, TResponse> config
+    ) where T : class, IRepositoryObject {
+        return new ResourceService<T, TResponse>(config);
+    }
+
 
 }
-

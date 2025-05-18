@@ -1,10 +1,12 @@
 ﻿using HikeIt.Api.Dto;
 using HikeIt.Api.Entities;
+using HikeIt.Api.Mappers.Implementations;
 using HikeIt.Api.Repository;
 
 namespace HikeIt.Api.Endpoints;
 
 public static class PeaksEndpoints {
+
     public static RouteGroupBuilder MapPeaksEndpoint(this WebApplication app) {
         var group = app.MapGroup("api/peaks");
 
@@ -15,34 +17,28 @@ public static class PeaksEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAll(IRepository<Peak> repo) {
+    static async Task<IResult> GetAll(IRepository<Peak> repo, IRepository<Region> regionRepo) {
         var peaks = await repo.GetAllAsync();
         return Results.Ok(peaks);
     }
 
-    static async Task<IResult> GetById(int id, IRepository<Peak> repo) {
+    static async Task<IResult> GetById(
+        int id,
+        IRepository<Peak> repo,
+        IRepository<Region> regionRepo
+    ) {
         var peak = await repo.GetByIDAsync(id);
-        return Results.Ok(peak);
+        var region = await regionRepo.GetByIDAsync(peak.RegionID);
+        var peakDto = new PeakDto.NewWithCompleteRegion(peak.Height, peak.Name, region);
+        return Results.Ok(peakDto);
     }
 
     static async Task<IResult> CreatePeak(PeakDto.NewWithRegion peakDto, IRepository<Peak> repo) {
-        Peak newPeak = DtoToEntity(peakDto);
+        Peak newPeak = new PeakMapper().MapToEntity(peakDto);
 
         await repo.AddAsync(newPeak);
         return Results.Ok();
     }
 
-    private static Peak DtoToEntity(PeakDto peak) {
-        Peak newPeak;
-        switch (peak) {
-            case PeakDto.New newDTo:
-                newPeak = new Peak() { Height = newDTo.Height, Name = newDTo.Name, RegionID = 1 };
-                break;
-            default:
-                newPeak = new Peak();
-                break;
-        }
-
-        return newPeak;
-    }
 }
+
