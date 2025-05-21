@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 
-const apiPath = "http://localhost:5063/";
+const originPath = "http://localhost:5063/";
+const apiVersion = "api/";
+const apiPath = originPath + apiVersion;
 
 export interface FetchResponse<T> {
   data: T | null;
   error: string | null;
   loading: boolean;
 }
-type Route = "peaks" | "trips" | "users";
+
+type Route = "peaks" | "trips" | "users" | "regions";
 
 function useFetch<T>(urlPath: Route, body?: any): FetchResponse<T> {
   const [data, setData] = useState<T | null>(null);

@@ -1,4 +1,10 @@
+import Regions from "@/components/Regions/Regions";
+
 function RegionsPage() {
-  return <div>Work in progress</div>;
+  return (
+    <div>
+      <Regions />
+    </div>
+  );
 }
 export default RegionsPage;

@@ -1,5 +1,6 @@
+import AddTrip from "@/components/AddTrip/AddTrip";
 import Trips from "@/components/Trips/Trips";
-import { Grid, GridItem, Heading, Stack } from "@chakra-ui/react";
+import { GridItem, Heading, Stack } from "@chakra-ui/react";
 
 function TripsPage() {
   return (
@@ -11,6 +12,9 @@ function TripsPage() {
 
         <GridItem>
           <Trips></Trips>
+        </GridItem>
+        <GridItem>
+          <AddTrip />
         </GridItem>
       </Stack>
     </>

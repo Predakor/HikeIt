@@ -4,7 +4,7 @@ import Nav from "./Nav/Nav";
 
 function Layout({ children }: PropsWithChildren) {
   return (
-    <Stack py={"1em"} minH={"100vh"} align={"center"}>
+    <Stack py={"1em"} minH={"100vh"} align={"center"} gap={"2em"}>
       <header>
         <Heading fontSize={"4xl"}>
           Hike
