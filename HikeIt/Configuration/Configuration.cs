@@ -1,4 +1,4 @@
-﻿namespace HikeIt.Api.Configuration;
+﻿namespace Api.Configuration;
 
 public interface IConfiguration<in T> {
     public void Apply(T config);

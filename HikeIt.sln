@@ -3,11 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HikeIt.Api", "HikeIt\HikeIt.Api.csproj", "{9F65B798-B039-4401-9067-4EC0D3CE18BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "HikeIt\Api.csproj", "{9F65B798-B039-4401-9067-4EC0D3CE18BA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F54C0CFC-F704-4B95-8575-42167D3E9FBE} = {F54C0CFC-F704-4B95-8575-42167D3E9FBE}
+		{FB39C332-940E-49D7-AD5C-68C9FF1B97F7} = {FB39C332-940E-49D7-AD5C-68C9FF1B97F7}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{F54C0CFC-F704-4B95-8575-42167D3E9FBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{FB39C332-940E-49D7-AD5C-68C9FF1B97F7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{874B747B-44F6-411E-81DD-C0BC3A61DD1C} = {874B747B-44F6-411E-81DD-C0BC3A61DD1C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{874B747B-44F6-411E-81DD-C0BC3A61DD1C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F54C0CFC-F704-4B95-8575-42167D3E9FBE} = {F54C0CFC-F704-4B95-8575-42167D3E9FBE}
 	EndProjectSection
 EndProject
 Global
@@ -20,6 +36,18 @@ Global
 		{9F65B798-B039-4401-9067-4EC0D3CE18BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F65B798-B039-4401-9067-4EC0D3CE18BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F65B798-B039-4401-9067-4EC0D3CE18BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F54C0CFC-F704-4B95-8575-42167D3E9FBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F54C0CFC-F704-4B95-8575-42167D3E9FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F54C0CFC-F704-4B95-8575-42167D3E9FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F54C0CFC-F704-4B95-8575-42167D3E9FBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB39C332-940E-49D7-AD5C-68C9FF1B97F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB39C332-940E-49D7-AD5C-68C9FF1B97F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB39C332-940E-49D7-AD5C-68C9FF1B97F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB39C332-940E-49D7-AD5C-68C9FF1B97F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{874B747B-44F6-411E-81DD-C0BC3A61DD1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874B747B-44F6-411E-81DD-C0BC3A61DD1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874B747B-44F6-411E-81DD-C0BC3A61DD1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874B747B-44F6-411E-81DD-C0BC3A61DD1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

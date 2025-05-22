@@ -1,7 +1,6 @@
-﻿using HikeIt.Api.Entities;
-using HikeIt.Api.Repository;
+﻿using Application.Services.Region;
 
-namespace HikeIt.Api.Endpoints;
+namespace Api.Endpoints;
 
 public static class RegionsEndpoints {
     public static RouteGroupBuilder MapRegionsEndpoints(this WebApplication app) {
@@ -13,25 +12,19 @@ public static class RegionsEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAll(IRepository<Region> repo) {
-        var results = await repo.GetAllAsync();
+    static async Task<IResult> GetAll(RegionService service) {
+        var results = await service.GetAllAsync();
         if (results is null) {
             return Results.NotFound();
         }
         return Results.Ok(results);
     }
-    static async Task<IResult> GetById(IRepository<Region> repo, int id) {
-        var result = await repo.GetByIDAsync(id);
+
+    static async Task<IResult> GetById(RegionService service, int id) {
+        var result = await service.GetAsync(id);
         if (result is null) {
             return Results.NotFound();
         }
         return Results.Ok(result);
     }
-
-
 }
-
-public static class ResoureManager {
-
-}
-

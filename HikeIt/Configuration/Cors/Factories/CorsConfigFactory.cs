@@ -1,6 +1,6 @@
-﻿using HikeIt.Api.Configuration.Cors.Models;
+﻿using Api.Configuration.Cors.Models;
 
-namespace HikeIt.Api.Configuration.Cors.Factories;
+namespace Api.Configuration.Cors.Factories;
 
 public static class CorsConfigFactory {
     public static CorsConfig Create(IHostEnvironment env, IConfiguration configuration) {

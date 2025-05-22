@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 
-namespace HikeIt.Api.ApiResolver;
+namespace Api.ApiResolver;
 public class MinimalAPiResolver : IRequestResolver<IResult> {
     public IResult Resolve<T>(T? result) {
         if (result is null) {

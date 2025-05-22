@@ -1,7 +1,7 @@
-﻿using HikeIt.Api.Entities;
-using HikeIt.Api.Repository;
+﻿using Application.Dto;
+using Application.Services.Trip;
 
-namespace HikeIt.Api.Endpoints;
+namespace Api.Endpoints;
 
 public static class TripsEndpoints {
     public static RouteGroupBuilder MapTripsEndpoint(this WebApplication app) {
@@ -13,20 +13,20 @@ public static class TripsEndpoints {
 
         group.MapPost("/", CreateTrip);
 
-        group.MapPut("/{id}", UpdateTrip);
+        group.MapPut("/", UpdateTrip);
 
         group.MapDelete("/{id}", DeleteTrip);
 
         return group;
     }
 
-    static async Task<IResult> GetAll(IRepository<Trip> repo) {
-        var trips = await repo.GetAllAsync();
+    static async Task<IResult> GetAll(TripService service) {
+        var trips = await service.GetAll();
         return Results.Ok(trips);
     }
 
-    static async Task<IResult> GetByID(IRepository<Trip> repo, int id) {
-        var trip = await repo.GetByIDAsync(id);
+    static async Task<IResult> GetByID(TripService service, int id) {
+        var trip = await service.GetById(id);
         if (trip is null) {
             return Results.NotFound();
         }
@@ -34,18 +34,18 @@ public static class TripsEndpoints {
         return Results.Ok(trip);
     }
 
-    static async Task<IResult> CreateTrip(Trip newTrip, IRepository<Trip> repo) {
-        await repo.AddAsync(newTrip);
-        return Results.Created($"/trips/{newTrip.Id}", newTrip);
+    static async Task<IResult> CreateTrip(TripDto newTrip, TripService service) {
+        await service.Add(newTrip);
+        return Results.Created();
     }
 
-    static async Task<IResult> UpdateTrip(int id, Trip updatedTrip, IRepository<Trip> repo) {
-        await repo.UpdateAsync(id, updatedTrip);
+    static async Task<IResult> UpdateTrip(TripDto.UpdateDto updateDto, TripService service) {
+        await service.Update(updateDto);
         return Results.NoContent();
     }
 
-    static async Task<IResult> DeleteTrip(int id, IRepository<Trip> repo) {
-        await repo.RemoveAsync(id);
+    static async Task<IResult> DeleteTrip(int id, TripService service) {
+        await service.Delete(id);
         return Results.NoContent();
     }
 }

@@ -1,7 +1,7 @@
-﻿using HikeIt.Api.Configuration.Cors.Interfaces;
-using HikeIt.Api.Configuration.Cors.Models;
+﻿using Api.Configuration.Cors.Interfaces;
+using Api.Configuration.Cors.Models;
 
-namespace HikeIt.Api.Configuration.Cors.Policies;
+namespace Api.Configuration.Cors.Policies;
 
 public class DevCorsPolicy(CorsConfig.Development config) : ICorsPolicy {
     public void ApplyCorsPolicy(IServiceCollection services) {

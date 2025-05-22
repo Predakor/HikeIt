@@ -1,6 +1,6 @@
-﻿using HikeIt.Api.Configuration.Cors.Interfaces;
+﻿using Api.Configuration.Cors.Interfaces;
 
-namespace HikeIt.Api.Configuration.Cors.Models;
+namespace Api.Configuration.Cors.Models;
 
 public abstract record CorsConfig(string Name) : ICorsConfig {
     public record Development(string Name) : CorsConfig(Name);

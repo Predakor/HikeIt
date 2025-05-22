@@ -1,9 +1,17 @@
-using HikeIt.Api.Configuration.Cors.Factories;
-using HikeIt.Api.Data;
-using HikeIt.Api.Endpoints;
-using HikeIt.Api.Entities;
-using HikeIt.Api.Repository;
-using Microsoft.EntityFrameworkCore;
+using Api.Configuration.Cors.Factories;
+using Api.Configuration.Cors.Models;
+using Api.Endpoints;
+using Application.Mappers.Implementations;
+using Application.Services.Peaks;
+using Application.Services.Region;
+using Application.Services.Trip;
+using Application.Services.Users;
+using Domain.Peaks;
+using Domain.Regions;
+using Domain.Trips;
+using Infrastructure;
+using Infrastructure.Data;
+using Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,27 +23,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Use connnection string from appsettings.json
-builder.Services.AddDbContext<TripDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TripDbCS"))
-);
+builder.Services.AddDatabase(builder.Configuration.GetConnectionString("TripDbCS"));
 
 InjectRepositories(builder);
+InjectMappers(builder);
+InjectServices(builder);
 
 var corsConfig = ConfigureCors(builder);
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope()) {
-    var services = scope.ServiceProvider;
-    try {
-        var context = services.GetRequiredService<TripDbContext>();
-        await context.Database.MigrateAsync();
-    }
-    catch (Exception ex) {
-        Console.WriteLine($"error {ex}");
-    }
-}
+await MigrationHelper.MigrateDatabaseAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
@@ -63,14 +61,25 @@ static void MapEndpoints(WebApplication app) {
 }
 
 static void InjectRepositories(WebApplicationBuilder builder) {
-    builder.Services.AddScoped<IRepository<Trip>, SqlRepository<Trip>>();
-    builder.Services.AddScoped<IRepository<Peak>, SqlRepository<Peak>>();
-    builder.Services.AddScoped<IRepository<User>, SqlRepository<User>>();
-    builder.Services.AddScoped<IRepository<Region>, SqlRepository<Region>>();
+    builder.Services.AddScoped<IPeakRepository, PeakRepository>();
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<ITripRepository, TripRepository>();
+    builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 }
 
+static void InjectServices(WebApplicationBuilder builder) {
+    builder.Services.AddScoped<PeakService>();
+    builder.Services.AddScoped<UserService>();
+    builder.Services.AddScoped<TripService>();
+    builder.Services.AddScoped<RegionService>();
+}
+static void InjectMappers(WebApplicationBuilder builder) {
+    builder.Services.AddScoped<PeakMapper>();
+    builder.Services.AddScoped<TripMapper>();
+    builder.Services.AddScoped<RegionMapper>();
+}
 
-static HikeIt.Api.Configuration.Cors.Models.CorsConfig ConfigureCors(WebApplicationBuilder builder) {
+static CorsConfig ConfigureCors(WebApplicationBuilder builder) {
     var corsConfig = CorsConfigFactory.Create(builder.Environment, builder.Configuration);
     CorsPolicyFactory.Create(corsConfig).ApplyCorsPolicy(builder.Services);
     return corsConfig;

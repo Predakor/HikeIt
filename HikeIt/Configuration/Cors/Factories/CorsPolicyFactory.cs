@@ -1,8 +1,8 @@
-﻿using HikeIt.Api.Configuration.Cors.Interfaces;
-using HikeIt.Api.Configuration.Cors.Models;
-using HikeIt.Api.Configuration.Cors.Policies;
+﻿using Api.Configuration.Cors.Interfaces;
+using Api.Configuration.Cors.Models;
+using Api.Configuration.Cors.Policies;
 
-namespace HikeIt.Api.Configuration.Cors.Factories;
+namespace Api.Configuration.Cors.Factories;
 
 public static class CorsPolicyFactory {
     public static ICorsPolicy Create(ICorsConfig config) {
