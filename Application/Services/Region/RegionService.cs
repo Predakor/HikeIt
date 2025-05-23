@@ -6,7 +6,7 @@ namespace Application.Services.Region;
 
 public interface IRegionService {
     public Task<RegionDto> GetAsync(int id);
-    public Task<List<RegionDto>> GetAllAsync();
+    public Task<List<RegionDto.Complete>> GetAllAsync();
 }
 public class RegionService(RegionMapper mapper, IRegionRepository repository) : IRegionService {
 
@@ -21,13 +21,14 @@ public class RegionService(RegionMapper mapper, IRegionRepository repository) : 
         return _mapper.MapToDto(result);
     }
 
-    public async Task<List<RegionDto>> GetAllAsync() {
+    public async Task<List<RegionDto.Complete>> GetAllAsync() {
         var result = await _repository.GetAllAsync();
+
         if (!result.Any()) {
             return null;
         }
-        var mappedResults = result.Select(_mapper.MapToDto).ToList();
 
+        var mappedResults = result.Select(_mapper.MapToCompleteDto).ToList();
         return mappedResults;
     }
 }

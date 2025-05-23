@@ -8,6 +8,10 @@ public class RegionMapper : IEntityDtoMapper<Region, RegionDto> {
     public RegionDto MapToDto(Region entity) {
         return new RegionDto.Complete(entity.Id, entity.Name);
     }
+    public RegionDto.Complete MapToCompleteDto(Region entity) {
+        return new RegionDto.Complete(entity.Id, entity.Name);
+
+    }
 
     public Region MapToEntity(RegionDto dto) {
         return dto switch {
