@@ -1,0 +1,12 @@
+﻿using Application.Dto;
+
+namespace Application.Services.Trip;
+
+public interface ITripService {
+    public Task<bool> Add(TripDto dto);
+    public Task<bool> Update(TripDto.UpdateDto dto);
+    public Task<bool> Delete(int id);
+
+    public Task<TripDto.Complete?> GetById(int id);
+    public Task<List<TripDto.Basic>> GetAll();
+}

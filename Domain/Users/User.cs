@@ -1,6 +1,6 @@
 ﻿namespace Domain.Users;
 
-public class User : IRepositoryObject {
+public class User : IEntity {
     public int Id { get; set; }
     public required string Name { get; set; }
     public string Email { get; set; }

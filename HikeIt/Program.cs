@@ -9,6 +9,7 @@ using Application.Services.Users;
 using Domain.Peaks;
 using Domain.Regions;
 using Domain.Trips;
+using Domain.Users;
 using Infrastructure;
 using Infrastructure.Data;
 using Infrastructure.Repository;

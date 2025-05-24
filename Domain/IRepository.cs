@@ -1,12 +1,19 @@
 ﻿namespace Domain;
 
-public interface IRepositoryObject { }
+public interface IEntity { }
 
-public interface IRepository<TEntity>
-    where TEntity : class, IRepositoryObject {
-    Task<TEntity?> GetByIDAsync(int id);
+public interface IReadRepository<TEntity>
+    where TEntity : class, IEntity {
+    Task<TEntity?> GetByIdAsync(int id);
     Task<IEnumerable<TEntity>> GetAllAsync();
-    Task AddAsync(TEntity entity);
-    Task<bool> UpdateAsync(int id, TEntity updatedEntity);
-    Task RemoveAsync(int id);
 }
+
+public interface IWriteRepository<TEntity>
+    where TEntity : class, IEntity {
+    Task<bool> AddAsync(TEntity entity);
+    Task<bool> UpdateAsync(int id, TEntity updatedEntity);
+    Task<bool> RemoveAsync(int id);
+}
+
+public interface ICrudRepository<TEntity> : IReadRepository<TEntity>, IWriteRepository<TEntity>
+    where TEntity : class, IEntity { }

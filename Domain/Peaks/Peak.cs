@@ -2,7 +2,7 @@
 
 namespace Domain.Peaks;
 
-public class Peak : IRepositoryObject {
+public class Peak : IEntity {
     public int Id { get; set; }
     public int Height { get; set; }
 

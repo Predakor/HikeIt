@@ -7,7 +7,22 @@ namespace Application.Mappers.Implementations;
 public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
     public TripDto MapToDto(Trip entity) {
         return new TripDto.Basic(entity.Height, entity.Length, entity.Duration);
+    }
 
+    public TripDto.Basic MapToBasicDto(Trip entity) {
+        return new TripDto.Basic(entity.Height, entity.Length, entity.Duration);
+    }
+
+    public TripDto.Complete MapToCompleteDto(Trip entity) {
+        var mappedRegion = new RegionMapper().MapToCompleteDto(entity.Region);
+
+        return new TripDto.Complete(
+            entity.Height,
+            entity.Length,
+            entity.Duration,
+            mappedRegion,
+            entity.TripDay
+        );
     }
 
     public Trip MapToEntity(TripDto dto) {

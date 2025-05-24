@@ -2,7 +2,7 @@
 
 namespace Domain.Regions;
 
-public class Region : IRepositoryObject {
+public class Region : IEntity {
     public int Id { get; set; }
 
     [Required]

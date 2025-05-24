@@ -7,7 +7,7 @@ namespace Infrastructure.Repository;
 public class PeakRepository : Repository<Peak>, IPeakRepository {
     public PeakRepository(TripDbContext context) : base(context) { }
 
-    public override async Task<List<Peak>> GetAllAsync() {
+    public override async Task<IEnumerable<Peak>> GetAllAsync() {
         return await DbSet.Include(x => x.Region).ToListAsync();
     }
 
@@ -15,7 +15,10 @@ public class PeakRepository : Repository<Peak>, IPeakRepository {
         return await DbSet.Include(x => x.Region).FirstOrDefaultAsync(e => e.Id == id);
     }
 
-    Task<IEnumerable<Peak>> IPeakRepository.GetAllAsync() {
-        throw new NotImplementedException();
+    public async Task<bool> AddAsync(Peak peak) {
+        await DbSet.AddAsync(peak);
+        await SaveChangesAsync();
+        return true;
+
     }
 }

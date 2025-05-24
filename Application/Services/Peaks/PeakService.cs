@@ -3,12 +3,6 @@ using Application.Mappers.Implementations;
 using Domain.Peaks;
 namespace Application.Services.Peaks;
 
-public interface IPeakService {
-    Task<IEnumerable<PeakDto.Complete>> GetAllPeaksAsync();
-    Task<PeakDto.Complete> GetPeakByIdAsync(int id);
-    Task CreatePeakAsync(PeakDto.Simple peakDto);
-}
-
 public class PeakService(IPeakRepository repo, PeakMapper peakMapper) : IPeakService {
     readonly IPeakRepository _repo = repo;
     readonly PeakMapper _peakMapper = peakMapper;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Trips;
 
-public class Trip : IRepositoryObject {
+public class Trip : IEntity {
     public int Id { get; set; }
 
     [Required]

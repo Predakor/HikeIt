@@ -1,9 +1,5 @@
-﻿using Domain.Users;
+﻿namespace Domain.Users;
 
-namespace Infrastructure.Repository;
-
-public interface IUserRepository {
-    Task<User?> GetUser(int id);
-    Task<List<User>> GetAllUsers();
+public interface IUserRepository : IReadRepository<User> {
     Task<bool> Create(User newUser);
 }
