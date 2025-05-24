@@ -1,17 +1,7 @@
-import { For, Select, type ListCollection } from "@chakra-ui/react";
-import type { ReactElement } from "react";
+import { For, Select } from "@chakra-ui/react";
+import { WithId, Props } from "./SelectWrapper";
 
-interface WithId {
-  id: string | number;
-}
-
-interface Props<T extends WithId> {
-  collection: ListCollection<T>;
-  onValueChange?: (element: T) => void;
-  children: (data: T) => ReactElement;
-}
-
-function SelectWrapper<T extends WithId>({
+export function SelectWrapper<T extends WithId>({
   collection,
   onValueChange,
   children,
@@ -19,9 +9,7 @@ function SelectWrapper<T extends WithId>({
   return (
     <Select.Root
       collection={collection}
-      onValueChange={
-        onValueChange ? (e) => onValueChange(e.items[0]) : undefined
-      }
+      onValueChange={onValueChange ? (e) => console.log(e.items[0]) : undefined}
       defaultValue={["1"]}
     >
       <Select.HiddenSelect />
@@ -50,5 +38,3 @@ function SelectWrapper<T extends WithId>({
     </Select.Root>
   );
 }
-
-export default SelectWrapper;

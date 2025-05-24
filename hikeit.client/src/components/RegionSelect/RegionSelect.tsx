@@ -1,9 +1,14 @@
 import { createListCollection } from "@chakra-ui/react";
 import SelectWrapper from "./SelectWrapper";
+import type { Region } from "@/data/types";
 
-function RegionSelect() {
+interface Props<T> {
+  onValueChange: (el: T) => void;
+}
+
+function RegionSelect({ onValueChange }: Props<Region>) {
   return (
-    <SelectWrapper collection={regions}>
+    <SelectWrapper onValueChange={onValueChange} collection={regions}>
       {(region) => <div>{region.name}</div>}
     </SelectWrapper>
   );
