@@ -50,7 +50,7 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                     TripDay = new DateOnly(2020, 12, 1),
                     Duration = 8,
                     Height = 1000,
-                    Length = 23.7f,
+                    Distance = 23.7f,
                     RegionID = 1,
                 },
                 new Trip {
@@ -58,7 +58,7 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                     TripDay = new DateOnly(2023, 4, 7),
                     Duration = 4,
                     Height = 620,
-                    Length = 14.2f,
+                    Distance = 14.2f,
                     RegionID = 22,
                 }
             );

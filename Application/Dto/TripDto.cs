@@ -1,12 +1,12 @@
 ﻿namespace Application.Dto;
 
 public abstract record TripDto {
-    public record Basic(float Height, float Length, float Duration) : TripDto;
+    public record Basic(float Height, float Length, float Distance) : TripDto;
 
     public record CompleteLinked(
         float Height,
         float Length,
-        float Duration,
+        float Distance,
         int RegionId,
         DateOnly TripDay
     ) : TripDto;
@@ -14,7 +14,7 @@ public abstract record TripDto {
     public record Complete(
         float Height,
         float Length,
-        float Duration,
+        float Distance,
         RegionDto.Complete Region,
         DateOnly TripDay
     ) : TripDto;
@@ -23,7 +23,7 @@ public abstract record TripDto {
         int Id,
         float Height,
         float Length,
-        float Duration,
+        float Distance,
         int RegionId,
         DateOnly TripDay
     ) : TripDto;

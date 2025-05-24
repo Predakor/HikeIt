@@ -35,7 +35,7 @@ public class TripBuilder {
     public Trip Build() {
         return new Trip {
             Height = _height,
-            Length = _length,
+            Distance = _length,
             Duration = _duration,
             TripDay = _tripDay,
             RegionID = _regionId,

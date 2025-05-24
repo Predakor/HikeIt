@@ -34,7 +34,7 @@ public static class TripsEndpoints {
         return Results.Ok(trip);
     }
 
-    static async Task<IResult> CreateTrip(TripDto newTrip, TripService service) {
+    static async Task<IResult> CreateTrip(TripDto.CompleteLinked newTrip, TripService service) {
         await service.Add(newTrip);
         return Results.Created();
     }

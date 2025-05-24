@@ -3,7 +3,7 @@
 namespace Application.Services.Trip;
 
 public interface ITripService {
-    public Task<bool> Add(TripDto dto);
+    public Task<bool> Add(TripDto.CompleteLinked dto);
     public Task<bool> Update(TripDto.UpdateDto dto);
     public Task<bool> Delete(int id);
 

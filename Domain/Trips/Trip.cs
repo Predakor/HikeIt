@@ -10,7 +10,7 @@ public class Trip : IEntity {
     public required float Height { get; set; }
 
     [Required]
-    public required float Length { get; set; }
+    public required float Distance { get; set; }
 
     [Required]
     public required float Duration { get; set; }

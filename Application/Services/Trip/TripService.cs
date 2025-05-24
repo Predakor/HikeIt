@@ -28,7 +28,7 @@ public class TripService(ITripRepository tripRepository, TripMapper tripMapper) 
     }
 
 
-    public async Task<bool> Add(TripDto dto) {
+    public async Task<bool> Add(TripDto.CompleteLinked dto) {
         var trip = _tripMapper.MapToEntity(dto);
         await _tripRepository.AddAsync(trip);
         return true;

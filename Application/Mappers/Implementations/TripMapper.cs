@@ -6,11 +6,11 @@ namespace Application.Mappers.Implementations;
 
 public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
     public TripDto MapToDto(Trip entity) {
-        return new TripDto.Basic(entity.Height, entity.Length, entity.Duration);
+        return new TripDto.Basic(entity.Height, entity.Distance, entity.Duration);
     }
 
     public TripDto.Basic MapToBasicDto(Trip entity) {
-        return new TripDto.Basic(entity.Height, entity.Length, entity.Duration);
+        return new TripDto.Basic(entity.Height, entity.Distance, entity.Duration);
     }
 
     public TripDto.Complete MapToCompleteDto(Trip entity) {
@@ -18,7 +18,7 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
 
         return new TripDto.Complete(
             entity.Height,
-            entity.Length,
+            entity.Distance,
             entity.Duration,
             mappedRegion,
             entity.TripDay
@@ -30,19 +30,19 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
             TripDto.Basic tripDto => new() {
                 Duration = tripDto.Duration,
                 Height = tripDto.Height,
-                Length = tripDto.Length,
+                Distance = tripDto.Length,
             },
             TripDto.CompleteLinked tripDto => new() {
                 Duration = tripDto.Duration,
                 Height = tripDto.Height,
-                Length = tripDto.Length,
+                Distance = tripDto.Length,
                 RegionID = tripDto.RegionId,
                 TripDay = tripDto.TripDay,
             },
             TripDto.Complete tripDto => new() {
                 Duration = tripDto.Duration,
                 Height = tripDto.Height,
-                Length = tripDto.Length,
+                Distance = tripDto.Length,
                 RegionID = tripDto.Region.Id,
                 TripDay = tripDto.TripDay,
             },
