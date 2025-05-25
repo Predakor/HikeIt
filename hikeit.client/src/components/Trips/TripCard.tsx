@@ -1,5 +1,5 @@
 import type { Trip } from "@/data/types";
-import { dateOnlyToString } from "@/Utils/DateFormats";
+import { dateOnlyToString } from "@/Utils/dateFormats";
 import { Card, Stat } from "@chakra-ui/react";
 
 function TripCard({ trip }: { trip: Trip }) {
