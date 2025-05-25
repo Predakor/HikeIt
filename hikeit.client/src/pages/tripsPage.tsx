@@ -11,7 +11,7 @@ function TripsPage() {
         </GridItem>
 
         <GridItem>
-          <Trips></Trips>
+          <Trips />
         </GridItem>
         <GridItem>
           <AddTripForm />

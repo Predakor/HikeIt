@@ -1,3 +1,5 @@
+import type { FieldEntry } from "./types";
+
 export const tripFormConfig: FieldEntry[] = [
   {
     name: "tripDay",

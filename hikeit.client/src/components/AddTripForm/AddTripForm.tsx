@@ -3,9 +3,10 @@ import { useForm } from "react-hook-form";
 import RegionSelect from "../RegionSelect/RegionSelect";
 import { AddFile } from "./AddFile/AddFile";
 import { tripFormConfig } from "./AddTrip/data";
+import type { TripDto } from "./AddTrip/types";
 
 function AddTripForm() {
-  const { register, handleSubmit, setValue, watch } = useForm<TripDto>({
+  const { register, handleSubmit, setValue } = useForm<TripDto>({
     defaultValues: {
       height: 0,
       distance: 0,
