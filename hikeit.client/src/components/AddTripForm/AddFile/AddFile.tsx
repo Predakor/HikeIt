@@ -1,10 +1,5 @@
-import {
-  calculateStats,
-  downsampleToMaxSize,
-  generateGains,
-  smoothMedian,
-} from "@/Utils/arrayUtils";
-import { Button, Field, FileUpload } from "@chakra-ui/react";
+import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
+import { Field, FileUpload, Button } from "@chakra-ui/react";
 import type { FileChangeDetails } from "node_modules/@chakra-ui/react/dist/types/components/file-upload/namespace";
 import { useState } from "react";
 import { HiUpload } from "react-icons/hi";
@@ -16,24 +11,23 @@ interface AddFileProps {
 }
 
 export function AddFile({ onFileChange }: AddFileProps) {
+  const [chartData, setChartData] = useState<GpxArray | null>(null);
+
   const handleFileChange = (f: FileChangeDetails) => {
     const file = f.acceptedFiles[0];
     onFileChange(file);
     handleFileMapping(file);
   };
 
-  const [chartData, setChartData] = useState<GpxArray | null>(null);
-
   const handleFileMapping = async (file: File) => {
-    let gpxArray = await mapToGpxArray(file); //map from file
-    gpxArray = smoothMedian(gpxArray, 5); //smooth out gps error
-    gpxArray = generateGains(gpxArray); // calculate point to point gains
+    const builder = await GpxArrayBuilder.fromFile(file);
+    const gpxArray = builder.smoothMedian(5).generateGains().build();
 
-    const stats = calculateStats(gpxArray);
+    const stats = builder.getStats();
     console.log({ stats, gpxArray });
 
-    let chartGpxArray = downsampleToMaxSize(gpxArray, 500);
-    chartGpxArray = smoothMedian(gpxArray, 10);
+    const chartGpxArray = builder.downsample(500).smoothMedian(10).build();
+
     setChartData(chartGpxArray);
   };
 
@@ -55,17 +49,4 @@ export function AddFile({ onFileChange }: AddFileProps) {
       </FileUpload.Root>
     </Field.Root>
   );
-}
-
-async function mapToGpxArray(file: File): Promise<GpxArray> {
-  const text = await file.text();
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(text, "application/xml");
-
-  return Array.from(xml.getElementsByTagName("trkpt")).map((pt) => ({
-    lat: parseFloat(pt.getAttribute("lat") || "0"),
-    lon: parseFloat(pt.getAttribute("lon") || "0"),
-    ele: parseFloat(pt.getElementsByTagName("ele")[0]?.textContent || "0"),
-    time: pt.getElementsByTagName("time")[0]?.textContent || "",
-  }));
 }
