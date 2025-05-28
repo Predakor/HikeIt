@@ -30,19 +30,19 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
             TripDto.Basic tripDto => new() {
                 Duration = tripDto.Duration,
                 Height = tripDto.Height,
-                Distance = tripDto.Length,
+                Distance = tripDto.Duration,
             },
             TripDto.CompleteLinked tripDto => new() {
                 Duration = tripDto.Duration,
                 Height = tripDto.Height,
-                Distance = tripDto.Length,
+                Distance = tripDto.Duration,
                 RegionID = tripDto.RegionId,
                 TripDay = tripDto.TripDay,
             },
             TripDto.Complete tripDto => new() {
                 Duration = tripDto.Duration,
                 Height = tripDto.Height,
-                Distance = tripDto.Length,
+                Distance = tripDto.Duration,
                 RegionID = tripDto.Region.Id,
                 TripDay = tripDto.TripDay,
             },
