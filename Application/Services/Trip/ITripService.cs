@@ -8,5 +8,5 @@ public interface ITripService {
     public Task<bool> Delete(int id);
 
     public Task<TripDto.Complete?> GetById(int id);
-    public Task<List<TripDto.Basic>> GetAll();
+    public Task<List<TripDto.CompleteLinked>> GetAll();
 }

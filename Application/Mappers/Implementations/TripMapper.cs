@@ -6,11 +6,18 @@ namespace Application.Mappers.Implementations;
 
 public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
     public TripDto MapToDto(Trip entity) {
-        return new TripDto.Basic(entity.Height, entity.Distance, entity.Duration);
+        return new TripDto.Basic(entity.Height, entity.Duration, entity.Distance, entity.TripDay);
     }
 
-    public TripDto.Basic MapToBasicDto(Trip entity) {
-        return new TripDto.Basic(entity.Height, entity.Distance, entity.Duration);
+    public TripDto.CompleteLinked MapToLinkedDto(Trip entity) {
+        return new TripDto.CompleteLinked(
+            entity.Id,
+            entity.Height,
+            entity.Duration,
+            entity.Distance,
+            entity.RegionID,
+            entity.TripDay
+        );
     }
 
     public TripDto.Complete MapToCompleteDto(Trip entity) {
@@ -42,7 +49,7 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
             TripDto.Complete tripDto => new() {
                 Duration = tripDto.Duration,
                 Height = tripDto.Height,
-                Distance = tripDto.Duration,
+                Distance = tripDto.Distance,
                 RegionID = tripDto.Region.Id,
                 TripDay = tripDto.TripDay,
             },

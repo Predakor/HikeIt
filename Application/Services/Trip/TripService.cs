@@ -8,12 +8,12 @@ public class TripService(ITripRepository tripRepository, TripMapper tripMapper) 
     readonly ITripRepository _tripRepository = tripRepository;
     readonly TripMapper _tripMapper = tripMapper;
 
-    public async Task<List<TripDto.Basic>> GetAll() {
+    public async Task<List<TripDto.CompleteLinked>> GetAll() {
         var trips = await _tripRepository.GetAllAsync();
         if (!trips.Any()) {
             return null;
         }
-        var mappedTrips = trips.Select(_tripMapper.MapToBasicDto).ToList();
+        var mappedTrips = trips.Select(_tripMapper.MapToLinkedDto).ToList();
 
         return mappedTrips;
     }
