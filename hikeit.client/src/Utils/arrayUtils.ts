@@ -31,23 +31,31 @@ export function calculateStats(gpxArray: GpxArray) {
     totalLength += Math.sqrt(plannarDist ** 2 + eleDelta ** 2);
   });
 
+  const [start, end] = getTimeRange();
+
   return {
     climbed: Math.floor(totalClimb),
     descended: Math.floor(totalDescend),
     distance: Math.floor(totalLength),
-    duration: getDuration(),
+    duration: getDuration(start, end),
+    startTime: start,
+    endTime: end,
   };
 
-  function getDuration() {
-    const startTime = gpxArray[0]?.time;
-    const endTime = gpxArray[gpxArray.length - 1]?.time;
-
-    if (startTime && endTime) {
-      const startDate = new Date(startTime).getTime();
-      const endDate = new Date(endTime).getTime();
+  function getDuration(start: string | undefined, end: string | undefined) {
+    if (start && end) {
+      const startDate = new Date(start).getTime();
+      const endDate = new Date(end).getTime();
       const durationMs = endDate - startDate;
       return durationMs / 1000 / 60;
     }
     return null;
+  }
+
+  function getTimeRange() {
+    const startTime = gpxArray[0]?.time;
+    const endTime = gpxArray[gpxArray.length - 1]?.time;
+
+    return [startTime, endTime];
   }
 }

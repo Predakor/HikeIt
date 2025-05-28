@@ -1,24 +1,23 @@
-import { Field, InputGroup, Input, Button, Stack } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
+import { Field, Input, InputGroup, Stack } from "@chakra-ui/react";
+import { useForm, type UseFormReturn } from "react-hook-form";
 import RegionSelect from "../RegionSelect/RegionSelect";
-import { AddFile } from "./AddFile/AddFile";
 import { tripFormConfig } from "./AddTrip/data";
 import type { TripDto } from "./AddTrip/types";
 
-function AddTripForm() {
-  const { register, handleSubmit, setValue } = useForm<TripDto>({
-    defaultValues: {
-      height: 0,
-      distance: 0,
-      duration: 0,
-      regionId: 0,
-      tripDay: "",
-    },
-  });
+interface Props {
+  formHandler: UseFormReturn<TripDto>;
+}
+
+function AddTripForm({ formHandler }: Props) {
+  let file: File | null = null;
+  const { register, handleSubmit, setValue } = formHandler;
 
   const onSubmit = (data: TripDto) => {
     console.log("Submit:", data);
   };
+
+
 
   return (
     <Stack as={"form"} onSubmit={handleSubmit(onSubmit)}>
@@ -40,12 +39,28 @@ function AddTripForm() {
           onValueChange={(region) => setValue("regionId", region.id)}
         />
       </Field.Root>
-
-      <AddFile onFileChange={(f) => console.log(f)} />
-
-      <Button type="submit">Upload</Button>
     </Stack>
   );
 }
+
+// function TripChart() {
+//   const [chartData, setChartData] = useState<GpxArray | null>(null);
+
+//   const handleFileMapping = async (file: File) => {
+//     const builder = await GpxArrayBuilder.fromFile(file);
+//     const gpxArray = builder.smoothMedian(5).generateGains().build();
+
+//     const stats = builder.getStats();
+//     console.log({ stats, gpxArray });
+
+//     const chartGpxArray = builder.downsample(500).smoothMedian(10).build();
+
+//     setChartData(chartGpxArray);
+//   };
+
+//   if (chartData) {
+//     return <TripChart data={chartData} />;
+//   }
+// }
 
 export default AddTripForm;

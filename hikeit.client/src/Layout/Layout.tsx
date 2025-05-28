@@ -4,7 +4,7 @@ import Nav from "./Nav/Nav";
 
 function Layout({ children }: PropsWithChildren) {
   return (
-    <Stack py={"1em"} minH={"100vh"} align={"center"} gap={"2em"}>
+    <Stack p={"1em"} minH={"100vh"} align={"stretch"} gap={"2em"}>
       <header>
         <Heading fontSize={"4xl"}>
           Hike
@@ -14,8 +14,8 @@ function Layout({ children }: PropsWithChildren) {
         </Heading>
         <Nav />
       </header>
-      <Center flexGrow={1}>
-        <main>{children}</main>
+      <Center as="main" flexGrow={1}>
+        {children}
       </Center>
       <footer>Footer placeholder </footer>
     </Stack>

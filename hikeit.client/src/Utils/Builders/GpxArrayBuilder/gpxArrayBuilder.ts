@@ -18,7 +18,7 @@ export class GpxArrayBuilder {
     return new GpxArrayBuilder(parsed);
   }
 
-  smoothMedian(windowSize: number) {
+  smoothMedian(windowSize: number = 5) {
     this.gpxArray = smoothWithMedian(this.gpxArray, windowSize);
     return this;
   }

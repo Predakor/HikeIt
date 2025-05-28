@@ -1,23 +1,19 @@
 import type { Trip } from "@/data/types";
-import useFetch from "@/hooks/useFetch";
 import { Flex } from "@chakra-ui/react";
-import TripCard from "./TripCard";
-import FetchWrapper from "../Wrappers/Fetching";
 import MapWrapper from "../Wrappers/Mapping";
+import TripCard from "./TripCard";
 
-function Trips() {
-  const request = useFetch<Trip[]>("trips");
-
+//TODO actually so some ui to show trip creation when no trips
+interface Props {
+  trips: Trip[];
+}
+function Trips({ trips }: Props) {
   return (
     <Flex gap={5}>
-      <FetchWrapper request={request}>
-        {(data) => (
-          <MapWrapper
-            items={data}
-            renderItem={(trip) => <TripCard key={trip.id} trip={trip} />}
-          />
-        )}
-      </FetchWrapper>
+      <MapWrapper
+        items={trips}
+        renderItem={(trip) => <TripCard key={trip.id} trip={trip} />}
+      />
     </Flex>
   );
 }
