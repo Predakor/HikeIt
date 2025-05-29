@@ -41,7 +41,6 @@ const regions = createListCollection({
     { id: 23, name: "Góry Izerskie" },
     { id: 24, name: "Rudawy Janowickie" },
     { id: 25, name: "Sudety Wałbrzyskie" },
-    { id: 26, name: "string" },
   ],
   itemToString: (item) => item.name,
   itemToValue: (item) => item.id.toString(),

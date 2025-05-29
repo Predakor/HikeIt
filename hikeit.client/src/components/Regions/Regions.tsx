@@ -1,12 +1,18 @@
+import apiClient from "@/Utils/Api/ApiClient";
 import type { Region } from "@/data/types";
-import useFetch from "@/hooks/useFetch";
 import { SimpleGrid } from "@chakra-ui/react";
-import RegionCard from "./Card/RegionCard";
+import { useQuery } from "@tanstack/react-query";
 import FetchWrapper from "../Wrappers/Fetching";
 import MapWrapper from "../Wrappers/Mapping";
+import RegionCard from "./Card/RegionCard";
 
+const staleTime = 3600 * 24 * 30;
 function Regions() {
-  const request = useFetch<Region[]>("regions");
+  const request = useQuery<Region[]>({
+    queryKey: ["regions"],
+    queryFn: () => apiClient("regions"),
+    staleTime: staleTime,
+  });
 
   return (
     <FetchWrapper request={request}>

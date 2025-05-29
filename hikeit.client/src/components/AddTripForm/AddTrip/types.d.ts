@@ -1,9 +1,10 @@
 export interface TripDto {
+  id: number;
   height: number;
   distance: number;
   duration: number;
-  regionId: number;
-  tripDay: string;
+  regionId?: number;
+  tripDay?: string;
 }
 
 export interface FieldEntry {

@@ -4,6 +4,7 @@ import RegionsPage from "@pages/RegionsPage";
 import BadgesPage from "@pages/BadgesPage";
 import type { FunctionComponent, ReactNode } from "react";
 import AddTripPage from "@/pages/Trips/AddTripPage";
+import TripDetailsPage from "@/pages/Trips/TripDetailsPage";
 
 interface RouteData {
   path: string;
@@ -31,6 +32,13 @@ export const routes: RouteData[] = [
     label: "Add new tirp",
     hidden: true,
     Page: AddTripPage,
+    // Icon: BadgeIcon,
+  },
+  {
+    path: "/trips/:tripId",
+    label: "trip details",
+    hidden: true,
+    Page: TripDetailsPage,
     // Icon: BadgeIcon,
   },
 

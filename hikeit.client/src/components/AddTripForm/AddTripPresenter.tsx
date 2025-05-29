@@ -1,6 +1,5 @@
-import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
 import { Field, Input, InputGroup, Stack } from "@chakra-ui/react";
-import { useForm, type UseFormReturn } from "react-hook-form";
+import { type UseFormReturn } from "react-hook-form";
 import RegionSelect from "../RegionSelect/RegionSelect";
 import { tripFormConfig } from "./AddTrip/data";
 import type { TripDto } from "./AddTrip/types";
@@ -9,18 +8,11 @@ interface Props {
   formHandler: UseFormReturn<TripDto>;
 }
 
-function AddTripForm({ formHandler }: Props) {
-  let file: File | null = null;
-  const { register, handleSubmit, setValue } = formHandler;
-
-  const onSubmit = (data: TripDto) => {
-    console.log("Submit:", data);
-  };
-
-
+function AddTripPresenter({ formHandler }: Props) {
+  const { register, setValue } = formHandler;
 
   return (
-    <Stack as={"form"} onSubmit={handleSubmit(onSubmit)}>
+    <Stack>
       {tripFormConfig.map((entry) => (
         <Field.Root key={entry.name}>
           <Field.Label>{entry.label}</Field.Label>
@@ -63,4 +55,4 @@ function AddTripForm({ formHandler }: Props) {
 //   }
 // }
 
-export default AddTripForm;
+export default AddTripPresenter;

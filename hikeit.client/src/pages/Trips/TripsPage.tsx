@@ -1,12 +1,14 @@
+import type { TripDto } from "@/components/AddTripForm/AddTrip/types";
 import NoTrips from "@/components/Trips/NoTrips";
 import Trips from "@/components/Trips/Trips";
 import FetchWrapper from "@/components/Wrappers/Fetching";
-import type { Trip } from "@/data/types";
 import useFetch from "@/hooks/useFetch";
-import { GridItem, Heading, Stack } from "@chakra-ui/react";
+import { GridItem, Heading, Icon, Stack } from "@chakra-ui/react";
+import { HiPlus } from "react-icons/hi2";
+import { Link } from "react-router";
 
 function TripsPage() {
-  const request = useFetch<Trip[]>("trips");
+  const request = useFetch<TripDto[]>("trips");
 
   return (
     <Stack gap={10}>
@@ -18,6 +20,17 @@ function TripsPage() {
         <FetchWrapper request={request} NoDataComponent={NoTrips}>
           {(tripsData) => <Trips trips={tripsData} />}
         </FetchWrapper>
+
+        <Link to={"add"}>
+          <Icon
+            bg={"blue"}
+            borderRadius={"50%"}
+            size={"2xl"}
+            padding={".125em"}
+          >
+            <HiPlus />
+          </Icon>
+        </Link>
       </GridItem>
     </Stack>
   );

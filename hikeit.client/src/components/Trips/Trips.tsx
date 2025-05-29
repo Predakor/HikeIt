@@ -1,18 +1,23 @@
-import type { Trip } from "@/data/types";
+import useRegionMatcher from "@/hooks/useRegionMatcher";
 import { Flex } from "@chakra-ui/react";
+import type { TripDto } from "../AddTripForm/AddTrip/types";
 import MapWrapper from "../Wrappers/Mapping";
 import TripCard from "./TripCard";
 
 //TODO actually so some ui to show trip creation when no trips
 interface Props {
-  trips: Trip[];
+  trips: TripDto[];
 }
+
 function Trips({ trips }: Props) {
+  //TODO actually implement caching fetch with global store store or context or whatever
+  const { matchRegion } = useRegionMatcher();
+
   return (
     <Flex gap={5}>
       <MapWrapper
         items={trips}
-        renderItem={(trip) => <TripCard key={trip.id} trip={trip} />}
+        renderItem={(trip) => <TripCard trip={trip} key={trip.id} />}
       />
     </Flex>
   );

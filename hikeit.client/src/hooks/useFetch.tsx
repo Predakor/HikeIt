@@ -1,8 +1,5 @@
+import { apiPath } from "@/data/apiPaths";
 import { useEffect, useState } from "react";
-
-const originPath = "http://localhost:5063/";
-const apiVersion = "api/";
-const apiPath = originPath + apiVersion;
 
 export interface FetchResponse<T> {
   data: T | null;
@@ -10,7 +7,7 @@ export interface FetchResponse<T> {
   loading: boolean;
 }
 
-type Route = "peaks" | "trips" | "users" | "regions";
+export type Route = "peaks" | "trips" | "users" | "regions";
 
 function useFetch<T>(urlPath: Route, body?: any): FetchResponse<T> {
   const [data, setData] = useState<T | null>(null);
