@@ -13,6 +13,7 @@ public abstract record TripDto {
     ) : TripDto;
 
     public record Complete(
+        int Id,
         float Height,
         float Duration,
         float Distance,

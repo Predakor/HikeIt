@@ -2,10 +2,12 @@ using Api.Configuration.Cors.Factories;
 using Api.Configuration.Cors.Models;
 using Api.Endpoints;
 using Application.Mappers.Implementations;
+using Application.Services.Files;
 using Application.Services.Peaks;
 using Application.Services.Region;
 using Application.Services.Trip;
 using Application.Services.Users;
+using Domain.GpxFiles;
 using Domain.Peaks;
 using Domain.Regions;
 using Domain.Trips;
@@ -13,6 +15,7 @@ using Domain.Users;
 using Infrastructure;
 using Infrastructure.Data;
 using Infrastructure.Repository;
+using Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +29,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDatabase(builder.Configuration.GetConnectionString("TripDbCS"));
 
-InjectRepositories(builder);
-InjectMappers(builder);
-InjectServices(builder);
+InjectDependencies(builder);
 
 var corsConfig = ConfigureCors(builder);
 
@@ -54,11 +55,27 @@ app.MapControllers();
 
 app.Run();
 
+
+
+
 static void MapEndpoints(WebApplication app) {
-    app.MapTripsEndpoint();
-    app.MapPeaksEndpoint();
+    app.MapTripsEndpoints();
+    app.MapPeaksEndpoints();
     app.MapUserEndpoints();
     app.MapRegionsEndpoints();
+    app.MapFilesEndpoints();
+}
+
+static void InjectDependencies(WebApplicationBuilder builder) {
+    InjectMappers(builder);
+    InjectRepositories(builder);
+    InjectStorages(builder);
+    InjectServices(builder);
+}
+
+
+static void InjectStorages(WebApplicationBuilder builder) {
+    builder.Services.AddScoped<IFileStorage, FileStorage>();
 }
 
 static void InjectRepositories(WebApplicationBuilder builder) {
@@ -66,6 +83,7 @@ static void InjectRepositories(WebApplicationBuilder builder) {
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<ITripRepository, TripRepository>();
     builder.Services.AddScoped<IRegionRepository, RegionRepository>();
+    builder.Services.AddScoped<IGpxFileRepository, GpxFileRepository>();
 }
 
 static void InjectServices(WebApplicationBuilder builder) {
@@ -73,6 +91,7 @@ static void InjectServices(WebApplicationBuilder builder) {
     builder.Services.AddScoped<UserService>();
     builder.Services.AddScoped<TripService>();
     builder.Services.AddScoped<RegionService>();
+    builder.Services.AddScoped<IGpxFileService, GpxFileService>();
 }
 static void InjectMappers(WebApplicationBuilder builder) {
     builder.Services.AddScoped<PeakMapper>();
@@ -85,3 +104,4 @@ static CorsConfig ConfigureCors(WebApplicationBuilder builder) {
     CorsPolicyFactory.Create(corsConfig).ApplyCorsPolicy(builder.Services);
     return corsConfig;
 }
+

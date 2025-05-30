@@ -25,7 +25,7 @@ public class TripRepository : Repository<Trip>, ITripRepository {
         }
 
         DbSet.Remove(target);
-        return await SaveChangesAsync() > 0;
+        return await SaveChangesAsync();
     }
 
     public async Task<bool> UpdateAsync(int id, Trip updatedEntity) {
@@ -38,6 +38,6 @@ public class TripRepository : Repository<Trip>, ITripRepository {
         target.TripDay = updatedEntity.TripDay;
         target.Duration = updatedEntity.Duration;
 
-        return await SaveChangesAsync() > 0;
+        return await SaveChangesAsync();
     }
 }

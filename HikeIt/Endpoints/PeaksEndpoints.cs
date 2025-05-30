@@ -4,7 +4,7 @@ namespace Api.Endpoints;
 
 public static class PeaksEndpoints {
 
-    public static RouteGroupBuilder MapPeaksEndpoint(this WebApplication app) {
+    public static RouteGroupBuilder MapPeaksEndpoints(this WebApplication app) {
         var group = app.MapGroup("api/peaks");
 
         group.MapGet("/", GetAll);

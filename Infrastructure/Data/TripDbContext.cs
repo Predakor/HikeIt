@@ -1,4 +1,5 @@
-﻿using Domain.Peaks;
+﻿using Domain.GpxFiles;
+using Domain.Peaks;
 using Domain.Regions;
 using Domain.Trips;
 using Domain.Users;
@@ -11,6 +12,8 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
     public DbSet<Region> Regions { get; set; }
     public DbSet<Peak> Peaks { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<GpxFile> GpxFiles { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder

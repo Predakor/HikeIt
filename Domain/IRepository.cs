@@ -13,6 +13,7 @@ public interface IWriteRepository<TEntity>
     Task<bool> AddAsync(TEntity entity);
     Task<bool> UpdateAsync(int id, TEntity updatedEntity);
     Task<bool> RemoveAsync(int id);
+    Task<bool> SaveChangesAsync();
 }
 
 public interface ICrudRepository<TEntity> : IReadRepository<TEntity>, IWriteRepository<TEntity>

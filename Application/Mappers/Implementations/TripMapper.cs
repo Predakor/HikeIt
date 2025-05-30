@@ -24,6 +24,7 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
         var mappedRegion = new RegionMapper().MapToCompleteDto(entity.Region);
 
         return new TripDto.Complete(
+            entity.Id,
             entity.Height,
             entity.Distance,
             entity.Duration,

@@ -10,6 +10,6 @@ public class UserRepository : Repository<User>, IUserRepository {
     public async Task<bool> Create(User newUser) {
         // Add Validation
         await DbSet.AddAsync(newUser);
-        return await SaveChangesAsync() > 0;
+        return await SaveChangesAsync();
     }
 }

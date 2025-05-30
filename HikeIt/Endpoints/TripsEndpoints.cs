@@ -4,7 +4,7 @@ using Application.Services.Trip;
 namespace Api.Endpoints;
 
 public static class TripsEndpoints {
-    public static RouteGroupBuilder MapTripsEndpoint(this WebApplication app) {
+    public static RouteGroupBuilder MapTripsEndpoints(this WebApplication app) {
         var group = app.MapGroup("api/trips").WithParameterValidation();
 
         group.MapGet("/", GetAll);
