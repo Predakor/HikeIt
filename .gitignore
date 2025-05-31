@@ -36,6 +36,9 @@ ScaffoldingReadMe.txt
 # NuGet Symbol Packages
 *.snupkg
 
+#Server Upload Files
+/HikeIt/wwwroot/
+
 # Others
 ~$*
 *~
