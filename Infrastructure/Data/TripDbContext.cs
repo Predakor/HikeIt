@@ -16,6 +16,12 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.Entity<Region>().HasData(DataSeed.Regions);
+
+        modelBuilder.Entity<Peak>(builder => {
+            builder.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);
+            builder.HasData(DataSeed.Peaks);
+        });
+
         modelBuilder.Entity<User>().HasData(DataSeed.Users);
 
         modelBuilder.Entity<Trip>(
@@ -31,9 +37,6 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                 builder.HasData(DataSeed.Trips);
             }
         );
-        modelBuilder.Entity<Peak>(builder => {
-            builder.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);
-            builder.HasData(DataSeed.Peaks);
-        });
+
     }
 }

@@ -1,5 +1,5 @@
-﻿using Application.Dto;
-using Application.Services.Trip;
+﻿using Application.Services.Trip;
+using static Application.Dto.TripDto;
 
 namespace Api.Endpoints;
 
@@ -8,13 +8,9 @@ public static class TripsEndpoints {
         var group = app.MapGroup("api/trips").WithParameterValidation();
 
         group.MapGet("/", GetAll);
-
         group.MapGet("/{id}", GetByID);
-
         group.MapPost("/", CreateTrip);
-
         group.MapPut("/", UpdateTrip);
-
         group.MapDelete("/{id}", DeleteTrip);
 
         return group;
@@ -34,12 +30,12 @@ public static class TripsEndpoints {
         return Results.Ok(trip);
     }
 
-    static async Task<IResult> CreateTrip(TripDto.CompleteLinked newTrip, TripService service) {
+    static async Task<IResult> CreateTrip(Request.Create newTrip, TripService service) {
         await service.Add(newTrip);
         return Results.Created();
     }
 
-    static async Task<IResult> UpdateTrip(TripDto.UpdateDto updateDto, TripService service) {
+    static async Task<IResult> UpdateTrip(Request.Update updateDto, TripService service) {
         await service.Update(updateDto);
         return Results.NoContent();
     }

@@ -9,7 +9,10 @@ public class TripRepository : Repository<Trip>, ITripRepository {
         : base(context) { }
 
     public override async Task<Trip?> GetByIdAsync(int id) {
-        return await DbSet.Include(x => x.Region).FirstOrDefaultAsync(x => x.Id == id);
+        return await DbSet
+            .Include(x => x.Region)
+            .Include(x => x.GpxFile)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<bool> AddAsync(Trip entity) {

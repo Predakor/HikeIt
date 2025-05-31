@@ -1,32 +1,62 @@
-﻿namespace Application.Dto;
+﻿using Domain.GpxFiles;
+using Domain.Regions;
+using Domain.TrackAnalytics;
 
-public abstract record TripDto {
-    public record Basic(float Height, float Duration, float Distance, DateOnly TripDay) : TripDto;
+namespace Application.Dto;
 
-    public record CompleteLinked(
+/// <summary>
+/// Core trip properties shared by all trip DTOs.
+/// </summary>
+public record TripBase(float Height, float Distance, float Duration, DateOnly TripDay);
+
+public record TripBasePartial(float? Height, float? Distance, float? Duration, DateOnly? TripDay);
+
+public abstract record TripDto(TripBase Base) {
+    public record Partial(
         int Id,
-        float Height,
-        float Duration,
-        float Distance,
-        int RegionId,
-        DateOnly TripDay
-    ) : TripDto;
+        TrackAnalytic? TrackAnalytic,
+        GpxFile? GpxFile,
+        Region? Region,
+        TripBase Base
+    ) : TripDto(Base);
 
-    public record Complete(
+    public record PartialLinked(
         int Id,
-        float Height,
-        float Duration,
-        float Distance,
-        RegionDto.Complete Region,
-        DateOnly TripDay
-    ) : TripDto;
+        TrackAnalytic? TrackAnalytic,
+        Guid? GpxFileId,
+        int? RegionId,
+        TripBase Base
+    ) : TripDto(Base);
 
-    public record UpdateDto(
-        int Id,
-        float Height,
-        float Duration,
-        float Distance,
-        int RegionId,
-        DateOnly TripDay
-    ) : TripDto;
+    public record Request(int Id, TripBase Base) : TripDto(Base) {
+        public record ResponseBasic(int Id, int RegionId, TripBase Base) : Request(Id, Base);
+
+        public record Response(
+            int Id,
+            RegionDto.Complete? Region,
+            GpxFile? GpxFile,
+            TrackAnalytic? TrackAnalytic,
+            TripBase Base
+        ) : Request(Id, Base);
+
+        /// <summary>
+        /// Full response with required region, file ID, and analytics.
+        /// </summary>
+        public record ResponseFull(
+            int Id,
+            RegionDto.Complete Region,
+            GpxFile GpxFile,
+            TrackAnalytic TrackAnalytic,
+            TripBase Base
+        ) : Request(Id, Base);
+
+        /// <summary>
+        /// DTO for updating trip information.
+        /// </summary>
+        public record Update(int Id, int? RegionId, TripBasePartial? Base);
+
+        public record Create(int RegionId, TripBase Base) : TripDto(Base);
+
+        public record Delete(int Id);
+    }
 }

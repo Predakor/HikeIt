@@ -8,31 +8,40 @@ public class TripService(ITripRepository tripRepository, TripMapper tripMapper) 
     readonly ITripRepository _tripRepository = tripRepository;
     readonly TripMapper _tripMapper = tripMapper;
 
-    public async Task<List<TripDto.CompleteLinked>> GetAll() {
+    //TODO!!!
+    //Take id from logged user
+    private static int GetLoggedUserId() {
+        return 1;
+    }
+
+    public async Task<List<TripDto.Request.ResponseBasic>> GetAll() {
         var trips = await _tripRepository.GetAllAsync();
         if (!trips.Any()) {
             return null;
         }
-        var mappedTrips = trips.Select(_tripMapper.MapToLinkedDto).ToList();
+        var mappedTrips = trips.Select(_tripMapper.MapToBasicDto).ToList();
 
         return mappedTrips;
     }
 
-    public async Task<TripDto.Complete?> GetById(int id) {
+    public async Task<TripDto.Partial?> GetById(int id) {
         var trip = await _tripRepository.GetByIdAsync(id);
         if (trip == null) {
             return null;
         }
-
-        return _tripMapper.MapToCompleteDto(trip);
+        return _tripMapper.MapToPartialDto(trip);
     }
 
 
-    public async Task<bool> Add(TripDto.CompleteLinked dto) {
+    public async Task<bool> Add(TripDto.Request.Create dto) {
         var trip = _tripMapper.MapToEntity(dto);
+
+        trip.UserId = GetLoggedUserId();
         await _tripRepository.AddAsync(trip);
         return true;
     }
+
+
 
     public async Task<bool> Delete(int id) {
         var trip = await _tripRepository.GetByIdAsync(id);
@@ -46,7 +55,7 @@ public class TripService(ITripRepository tripRepository, TripMapper tripMapper) 
 
 
 
-    public async Task<bool> Update(TripDto.UpdateDto dto) {
+    public async Task<bool> Update(TripDto.Request.Update dto) {
         var trip = await _tripRepository.GetByIdAsync(dto.Id);
         if (trip == null) {
             return false;

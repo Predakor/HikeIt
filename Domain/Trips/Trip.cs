@@ -10,7 +10,7 @@ public class Trip : IEntity {
     public required float Height { get; set; }
     public required float Distance { get; set; }
     public required float Duration { get; set; }
-    public DateOnly TripDay { get; set; }
+    public required DateOnly TripDay { get; set; }
 
     //Owned Type
     public TrackAnalytic? TrackAnalytics { get; set; }
