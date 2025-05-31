@@ -63,6 +63,25 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GpxFiles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GpxFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GpxFiles_Users_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Trips",
                 columns: table => new
                 {
@@ -71,16 +90,44 @@ namespace Infrastructure.Migrations
                     Height = table.Column<float>(type: "real", nullable: false),
                     Distance = table.Column<float>(type: "real", nullable: false),
                     Duration = table.Column<float>(type: "real", nullable: false),
+                    TripDay = table.Column<DateOnly>(type: "date", nullable: false),
+                    TrackAnalytics_TotalDistanceKm = table.Column<double>(type: "float", nullable: true),
+                    TrackAnalytics_TotalAscent = table.Column<double>(type: "float", nullable: true),
+                    TrackAnalytics_TotalDescent = table.Column<double>(type: "float", nullable: true),
+                    TrackAnalytics_MinElevation = table.Column<double>(type: "float", nullable: true),
+                    TrackAnalytics_MaxElevation = table.Column<double>(type: "float", nullable: true),
+                    TrackAnalytics_TimeAnalytics_Duration = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TrackAnalytics_TimeAnalytics_StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TrackAnalytics_TimeAnalytics_EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TrackAnalytics_TimeAnalytics_ActiveTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TrackAnalytics_TimeAnalytics_IdleTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TrackAnalytics_TimeAnalytics_AscentTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TrackAnalytics_TimeAnalytics_DescentTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TrackAnalytics_TimeAnalytics_AverageSpeedKph = table.Column<double>(type: "float", nullable: true),
+                    TrackAnalytics_TimeAnalytics_AverageAscentKph = table.Column<double>(type: "float", nullable: true),
+                    TrackAnalytics_TimeAnalytics_AverageDescentKph = table.Column<double>(type: "float", nullable: true),
                     RegionID = table.Column<int>(type: "int", nullable: false),
-                    TripDay = table.Column<DateOnly>(type: "date", nullable: false)
+                    GpxFileID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Trips", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Trips_GpxFiles_GpxFileID",
+                        column: x => x.GpxFileID,
+                        principalTable: "GpxFiles",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Trips_Regions_RegionID",
                         column: x => x.RegionID,
                         principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Trips_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -141,12 +188,17 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Trips",
-                columns: new[] { "Id", "Distance", "Duration", "Height", "RegionID", "TripDay" },
+                columns: new[] { "Id", "Distance", "Duration", "GpxFileID", "Height", "RegionID", "TripDay", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 23.7f, 8f, 1000f, 1, new DateOnly(2020, 12, 1) },
-                    { 2, 14.2f, 4f, 620f, 22, new DateOnly(2023, 4, 7) }
+                    { 1, 23.7f, 8f, null, 1000f, 1, new DateOnly(2020, 12, 1), 1 },
+                    { 2, 14.2f, 4f, null, 620f, 22, new DateOnly(2023, 4, 7), 2 }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GpxFiles_OwnerId",
+                table: "GpxFiles",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Peaks_RegionID",
@@ -154,9 +206,21 @@ namespace Infrastructure.Migrations
                 column: "RegionID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Trips_GpxFileID",
+                table: "Trips",
+                column: "GpxFileID",
+                unique: true,
+                filter: "[GpxFileID] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Trips_RegionID",
                 table: "Trips",
                 column: "RegionID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_UserId",
+                table: "Trips",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -169,10 +233,13 @@ namespace Infrastructure.Migrations
                 name: "Trips");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "GpxFiles");
 
             migrationBuilder.DropTable(
                 name: "Regions");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

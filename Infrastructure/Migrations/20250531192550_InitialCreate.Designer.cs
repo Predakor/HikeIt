@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250530220440_AddFilesTable")]
-    partial class AddFilesTable
+    [Migration("20250531192550_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,30 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.GpxFiles.GpxFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("GpxFiles");
+                });
 
             modelBuilder.Entity("Domain.Peaks.Peak", b =>
                 {
@@ -238,6 +262,9 @@ namespace Infrastructure.Migrations
                     b.Property<float>("Duration")
                         .HasColumnType("real");
 
+                    b.Property<Guid?>("GpxFileID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<float>("Height")
                         .HasColumnType("real");
 
@@ -247,9 +274,18 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("TripDay")
                         .HasColumnType("date");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("GpxFileID")
+                        .IsUnique()
+                        .HasFilter("[GpxFileID] IS NOT NULL");
+
                     b.HasIndex("RegionID");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Trips");
 
@@ -261,7 +297,8 @@ namespace Infrastructure.Migrations
                             Duration = 8f,
                             Height = 1000f,
                             RegionID = 1,
-                            TripDay = new DateOnly(2020, 12, 1)
+                            TripDay = new DateOnly(2020, 12, 1),
+                            UserId = 1
                         },
                         new
                         {
@@ -270,7 +307,8 @@ namespace Infrastructure.Migrations
                             Duration = 4f,
                             Height = 620f,
                             RegionID = 22,
-                            TripDay = new DateOnly(2023, 4, 7)
+                            TripDay = new DateOnly(2023, 4, 7),
+                            UserId = 2
                         });
                 });
 
@@ -328,6 +366,15 @@ namespace Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.GpxFiles.GpxFile", b =>
+                {
+                    b.HasOne("Domain.Users.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId");
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("Domain.Peaks.Peak", b =>
                 {
                     b.HasOne("Domain.Regions.Region", "Region")
@@ -341,13 +388,102 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Trips.Trip", b =>
                 {
+                    b.HasOne("Domain.GpxFiles.GpxFile", "GpxFile")
+                        .WithOne()
+                        .HasForeignKey("Domain.Trips.Trip", "GpxFileID");
+
                     b.HasOne("Domain.Regions.Region", "Region")
                         .WithMany()
                         .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.TrackAnalytics.TrackAnalytic", "TrackAnalytics", b1 =>
+                        {
+                            b1.Property<int>("TripId")
+                                .HasColumnType("int");
+
+                            b1.Property<double>("MaxElevation")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("MinElevation")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("TotalAscent")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("TotalDescent")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("TotalDistanceKm")
+                                .HasColumnType("float");
+
+                            b1.HasKey("TripId");
+
+                            b1.ToTable("Trips");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TripId");
+
+                            b1.OwnsOne("Domain.TrackAnalytics.TrackTimeAnalytic", "TimeAnalytics", b2 =>
+                                {
+                                    b2.Property<int>("TrackAnalyticTripId")
+                                        .HasColumnType("int");
+
+                                    b2.Property<TimeSpan>("ActiveTime")
+                                        .HasColumnType("time");
+
+                                    b2.Property<TimeSpan>("AscentTime")
+                                        .HasColumnType("time");
+
+                                    b2.Property<double>("AverageAscentKph")
+                                        .HasColumnType("float");
+
+                                    b2.Property<double>("AverageDescentKph")
+                                        .HasColumnType("float");
+
+                                    b2.Property<double>("AverageSpeedKph")
+                                        .HasColumnType("float");
+
+                                    b2.Property<TimeSpan>("DescentTime")
+                                        .HasColumnType("time");
+
+                                    b2.Property<TimeSpan>("Duration")
+                                        .HasColumnType("time");
+
+                                    b2.Property<DateTime>("EndTime")
+                                        .HasColumnType("datetime2");
+
+                                    b2.Property<TimeSpan>("IdleTime")
+                                        .HasColumnType("time");
+
+                                    b2.Property<DateTime>("StartTime")
+                                        .HasColumnType("datetime2");
+
+                                    b2.HasKey("TrackAnalyticTripId");
+
+                                    b2.ToTable("Trips");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TrackAnalyticTripId");
+                                });
+
+                            b1.Navigation("TimeAnalytics");
+                        });
+
+                    b.Navigation("GpxFile");
+
                     b.Navigation("Region");
+
+                    b.Navigation("TrackAnalytics");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

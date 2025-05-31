@@ -55,9 +55,6 @@ app.MapControllers();
 
 app.Run();
 
-
-
-
 static void MapEndpoints(WebApplication app) {
     app.MapTripsEndpoints();
     app.MapPeaksEndpoints();
@@ -72,7 +69,6 @@ static void InjectDependencies(WebApplicationBuilder builder) {
     InjectStorages(builder);
     InjectServices(builder);
 }
-
 
 static void InjectStorages(WebApplicationBuilder builder) {
     builder.Services.AddScoped<IFileStorage, FileStorage>();
@@ -104,4 +100,3 @@ static CorsConfig ConfigureCors(WebApplicationBuilder builder) {
     CorsPolicyFactory.Create(corsConfig).ApplyCorsPolicy(builder.Services);
     return corsConfig;
 }
-

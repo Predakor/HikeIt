@@ -7,8 +7,7 @@ public class Peak : IEntity {
     public int Height { get; set; }
 
     public string? Name { get; set; }
+
     public int RegionID { get; set; }
-
-
     public Region Region { get; set; } //navigation prop
 }
