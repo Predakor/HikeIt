@@ -8,7 +8,7 @@ export interface PostResponse {
 
 type LazyFetch = (urlPath: PostPaths, body: BodyInit) => Promise<void>;
 
-type PostPaths = "trips" | "users";
+type PostPaths = "trips" | "users" | "files";
 
 function usePost(): [LazyFetch, PostResponse] {
   const [pending, setPending] = useState(false);
@@ -18,15 +18,18 @@ function usePost(): [LazyFetch, PostResponse] {
     setPending(true);
     setResult(null);
 
+    const isFormData = body instanceof FormData;
+    const headerType = isFormData
+      ? undefined
+      : {
+          "Content-Type": "application/json",
+        };
+
     const options: RequestInit = {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: headerType,
       body: body,
     };
-
-    console.log(body);
 
     const requestPath = apiPath + urlPath;
 

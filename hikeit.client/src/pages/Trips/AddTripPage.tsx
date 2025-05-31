@@ -5,7 +5,7 @@ import AddTripPresenter from "@/components/AddTripForm/AddTripPresenter";
 import Divider from "@/components/Divider/Divider";
 import usePost from "@/hooks/usePost";
 import { Box, Button, Center, Heading, Stack } from "@chakra-ui/react";
-import type { FormEvent } from "react";
+import { useRef, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 
 const defaultValues = {
@@ -17,16 +17,24 @@ const defaultValues = {
 };
 
 function AddTripPage() {
-  let file: File;
+  const fileRef = useRef<File | null>(null);
   const [post, result] = usePost();
   const formHandler = useForm<TripDto>({
     defaultValues,
   });
 
+  const file = fileRef.current;
+
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
     const data = formHandler.getValues();
     post("trips", JSON.stringify(data));
+
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      post("files", formData);
+    }
   };
 
   const fileChangeHandler = (newFile: File) => {
@@ -41,7 +49,7 @@ function AddTripPage() {
       formHandler.setValue("tripDay", stats.startTime?.slice(0, 10) || "");
     };
 
-    file = newFile;
+    fileRef.current = newFile;
     mapFromFile();
   };
 
