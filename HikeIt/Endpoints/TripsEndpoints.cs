@@ -31,6 +31,7 @@ public static class TripsEndpoints {
     }
 
     static async Task<IResult> CreateTrip(Request.Create newTrip, TripService service) {
+        Console.WriteLine(newTrip.RegionId);
         await service.Add(newTrip);
         return Results.Created();
     }

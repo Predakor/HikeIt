@@ -16,8 +16,8 @@ public class Trip : IEntity {
     public TrackAnalytic? TrackAnalytics { get; set; }
 
     //Foreign Keys
-    public int RegionID { get; set; }
-    public Guid? GpxFileID { get; set; }
+    public int RegionId { get; set; }
+    public Guid? GpxFileId { get; set; }
     public int UserId { get; set; }
 
     //Navigation Property

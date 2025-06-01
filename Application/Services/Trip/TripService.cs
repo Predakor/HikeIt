@@ -34,6 +34,7 @@ public class TripService(ITripRepository tripRepository, TripMapper tripMapper) 
 
 
     public async Task<bool> Add(TripDto.Request.Create dto) {
+        Console.WriteLine(dto.RegionId);
         var trip = _tripMapper.MapToEntity(dto);
 
         trip.UserId = GetLoggedUserId();

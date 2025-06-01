@@ -34,7 +34,7 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
     }
 
     public TripDto.Request.ResponseBasic MapToBasicDto(Trip trip) {
-        return new TripDto.Request.ResponseBasic(trip.Id, trip.RegionID, EntityToBase(trip));
+        return new TripDto.Request.ResponseBasic(trip.Id, trip.RegionId, EntityToBase(trip));
     }
 
     public TripDto.Partial MapToPartialDto(Trip trip) {
@@ -51,11 +51,12 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
         TripBase trip = dto.Base;
 
         return dto switch {
-            TripDto.Request.Create => new() {
+            TripDto.Request.Create newTrip => new() {
                 Duration = trip.Duration,
                 Height = trip.Height,
                 Distance = trip.Distance,
                 TripDay = trip.TripDay,
+                RegionId = newTrip.RegionId,
             },
             _ => throw new Exception($"Unsoported TripDto type {dto}"),
         };

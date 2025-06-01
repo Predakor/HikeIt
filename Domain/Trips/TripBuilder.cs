@@ -38,7 +38,7 @@ public class TripBuilder {
             Distance = _length,
             Duration = _duration,
             TripDay = _tripDay,
-            RegionID = _regionId,
+            RegionId = _regionId,
         };
     }
 }

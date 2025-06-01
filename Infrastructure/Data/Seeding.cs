@@ -108,7 +108,7 @@ internal static class DataSeed {
             Duration = 8,
             Height = 1000,
             Distance = 23.7f,
-            RegionID = 1,
+            RegionId = 1,
             UserId = 1,
         },
         new()
@@ -118,7 +118,7 @@ internal static class DataSeed {
             Duration = 4,
             Height = 620,
             Distance = 14.2f,
-            RegionID = 22,
+            RegionId = 22,
             UserId = 2,
         },
     ];

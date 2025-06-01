@@ -27,8 +27,8 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
         modelBuilder.Entity<Trip>(
             (builder) => {
                 builder.HasOne(t => t.User).WithMany().HasForeignKey(t => t.UserId);
-                builder.HasOne(t => t.Region).WithMany().HasForeignKey(t => t.RegionID);
-                builder.HasOne(t => t.GpxFile).WithOne().HasForeignKey<Trip>(t => t.GpxFileID);
+                builder.HasOne(t => t.Region).WithMany().HasForeignKey(t => t.RegionId);
+                builder.HasOne(t => t.GpxFile).WithOne().HasForeignKey<Trip>(t => t.GpxFileId);
                 builder.OwnsOne(
                     t => t.TrackAnalytics,
                     ta => ta.OwnsOne(a => a.TimeAnalytics).WithOwner()
