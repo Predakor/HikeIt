@@ -1,8 +1,8 @@
-﻿using Domain.Regions;
+﻿using Domain.Entiites.Regions;
 
-namespace Domain.Peaks;
+namespace Domain.Entiites.Peaks;
 
-public class Peak : IEntity {
+public class Peak : IEntity<int> {
     public int Id { get; set; }
     public int Height { get; set; }
 

@@ -1,5 +1,6 @@
-﻿using Domain.GpxFiles;
-using Domain.Users;
+﻿using Domain.Common;
+using Domain.Entiites.Users;
+using Domain.Trips.GpxFiles;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;
@@ -8,12 +9,11 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository)
     readonly IFileStorage _fileStorage = storage;
     readonly IGpxFileRepository _repository = repository;
 
-    public async Task<bool> CreateAsync(IFormFile file) {
+    public async Task<Result<GpxFile>> CreateAsync(IFormFile file) {
         var (isValid, errors) = Validate(file);
         if (!isValid) {
-            //TODO add result class
-            Console.WriteLine(errors);
-            return false;
+            var err = new Error("multiple validation errors", errors.ToString());
+            return Result<GpxFile>.Failure(err);
         }
 
         User? user = null;
@@ -23,20 +23,25 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository)
 
         if (result.HasErrors(out var error)) {
             Console.WriteLine(error.Message);
-            return false;
+            return Result<GpxFile>.Failure(new("saving", error.Message));
         }
 
         FileCreationInfo info = result.Value!;
-
+        Guid id = Guid.NewGuid();
         GpxFile entity = new() {
+            Id = id,
             Name = info.Name,
             Path = info.Path,
             OwnerId = user?.Id,
         };
 
         await _repository.AddAsync(entity);
-        return await _repository.SaveChangesAsync();
+        var succes = await _repository.SaveChangesAsync();
 
+        if (!succes) {
+            return Result<GpxFile>.Failure(new("err", "couldn't save"));
+        }
+        return Result<GpxFile>.Success(entity);
     }
 
     public Task<bool> DeleteAsync(int id) {
@@ -51,24 +56,28 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository)
         throw new NotImplementedException();
     }
 
-    static (bool isValid, List<string> errors) Validate(IFormFile? file) {
+    static (bool isValid, List<Error> errors) Validate(IFormFile? file) {
         const int maxSizeInBytes = 1024 * 1024 / 2; // 0.5 MB
         const string allowedExtension = ".gpx";
 
-        var errors = new List<string>();
+        var errors = new List<Error>();
+
+        void AddError(string code, string message) {
+            errors.Add(new Error(code, message));
+        }
 
         if (file == null || file.Length == 0) {
-            errors.Add("No file uploaded.");
+            AddError("nullRef", "No file uploaded.");
             return (false, errors); // Return immediately here; can't proceed with other checks
         }
 
         if (!file.FileName.EndsWith(allowedExtension, StringComparison.OrdinalIgnoreCase)) {
-            errors.Add($"Only {allowedExtension} files are allowed.");
+            AddError("Invalid extention", $"Only {allowedExtension} files are allowed.");
         }
 
         if (file.Length > maxSizeInBytes) {
             double maxSizeInMB = maxSizeInBytes / 1024f / 1024f;
-            errors.Add($"File is too large. Max size: {maxSizeInMB:F1} MB.");
+            AddError("File size", $"File is too large. Max size: {maxSizeInMB:F1} MB.");
         }
 
         return (errors.Count == 0, errors);

@@ -1,6 +1,6 @@
 ﻿using Application.Dto;
 using Application.Mappers.Interfaces;
-using Domain.Users;
+using Domain.Entiites.Users;
 
 namespace Application.Mappers.Implementations;
 

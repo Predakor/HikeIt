@@ -1,10 +1,10 @@
-﻿using Domain.Peaks;
+﻿using Domain.Entiites.Peaks;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;
 
-public class PeakRepository : Repository<Peak>, IPeakRepository {
+public class PeakRepository : Repository<Peak, int>, IPeakRepository {
     public PeakRepository(TripDbContext context) : base(context) { }
 
     public override async Task<IEnumerable<Peak>> GetAllAsync() {

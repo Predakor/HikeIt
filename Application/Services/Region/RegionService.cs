@@ -1,6 +1,6 @@
 ﻿using Application.Dto;
 using Application.Mappers.Implementations;
-using Domain.Regions;
+using Domain.Entiites.Regions;
 
 namespace Application.Services.Region;
 public class RegionService(RegionMapper mapper, IRegionRepository repository) : IRegionService {

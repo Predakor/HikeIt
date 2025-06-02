@@ -1,4 +1,4 @@
 ﻿namespace Domain.Trips;
 
-public interface ITripRepository : ICrudRepository<Trip> {
+public interface ITripRepository : ICrudRepository<Trip, Guid> {
 }

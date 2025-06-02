@@ -1,5 +1,5 @@
 ﻿using Application.Dto;
-using Domain.Users;
+using Domain.Entiites.Users;
 
 namespace Application.Services.Users;
 
@@ -11,7 +11,7 @@ public class UserService(IUserRepository repository) : IUserService {
         return users.Select(user => new UserDto.Complete(user.Name, user.Email, user.BirthDay));
     }
 
-    public async Task<UserDto.Complete?> GetUserByIdAsync(int id) {
+    public async Task<UserDto.Complete?> GetUserByIdAsync(Guid id) {
         var user = await _repository.GetByIdAsync(id);
         if (user is null) {
             return null;

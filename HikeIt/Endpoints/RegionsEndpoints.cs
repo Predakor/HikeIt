@@ -12,7 +12,7 @@ public static class RegionsEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAll(RegionService service) {
+    static async Task<IResult> GetAll(IRegionService service) {
         var results = await service.GetAllAsync();
         if (results is null) {
             return Results.NotFound();
@@ -20,7 +20,7 @@ public static class RegionsEndpoints {
         return Results.Ok(results);
     }
 
-    static async Task<IResult> GetById(RegionService service, int id) {
+    static async Task<IResult> GetById(IRegionService service, int id) {
         var result = await service.GetAsync(id);
         if (result is null) {
             return Results.NotFound();

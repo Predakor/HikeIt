@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250601110527_CorrectedIdSpelling")]
-    partial class CorrectedIdSpelling
+    [Migration("20250602160355_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,31 +25,7 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.GpxFiles.GpxFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("OwnerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("GpxFiles");
-                });
-
-            modelBuilder.Entity("Domain.Peaks.Peak", b =>
+            modelBuilder.Entity("Domain.Entiites.Peaks.Peak", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -103,7 +79,7 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Regions.Region", b =>
+            modelBuilder.Entity("Domain.Entiites.Regions.Region", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,77 +224,11 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Trips.Trip", b =>
+            modelBuilder.Entity("Domain.Entiites.Users.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<float>("Distance")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Duration")
-                        .HasColumnType("real");
-
-                    b.Property<Guid?>("GpxFileId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("Height")
-                        .HasColumnType("real");
-
-                    b.Property<int>("RegionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("TripDay")
-                        .HasColumnType("date");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GpxFileId")
-                        .IsUnique()
-                        .HasFilter("[GpxFileId] IS NOT NULL");
-
-                    b.HasIndex("RegionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Trips");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Distance = 23.7f,
-                            Duration = 8f,
-                            Height = 1000f,
-                            RegionId = 1,
-                            TripDay = new DateOnly(2020, 12, 1),
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Distance = 14.2f,
-                            Duration = 4f,
-                            Height = 620f,
-                            RegionId = 22,
-                            TripDay = new DateOnly(2023, 4, 7),
-                            UserId = 2
-                        });
-                });
-
-            modelBuilder.Entity("Domain.Users.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateOnly>("BirthDay")
                         .HasColumnType("date");
@@ -338,46 +248,123 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"),
                             BirthDay = new DateOnly(2002, 4, 15),
                             Email = "mistrzbiznesu@wp.pl",
                             Name = "Janusz"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("183a96d7-9c20-4b18-b65b-d5d6676b57aa"),
                             BirthDay = new DateOnly(1995, 8, 20),
                             Email = "kasia.wandziak@wp.pl",
                             Name = "Kasia"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("e5be7d3d-8320-4ef9-b60d-92b5464f2f1b"),
                             BirthDay = new DateOnly(1988, 3, 2),
                             Email = "marek.kowalski@gmail.com",
                             Name = "Marek"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c90"),
                             BirthDay = new DateOnly(1990, 12, 11),
                             Email = "ewa.nowak@outlook.com",
                             Name = "Ewa"
                         });
                 });
 
-            modelBuilder.Entity("Domain.GpxFiles.GpxFile", b =>
+            modelBuilder.Entity("Domain.Trips.GpxFiles.GpxFile", b =>
                 {
-                    b.HasOne("Domain.Users.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Navigation("Owner");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("GpxFiles");
                 });
 
-            modelBuilder.Entity("Domain.Peaks.Peak", b =>
+            modelBuilder.Entity("Domain.Trips.Trip", b =>
                 {
-                    b.HasOne("Domain.Regions.Region", "Region")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Distance")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Duration")
+                        .HasColumnType("real");
+
+                    b.Property<Guid?>("GpxFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<int>("RegionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("TripDay")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GpxFileId")
+                        .IsUnique()
+                        .HasFilter("[GpxFileId] IS NOT NULL");
+
+                    b.HasIndex("RegionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Trips");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aa73d9ee-1b3d-4f0a-880d-6b2a4ea1d4e1"),
+                            Distance = 23.7f,
+                            Duration = 8f,
+                            Height = 1000f,
+                            RegionId = 1,
+                            TripDay = new DateOnly(2020, 12, 1),
+                            UserId = new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380")
+                        },
+                        new
+                        {
+                            Id = new Guid("bfd29135-2469-4341-859f-41e42d59e0a3"),
+                            Distance = 14.2f,
+                            Duration = 4f,
+                            Height = 620f,
+                            RegionId = 22,
+                            TripDay = new DateOnly(2023, 4, 7),
+                            UserId = new Guid("183a96d7-9c20-4b18-b65b-d5d6676b57aa")
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entiites.Peaks.Peak", b =>
+                {
+                    b.HasOne("Domain.Entiites.Regions.Region", "Region")
                         .WithMany()
                         .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -386,28 +373,37 @@ namespace Infrastructure.Migrations
                     b.Navigation("Region");
                 });
 
+            modelBuilder.Entity("Domain.Trips.GpxFiles.GpxFile", b =>
+                {
+                    b.HasOne("Domain.Entiites.Users.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId");
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("Domain.Trips.Trip", b =>
                 {
-                    b.HasOne("Domain.GpxFiles.GpxFile", "GpxFile")
+                    b.HasOne("Domain.Trips.GpxFiles.GpxFile", "GpxFile")
                         .WithOne()
                         .HasForeignKey("Domain.Trips.Trip", "GpxFileId");
 
-                    b.HasOne("Domain.Regions.Region", "Region")
+                    b.HasOne("Domain.Entiites.Regions.Region", "Region")
                         .WithMany()
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Users.User", "User")
+                    b.HasOne("Domain.Entiites.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.TrackAnalytics.TrackAnalytic", "TrackAnalytics", b1 =>
+                    b.OwnsOne("Domain.Trips.TripAnalytics.TripAnalytic", "TripAnalytics", b1 =>
                         {
-                            b1.Property<int>("TripId")
-                                .HasColumnType("int");
+                            b1.Property<Guid>("TripId")
+                                .HasColumnType("uniqueidentifier");
 
                             b1.Property<double>("MaxElevation")
                                 .HasColumnType("float");
@@ -431,10 +427,10 @@ namespace Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("TripId");
 
-                            b1.OwnsOne("Domain.TrackAnalytics.TrackTimeAnalytic", "TimeAnalytics", b2 =>
+                            b1.OwnsOne("Domain.Trips.TripAnalytics.TripTimeAnalytic", "TimeAnalytics", b2 =>
                                 {
-                                    b2.Property<int>("TrackAnalyticTripId")
-                                        .HasColumnType("int");
+                                    b2.Property<Guid>("TripAnalyticTripId")
+                                        .HasColumnType("uniqueidentifier");
 
                                     b2.Property<TimeSpan>("ActiveTime")
                                         .HasColumnType("time");
@@ -466,12 +462,12 @@ namespace Infrastructure.Migrations
                                     b2.Property<DateTime>("StartTime")
                                         .HasColumnType("datetime2");
 
-                                    b2.HasKey("TrackAnalyticTripId");
+                                    b2.HasKey("TripAnalyticTripId");
 
                                     b2.ToTable("Trips");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("TrackAnalyticTripId");
+                                        .HasForeignKey("TripAnalyticTripId");
                                 });
 
                             b1.Navigation("TimeAnalytics");
@@ -481,7 +477,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Region");
 
-                    b.Navigation("TrackAnalytics");
+                    b.Navigation("TripAnalytics");
 
                     b.Navigation("User");
                 });

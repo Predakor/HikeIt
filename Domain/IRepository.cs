@@ -1,20 +1,24 @@
 ﻿namespace Domain;
 
-public interface IEntity { }
+public interface IEntity<TKey> {
+    TKey Id { get; }
+}
 
-public interface IReadRepository<TEntity>
-    where TEntity : class, IEntity {
-    Task<TEntity?> GetByIdAsync(int id);
+public interface IReadRepository<TEntity, TKey>
+    where TEntity : class, IEntity<TKey> {
+    Task<TEntity?> GetByIdAsync(TKey id);
     Task<IEnumerable<TEntity>> GetAllAsync();
 }
 
-public interface IWriteRepository<TEntity>
-    where TEntity : class, IEntity {
+public interface IWriteRepository<TEntity, TKey>
+    where TEntity : class, IEntity<TKey> {
     Task<bool> AddAsync(TEntity entity);
-    Task<bool> UpdateAsync(int id, TEntity updatedEntity);
-    Task<bool> RemoveAsync(int id);
+    Task<bool> UpdateAsync(TKey id, TEntity updatedEntity);
+    Task<bool> RemoveAsync(TKey id);
     Task<bool> SaveChangesAsync();
 }
 
-public interface ICrudRepository<TEntity> : IReadRepository<TEntity>, IWriteRepository<TEntity>
-    where TEntity : class, IEntity { }
+public interface ICrudRepository<TEntity, TKey>
+    : IReadRepository<TEntity, TKey>,
+      IWriteRepository<TEntity, TKey>
+    where TEntity : class, IEntity<TKey> { }

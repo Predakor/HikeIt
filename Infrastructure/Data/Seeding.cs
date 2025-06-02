@@ -1,9 +1,9 @@
 ﻿namespace Infrastructure.Data;
 
-using Domain.Peaks;
-using Domain.Regions;
+using Domain.Entiites.Peaks;
+using Domain.Entiites.Regions;
+using Domain.Entiites.Users;
 using Domain.Trips;
-using Domain.Users;
 
 internal static class DataSeed {
     public static readonly Region[] Regions =
@@ -68,58 +68,59 @@ internal static class DataSeed {
     ];
 
     public static readonly User[] Users =
-    [
-        new()
-        {
-            Id = 1,
-            Name = "Janusz",
-            Email = "mistrzbiznesu@wp.pl",
-            BirthDay = new DateOnly(2002, 4, 15),
-        },
-        new()
-        {
-            Id = 2,
-            Name = "Kasia",
-            Email = "kasia.wandziak@wp.pl",
-            BirthDay = new DateOnly(1995, 8, 20),
-        },
-        new()
-        {
-            Id = 3,
-            Name = "Marek",
-            Email = "marek.kowalski@gmail.com",
-            BirthDay = new DateOnly(1988, 3, 2),
-        },
-        new()
-        {
-            Id = 4,
-            Name = "Ewa",
-            Email = "ewa.nowak@outlook.com",
-            BirthDay = new DateOnly(1990, 12, 11),
-        },
-    ];
+[
+    new()
+    {
+        Id = Guid.Parse("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"),
+        Name = "Janusz",
+        Email = "mistrzbiznesu@wp.pl",
+        BirthDay = new DateOnly(2002, 4, 15),
+    },
+    new()
+    {
+        Id = Guid.Parse("183a96d7-9c20-4b18-b65b-d5d6676b57aa"),
+        Name = "Kasia",
+        Email = "kasia.wandziak@wp.pl",
+        BirthDay = new DateOnly(1995, 8, 20),
+    },
+    new()
+    {
+        Id = Guid.Parse("e5be7d3d-8320-4ef9-b60d-92b5464f2f1b"),
+        Name = "Marek",
+        Email = "marek.kowalski@gmail.com",
+        BirthDay = new DateOnly(1988, 3, 2),
+    },
+    new()
+    {
+        Id = Guid.Parse("b91a0ed5-40a1-447e-8f48-c8d1e89c7c90"),
+        Name = "Ewa",
+        Email = "ewa.nowak@outlook.com",
+        BirthDay = new DateOnly(1990, 12, 11),
+    },
+];
+
 
     public static readonly Trip[] Trips =
     [
-        new()
-        {
-            Id = 1,
-            TripDay = new DateOnly(2020, 12, 1),
-            Duration = 8,
-            Height = 1000,
-            Distance = 23.7f,
-            RegionId = 1,
-            UserId = 1,
-        },
-        new()
-        {
-            Id = 2,
-            TripDay = new DateOnly(2023, 4, 7),
-            Duration = 4,
-            Height = 620,
-            Distance = 14.2f,
-            RegionId = 22,
-            UserId = 2,
-        },
+    new()
+    {
+        Id = Guid.Parse("aa73d9ee-1b3d-4f0a-880d-6b2a4ea1d4e1"),
+        TripDay = new DateOnly(2020, 12, 1),
+        Duration = 8,
+        Height = 1000,
+        Distance = 23.7f,
+        RegionId = 1,
+        UserId = Guid.Parse("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"), // Janusz
+    },
+    new()
+    {
+        Id = Guid.Parse("bfd29135-2469-4341-859f-41e42d59e0a3"),
+        TripDay = new DateOnly(2023, 4, 7),
+        Duration = 4,
+        Height = 620,
+        Distance = 14.2f,
+        RegionId = 22,
+        UserId = Guid.Parse("183a96d7-9c20-4b18-b65b-d5d6676b57aa"), // Kasia
+    },
     ];
 }

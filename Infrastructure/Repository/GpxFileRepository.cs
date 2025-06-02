@@ -1,9 +1,9 @@
 ﻿using Application.Services.Files;
-using Domain.GpxFiles;
+using Domain.Trips.GpxFiles;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repository;
-public class GpxFileRepository : Repository<GpxFile>, IGpxFileRepository {
+public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
     public GpxFileRepository(TripDbContext context) : base(context) {
     }
 
@@ -12,7 +12,7 @@ public class GpxFileRepository : Repository<GpxFile>, IGpxFileRepository {
         return await SaveChangesAsync();
     }
 
-    public async Task<bool> RemoveAsync(int id) {
+    public async Task<bool> RemoveAsync(Guid id) {
         var target = await DbSet.FindAsync(id);
         if (target == null) {
             return false;
@@ -25,7 +25,7 @@ public class GpxFileRepository : Repository<GpxFile>, IGpxFileRepository {
 
     }
 
-    public Task<bool> UpdateAsync(int id, GpxFile updatedEntity) {
+    public Task<bool> UpdateAsync(Guid id, GpxFile updatedEntity) {
         throw new NotImplementedException();
     }
 
@@ -36,4 +36,5 @@ public class GpxFileRepository : Repository<GpxFile>, IGpxFileRepository {
         }
         return null;
     }
+
 }

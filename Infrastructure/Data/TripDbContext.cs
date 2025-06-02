@@ -1,8 +1,8 @@
-﻿using Domain.GpxFiles;
-using Domain.Peaks;
-using Domain.Regions;
+﻿using Domain.Entiites.Peaks;
+using Domain.Entiites.Regions;
+using Domain.Entiites.Users;
 using Domain.Trips;
-using Domain.Users;
+using Domain.Trips.GpxFiles;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
@@ -30,7 +30,7 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                 builder.HasOne(t => t.Region).WithMany().HasForeignKey(t => t.RegionId);
                 builder.HasOne(t => t.GpxFile).WithOne().HasForeignKey<Trip>(t => t.GpxFileId);
                 builder.OwnsOne(
-                    t => t.TrackAnalytics,
+                    t => t.TripAnalytics,
                     ta => ta.OwnsOne(a => a.TimeAnalytics).WithOwner()
                 );
 

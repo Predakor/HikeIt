@@ -1,6 +1,6 @@
 ﻿using Application.Dto;
 using Application.Mappers.Interfaces;
-using Domain.Regions;
+using Domain.Entiites.Regions;
 using Domain.Trips;
 
 namespace Application.Mappers.Implementations;
@@ -9,7 +9,7 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
     public TripDto MapToDto(Trip entity) {
         TripBase tripBase = EntityToBase(entity);
 
-        int id = entity.Id;
+        var id = entity.Id;
 
         if (entity.Region == null) {
             return new TripDto.Request(id, tripBase);
@@ -20,7 +20,7 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
         }
 
         var regionDto = RegionToDto(entity.Region);
-        if (entity.TrackAnalytics == null) {
+        if (entity.TripAnalytics == null) {
             return new TripDto.Request.Response(id, regionDto, entity.GpxFile, null, tripBase);
         }
 
@@ -28,7 +28,7 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
             id,
             regionDto,
             entity.GpxFile,
-            entity.TrackAnalytics,
+            entity.TripAnalytics,
             tripBase
         );
     }
@@ -40,7 +40,7 @@ public class TripMapper : IEntityDtoMapper<Trip, TripDto> {
     public TripDto.Partial MapToPartialDto(Trip trip) {
         return new TripDto.Partial(
             trip.Id,
-            trip.TrackAnalytics,
+            trip.TripAnalytics,
             trip.GpxFile,
             trip.Region,
             EntityToBase(trip)

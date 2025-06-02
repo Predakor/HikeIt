@@ -13,7 +13,7 @@ public static class PeaksEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAll(PeakService service) {
+    static async Task<IResult> GetAll(IPeakService service) {
         var peaks = await service.GetAllPeaksAsync();
         var peakList = peaks.ToList();
 
@@ -24,7 +24,7 @@ public static class PeaksEndpoints {
         return Results.Ok(peakList);
     }
 
-    static async Task<IResult> GetById(int id, PeakService service) {
+    static async Task<IResult> GetById(int id, IPeakService service) {
         var peakDto = await service.GetPeakByIdAsync(id);
         if (peakDto == null) {
             return Results.NotFound();

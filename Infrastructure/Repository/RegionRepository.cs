@@ -1,9 +1,9 @@
-﻿using Domain.Regions;
+﻿using Domain.Entiites.Regions;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repository;
 
 
-public class RegionRepository : Repository<Region>, IRegionRepository {
+public class RegionRepository : Repository<Region, int>, IRegionRepository {
     public RegionRepository(TripDbContext context) : base(context) { }
 }

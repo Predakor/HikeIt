@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Regions;
+namespace Domain.Entiites.Regions;
 
-public class Region : IEntity {
+public class Region : IEntity<int> {
     public int Id { get; set; }
 
     [Required]

@@ -7,11 +7,11 @@ using Application.Services.Peaks;
 using Application.Services.Region;
 using Application.Services.Trip;
 using Application.Services.Users;
-using Domain.GpxFiles;
-using Domain.Peaks;
-using Domain.Regions;
+using Domain.Entiites.Peaks;
+using Domain.Entiites.Regions;
+using Domain.Entiites.Users;
 using Domain.Trips;
-using Domain.Users;
+using Domain.Trips.GpxFiles;
 using Infrastructure;
 using Infrastructure.Data;
 using Infrastructure.Repository;
@@ -83,10 +83,10 @@ static void InjectRepositories(WebApplicationBuilder builder) {
 }
 
 static void InjectServices(WebApplicationBuilder builder) {
-    builder.Services.AddScoped<PeakService>();
-    builder.Services.AddScoped<UserService>();
-    builder.Services.AddScoped<TripService>();
-    builder.Services.AddScoped<RegionService>();
+    builder.Services.AddScoped<IPeakService, PeakService>();
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<ITripService, TripService>();
+    builder.Services.AddScoped<IRegionService, RegionService>();
     builder.Services.AddScoped<IGpxFileService, GpxFileService>();
 }
 static void InjectMappers(WebApplicationBuilder builder) {

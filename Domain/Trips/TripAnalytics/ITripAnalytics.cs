@@ -1,6 +1,6 @@
-﻿namespace Domain.TrackAnalytics;
+﻿namespace Domain.Trips.TripAnalytics;
 //Owned Type
-public class TrackTimeAnalytic {
+public class TripTimeAnalytic {
     public TimeSpan Duration { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

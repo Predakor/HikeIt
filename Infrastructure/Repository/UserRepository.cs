@@ -1,9 +1,9 @@
-﻿using Domain.Users;
+﻿using Domain.Entiites.Users;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repository;
 
-public class UserRepository : Repository<User>, IUserRepository {
+public class UserRepository : Repository<User, Guid>, IUserRepository {
     public UserRepository(TripDbContext context)
         : base(context) { }
 

@@ -1,14 +1,15 @@
-﻿using Domain.Trips;
+﻿using Application.Dto;
+using Domain.Trips;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;
 
-public class TripRepository : Repository<Trip>, ITripRepository {
+public class TripRepository : Repository<Trip, Guid>, ITripRepository {
     public TripRepository(TripDbContext context)
         : base(context) { }
 
-    public override async Task<Trip?> GetByIdAsync(int id) {
+    public override async Task<Trip?> GetByIdAsync(Guid id) {
         return await DbSet
             .Include(x => x.Region)
             .Include(x => x.GpxFile)
@@ -21,7 +22,7 @@ public class TripRepository : Repository<Trip>, ITripRepository {
         return true;
     }
 
-    public async Task<bool> RemoveAsync(int id) {
+    public async Task<bool> RemoveAsync(Guid id) {
         var target = await DbSet.FindAsync(id);
         if (target == null) {
             return false;
@@ -31,16 +32,36 @@ public class TripRepository : Repository<Trip>, ITripRepository {
         return await SaveChangesAsync();
     }
 
-    public async Task<bool> UpdateAsync(int id, Trip updatedEntity) {
+    public async Task<bool> UpdateAsync(Guid id, TripDto.PartialLinked updateDto) {
         var target = await DbSet.FindAsync(id);
         if (target == null) {
             return false;
         }
 
-        target.Region = updatedEntity.Region;
-        target.TripDay = updatedEntity.TripDay;
-        target.Duration = updatedEntity.Duration;
+        //TODO change it{
+        if (updateDto.RegionId.HasValue) {
+            target.ChangeRegion(updateDto.RegionId.Value);
+        }
+
+        if (updateDto.Base != null) {
+            if (updateDto.Base.TripDay != null) {
+                target.TripDay = updateDto.Base.TripDay.Value;
+            }
+            if (updateDto.Base.Distance != null) {
+                target.Distance = updateDto.Base.Distance.Value;
+            }
+            if (updateDto.Base.Duration != null) {
+                target.Duration = updateDto.Base.Duration.Value;
+            }
+        }
+        if (updateDto.GpxFileId != null) {
+            target.AddGpxFile(updateDto.GpxFileId.Value);
+        }
 
         return await SaveChangesAsync();
+    }
+
+    public Task<bool> UpdateAsync(Guid id, Trip updatedEntity) {
+        throw new NotImplementedException();
     }
 }

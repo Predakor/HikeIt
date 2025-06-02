@@ -1,7 +1,7 @@
-﻿namespace Domain.TrackAnalytics;
+﻿namespace Domain.Trips.TripAnalytics;
 
 //Owned Type
-public class TrackAnalytic {
+public class TripAnalytic {
     public double TotalDistanceKm { get; set; }
     public double TotalAscent { get; set; }
     public double TotalDescent { get; set; }
@@ -9,5 +9,5 @@ public class TrackAnalytic {
     public double MaxElevation { get; set; }
 
     //Owned Type
-    public TrackTimeAnalytic? TimeAnalytics { get; set; }
+    public TripTimeAnalytic? TimeAnalytics { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using Application.Mappers.Implementations;
-using Domain.Peaks;
+using Domain.Entiites.Peaks;
+
 namespace Application.Services.Peaks;
 
 public class PeakService(IPeakRepository repo, PeakMapper peakMapper) : IPeakService {

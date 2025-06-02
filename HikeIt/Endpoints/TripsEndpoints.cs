@@ -1,4 +1,5 @@
-﻿using Application.Services.Trip;
+﻿
+using Application.Services.Trip;
 using static Application.Dto.TripDto;
 
 namespace Api.Endpoints;
@@ -16,12 +17,12 @@ public static class TripsEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAll(TripService service) {
+    static async Task<IResult> GetAll(ITripService service) {
         var trips = await service.GetAll();
         return Results.Ok(trips);
     }
 
-    static async Task<IResult> GetByID(TripService service, int id) {
+    static async Task<IResult> GetByID(ITripService service, Guid id) {
         var trip = await service.GetById(id);
         if (trip is null) {
             return Results.NotFound();
@@ -30,18 +31,18 @@ public static class TripsEndpoints {
         return Results.Ok(trip);
     }
 
-    static async Task<IResult> CreateTrip(Request.Create newTrip, TripService service) {
+    static async Task<IResult> CreateTrip(Request.Create newTrip, ITripService service) {
         Console.WriteLine(newTrip.RegionId);
         await service.Add(newTrip);
         return Results.Created();
     }
 
-    static async Task<IResult> UpdateTrip(Request.Update updateDto, TripService service) {
+    static async Task<IResult> UpdateTrip(Request.Update updateDto, ITripService service) {
         await service.Update(updateDto);
         return Results.NoContent();
     }
 
-    static async Task<IResult> DeleteTrip(int id, TripService service) {
+    static async Task<IResult> DeleteTrip(Guid id, ITripService service) {
         await service.Delete(id);
         return Results.NoContent();
     }

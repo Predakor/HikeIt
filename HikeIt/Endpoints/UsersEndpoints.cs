@@ -1,6 +1,6 @@
 ﻿using Application.Dto;
 using Application.Services.Users;
-using Domain.Users;
+using Domain.Entiites.Users;
 
 namespace Api.Endpoints;
 
@@ -15,7 +15,7 @@ public static class UsersEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAll(UserService service) {
+    static async Task<IResult> GetAll(IUserService service) {
         var results = await service.GetAllUsersAsync();
         if (results is null) {
             return Results.NotFound();
@@ -23,7 +23,7 @@ public static class UsersEndpoints {
         return Results.Ok(results);
     }
 
-    static async Task<IResult> GetById(UserService service, int id) {
+    static async Task<IResult> GetById(IUserService service, Guid id) {
         var result = await service.GetUserByIdAsync(id);
         if (result is null) {
             return Results.NotFound();
@@ -31,7 +31,7 @@ public static class UsersEndpoints {
         return Results.Ok(result);
     }
 
-    static async Task<IResult> CreateUser(UserService service, UserDto.Complete userDto) {
+    static async Task<IResult> CreateUser(IUserService service, UserDto.Complete userDto) {
         await service.CreateUserAsync(userDto);
         return Results.Ok();
     }

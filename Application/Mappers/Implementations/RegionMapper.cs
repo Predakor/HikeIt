@@ -1,6 +1,6 @@
 ﻿using Application.Dto;
 using Application.Mappers.Interfaces;
-using Domain.Regions;
+using Domain.Entiites.Regions;
 
 namespace Application.Mappers.Implementations;
 

@@ -1,13 +1,13 @@
-﻿using Domain.Users;
+﻿using Domain.Entiites.Users;
 
-namespace Domain.GpxFiles;
+namespace Domain.Trips.GpxFiles;
 
-public class GpxFile : IEntity {
+public class GpxFile : IEntity<Guid> {
     public Guid Id { get; set; }
 
     public required string Name { get; set; }
     public required string Path { get; set; }
-    public int? OwnerId { get; set; }
+    public Guid? OwnerId { get; set; }
 
     //navigation prop
     public User? Owner { get; set; }
