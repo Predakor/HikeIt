@@ -1,11 +1,14 @@
 ﻿using Domain.Common;
-using Domain.Trips.GpxFiles;
+using Domain.Trips.Entities.GpxFiles;
+using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;
 public interface IGpxFileService {
     Task<GpxFileDto> GetByIdAsync(int id);
     Task<Result<GpxFile>> CreateAsync(IFormFile file);
+    Task<Result<GpxAnalyticData>> GetGpxDataByFileIdAsync(Guid id);
+
     Task<bool> UpdateAsync(string path, IFormFile file);
     Task<bool> DeleteAsync(int id);
 }

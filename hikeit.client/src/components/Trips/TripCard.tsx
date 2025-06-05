@@ -5,15 +5,16 @@ import type { TripDto } from "../AddTripForm/AddTrip/types";
 import { Link } from "react-router";
 
 interface Props {
-  trip: TripDto;
+  data: TripDto;
 }
 
-function TripCard({ trip }: Props) {
+function TripCard({ data }: Props) {
+  const trip = data.base;
   const formatedDate = dateOnlyToString(trip.tripDay as string);
-  const { data: region } = useRegion(trip.regionId);
+  const { data: region } = useRegion(data.regionId);
 
   return (
-    <Link to={`${trip.id}`}>
+    <Link to={`${data.id}`}>
       <Card.Root>
         <Card.Header>{region && region.name}</Card.Header>
         <Card.Body>

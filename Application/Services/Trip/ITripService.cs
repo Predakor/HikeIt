@@ -8,7 +8,7 @@ public interface ITripService {
 
 
     public Task<bool> Update(TripDto.Request.Update dto);
-    public Task<bool> UpdateGpxFile(Guid id, Guid gpxFileId);
+    public Task<bool> UpdateGpxFile(Guid tripId, Guid gpxFileId);
     public Task<bool> Delete(Guid id);
 
     public Task<TripDto.Partial?> GetById(Guid id);

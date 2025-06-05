@@ -1,11 +1,10 @@
-﻿using Application.Services.Files;
-using Domain.Trips.GpxFiles;
+﻿using Domain.Trips.Entities.GpxFiles;
 using Infrastructure.Data;
 
 namespace Infrastructure.Repository;
+
 public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
-    public GpxFileRepository(TripDbContext context) : base(context) {
-    }
+    public GpxFileRepository(TripDbContext context) : base(context) { }
 
     public async Task<bool> AddAsync(GpxFile entity) {
         await DbSet.AddAsync(entity);
@@ -20,10 +19,6 @@ public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
         DbSet.Remove(target);
         return await SaveChangesAsync();
     }
-    public async Task<GpxFileDto> GetBytIdAsync(Guid id) {
-        throw new NotImplementedException();
-
-    }
 
     public Task<bool> UpdateAsync(Guid id, GpxFile updatedEntity) {
         throw new NotImplementedException();
@@ -34,7 +29,16 @@ public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
         if (result != null) {
             return result;
         }
+
         return null;
     }
 
+    public async Task<Stream?> GetGpxFileStream(Guid id) {
+        var result = await DbSet.FindAsync(id);
+        if (result == null) {
+            return null;
+        }
+
+        return File.OpenRead(result.Path);
+    }
 }

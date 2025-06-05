@@ -1,13 +1,16 @@
 ﻿using Domain.Common;
 using Domain.Entiites.Users;
-using Domain.Trips.GpxFiles;
+using Domain.Trips.Entities.GpxFiles;
+using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;
 
-public class GpxFileService(IFileStorage storage, IGpxFileRepository repository) : IGpxFileService {
+public class GpxFileService(IFileStorage storage, IGpxFileRepository repository, IGpxParser parser)
+    : IGpxFileService {
     readonly IFileStorage _fileStorage = storage;
     readonly IGpxFileRepository _repository = repository;
+    readonly IGpxParser _parser = parser;
 
     public async Task<Result<GpxFile>> CreateAsync(IFormFile file) {
         var (isValid, errors) = Validate(file);
@@ -17,9 +20,9 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository)
         }
 
         User? user = null;
-        string userId = user?.Id.ToString();
+        Guid userId = Guid.Parse("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380");
 
-        var result = await _fileStorage.Save(file, userId);
+        var result = await _fileStorage.Save(file, userId.ToString());
 
         if (result.HasErrors(out var error)) {
             Console.WriteLine(error.Message);
@@ -32,16 +35,34 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository)
             Id = id,
             Name = info.Name,
             Path = info.Path,
-            OwnerId = user?.Id,
+            OwnerId = userId,
         };
 
         await _repository.AddAsync(entity);
         var succes = await _repository.SaveChangesAsync();
 
-        if (!succes) {
-            return Result<GpxFile>.Failure(new("err", "couldn't save"));
-        }
+        Console.WriteLine(succes);
+        Console.WriteLine(entity.Name);
+        //if (!succes) {
+        //    return Result<GpxFile>.Failure(
+        //        Error.Unknown("something went wrong while saving your file")
+        //    );
+        //}
         return Result<GpxFile>.Success(entity);
+    }
+
+    public async Task<Result<GpxAnalyticData>> GetGpxDataByFileIdAsync(Guid id) {
+        var result = await _repository.GetGpxFileStream(id);
+        if (result == null) {
+            return Result<GpxAnalyticData>.Failure(Error.NotFound("No file with id found"));
+        }
+
+        var data = await _parser.ParseAsync(result);
+        if (data == null) {
+            return Result<GpxAnalyticData>.Failure(Error.Unknown("something went wrong"));
+        }
+
+        return Result<GpxAnalyticData>.Success(data);
     }
 
     public Task<bool> DeleteAsync(int id) {

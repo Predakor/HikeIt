@@ -1,10 +1,17 @@
 import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
 import DropFile from "@/components/AddTripForm/AddFile/DropFile";
-import type { TripDto } from "@/components/AddTripForm/AddTrip/types";
+import type { BaseTrip, TripDto } from "@/components/AddTripForm/AddTrip/types";
 import AddTripPresenter from "@/components/AddTripForm/AddTripPresenter";
 import Divider from "@/components/Divider/Divider";
 import usePost from "@/hooks/usePost";
-import { Box, Button, Center, Heading, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  DrawerTitle,
+  Heading,
+  Stack,
+} from "@chakra-ui/react";
 import { useRef, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 
@@ -16,10 +23,18 @@ const defaultValues = {
   tripDay: "",
 };
 
+type FormData = {
+  height: number;
+  distance: number;
+  duration: number;
+  regionId: number;
+  tripDay: string;
+};
+
 function AddTripPage() {
   const fileRef = useRef<File | null>(null);
   const [post, result] = usePost();
-  const formHandler = useForm<TripDto>({
+  const formHandler = useForm<FormData>({
     defaultValues,
   });
 
@@ -28,7 +43,22 @@ function AddTripPage() {
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
     const data = formHandler.getValues();
-    post("trips", JSON.stringify(data));
+    console.log(data);
+
+    const base: BaseTrip = {
+      distance: data.distance,
+      height: data.height,
+      duration: data.duration,
+      tripDay: data.tripDay,
+    };
+
+    const reqBody = {
+      base,
+      regionId: data.regionId || 1,
+    };
+    console.log(reqBody);
+
+    post("trips", JSON.stringify(reqBody));
 
     if (file) {
       const formData = new FormData();
@@ -45,15 +75,16 @@ function AddTripPage() {
       formHandler.setValue("height", stats.climbed);
       formHandler.setValue("distance", stats.distance);
 
-      formHandler.setValue("duration", stats?.duration || 0);
-      formHandler.setValue("tripDay", stats.startTime?.slice(0, 10) || "");
+      const duration = stats.duration ? parseInt(stats.duration.toFixed(1)) : 0;
+      const tripDate = stats.startTime?.slice(0, 10) || "";
+
+      formHandler.setValue("duration", duration);
+      formHandler.setValue("tripDay", tripDate);
     };
 
     fileRef.current = newFile;
     mapFromFile();
   };
-
-  console.log(result);
 
   return (
     <Stack alignItems={"center"} w={"100%"} gap={10}>

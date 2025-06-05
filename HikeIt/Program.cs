@@ -11,9 +11,10 @@ using Domain.Entiites.Peaks;
 using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
 using Domain.Trips;
-using Domain.Trips.GpxFiles;
+using Domain.Trips.Entities.GpxFiles;
 using Infrastructure;
 using Infrastructure.Data;
+using Infrastructure.Parsers;
 using Infrastructure.Repository;
 using Infrastructure.Storage;
 
@@ -56,18 +57,26 @@ app.MapControllers();
 app.Run();
 
 static void MapEndpoints(WebApplication app) {
-    app.MapTripsEndpoints();
+    //app.MapTripsEndpoints();
     app.MapPeaksEndpoints();
     app.MapUserEndpoints();
     app.MapRegionsEndpoints();
     app.MapFilesEndpoints();
 }
 
+
+
 static void InjectDependencies(WebApplicationBuilder builder) {
     InjectMappers(builder);
     InjectRepositories(builder);
     InjectStorages(builder);
     InjectServices(builder);
+    InjectParsers(builder);
+}
+
+
+static void InjectParsers(WebApplicationBuilder builder) {
+    builder.Services.AddSingleton<IGpxParser, GpxParser>();
 }
 
 static void InjectStorages(WebApplicationBuilder builder) {

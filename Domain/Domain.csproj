@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="Trips\Events\TimeAnalyticsAdded.cs" />
+  </ItemGroup>
+
 </Project>

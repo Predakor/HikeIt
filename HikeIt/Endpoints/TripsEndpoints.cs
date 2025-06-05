@@ -36,6 +36,12 @@ public static class TripsEndpoints {
         await service.Add(newTrip);
         return Results.Created();
     }
+    //static async Task<IResult> CreateTrip(Request.Create newTrip, IFileHttpResult file, ITripService service) {
+    //    Console.WriteLine(newTrip.RegionId);
+    //    await service.Add(newTrip);
+    //    await service.
+    //    return Results.Created();
+    //}
 
     static async Task<IResult> UpdateTrip(Request.Update updateDto, ITripService service) {
         await service.Update(updateDto);

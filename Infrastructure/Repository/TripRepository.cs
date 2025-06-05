@@ -39,29 +39,10 @@ public class TripRepository : Repository<Trip, Guid>, ITripRepository {
         }
 
         //TODO change it{
-        if (updateDto.RegionId.HasValue) {
-            target.ChangeRegion(updateDto.RegionId.Value);
-        }
 
-        if (updateDto.Base != null) {
-            if (updateDto.Base.TripDay != null) {
-                target.TripDay = updateDto.Base.TripDay.Value;
-            }
-            if (updateDto.Base.Distance != null) {
-                target.Distance = updateDto.Base.Distance.Value;
-            }
-            if (updateDto.Base.Duration != null) {
-                target.Duration = updateDto.Base.Duration.Value;
-            }
-        }
-        if (updateDto.GpxFileId != null) {
-            target.AddGpxFile(updateDto.GpxFileId.Value);
-        }
 
         return await SaveChangesAsync();
     }
 
-    public Task<bool> UpdateAsync(Guid id, Trip updatedEntity) {
-        throw new NotImplementedException();
-    }
+
 }

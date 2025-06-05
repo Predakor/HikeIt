@@ -1,10 +1,23 @@
-export interface TripDto {
-  id: number;
+export type BaseTrip = {
   height: number;
   distance: number;
   duration: number;
+  tripDay: string;
+};
+
+export interface TripDto {
+  id: number;
+  base: BaseTrip;
   regionId?: number;
-  tripDay?: string;
+}
+
+export interface TripDtoFull extends TripDto {
+  region?: {
+    id: number;
+    name: string;
+  };
+  trackAnalytic?: {};
+  gpxFile?: {};
 }
 
 export interface FieldEntry {

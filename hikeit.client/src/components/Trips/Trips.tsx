@@ -17,7 +17,7 @@ function Trips({ trips }: Props) {
     <Flex gap={5}>
       <MapWrapper
         items={trips}
-        renderItem={(trip) => <TripCard trip={trip} key={trip.id} />}
+        renderItem={(trip) => <TripCard data={trip} key={trip.id} />}
       />
     </Flex>
   );

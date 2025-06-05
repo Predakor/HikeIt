@@ -15,6 +15,14 @@ public abstract class Repository<T, TKey>(TripDbContext context)
     public virtual async Task<IEnumerable<T>> GetAllAsync() => await DbSet.ToListAsync();
 
 
-    public virtual async Task<bool> SaveChangesAsync() => await Context.SaveChangesAsync() > 0;
+    public virtual async Task<bool> SaveChangesAsync() {
+        try {
+            return await Context.SaveChangesAsync() > 0;
 
+        }
+        catch (Exception ex) {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
 }

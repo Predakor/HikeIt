@@ -1,7 +1,7 @@
 ﻿using Application.Services.Files;
 using Application.Services.Trip;
 using Domain.Common;
-using Domain.Trips.GpxFiles;
+using Domain.Trips.Entities.GpxFiles;
 
 namespace Api.Endpoints;
 

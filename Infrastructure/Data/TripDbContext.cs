@@ -2,7 +2,7 @@
 using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
 using Domain.Trips;
-using Domain.Trips.GpxFiles;
+using Domain.Trips.Entities.GpxFiles;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;

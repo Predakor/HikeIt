@@ -1,6 +1,6 @@
 ﻿using Domain.Entiites.Users;
 
-namespace Domain.Trips.GpxFiles;
+namespace Domain.Trips.Entities.GpxFiles;
 
 public class GpxFile : IEntity<Guid> {
     public Guid Id { get; set; }
