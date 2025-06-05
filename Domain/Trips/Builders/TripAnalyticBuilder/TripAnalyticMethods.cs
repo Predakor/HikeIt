@@ -1,0 +1,37 @@
+﻿using Domain.Trips.ValueObjects;
+
+namespace Domain.Trips.Builders.TripAnalyticBuilder;
+
+internal static class TripBuilderMethods {
+    public static List<GpxGain> GenerateGains(List<GpxPoint> data) {
+        List<GpxGain> gains = new(data.Count - 1);
+
+        for (int i = 1; i < data.Count; i++) {
+            var current = data[i];
+            var prev = data[i - 1];
+
+            gains.Add(GpxPointHelpers.ComputeGain(current, prev));
+        }
+
+        return gains;
+    }
+
+    public static List<GpxPoint> FindLocalPeaks(List<GpxPoint> data, List<GpxGain> gains) {
+        //data is filtered from gps jitter and microjumps
+        //so if ele delta gets smaller we probbalby are on local peak
+
+        List<GpxPoint> localPeaks = [];
+
+        for (int i = 0; i < gains.Count; i++) {
+            //difference between gpxPoint[i] and gpxPoint[i-1]
+            var eleDelta = gains[i].ElevationDelta;
+            if (eleDelta > 0) {
+                continue;
+            }
+
+            localPeaks.Add(data[i]);
+        }
+
+        return localPeaks;
+    }
+}

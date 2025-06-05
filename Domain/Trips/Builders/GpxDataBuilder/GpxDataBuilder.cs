@@ -1,6 +1,6 @@
 ﻿using Domain.Trips.ValueObjects;
 
-namespace Domain.Trips.Builders;
+namespace Domain.Trips.Builders.GpxDataBuilder;
 
 internal class MuttableGpxPoint(double Lat, double Lon, double Ele, DateTime? Time = null) {
     public static MuttableGpxPoint Create(GpxPoint point) {

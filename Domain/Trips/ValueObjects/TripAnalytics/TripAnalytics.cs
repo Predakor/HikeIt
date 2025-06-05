@@ -8,7 +8,7 @@ public class TripAnalytic {
     public double MinElevation { get; init; }
     public double MaxElevation { get; init; }
 
-    //Owned Type
+    //Owned Types
     public TripTimeAnalytic? TimeAnalytics { get; set; }
-
+    public List<ReachedPeak>? ReachedPeaks { get; set; }
 }

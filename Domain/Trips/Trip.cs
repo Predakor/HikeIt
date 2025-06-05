@@ -1,6 +1,7 @@
 ﻿using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
-using Domain.Trips.Builders;
+using Domain.Trips.Builders.GpxDataBuilder;
+using Domain.Trips.Builders.TripAnalyticBuilder;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.ValueObjects;
 using Domain.Trips.ValueObjects.TripAnalytics;
