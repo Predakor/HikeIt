@@ -12,17 +12,14 @@ public class GpxParser : IGpxParser {
         var xml = await reader.ReadToEndAsync();
 
         var doc = XDocument.Parse(xml);
+        XNamespace ns = doc.Root.GetDefaultNamespace(); // grabs the default namespace from the root
 
-        var result = doc.Descendants()
-            .Where(e => e.Name.LocalName == "trkpt")
+        var result = doc.Descendants(ns + "trkpt")
             .Select(pt => new GpxPoint(
                 double.Parse(pt.Attribute("lat")?.Value ?? "0", CultureInfo.InvariantCulture),
                 double.Parse(pt.Attribute("lon")?.Value ?? "0", CultureInfo.InvariantCulture),
-                double.Parse(
-                    pt.Element(XName.Get("ele"))?.Value ?? "0",
-                    CultureInfo.InvariantCulture
-                ),
-                DateTime.TryParse(pt.Element(XName.Get("time"))?.Value, out var t) ? t : null
+                double.Parse(pt.Element(ns + "ele")?.Value ?? "0", CultureInfo.InvariantCulture),
+                DateTime.TryParse(pt.Element(ns + "time")?.Value, out var t) ? t : null
             ))
             .ToList();
 
