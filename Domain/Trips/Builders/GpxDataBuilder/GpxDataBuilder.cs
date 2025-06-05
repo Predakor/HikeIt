@@ -2,26 +2,27 @@
 
 namespace Domain.Trips.Builders.GpxDataBuilder;
 
-internal class MuttableGpxPoint(double Lat, double Lon, double Ele, DateTime? Time = null) {
-    public static MuttableGpxPoint Create(GpxPoint point) {
+internal class MutableGpxPoint(double lat, double lon, double ele, DateTime? time = null) {
+    public double Lat { get; set; } = lat;
+    public double Lon { get; set; } = lon;
+    public double Ele { get; set; } = ele;
+    public DateTime? Time { get; set; } = time;
+
+    public static MutableGpxPoint Create(GpxPoint point) {
         return new(point.Lat, point.Lon, point.Ele, point.Time);
     }
-
-    public double Lat { get; set; } = Lat;
-    public double Lon { get; set; } = Lon;
-    public double Ele { get; set; } = Ele;
-    public DateTime? Time { get; set; } = Time;
 }
 
 public class GpxDataBuilder {
-    List<MuttableGpxPoint> _gpxPoints;
+    List<MutableGpxPoint> _gpxPoints;
 
     public GpxDataBuilder(GpxAnalyticData data) {
-        _gpxPoints = data.Data.Select(MuttableGpxPoint.Create).ToList();
+        _gpxPoints = data.Data.Select(MutableGpxPoint.Create).ToList();
     }
 
     public static GpxAnalyticData ProcessData(GpxAnalyticData data) {
         return new GpxDataBuilder(data)
+            .RoundElevation()
             .ClampElevationSpikes()
             .ApplyMedianFilter()
             .ApplyEmaSmoothing()
@@ -43,17 +44,25 @@ public class GpxDataBuilder {
         return this;
     }
 
+    public GpxDataBuilder RoundElevation(int decimals = 1) {
+        foreach (var point in _gpxPoints) {
+            point.Ele = Math.Round(point.Ele, decimals);
+        }
+
+        return this;
+    }
+
     public GpxAnalyticData Build() {
         return new(_gpxPoints.Select(Helpers.CreateGpxPoint).ToList());
     }
 }
 
 internal static class Methods {
-    public static List<MuttableGpxPoint> SmoothWithEma(List<MuttableGpxPoint> points, float alpha) {
+    public static List<MutableGpxPoint> SmoothWithEma(List<MutableGpxPoint> points, float alpha) {
         var prevEma = points.First().Ele;
 
         for (int i = 1; i < points.Count; i++) {
-            MuttableGpxPoint current = points[i];
+            MutableGpxPoint current = points[i];
             prevEma = alpha * current.Ele + (1 - alpha) * prevEma;
             current.Ele = prevEma;
         }
@@ -61,12 +70,12 @@ internal static class Methods {
         return points;
     }
 
-    public static List<MuttableGpxPoint> MedianSmooth(List<MuttableGpxPoint> data, int number) {
+    public static List<MutableGpxPoint> MedianSmooth(List<MutableGpxPoint> data, int number) {
         int half = (int)MathF.Floor(number / 2);
 
         return data.Select(
                 (point, i) => {
-                    List<MuttableGpxPoint> window = Helpers
+                    List<MutableGpxPoint> window = Helpers
                         .GetArrayWindow(data, i, half)
                         .OrderBy(p => p.Ele)
                         .ToList();
@@ -80,15 +89,12 @@ internal static class Methods {
             .ToList();
     }
 
-    public static List<MuttableGpxPoint> ClampSpikes(
-        List<MuttableGpxPoint> points,
-        double maxChange
-    ) {
-        var clampedPoints = new List<MuttableGpxPoint> { points[0] };
+    public static List<MutableGpxPoint> ClampSpikes(List<MutableGpxPoint> points, double maxChange) {
+        var clampedPoints = new List<MutableGpxPoint> { points[0] };
 
         for (int i = 1; i < points.Count; i++) {
-            MuttableGpxPoint current = points[i];
-            MuttableGpxPoint prev = points[i - 1];
+            MutableGpxPoint current = points[i];
+            MutableGpxPoint prev = points[i - 1];
 
             double diff = current.Ele - prev.Ele;
 
@@ -102,7 +108,7 @@ internal static class Methods {
 }
 
 internal class Helpers {
-    public static GpxPoint CreateGpxPoint(MuttableGpxPoint p) => new(p.Lat, p.Lon, p.Ele, p.Time);
+    public static GpxPoint CreateGpxPoint(MutableGpxPoint p) => new(p.Lat, p.Lon, p.Ele, p.Time);
 
     public static IEnumerable<T> GetArrayWindow<T>(List<T> data, int i, int half) {
         var (start, end) = GetWindowBounds(data, i, half);
