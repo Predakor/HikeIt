@@ -1,16 +1,15 @@
 import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
 import DropFile from "@/components/AddTripForm/AddFile/DropFile";
-import type { TripDto } from "@/types/types";
-import type { BaseTrip } from "@/components/AddTripForm/AddTrip/tripTypes";
 import AddTripPresenter from "@/components/AddTripForm/AddTripPresenter";
 import Divider from "@/components/Divider/Divider";
 import usePost from "@/hooks/usePost";
 import {
+  Alert,
   Box,
   Button,
   Center,
-  DrawerTitle,
   Heading,
+  ProgressCircle,
   Stack,
 } from "@chakra-ui/react";
 import { useRef, type FormEvent } from "react";
@@ -34,38 +33,34 @@ type FormData = {
 
 function AddTripPage() {
   const fileRef = useRef<File | null>(null);
+
   const [post, result] = usePost();
   const formHandler = useForm<FormData>({
     defaultValues,
   });
 
-  const file = fileRef.current;
-
-  const submitHandler = (e: FormEvent) => {
+  const submitHandler = async (e: FormEvent) => {
     e.preventDefault();
     const data = formHandler.getValues();
-    console.log(data);
+    const file = fileRef.current;
 
-    const base: BaseTrip = {
-      distance: data.distance,
-      height: data.height,
-      duration: data.duration,
-      tripDay: data.tripDay,
-    };
-
-    const reqBody = {
-      base,
-      regionId: data.regionId || 1,
-    };
-    console.log(reqBody);
-
-    post("trips", JSON.stringify(reqBody));
-
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      post("files", formData);
+    if (!file) {
+      alert("Please provide a .gpx file.");
+      return;
     }
+
+    const formData = new FormData();
+
+    formData.append("RegionId", data.regionId.toString());
+    formData.append("Base.Height", data.height.toString());
+    formData.append("Base.Distance", data.distance.toString());
+    formData.append("Base.Duration", data.duration.toString());
+    formData.append("Base.TripDay", data.tripDay);
+    formData.append("file", file);
+
+    console.log({ formData, formHandler });
+
+    await post("trips/form", formData);
   };
 
   const fileChangeHandler = (newFile: File) => {
@@ -87,11 +82,36 @@ function AddTripPage() {
     mapFromFile();
   };
 
+  if (result.pending) {
+    return (
+      <ProgressCircle.Root value={null} size="sm">
+        <ProgressCircle.Circle>
+          <ProgressCircle.Track />
+          <ProgressCircle.Range />
+        </ProgressCircle.Circle>
+      </ProgressCircle.Root>
+    );
+  }
+
   return (
     <Stack alignItems={"center"} w={"100%"} gap={10}>
       <Center>
         <Heading size={"5xl"}>Add Your Trip</Heading>
       </Center>
+
+      {result.result && (
+        <Alert.Root
+          status={result.result === typeof Error ? "error" : "neutral"}
+        >
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>{result.result.toString()}</Alert.Title>
+            <Alert.Description>
+              Your form has some errors. Please fix them and try again.
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )}
 
       <Stack as={"form"} onSubmit={submitHandler} gap={"2em"}>
         <Stack

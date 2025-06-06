@@ -8,7 +8,7 @@ export interface PostResponse {
 
 type LazyFetch = (urlPath: PostPaths, body: BodyInit) => Promise<void>;
 
-type PostPaths = "trips" | "users" | "files";
+type PostPaths = "trips" | "users" | "files" | "trips/form";
 
 function usePost(): [LazyFetch, PostResponse] {
   const [pending, setPending] = useState(false);
