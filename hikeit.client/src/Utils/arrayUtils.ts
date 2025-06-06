@@ -1,4 +1,4 @@
-import type { GpxArray } from "@/components/AddTripForm/AddTrip/types";
+import type { GpxArray } from "@/types/types";
 
 export function downsampleToMaxSize<T>(
   gpxArray: T[],

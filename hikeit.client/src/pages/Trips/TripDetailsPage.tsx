@@ -1,7 +1,7 @@
 import apiClient from "@/Utils/Api/ApiClient";
-import type { TripDtoFull } from "@/components/AddTripForm/AddTrip/types";
-import TripDetails from "@/components/Trip/TripDetails";
+import TripDetails from "@/components/Trip/TripDetails/TripDetails";
 import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
+import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 

@@ -1,6 +1,6 @@
 import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
 import DropFile from "@/components/AddTripForm/AddFile/DropFile";
-import type { TripDto } from "@/components/AddTripForm/AddTrip/types";
+import type { TripDto } from "@/types/types";
 import type { BaseTrip } from "@/components/AddTripForm/AddTrip/tripTypes";
 import AddTripPresenter from "@/components/AddTripForm/AddTripPresenter";
 import Divider from "@/components/Divider/Divider";

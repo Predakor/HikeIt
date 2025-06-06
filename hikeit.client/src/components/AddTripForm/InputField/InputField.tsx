@@ -1,5 +1,5 @@
 import { Field, InputGroup, Input } from "@chakra-ui/react";
-import type { FieldEntry } from "../AddTrip/types";
+import type { FieldEntry } from "../../../types/types";
 
 interface Props {
   entry: FieldEntry;

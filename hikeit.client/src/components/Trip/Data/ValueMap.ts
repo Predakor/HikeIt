@@ -2,8 +2,6 @@ import type {
   BaseTrip,
   TripAnalytic,
 } from "@/components/AddTripForm/AddTrip/tripTypes";
-import type { TripDtoFull } from "@/components/AddTripForm/AddTrip/types";
-import type { ReactElement } from "react";
 import type { IconType } from "react-icons";
 import { CiCalendarDate } from "react-icons/ci";
 import {
@@ -14,21 +12,8 @@ import {
 } from "react-icons/fa6";
 import { GiJourney, GiPeaks } from "react-icons/gi";
 import { LuTimer } from "react-icons/lu";
-import type { PartialMap } from "../MappingTypes";
-
-type LengthUnit = "m" | "km";
-type TimeUnit = "s" | "min" | "hrs";
-
-export type IconUnit = {
-  IconType: IconType;
-  unit?: LengthUnit | TimeUnit;
-};
-
-export type StatAddons = {
-  IconSource: IconType;
-  unit?: LengthUnit | TimeUnit;
-  badge?: ReactElement;
-};
+import type { PartialMap, StatAddons } from "../../../types/MappingTypes";
+import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
 
 export const icons: PartialMap<BaseTrip, StatAddons> = {
   distance: { IconSource: GiJourney, unit: "m" },

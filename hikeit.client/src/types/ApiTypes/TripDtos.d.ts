@@ -1,4 +1,8 @@
-import { BaseTrip, TripAnalytic, GraphData } from "./tripTypes";
+import {
+  BaseTrip,
+  TripAnalytic,
+  GraphData,
+} from "../components/AddTripForm/AddTrip/tripTypes";
 
 export interface TripDto {
   id: number;

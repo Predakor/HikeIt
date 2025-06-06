@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import type { GpxArray } from "../AddTrip/types";
+import type { GpxArray } from "../../../types/types";
 import { Chart, useChart } from "@chakra-ui/charts";
 import {
   CartesianGrid,

@@ -2,7 +2,7 @@ import { Field, Input, InputGroup, Stack } from "@chakra-ui/react";
 import { type UseFormReturn } from "react-hook-form";
 import RegionSelect from "../RegionSelect/RegionSelect";
 import { tripFormConfig } from "./AddTrip/data";
-import type { TripDto } from "./AddTrip/types";
+import type { TripDto } from "../../types/types";
 
 interface Props {
   formHandler: UseFormReturn<TripDto>;

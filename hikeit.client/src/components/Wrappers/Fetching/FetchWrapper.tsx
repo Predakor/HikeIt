@@ -5,7 +5,8 @@ interface Props<T> {
   LoadingComponent?: FunctionComponent;
   ErrorComponent?: FunctionComponent<{ error: Error }>;
   NoDataComponent?: FunctionComponent;
-  children: (data: T) => ReactNode; // render prop for data
+  Component?: FunctionComponent<{ data: T }>;
+  children?: (data: T) => ReactNode; // render prop for data
   request: UseQueryResult<T>;
 }
 
@@ -16,6 +17,7 @@ const DefaultNoData = () => <div>No data available.</div>;
 function FetchWrapper<T>({
   children,
   request,
+  Component,
   LoadingComponent = DefaultLoading,
   ErrorComponent = DefaultError,
   NoDataComponent = DefaultNoData,
@@ -32,6 +34,10 @@ function FetchWrapper<T>({
 
   if (!data) {
     return <NoDataComponent />;
+  }
+
+  if (Component) {
+    return <Component data={data} />;
   }
 
   return <>{children(data)}</>;

@@ -1,11 +1,11 @@
 import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
 import { ObjectToArray } from "@/Utils/ObjectToArray";
+import type { BaseTrip } from "@/components/AddTripForm/AddTrip/tripTypes";
+import RowStat from "@/components/Stats/RowStat";
 import { For } from "@chakra-ui/react";
-import type { BaseTrip } from "../AddTripForm/AddTrip/tripTypes";
-import RowStat from "../Stats/RowStat";
-import { icons } from "./Data/ValueMap";
+import { icons } from "../../Data/ValueMap";
 
-function Trip({ data }: { data: BaseTrip }) {
+function TripBase({ data }: { data: BaseTrip }) {
   const stats = ObjectToArray(data);
 
   return (
@@ -25,4 +25,4 @@ function Trip({ data }: { data: BaseTrip }) {
   );
 }
 
-export default Trip;
+export default TripBase;

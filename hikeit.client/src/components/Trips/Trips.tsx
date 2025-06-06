@@ -1,6 +1,6 @@
 import useRegionMatcher from "@/hooks/useRegionMatcher";
 import { Flex } from "@chakra-ui/react";
-import type { TripDto } from "../AddTripForm/AddTrip/types";
+import type { TripDto } from "../../types/types";
 import MapWrapper from "../Wrappers/Mapping";
 import TripCard from "./TripCard";
 

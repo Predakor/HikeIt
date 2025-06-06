@@ -1,4 +1,4 @@
-import type { FieldEntry } from "./types";
+import type { FieldEntry } from "../../../types/types";
 
 export const tripFormConfig: FieldEntry[] = [
   {

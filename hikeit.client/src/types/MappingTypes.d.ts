@@ -13,3 +13,17 @@ export type PartialIconMap<TObject extends object> = PartialMap<
   IconType
 >;
 export type FullIconMap<TObject extends object> = FullMap<TObject, IconType>;
+
+export type LengthUnit = "m" | "km";
+export type TimeUnit = "s" | "min" | "hrs";
+
+export type IconUnit = {
+  IconType: IconType;
+  unit?: LengthUnit | TimeUnit;
+};
+
+export type StatAddons = {
+  IconSource: IconType;
+  unit?: LengthUnit | TimeUnit;
+  badge?: ReactElement;
+};

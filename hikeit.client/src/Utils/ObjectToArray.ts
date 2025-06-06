@@ -8,6 +8,10 @@ export function ToTitleCase(key: string): any {
 }
 
 export function ObjectToArray<T extends object>(object: T) {
+  if (!object) {
+    throw new Error("passed null object");
+  }
+
   return Object.entries(object).filter(([, value]) =>
     NotNullOrObject(value)
   ) as MappedObject<T, string | number>;

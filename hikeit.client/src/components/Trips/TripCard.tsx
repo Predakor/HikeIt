@@ -2,7 +2,7 @@ import { dateOnlyToString } from "@/Utils/Formatters/dateFormats";
 import useRegion from "@/hooks/useRegion";
 import { Card, Stat } from "@chakra-ui/react";
 import { Link } from "react-router";
-import type { TripDto } from "../AddTripForm/AddTrip/types";
+import type { TripDto } from "../../types/types";
 
 interface Props {
   data: TripDto;
