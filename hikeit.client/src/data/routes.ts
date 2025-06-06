@@ -1,10 +1,10 @@
-import LandingPage from "@pages/LandingPage";
-import TripsPage from "@/pages/Trips/TripsPage";
-import RegionsPage from "@pages/RegionsPage";
-import BadgesPage from "@pages/BadgesPage";
-import type { FunctionComponent, ReactNode } from "react";
 import AddTripPage from "@/pages/Trips/AddTripPage";
 import TripDetailsPage from "@/pages/Trips/TripDetailsPage";
+import TripsPage from "@/pages/Trips/TripsPage";
+import BadgesPage from "@pages/BadgesPage";
+import LandingPage from "@pages/LandingPage";
+import RegionsPage from "@pages/RegionsPage";
+import type { FunctionComponent, ReactNode } from "react";
 
 interface RouteData {
   path: string;

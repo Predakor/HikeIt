@@ -1,9 +1,4 @@
-export type BaseTrip = {
-  height: number;
-  distance: number;
-  duration: number;
-  tripDay: string;
-};
+import { BaseTrip, TripAnalytic, GraphData } from "./tripTypes";
 
 export interface TripDto {
   id: number;
@@ -16,7 +11,9 @@ export interface TripDtoFull extends TripDto {
     id: number;
     name: string;
   };
-  trackAnalytic?: {};
+  trackAnalytic?: TripAnalytic;
+  trackGraph?: GraphData[];
+  reachedPeaks?: ReachedPeak[];
   gpxFile?: {};
 }
 
