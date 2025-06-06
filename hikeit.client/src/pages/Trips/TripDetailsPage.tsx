@@ -1,14 +1,11 @@
 import apiClient from "@/Utils/Api/ApiClient";
-import type {
-  TripDto,
-  TripDtoFull,
-} from "@/components/AddTripForm/AddTrip/types";
+import type { TripDtoFull } from "@/components/AddTripForm/AddTrip/types";
+import TripDetails from "@/components/Trip/TripDetails";
 import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
-import { Heading, Show, Stack, Stat } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 
-const staleTime = 1000 * 60 * 30;
+const staleTime = 1000 * 60 * 30; //1000ms * 60* 30 //30 minuts;
 
 function TripDetailsPage() {
   const { tripId } = useParams();
@@ -16,43 +13,16 @@ function TripDetailsPage() {
   const request = useQuery<TripDtoFull>({
     queryKey: ["trip", tripId],
     queryFn: () => apiClient<TripDtoFull>(`trips/${tripId}`),
-  enabled: !!tripId,
+    enabled: !!tripId,
     staleTime: staleTime,
   });
 
   return (
-    <FetchWrapper request={request}>
-      {({ base: trip, id, region }) => {
-        console.log(trip);
-        return (
-          <Stack gap={"2em"}>
-            <Heading>Trip summary for {id}</Heading>
-            <Stack gap={"1em"}>
-              <Stat.Root>
-                <Stat.Label>Total distance</Stat.Label>
-                <Stat.ValueText>{trip.distance}</Stat.ValueText>
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Label>Total climb</Stat.Label>
-                <Stat.ValueText>{trip.height}</Stat.ValueText>
-              </Stat.Root>
-              <Stat.Root>
-                <Stat.Label>Total time</Stat.Label>
-                <Stat.ValueText>{trip.duration}</Stat.ValueText>
-              </Stat.Root>
-              <Show when={region}>
-                {(r) => (
-                  <Stat.Root>
-                    <Stat.Label>Region</Stat.Label>
-                    <Stat.ValueText>{r.name}</Stat.ValueText>
-                  </Stat.Root>
-                )}
-              </Show>
-            </Stack>
-          </Stack>
-        );
-      }}
-    </FetchWrapper>
+    <FetchWrapper
+      request={request}
+      LoadingComponent={() => "wait i'm loading"}
+      Component={TripDetails}
+    />
   );
 }
 export default TripDetailsPage;

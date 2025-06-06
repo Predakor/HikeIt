@@ -1,3 +1,5 @@
+type MappedObject<TKey, TValue> = [keyof TKey, TValue][];
+
 export function NotNullOrObject(value: any): unknown {
   return value !== null && typeof value != "object";
 }
@@ -8,5 +10,15 @@ export function ToTitleCase(key: string): any {
 export function ObjectToArray<T extends object>(object: T) {
   return Object.entries(object).filter(([, value]) =>
     NotNullOrObject(value)
-  ) as [keyof T, string | number][];
+  ) as MappedObject<T, string | number>;
+}
+
+export function AllObjectEntriesToArray<T extends object>(object: T) {
+  return Object.entries(object) as MappedObject<T, any>;
+}
+
+export function NestedObjectsToArray<T extends object>(object: T) {
+  return Object.entries(object).filter(
+    ([, value]) => typeof value === "object"
+  ) as MappedObject<T, object>;
 }

@@ -1,8 +1,8 @@
-import { dateOnlyToString } from "@/Utils/dateFormats";
+import { dateOnlyToString } from "@/Utils/Formatters/dateFormats";
 import useRegion from "@/hooks/useRegion";
 import { Card, Stat } from "@chakra-ui/react";
-import type { TripDto } from "../AddTripForm/AddTrip/types";
 import { Link } from "react-router";
+import type { TripDto } from "../AddTripForm/AddTrip/types";
 
 interface Props {
   data: TripDto;
