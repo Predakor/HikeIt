@@ -1,10 +1,11 @@
-﻿using Domain.Entiites.Regions;
+﻿using Domain.Entiites.Peaks;
+using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
+using Domain.TripAnalytics;
+using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 using Domain.Trips.Builders.GpxDataBuilder;
-using Domain.Trips.Builders.TripAnalyticBuilder;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.ValueObjects;
-using Domain.Trips.ValueObjects.TripAnalytics;
 
 namespace Domain.Trips;
 
@@ -13,23 +14,26 @@ public class Trip : IEntity<Guid> {
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public Guid Id { get; init; }
-    public required float Height { get; set; }
-    public required float Distance { get; set; }
-    public required float Duration { get; set; }
+    public required string Name { get; set; }
     public required DateOnly TripDay { get; set; }
 
-    //Owned Type
-    public TripAnalytic? TripAnalytics { get; private set; }
+    #region Foreign Keys
 
-    //Foreign Keys
-    public int RegionId { get; set; }
+    public Guid UserId { get; private set; }
+    public int PeakId { get; private set; }
+    public int RegionId { get; private set; }
+    public Guid? TripAnalyticID { get; private set; }
     public Guid? GpxFileId { get; private set; }
-    public Guid UserId { get; set; }
+    #endregion
 
-    //Navigation Property
-    public Region? Region { get; }
-    public GpxFile? GpxFile { get; }
-    public User? User { get; }
+    #region Navigation Properties
+    public User? User { get; set; }
+    public Peak? Target { get; set; }
+    public Region? Region { get; set; }
+    public GpxFile? GpxFile { get; set; }
+    public TripAnalytic? TripAnalytic { get; set; }
+    #endregion
+
 
     public static Trip Create(float height, float distance, float duration, DateOnly date) {
         return new() {
@@ -41,27 +45,17 @@ public class Trip : IEntity<Guid> {
         };
     }
 
-    public static Trip Create(
-        float height,
-        float distance,
-        float duration,
-        DateOnly date,
-        GpxAnalyticData data
-    ) {
-        var gpxData = GpxDataBuilder.ProcessData(data);
-        var analytics = TripAnalyticDirector.Create(gpxData);
-
-        return new() {
+    public static Trip Create(string name, DateOnly tripDay, TripAnalyticData data) {
+        Trip entity = new() {
             Id = Guid.NewGuid(),
-            Height = height,
-            Distance = distance,
-            Duration = duration,
-            TripDay = date,
-            TripAnalytics = analytics,
+            Name = name,
+            TripDay = tripDay,
         };
+
+        return entity;
     }
 
-    public void CreateAnalytic(GpxAnalyticData data) {
+    public void CreateAnalytic(TripAnalyticData data) {
         var gpxData = GpxDataBuilder.ProcessData(data);
         var analytics = TripAnalyticDirector.Create(gpxData);
 
@@ -70,7 +64,7 @@ public class Trip : IEntity<Guid> {
 
     public void AddAnalytics(TripAnalytic analytic) {
         ArgumentNullException.ThrowIfNull(analytic);
-        TripAnalytics = analytic;
+        TripAnalyticID = analytic.Id;
     }
 
     public void ChangeRegion(int regionID) {

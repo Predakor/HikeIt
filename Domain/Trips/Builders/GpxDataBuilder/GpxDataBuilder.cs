@@ -16,11 +16,11 @@ internal class MutableGpxPoint(double lat, double lon, double ele, DateTime? tim
 public class GpxDataBuilder {
     List<MutableGpxPoint> _gpxPoints;
 
-    public GpxDataBuilder(GpxAnalyticData data) {
+    public GpxDataBuilder(TripAnalyticData data) {
         _gpxPoints = data.Data.Select(MutableGpxPoint.Create).ToList();
     }
 
-    public static GpxAnalyticData ProcessData(GpxAnalyticData data) {
+    public static TripAnalyticData ProcessData(TripAnalyticData data) {
         return new GpxDataBuilder(data)
             .RoundElevation()
             .ClampElevationSpikes()
@@ -52,7 +52,7 @@ public class GpxDataBuilder {
         return this;
     }
 
-    public GpxAnalyticData Build() {
+    public TripAnalyticData Build() {
         return new(_gpxPoints.Select(Helpers.CreateGpxPoint).ToList());
     }
 }

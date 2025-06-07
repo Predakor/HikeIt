@@ -1,6 +1,6 @@
 ﻿using Domain.Trips.ValueObjects;
 
-namespace Domain.Trips.Builders.TripAnalyticBuilder;
+namespace Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 
 internal static class TripBuilderMethods {
     public static List<GpxGain> GenerateGains(List<GpxPoint> data) {

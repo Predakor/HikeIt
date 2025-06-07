@@ -1,7 +1,8 @@
-﻿using Domain.Trips.ValueObjects;
-using Domain.Trips.ValueObjects.TripAnalytics;
+﻿using Domain.TripAnalytics.Builders.TripTimeAnalyticBuilder;
+using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
+using Domain.Trips.ValueObjects;
 
-namespace Domain.Trips.Builders.TripTimeAnalyticBuilder;
+namespace Domain.TripAnalytics.Builders.TripTimeAnalyticBuilder;
 
 public record TimeFrame(DateTime Start, DateTime End);
 
@@ -19,9 +20,9 @@ public record TimeAnalyticConfig() {
 
 public static class TimeAnalyticsDirector {
     static readonly TimeAnalyticConfig defaultConfig = new() {
-        AscentTreshold = 0.2d,
-        DescentTreshold = -0.3d,
-        IdleSpeedTreshold = 0.3d,
+        AscentTreshold = 0.1d,
+        DescentTreshold = -0.2d,
+        IdleSpeedTreshold = 0.2d,
     };
 
     public static TripTimeAnalytic Create(TimeAnalyticData data, TimeAnalyticConfig? config = null) {
@@ -153,6 +154,6 @@ static class Helpers {
     }
 
     public static double ToKph(this TimeSpan time, double distance) {
-        return time.TotalHours > 0 ? (distance / 1000) / time.TotalHours : 0;
+        return time.TotalHours > 0 ? distance / 1000 / time.TotalHours : 0;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Domain.Trips;
+﻿namespace Domain.Trips.Builders;
 
 public class TripBuilder {
     private float _height;

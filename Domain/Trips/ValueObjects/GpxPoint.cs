@@ -4,16 +4,16 @@ public record GpxPoint(double Lat, double Lon, double Ele, DateTime? Time = null
 
 public record GpxPointWithTime(double Lat, double Lon, double Ele, DateTime Time);
 
-public record GpxGain(double DistanceDelta, double ElevationDelta, double Slope, double? TimeDelta);
+public record GpxGain(short DistanceDelta, short ElevationDelta, short Slope, short? TimeDelta);
 
 public record GpxGainWithTime(
-    double DistanceDelta,
-    double ElevationDelta,
-    double Slope,
-    double TimeDelta
+    short DistanceDelta,
+    short ElevationDelta,
+    short Slope,
+    short TimeDelta
 );
 
-public record GpxAnalyticData(List<GpxPoint> Data);
+public record TripAnalyticData(List<GpxPoint> Data);
 
 public static class GpxPointHelpers {
     public static double Distance2D(GpxPoint p1, GpxPoint p2) {
@@ -31,10 +31,10 @@ public static class GpxPointHelpers {
     }
 
     public static GpxGain ComputeGain(GpxPoint current, GpxPoint prev) {
-        var planarDelta = Distance2D(current, prev);
-        var eleDelta = current.Ele - prev.Ele;
-        var timeDelta = (current.Time - prev.Time)?.TotalSeconds;
-        var slope = eleDelta / planarDelta * 100;
+        short planarDelta = (short)Distance2D(current, prev);
+        short eleDelta = (short)(current.Ele - prev.Ele);
+        short timeDelta = (short)(current.Time - prev.Time)?.TotalSeconds;
+        short slope = (short)(eleDelta / planarDelta * 100);
 
         return new GpxGain(planarDelta, eleDelta, slope, timeDelta);
     }

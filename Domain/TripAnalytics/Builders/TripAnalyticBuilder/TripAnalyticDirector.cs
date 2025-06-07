@@ -1,10 +1,9 @@
 ﻿using Domain.Trips.ValueObjects;
-using Domain.Trips.ValueObjects.TripAnalytics;
 
-namespace Domain.Trips.Builders.TripAnalyticBuilder;
+namespace Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 
 public static class TripAnalyticDirector {
-    public static TripAnalytic Create(GpxAnalyticData data) {
+    public static TripAnalytic Create(TripAnalyticData data) {
         return new TripAnalyticBuilder(data)
             .WithGains()
             .WithHighestPoint()
@@ -15,7 +14,7 @@ public static class TripAnalyticDirector {
             .Build();
     }
 
-    public static TripAnalytic CreateTimedAnalytics(GpxAnalyticData data) {
+    public static TripAnalytic CreateTimedAnalytics(TripAnalyticData data) {
         return new TripAnalyticBuilder(data)
             .WithGains()
             .WithHighestPoint()
@@ -23,6 +22,7 @@ public static class TripAnalyticDirector {
             .WithTotalDescent()
             .WithTotalAscent()
             .WithTotalDistance()
+            .WithTimeAnalytic()
             .Build();
     }
 }
