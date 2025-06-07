@@ -3,8 +3,8 @@ using Domain.Trips.ValueObjects;
 
 namespace Domain.TripAnalytics.Builders.RouteAnalyticBuilder;
 
-internal class RouteAnalyticBuilder(TripAnalyticData data, List<GpxGain> gains) {
-    readonly List<GpxPoint> _points = data.Data;
+public class RouteAnalyticsBuilder(List<GpxPoint> points, List<GpxGain> gains) {
+    readonly List<GpxPoint> _points = points;
     readonly List<GpxGain> _gains = gains;
 
     #region mutable
@@ -23,42 +23,42 @@ internal class RouteAnalyticBuilder(TripAnalyticData data, List<GpxGain> gains) 
 
     #region builder methods
 
-    public RouteAnalyticBuilder WithHighestPoint() {
+    public RouteAnalyticsBuilder WithHighestPoint() {
         _maxElevation = _points.Max(p => p.Ele);
         return this;
     }
 
-    public RouteAnalyticBuilder WithLowestPoint() {
+    public RouteAnalyticsBuilder WithLowestPoint() {
         _minElevation = _points.Min(p => p.Ele);
         return this;
     }
 
-    public RouteAnalyticBuilder WithTotalDistance() {
+    public RouteAnalyticsBuilder WithTotalDistance() {
         _totalDistance = _gains.Sum(p => p.DistanceDelta);
         return this;
     }
 
-    public RouteAnalyticBuilder WithTotalDescent() {
+    public RouteAnalyticsBuilder WithTotalDescent() {
         _totalDescent = _gains.Where(p => p.ElevationDelta < 0).Sum(p => p.ElevationDelta);
         return this;
     }
 
-    public RouteAnalyticBuilder WithTotalAscent() {
+    public RouteAnalyticsBuilder WithTotalAscent() {
         _totalAscent = _gains.Where(p => p.ElevationDelta > 0).Sum(p => p.ElevationDelta);
         return this;
     }
 
-    public RouteAnalyticBuilder WithAverageSlope() {
+    public RouteAnalyticsBuilder WithAverageSlope() {
         _averageSlope = (short)_gains.Average(p => p.Slope);
         return this;
     }
 
-    public RouteAnalyticBuilder WithAverageAscentSlope() {
+    public RouteAnalyticsBuilder WithAverageAscentSlope() {
         _averageAscentSlope = (short)_gains.Where(p => p.Slope > 0).Average(p => p.Slope);
         return this;
     }
 
-    public RouteAnalyticBuilder WithAverageDescentSlope() {
+    public RouteAnalyticsBuilder WithAverageDescentSlope() {
         _averageDescentSlope = (short)_gains.Where(p => p.Slope < 0).Average(p => p.Slope);
         return this;
     }

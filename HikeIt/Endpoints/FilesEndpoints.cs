@@ -1,5 +1,5 @@
 ﻿using Application.Services.Files;
-using Application.Services.Trip;
+using Application.Services.Trips;
 using Domain.Common;
 using Domain.Trips.Entities.GpxFiles;
 

@@ -1,5 +1,4 @@
-﻿
-using Application.Services.Trip;
+﻿using Application.Services.Trips;
 using static Application.Dto.TripDto;
 
 namespace Api.Endpoints;

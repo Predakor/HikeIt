@@ -1,5 +1,5 @@
 ﻿using Application.Services.Files;
-using Application.Services.Trip;
+using Application.Services.Trips;
 using Domain.Common;
 using Microsoft.AspNetCore.Mvc;
 using static Application.Dto.TripDto;
@@ -42,13 +42,17 @@ public class TripsController : ControllerBase {
         [FromForm] Request.Create newTrip,
         IFormFile file
     ) {
-        var tripResult = await _tripService.Add(newTrip);
         var savedFile = await _fileService.CreateAsync(file);
-
         if (savedFile.HasErrors(out Error error)) {
             return BadRequest(error);
         }
 
+        var gpxData = await _fileService.GetGpxDataFromFile(file);
+        if (gpxData == null) {
+            return BadRequest("file was wrong");
+        }
+
+        var tripResult = await _tripService.Add(newTrip, gpxData);
         if (tripResult.HasErrors(out error)) {
             return BadRequest(error);
         }
@@ -56,7 +60,7 @@ public class TripsController : ControllerBase {
         var fileId = savedFile.Value.Id;
         var tripId = tripResult.Value!;
         await _tripService.UpdateGpxFile(tripId, fileId);
-        return Created(string.Empty, null);
+        return Created(tripId.ToString(), null);
     }
 
     [HttpPut]
@@ -82,8 +86,6 @@ public class TripsController : ControllerBase {
         await _tripService.UpdateGpxFile(trip.Id, fileId);
         return NoContent();
     }
-
-
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id) {

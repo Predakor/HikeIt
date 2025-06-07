@@ -15,7 +15,7 @@ public class GpxDataBuilderTest {
 
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
-    public void TripAnalyticsBuilder_Should_DampenSpikes(GpxAnalyticData data) {
+    public void TripAnalyticsBuilder_Should_DampenSpikes(TripAnalyticData data) {
         var points = new GpxDataBuilder(data).ApplyMedianFilter(5).Build();
 
         double MaxElevationJump(List<GpxPoint> points) {
@@ -36,7 +36,7 @@ public class GpxDataBuilderTest {
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
     public void TripAnalyticsBuilder_FlattenMicroJumps_Should_FlattenSmallJitters(
-        GpxAnalyticData data
+        TripAnalyticData data
     ) {
         const float jitterThreshold = 0.5f; // use same threshold as in method
 

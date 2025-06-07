@@ -15,7 +15,71 @@ public record GpxGainWithTime(
 
 public record TripAnalyticData(List<GpxPoint> Data);
 
-public static class GpxPointHelpers {
+public static class GpxHelpers {
+    public static List<GpxGain> ToGains(this List<GpxPoint> data) {
+        if (data.Count < 2) {
+            throw new Exception("passing gpx list with less than 2 points");
+        }
+
+        List<GpxGain> gains = new(data.Count - 1);
+
+        for (int i = 1; i < data.Count; i++) {
+            var current = data[i];
+            var prev = data[i - 1];
+
+            gains.Add(ComputeGain(current, prev));
+        }
+
+        return gains;
+    }
+
+    public static GpxGain ComputeGain(GpxPoint current, GpxPoint prev) {
+        short planarDelta = (short)DistanceHelpers.Distance2D(current, prev);
+        short eleDelta = (short)(current.Ele - prev.Ele);
+        short timeDelta = (short)(current.Time - prev.Time)?.TotalSeconds;
+        short slope = (short)(eleDelta / planarDelta * 100);
+
+        return new GpxGain(planarDelta, eleDelta, slope, timeDelta);
+    }
+
+    public static (List<GpxPointWithTime>, List<GpxGainWithTime>) MapToTimed(
+        List<GpxPoint> points,
+        List<GpxGain> gains
+    ) {
+        var pointsWithTime = points.MapToTimed();
+        var gainsWithTime = gains.MapToTimed();
+
+        return (pointsWithTime, gainsWithTime);
+    }
+
+    public static List<GpxPointWithTime> MapToTimed(this List<GpxPoint> points) {
+        return points
+            .Where(p => p.Time != null)
+            .Select(p => p.ToGpxWithTime((DateTime)p.Time!))
+            .ToList();
+    }
+
+    public static List<GpxGainWithTime> MapToTimed(this List<GpxGain> gains) {
+        return gains
+            .Where(p => p.TimeDelta != null)
+            .Select(p => p.ToGainWithTime((short)p.TimeDelta!))
+            .ToList();
+    }
+
+    public static GpxPointWithTime ToGpxWithTime(this GpxPoint p, DateTime time) {
+        return new GpxPointWithTime(p.Lat, p.Lon, p.Ele, time);
+    }
+
+    public static GpxGainWithTime ToGainWithTime(this GpxGain p, short timeDelta) {
+        return new GpxGainWithTime(p.DistanceDelta, p.ElevationDelta, p.Slope, timeDelta);
+    }
+
+    public static double ToKph(this TimeSpan time, double distance) {
+        return time.TotalHours > 0 ? distance / 1000 / time.TotalHours : 0;
+    }
+}
+
+public static class DistanceHelpers {
     public static double Distance2D(GpxPoint p1, GpxPoint p2) {
         return HaversineDistance(p1, p2);
     }
@@ -28,15 +92,6 @@ public static class GpxPointHelpers {
 
     public static double Distance3D(double planarDistance, double elevationDelta) {
         return Math.Sqrt(planarDistance * planarDistance + elevationDelta * elevationDelta);
-    }
-
-    public static GpxGain ComputeGain(GpxPoint current, GpxPoint prev) {
-        short planarDelta = (short)Distance2D(current, prev);
-        short eleDelta = (short)(current.Ele - prev.Ele);
-        short timeDelta = (short)(current.Time - prev.Time)?.TotalSeconds;
-        short slope = (short)(eleDelta / planarDelta * 100);
-
-        return new GpxGain(planarDelta, eleDelta, slope, timeDelta);
     }
 
     private static double HaversineDistance(GpxPoint p1, GpxPoint p2) {

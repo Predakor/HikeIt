@@ -5,7 +5,7 @@ using Application.Mappers.Implementations;
 using Application.Services.Files;
 using Application.Services.Peaks;
 using Application.Services.Region;
-using Application.Services.Trip;
+using Application.Services.Trips;
 using Application.Services.Users;
 using Domain.Entiites.Peaks;
 using Domain.Entiites.Regions;

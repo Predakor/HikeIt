@@ -3,7 +3,7 @@
 public static class GpxTestData {
 
 
-    public static readonly GpxAnalyticData JitteryTripMockup = new(
+    public static readonly TripAnalyticData JitteryTripMockup = new(
             [
                 new(100, 120, 12),
             new(100, 120, 12.5),
@@ -20,7 +20,7 @@ public static class GpxTestData {
             new(100, 120, 20.1),
         ]
         );
-    public static readonly GpxAnalyticData DownUpPath = new(
+    public static readonly TripAnalyticData DownUpPath = new(
         [
             new(100, 120, 100),
             new(100, 120, 99),
@@ -37,7 +37,7 @@ public static class GpxTestData {
             new(100, 120, 103),
         ]
     );
-    public static TheoryData<GpxAnalyticData> AllTripData { get; } =
+    public static TheoryData<TripAnalyticData> AllTripData { get; } =
     [
         JitteryTripMockup,
         DownUpPath,

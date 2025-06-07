@@ -7,8 +7,9 @@ namespace Application.Services.Files;
 public interface IGpxFileService {
     Task<GpxFileDto> GetByIdAsync(int id);
     Task<Result<GpxFile>> CreateAsync(IFormFile file);
-    Task<Result<GpxAnalyticData>> GetGpxDataByFileIdAsync(Guid id);
+    Task<Result<TripAnalyticData>> GetGpxDataByFileIdAsync(Guid id);
 
+    Task<TripAnalyticData> GetGpxDataFromFile(IFormFile file);
     Task<bool> UpdateAsync(string path, IFormFile file);
     Task<bool> DeleteAsync(int id);
 }

@@ -4,5 +4,7 @@ namespace Domain.TripAnalytics.ValueObjects.PeaksAnalytics;
 
 //Owned type
 public class PeaksAnalytic {
-    ICollection<ReachedPeak> Peaks { get; set; }
+    public required ICollection<ReachedPeak> Peaks { get; init; }
+    public required ReachedPeak Highest { get; init; }
+    public ICollection<ReachedPeak>? NewPeaks { get; init; }
 }

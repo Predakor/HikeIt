@@ -3,18 +3,7 @@
 namespace Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 
 internal static class TripBuilderMethods {
-    public static List<GpxGain> GenerateGains(List<GpxPoint> data) {
-        List<GpxGain> gains = new(data.Count - 1);
 
-        for (int i = 1; i < data.Count; i++) {
-            var current = data[i];
-            var prev = data[i - 1];
-
-            gains.Add(GpxPointHelpers.ComputeGain(current, prev));
-        }
-
-        return gains;
-    }
 
     public static List<GpxPoint> FindLocalPeaks(List<GpxPoint> data, List<GpxGain> gains) {
         //data is filtered from gps jitter and microjumps

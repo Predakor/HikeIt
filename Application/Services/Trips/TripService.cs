@@ -1,19 +1,27 @@
 ﻿using Application.Mappers.Implementations;
 using Application.Services.Files;
 using Domain.Common;
+using Domain.TripAnalytics.Services;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Trips.ValueObjects;
 using static Application.Dto.TripDto;
 
-namespace Application.Services.Trip;
+namespace Application.Services.Trips;
 
 public class TripService : ITripService {
     readonly TripMapper _tripMapper;
     readonly ITripRepository _tripRepository;
     readonly IGpxFileRepository _gpxFileRepository;
     readonly IGpxParser _gpxParser;
+    readonly ITripDomainAnalyticService _tripDomainAnalyticsService;
 
-    public TripService(ITripRepository trips, TripMapper mapper, IGpxFileRepository files, IGpxParser gpxParser) {
+    public TripService(
+        ITripRepository trips,
+        TripMapper mapper,
+        IGpxFileRepository files,
+        IGpxParser gpxParser
+    ) {
         _tripRepository = trips;
         _tripMapper = mapper;
         _gpxFileRepository = files;
@@ -45,9 +53,23 @@ public class TripService : ITripService {
     }
 
     public async Task<Result<Guid>> Add(Request.Create dto) {
-        Console.WriteLine(dto.RegionId);
         var trip = _tripMapper.MapToEntity(dto);
 
+        trip.UserId = GetLoggedUserId();
+        await _tripRepository.AddAsync(trip);
+        return Result<Guid>.Success(trip.Id);
+    }
+
+    public async Task<Result<Guid>> Add(Request.Create dto, TripAnalyticData data) {
+        var trip = Trip.Create(
+            dto.Base.Height,
+            dto.Base.Distance,
+            dto.Base.Duration,
+            dto.Base.TripDay,
+            data
+        );
+
+        trip.ChangeRegion(dto.RegionId);
         trip.UserId = GetLoggedUserId();
         await _tripRepository.AddAsync(trip);
         return Result<Guid>.Success(trip.Id);

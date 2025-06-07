@@ -32,10 +32,10 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
 
                 builder.OwnsOne(
                     t => t.TripAnalytics,
-                    ta => {
-                        ta.OwnsOne(a => a.TimeAnalytics);
+                    tripAnalytics => {
+                        tripAnalytics.OwnsOne(a => a.TimeAnalytics);
 
-                        ta.OwnsMany(
+                        tripAnalytics.OwnsMany(
                             a => a.ReachedPeaks,
                             rp => {
                                 rp.HasOne(r => r.Peak)

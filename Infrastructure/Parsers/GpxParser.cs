@@ -7,7 +7,7 @@ namespace Infrastructure.Parsers;
 
 
 public class GpxParser : IGpxParser {
-    public async Task<GpxAnalyticData> ParseAsync(Stream stream) {
+    public async Task<TripAnalyticData> ParseAsync(Stream stream) {
         using var reader = new StreamReader(stream);
         var xml = await reader.ReadToEndAsync();
 

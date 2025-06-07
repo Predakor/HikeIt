@@ -1,5 +1,4 @@
-﻿
-namespace Application.Services.Trip;
+﻿namespace Application.Services.Trips;
 public interface ITripAnalyticsService {
     Task Analyze(Guid GpxFileId);
 

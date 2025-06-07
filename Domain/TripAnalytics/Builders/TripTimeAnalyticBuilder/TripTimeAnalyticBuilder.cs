@@ -1,4 +1,4 @@
-﻿using Domain.TripAnalytics.Builders.TripTimeAnalyticBuilder;
+﻿using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
 using Domain.Trips.ValueObjects;
 
@@ -7,7 +7,7 @@ namespace Domain.TripAnalytics.Builders.TripTimeAnalyticBuilder;
 public record TimeFrame(DateTime Start, DateTime End);
 
 public record TimeAnalyticData(
-    TripAnalytic Analytics,
+    RouteAnalytic Analytics,
     List<GpxGainWithTime> Gains,
     TimeFrame TimeFrame
 );
@@ -39,7 +39,7 @@ public static class TimeAnalyticsDirector {
 
 internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig config) {
     readonly TimeAnalyticConfig _config = config;
-    readonly TripAnalytic _analytics = data.Analytics;
+    readonly RouteAnalytic _analytics = data.Analytics;
     readonly List<GpxGainWithTime> _gains = data.Gains;
     readonly TimeFrame _timeFrame = data.TimeFrame;
 
@@ -127,32 +127,7 @@ internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig
     }
 }
 
-static class Helpers {
-    public static (List<GpxPointWithTime>, List<GpxGainWithTime>) MapToTimed(
-        List<GpxPoint> points,
-        List<GpxGain> gains
-    ) {
-        var pointsWithTime = points
-            .Where(p => p.Time != null)
-            .Select(p => p.ToGpxWithTIme((DateTime)p.Time!))
-            .ToList();
-
-        var gainsWithTime = gains
-            .Where(p => p.TimeDelta != null)
-            .Select(p => p.ToGainWithTime((double)p.TimeDelta!))
-            .ToList();
-
-        return (pointsWithTime, gainsWithTime);
-    }
-
-    public static GpxPointWithTime ToGpxWithTIme(this GpxPoint p, DateTime time) {
-        return new GpxPointWithTime(p.Lat, p.Lon, p.Ele, time);
-    }
-
-    public static GpxGainWithTime ToGainWithTime(this GpxGain p, double timeDelta) {
-        return new GpxGainWithTime(p.DistanceDelta, p.ElevationDelta, p.Slope, timeDelta);
-    }
-
+public static class Helpers {
     public static double ToKph(this TimeSpan time, double distance) {
         return time.TotalHours > 0 ? distance / 1000 / time.TotalHours : 0;
     }
