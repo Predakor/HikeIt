@@ -3,6 +3,6 @@ using Domain.Trips.ValueObjects;
 
 namespace Application.Services;
 
-internal interface ITripAnalyticService {
+public interface ITripAnalyticService {
     Task<TripAnalytic> GenerateAnalytic(TripAnalyticData data);
 }

@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;
 public interface IGpxFileService {
-    Task<GpxFileDto> GetByIdAsync(int id);
+    Task<GpxFileDto> GetByIdAsync(Guid id);
     Task<Result<GpxFile>> CreateAsync(IFormFile file);
     Task<Result<TripAnalyticData>> GetGpxDataByFileIdAsync(Guid id);
 
     Task<TripAnalyticData> GetGpxDataFromFile(IFormFile file);
     Task<bool> UpdateAsync(string path, IFormFile file);
-    Task<bool> DeleteAsync(int id);
+    Task<bool> DeleteAsync(Guid id);
 }
 
 public abstract record GpxFileDto {

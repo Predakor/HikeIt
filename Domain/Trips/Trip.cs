@@ -2,10 +2,7 @@
 using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
 using Domain.TripAnalytics;
-using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
-using Domain.Trips.Builders.GpxDataBuilder;
 using Domain.Trips.Entities.GpxFiles;
-using Domain.Trips.ValueObjects;
 
 namespace Domain.Trips;
 
@@ -34,32 +31,18 @@ public class Trip : IEntity<Guid> {
     public TripAnalytic? TripAnalytic { get; set; }
     #endregion
 
-
-    public static Trip Create(float height, float distance, float duration, DateOnly date) {
-        return new() {
-            Id = Guid.NewGuid(),
-            Height = height,
-            Distance = distance,
-            Duration = duration,
-            TripDay = date,
-        };
+    public static Trip Create(string name, DateOnly tripDay) {
+        return Create(name, tripDay, Guid.NewGuid());
     }
 
-    public static Trip Create(string name, DateOnly tripDay, TripAnalyticData data) {
+    public static Trip Create(string name, DateOnly tripDay, Guid userId) {
         Trip entity = new() {
-            Id = Guid.NewGuid(),
+            Id = userId,
             Name = name,
             TripDay = tripDay,
         };
 
         return entity;
-    }
-
-    public void CreateAnalytic(TripAnalyticData data) {
-        var gpxData = GpxDataBuilder.ProcessData(data);
-        var analytics = TripAnalyticDirector.Create(gpxData);
-
-        AddAnalytics(analytics);
     }
 
     public void AddAnalytics(TripAnalytic analytic) {

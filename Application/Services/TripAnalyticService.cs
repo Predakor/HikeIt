@@ -55,7 +55,6 @@ public class TripAnalyticService(
             }
         }
 
-
         //peak detection semi done
         var potentialPeaks = _tripDomainAnalyticService.FindLocalPeaks(points, gains);
         var reachedPeaks = await _peakRepository.GetMatchingPeaks(potentialPeaks);
@@ -79,10 +78,13 @@ public class TripAnalyticService(
             builder.WithPeaksAnalytic(peakAnalytics);
         }
 
+        //Elevation profile wip
+        var elevationProfile = points.Select((p, i) => i == 10 ? p : null);
+        while (elevationProfile.Count() > 100) {
+            elevationProfile = elevationProfile.Select((p, i) => i == 10 ? p : null);
+        }
 
-
-        //RouteAnalytics done
-        //TimeAnalytics  done
+        var r = builder.Build();
         //PeaksAnalytics not done
         //ElevationProfile not done
 
