@@ -1,5 +1,4 @@
 ﻿using Domain.Trips.Builders.GpxDataBuilder;
-using Domain.Trips.Builders.TripAnalyticBuilder;
 using Domain.Trips.ValueObjects;
 
 namespace Domain.Tests;
@@ -8,7 +7,7 @@ public class GpxDataBuilderTest {
 
     [Fact]
     public void TripAnalyticsBuilder_Should_ReturnBuilder() {
-        var builder = new TripAnalyticBuilder(GpxTestData.DownUpPath);
+        var builder = new GpxDataBuilder(GpxTestData.DownUpPath);
 
         Assert.NotNull(builder);
     }

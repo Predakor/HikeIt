@@ -1,4 +1,5 @@
-﻿using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
+﻿using Domain.Common;
+using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 using Domain.TripAnalytics.Factories;
 using Domain.Trips.Builders.GpxDataBuilder;
 using Domain.Trips.ValueObjects;
@@ -9,10 +10,7 @@ public class GpxPipelineTests {
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
     public void Build_ShouldCalculateMaxAndMinElevation(TripAnalyticData data) {
-        var analytics = CreateBuilder(data)
-            .WithHighestPoint()
-            .WithLowestPoint()
-            .Build();
+        var analytics = CreateBuilder(data).WithHighestPoint().WithLowestPoint().Build();
 
         Assert.Equal(data.Data.Max(p => p.Ele), analytics.HighestElevation);
         Assert.Equal(data.Data.Min(p => p.Ele), analytics.LowestElevation);
@@ -21,10 +19,7 @@ public class GpxPipelineTests {
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
     public void Build_ShouldCalculateTotalAscentAndDescent(TripAnalyticData data) {
-        var analytics = CreateBuilder(data)
-    .WithTotalAscent()
-    .WithTotalDescent()
-    .Build();
+        var analytics = CreateBuilder(data).WithTotalAscent().WithTotalDescent().Build();
 
         // Just assert ascent >= 0 and descent <= 0 (descent is negative sum)
         Assert.True(analytics.TotalAscent >= 0);
@@ -33,15 +28,25 @@ public class GpxPipelineTests {
 
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
-    public void Builder_WithLowestAndHighestPoints_Should_ContainThem(TripAnalyticData data) {
+    public void Builder_WithLowest_AndHighestPoints_Should_ContainThem(TripAnalyticData data) {
+        var analytics = CreateBuilder(data).WithHighestPoint().WithLowestPoint().Build();
 
+        Assert.NotEqual(default, analytics.HighestElevation);
+        Assert.NotEqual(default, analytics.LowestElevation);
+    }
+
+    [Theory]
+    [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
+    public void Builder_With_AverageSlopes_Should_ContainThem(TripAnalyticData data) {
         var analytics = CreateBuilder(data)
-            .WithHighestPoint()
-            .WithLowestPoint()
+            //.WithAverageSlope()
+            .WithAverageAscentSlope()
+            .WithAverageDescentSlope()
             .Build();
 
-        Assert.Equal(default, analytics.HighestElevation);
-        Assert.Equal(default, analytics.LowestElevation);
+        Assert.NotEqual(default, analytics.AverageSlope);
+        Assert.NotEqual(default, analytics.AverageAscentSlope);
+        Assert.NotEqual(default, analytics.AverageDescentSlope);
     }
 
     [Fact]
@@ -56,9 +61,7 @@ public class GpxPipelineTests {
         Assert.NotNull(analytics);
     }
 
-
     static RouteAnalyticsBuilder CreateBuilder(TripAnalyticData data) {
         return new RouteAnalyticsBuilder(data.Data, data.Data.ToGains());
     }
-
 }
