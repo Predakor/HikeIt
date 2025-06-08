@@ -1,7 +1,41 @@
 ﻿using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.Trips.ValueObjects;
 
-namespace Domain.TripAnalytics.Builders.RouteAnalyticBuilder;
+namespace Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
+
+public static class RouteAnalyticFactory {
+    public static RouteAnalytic Create(TripAnalyticData data) {
+        return RouteAnalyticsDirector.Complete(data.Data);
+    }
+
+    public static RouteAnalytic Create(List<GpxPoint> points, List<GpxGain>? gains = null) {
+        return RouteAnalyticsDirector.Complete(points, gains);
+    }
+}
+
+public static class RouteAnalyticsDirector {
+    public static RouteAnalytic Complete(List<GpxPoint> points, List<GpxGain>? gains = null) {
+        return new RouteAnalyticsBuilder(points, gains ?? points.ToGains())
+            .WithTotalDistance()
+            .WithTotalAscent()
+            .WithTotalDescent()
+            .WithHighestPoint()
+            .WithLowestPoint()
+            .WithAverageSlope()
+            .WithAverageDescentSlope()
+            .WithAverageAscentSlope()
+            .Build();
+    }
+    public static RouteAnalytic Basic(List<GpxPoint> points, List<GpxGain>? gains = null) {
+        return new RouteAnalyticsBuilder(points, gains ?? points.ToGains())
+            .WithTotalDistance()
+            .WithTotalAscent()
+            .WithTotalDescent()
+            .WithHighestPoint()
+            .WithLowestPoint()
+            .Build();
+    }
+}
 
 public class RouteAnalyticsBuilder(List<GpxPoint> points, List<GpxGain> gains) {
     readonly List<GpxPoint> _points = points;

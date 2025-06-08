@@ -57,9 +57,8 @@ public class TripsController : ControllerBase {
             return BadRequest(error);
         }
 
-        var fileId = savedFile.Value.Id;
         var tripId = tripResult.Value!;
-        await _tripService.UpdateGpxFile(tripId, fileId);
+
         return Created(tripId.ToString(), null);
     }
 

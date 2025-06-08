@@ -18,12 +18,13 @@ public class ReachedPeak : IEntity<Guid> {
     public User? User { get; set; }
     public Peak? Peak { get; set; }
 
-    public static ReachedPeak Create(Guid TripId, Guid UserId, int PeakId) {
+    public static ReachedPeak Create(Guid TripId, Guid UserId, int PeakId, DateTime? reachTime = null) {
         return new ReachedPeak {
             Id = new Guid(),
             TripId = TripId,
             UserId = UserId,
             PeakId = PeakId,
+            TimeReached = reachTime
         };
     }
 }

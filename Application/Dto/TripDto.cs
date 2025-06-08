@@ -1,6 +1,6 @@
 ﻿using Domain.Entiites.Regions;
+using Domain.TripAnalytics;
 using Domain.Trips.Entities.GpxFiles;
-using Domain.Trips.ValueObjects.TripAnalytics;
 
 namespace Application.Dto;
 

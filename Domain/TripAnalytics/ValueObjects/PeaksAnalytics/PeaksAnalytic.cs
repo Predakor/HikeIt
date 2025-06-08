@@ -2,9 +2,20 @@
 
 namespace Domain.TripAnalytics.ValueObjects.PeaksAnalytics;
 
-//Owned type
-public class PeaksAnalytic {
-    public required ICollection<ReachedPeak> Peaks { get; init; }
-    public required ReachedPeak Highest { get; init; }
+public class PeaksAnalytic : IEntity<Guid> {
+    public Guid Id { get; init; }
+
+    public required ICollection<ReachedPeak> ReachedPeaks { get; init; } = [];
     public ICollection<ReachedPeak>? NewPeaks { get; init; }
+
+    //nav properties
+
+    public static PeaksAnalytic Create(List<ReachedPeak> peaks, List<ReachedPeak>? newPeaks = null) {
+        return new() {
+            Id = Guid.NewGuid(),
+            ReachedPeaks = peaks,
+            NewPeaks = newPeaks,
+        };
+    }
+
 }

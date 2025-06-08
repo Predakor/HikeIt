@@ -1,6 +1,6 @@
 ﻿namespace Domain.TripAnalytics.ValueObjects.TimeAnalytics;
 //Owned Type
-public class TripTimeAnalytic {
+public class TimeAnalytic {
     public TimeSpan Duration { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

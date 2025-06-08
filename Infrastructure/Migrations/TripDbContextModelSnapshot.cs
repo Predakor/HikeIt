@@ -273,6 +273,67 @@ namespace Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.ReachedPeaks.ReachedPeak", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("NewPeaksAnalyticId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PeakId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("PeaksAnalyticId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("TimeReached")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TripId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewPeaksAnalyticId");
+
+                    b.HasIndex("PeakId");
+
+                    b.HasIndex("PeaksAnalyticId");
+
+                    b.HasIndex("TripId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ReachedPeak");
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TripAnalytic");
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PeaksAnalytic");
+                });
+
             modelBuilder.Entity("Domain.Trips.Entities.GpxFiles.GpxFile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -303,20 +364,21 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<float>("Distance")
-                        .HasColumnType("real");
-
-                    b.Property<float>("Duration")
-                        .HasColumnType("real");
-
                     b.Property<Guid?>("GpxFileId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<float>("Height")
-                        .HasColumnType("real");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PeakId")
+                        .HasColumnType("int");
 
                     b.Property<int>("RegionId")
                         .HasColumnType("int");
+
+                    b.Property<Guid?>("TripAnalyticID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("TripDay")
                         .HasColumnType("date");
@@ -330,7 +392,13 @@ namespace Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[GpxFileId] IS NOT NULL");
 
+                    b.HasIndex("PeakId");
+
                     b.HasIndex("RegionId");
+
+                    b.HasIndex("TripAnalyticID")
+                        .IsUnique()
+                        .HasFilter("[TripAnalyticID] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -339,23 +407,19 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("aa73d9ee-1b3d-4f0a-880d-6b2a4ea1d4e1"),
-                            Distance = 23.7f,
-                            Duration = 8f,
-                            Height = 1000f,
-                            RegionId = 1,
-                            TripDay = new DateOnly(2020, 12, 1),
+                            Id = new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c91"),
+                            Name = "Wycieczka na śnieżke",
+                            RegionId = 22,
+                            TripDay = new DateOnly(2023, 5, 1),
                             UserId = new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380")
                         },
                         new
                         {
-                            Id = new Guid("bfd29135-2469-4341-859f-41e42d59e0a3"),
-                            Distance = 14.2f,
-                            Duration = 4f,
-                            Height = 620f,
+                            Id = new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c92"),
+                            Name = "Śnieżne kotły",
                             RegionId = 22,
-                            TripDay = new DateOnly(2023, 4, 7),
-                            UserId = new Guid("183a96d7-9c20-4b18-b65b-d5d6676b57aa")
+                            TripDay = new DateOnly(2025, 1, 16),
+                            UserId = new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380")
                         });
                 });
 
@@ -368,6 +432,158 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Region");
+                });
+
+            modelBuilder.Entity("Domain.ReachedPeaks.ReachedPeak", b =>
+                {
+                    b.HasOne("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", null)
+                        .WithMany("NewPeaks")
+                        .HasForeignKey("NewPeaksAnalyticId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Entiites.Peaks.Peak", "Peak")
+                        .WithMany()
+                        .HasForeignKey("PeakId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", null)
+                        .WithMany("ReachedPeaks")
+                        .HasForeignKey("PeaksAnalyticId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Trips.Trip", "Trip")
+                        .WithOne()
+                        .HasForeignKey("Domain.ReachedPeaks.ReachedPeak", "TripId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entiites.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Peak");
+
+                    b.Navigation("Trip");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
+                {
+                    b.OwnsOne("Domain.TripAnalytics.Builders.TripAnalyticBuilder.ElevationProfile", "ElevationProfile", b1 =>
+                        {
+                            b1.Property<Guid>("TripAnalyticId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("TripAnalyticId");
+
+                            b1.ToTable("TripAnalytic");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TripAnalyticId");
+                        });
+
+                    b.OwnsOne("Domain.TripAnalytics.ValueObjects.RouteAnalytics.RouteAnalytic", "RouteAnalytics", b1 =>
+                        {
+                            b1.Property<Guid>("TripAnalyticId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<short>("AverageAscentSlope")
+                                .HasColumnType("smallint");
+
+                            b1.Property<short>("AverageDescentSlope")
+                                .HasColumnType("smallint");
+
+                            b1.Property<short>("AverageSlope")
+                                .HasColumnType("smallint");
+
+                            b1.Property<double>("HighestElevation")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("LowestElevation")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("TotalAscent")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("TotalDescent")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("TotalDistanceKm")
+                                .HasColumnType("float");
+
+                            b1.HasKey("TripAnalyticId");
+
+                            b1.ToTable("TripAnalytic");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TripAnalyticId");
+                        });
+
+                    b.OwnsOne("Domain.TripAnalytics.ValueObjects.TimeAnalytics.TimeAnalytic", "TimeAnalytics", b1 =>
+                        {
+                            b1.Property<Guid>("TripAnalyticId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<TimeSpan>("ActiveTime")
+                                .HasColumnType("time");
+
+                            b1.Property<TimeSpan>("AscentTime")
+                                .HasColumnType("time");
+
+                            b1.Property<double>("AverageAscentKph")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("AverageDescentKph")
+                                .HasColumnType("float");
+
+                            b1.Property<double>("AverageSpeedKph")
+                                .HasColumnType("float");
+
+                            b1.Property<TimeSpan>("DescentTime")
+                                .HasColumnType("time");
+
+                            b1.Property<TimeSpan>("Duration")
+                                .HasColumnType("time");
+
+                            b1.Property<DateTime>("EndTime")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<TimeSpan>("IdleTime")
+                                .HasColumnType("time");
+
+                            b1.Property<DateTime>("StartTime")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("TripAnalyticId");
+
+                            b1.ToTable("TripAnalytic");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TripAnalyticId");
+                        });
+
+                    b.Navigation("ElevationProfile");
+
+                    b.Navigation("RouteAnalytics");
+
+                    b.Navigation("TimeAnalytics");
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", b =>
+                {
+                    b.HasOne("Domain.TripAnalytics.TripAnalytic", null)
+                        .WithOne("PeaksAnalytics")
+                        .HasForeignKey("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Trips.Entities.GpxFiles.GpxFile", b =>
@@ -383,166 +599,51 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Trips.Entities.GpxFiles.GpxFile", "GpxFile")
                         .WithOne()
-                        .HasForeignKey("Domain.Trips.Trip", "GpxFileId");
+                        .HasForeignKey("Domain.Trips.Trip", "GpxFileId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Entiites.Peaks.Peak", "Target")
+                        .WithMany()
+                        .HasForeignKey("PeakId");
 
                     b.HasOne("Domain.Entiites.Regions.Region", "Region")
                         .WithMany()
                         .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Domain.TripAnalytics.TripAnalytic", "Analytics")
+                        .WithOne()
+                        .HasForeignKey("Domain.Trips.Trip", "TripAnalyticID")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entiites.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.Trips.ValueObjects.TripAnalytics.TripAnalytic", "TripAnalytics", b1 =>
-                        {
-                            b1.Property<Guid>("TripId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<double>("MaxElevation")
-                                .HasColumnType("float");
-
-                            b1.Property<double>("MinElevation")
-                                .HasColumnType("float");
-
-                            b1.Property<double>("TotalAscent")
-                                .HasColumnType("float");
-
-                            b1.Property<double>("TotalDescent")
-                                .HasColumnType("float");
-
-                            b1.Property<double>("TotalDistanceKm")
-                                .HasColumnType("float");
-
-                            b1.HasKey("TripId");
-
-                            b1.ToTable("Trips");
-
-                            b1.WithOwner()
-                                .HasForeignKey("TripId");
-
-                            b1.OwnsMany("Domain.Trips.ValueObjects.TripAnalytics.ReachedPeak", "ReachedPeaks", b2 =>
-                                {
-                                    b2.Property<Guid>("TripAnalyticTripId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<int>("Id")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("int");
-
-                                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b2.Property<int>("Id"));
-
-                                    b2.Property<int?>("PeakId")
-                                        .HasColumnType("int");
-
-                                    b2.Property<DateTime?>("TimeReached")
-                                        .HasColumnType("datetime2");
-
-                                    b2.HasKey("TripAnalyticTripId", "Id");
-
-                                    b2.HasIndex("PeakId");
-
-                                    b2.ToTable("ReachedPeak");
-
-                                    b2.HasOne("Domain.Entiites.Peaks.Peak", "Peak")
-                                        .WithMany()
-                                        .HasForeignKey("PeakId");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TripAnalyticTripId");
-
-                                    b2.OwnsOne("Domain.Trips.ValueObjects.GpxPoint", "GpxPoint", b3 =>
-                                        {
-                                            b3.Property<Guid>("ReachedPeakTripAnalyticTripId")
-                                                .HasColumnType("uniqueidentifier");
-
-                                            b3.Property<int>("ReachedPeakId")
-                                                .HasColumnType("int");
-
-                                            b3.Property<double>("Ele")
-                                                .HasColumnType("float");
-
-                                            b3.Property<double>("Lat")
-                                                .HasColumnType("float");
-
-                                            b3.Property<double>("Lon")
-                                                .HasColumnType("float");
-
-                                            b3.Property<DateTime?>("Time")
-                                                .HasColumnType("datetime2");
-
-                                            b3.HasKey("ReachedPeakTripAnalyticTripId", "ReachedPeakId");
-
-                                            b3.ToTable("ReachedPeak");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("ReachedPeakTripAnalyticTripId", "ReachedPeakId");
-                                        });
-
-                                    b2.Navigation("GpxPoint")
-                                        .IsRequired();
-
-                                    b2.Navigation("Peak");
-                                });
-
-                            b1.OwnsOne("Domain.Trips.ValueObjects.TripAnalytics.TripTimeAnalytic", "TimeAnalytics", b2 =>
-                                {
-                                    b2.Property<Guid>("TripAnalyticTripId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<TimeSpan>("ActiveTime")
-                                        .HasColumnType("time");
-
-                                    b2.Property<TimeSpan>("AscentTime")
-                                        .HasColumnType("time");
-
-                                    b2.Property<double>("AverageAscentKph")
-                                        .HasColumnType("float");
-
-                                    b2.Property<double>("AverageDescentKph")
-                                        .HasColumnType("float");
-
-                                    b2.Property<double>("AverageSpeedKph")
-                                        .HasColumnType("float");
-
-                                    b2.Property<TimeSpan>("DescentTime")
-                                        .HasColumnType("time");
-
-                                    b2.Property<TimeSpan>("Duration")
-                                        .HasColumnType("time");
-
-                                    b2.Property<DateTime>("EndTime")
-                                        .HasColumnType("datetime2");
-
-                                    b2.Property<TimeSpan>("IdleTime")
-                                        .HasColumnType("time");
-
-                                    b2.Property<DateTime>("StartTime")
-                                        .HasColumnType("datetime2");
-
-                                    b2.HasKey("TripAnalyticTripId");
-
-                                    b2.ToTable("Trips");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("TripAnalyticTripId");
-                                });
-
-                            b1.Navigation("ReachedPeaks");
-
-                            b1.Navigation("TimeAnalytics");
-                        });
+                    b.Navigation("Analytics");
 
                     b.Navigation("GpxFile");
 
                     b.Navigation("Region");
 
-                    b.Navigation("TripAnalytics");
+                    b.Navigation("Target");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
+                {
+                    b.Navigation("PeaksAnalytics");
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", b =>
+                {
+                    b.Navigation("NewPeaks");
+
+                    b.Navigation("ReachedPeaks");
                 });
 #pragma warning restore 612, 618
         }

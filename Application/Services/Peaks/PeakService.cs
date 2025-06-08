@@ -29,14 +29,14 @@ public class PeakService(IPeakRepository repo, PeakMapper peakMapper) : IPeakSer
     public async Task<List<PeakDto.Reached>> GetMatchingPeaks(List<GpxPoint> points) {
         //TOIMPlemtn
         await Task.Delay(1);
-        return [new(1)];
+        return [new(1, 1065)];
         throw new NotImplementedException();
     }
 
     public async Task<List<PeakDto.Reached>> GetMatchingPeaks(List<GpxPointWithTime> points) {
         //TOIMPlemtn
         await Task.Delay(1);
-        return [new(1, DateTime.Now)];
+        return [new(1, 1065, DateTime.Now)];
         throw new NotImplementedException();
     }
 }

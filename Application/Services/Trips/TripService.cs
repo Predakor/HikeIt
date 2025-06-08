@@ -1,4 +1,4 @@
-﻿using Application.Mappers.Implementations;
+﻿using Application.Dto;
 using Application.Services.Files;
 using Domain.Common;
 using Domain.Trips;
@@ -8,18 +8,15 @@ using static Application.Dto.TripDto;
 namespace Application.Services.Trips;
 
 public class TripService : ITripService {
-    readonly TripMapper _tripMapper;
     readonly ITripRepository _tripRepository;
     readonly IGpxFileService _gpxFileService;
     readonly ITripAnalyticService _tripAnalyticService;
 
     public TripService(
-        TripMapper mapper,
         ITripRepository trips,
         IGpxFileService gpxFileService,
         ITripAnalyticService tripAnalyticService
     ) {
-        _tripMapper = mapper;
         _tripRepository = trips;
         _gpxFileService = gpxFileService;
         _tripAnalyticService = tripAnalyticService;
@@ -36,7 +33,13 @@ public class TripService : ITripService {
         if (!trips.Any()) {
             return null;
         }
-        var mappedTrips = trips.Select(_tripMapper.MapToBasicDto).ToList();
+        var mappedTrips = trips
+            .Select(p => new TripDto.Request.ResponseBasic(
+                p.Id,
+                p.RegionId,
+                new(1, 1, 1, p.TripDay)
+            ))
+            .ToList();
 
         return mappedTrips;
     }
@@ -46,7 +49,13 @@ public class TripService : ITripService {
         if (trip == null) {
             return null;
         }
-        return _tripMapper.MapToPartialDto(trip);
+        return new(
+            trip.Id,
+            trip.Analytics,
+            trip.GpxFile,
+            trip.Region,
+            new(1, 1, 1, trip.TripDay)
+        );
     }
 
     public async Task<Result<Guid>> Add(Request.Create dto) {
@@ -73,6 +82,8 @@ public class TripService : ITripService {
         if (analytics != null) {
             trip.AddAnalytics(analytics);
         }
+
+        //Attach file id somewhere
 
         await _tripRepository.AddAsync(trip);
         return Result<Guid>.Success(trip.Id);
@@ -102,7 +113,6 @@ public class TripService : ITripService {
             if (updateDto.Base.TripDay != null) {
                 trip.TripDay = updateDto.Base.TripDay.Value;
             }
-
         }
         if (updateDto.GpxFileId != null) {
             trip.AddGpxFile(updateDto.GpxFileId.Value);

@@ -17,8 +17,8 @@ public class Trip : IEntity<Guid> {
     #region Foreign Keys
 
     public Guid UserId { get; private set; }
-    public int PeakId { get; private set; }
     public int RegionId { get; private set; }
+    public int? PeakId { get; private set; }
     public Guid? TripAnalyticID { get; private set; }
     public Guid? GpxFileId { get; private set; }
     #endregion
@@ -28,21 +28,25 @@ public class Trip : IEntity<Guid> {
     public Peak? Target { get; set; }
     public Region? Region { get; set; }
     public GpxFile? GpxFile { get; set; }
-    public TripAnalytic? TripAnalytic { get; set; }
+    public TripAnalytic? Analytics { get; set; }
     #endregion
 
-    public static Trip Create(string name, DateOnly tripDay) {
-        return Create(name, tripDay, Guid.NewGuid());
-    }
-
-    public static Trip Create(string name, DateOnly tripDay, Guid userId) {
-        Trip entity = new() {
-            Id = userId,
+    public static Trip Create(
+        string name,
+        DateOnly tripDay,
+        Guid userId,
+        int? regionId = null,
+        Guid? tripId = null
+    ) {
+        var trip = new Trip {
+            Id = tripId ?? Guid.NewGuid(),
             Name = name,
             TripDay = tripDay,
+            UserId = userId,
+            RegionId = regionId ?? 0,
         };
 
-        return entity;
+        return trip;
     }
 
     public void AddAnalytics(TripAnalytic analytic) {

@@ -2,6 +2,7 @@ using Api.Configuration.Cors.Factories;
 using Api.Configuration.Cors.Models;
 using Api.Endpoints;
 using Application.Mappers.Implementations;
+using Application.Services;
 using Application.Services.Files;
 using Application.Services.Peaks;
 using Application.Services.Region;
@@ -10,6 +11,7 @@ using Application.Services.Users;
 using Domain.Entiites.Peaks;
 using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
+using Domain.TripAnalytics.Services;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
 using Infrastructure;
@@ -97,10 +99,11 @@ static void InjectServices(WebApplicationBuilder builder) {
     builder.Services.AddScoped<ITripService, TripService>();
     builder.Services.AddScoped<IRegionService, RegionService>();
     builder.Services.AddScoped<IGpxFileService, GpxFileService>();
+    builder.Services.AddScoped<ITripAnalyticService, TripAnalyticService>();
+    builder.Services.AddScoped<ITripDomainAnalyticService, TripDomainAnalyticsService>();
 }
 static void InjectMappers(WebApplicationBuilder builder) {
     builder.Services.AddScoped<PeakMapper>();
-    builder.Services.AddScoped<TripMapper>();
     builder.Services.AddScoped<RegionMapper>();
 }
 

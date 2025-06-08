@@ -13,7 +13,7 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
     readonly IGpxParser _parser = parser;
 
     public async Task<Result<GpxFile>> CreateAsync(IFormFile file) {
-        var (isValid, errors) = Validate(file);
+        var (isValid, errors) = FileValidation.Validate(file);
         if (!isValid) {
             var err = new Error("multiple validation errors", errors.ToString());
             return Result<GpxFile>.Failure(err);
@@ -81,7 +81,19 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
         throw new NotImplementedException();
     }
 
-    static (bool isValid, List<Error> errors) Validate(IFormFile? file) {
+
+    public Task<GpxFileDto> GetByIdAsync(Guid id) {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> DeleteAsync(Guid id) {
+        throw new NotImplementedException();
+    }
+}
+
+
+internal static class FileValidation {
+    public static (bool isValid, List<Error> errors) Validate(IFormFile? file) {
         const int maxSizeInBytes = 1024 * 1024 / 2; // 0.5 MB
         const string allowedExtension = ".gpx";
 
@@ -107,4 +119,5 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
 
         return (errors.Count == 0, errors);
     }
+
 }

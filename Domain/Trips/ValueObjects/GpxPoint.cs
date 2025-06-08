@@ -33,6 +33,23 @@ public static class GpxHelpers {
         return gains;
     }
 
+    public static List<GpxGainWithTime> ToGains(this List<GpxPointWithTime> data) {
+        if (data.Count < 2) {
+            throw new Exception("passing gpx list with less than 2 points");
+        }
+
+        List<GpxGainWithTime> gains = new(data.Count - 1);
+
+        for (int i = 1; i < data.Count; i++) {
+            var current = data[i];
+            var prev = data[i - 1];
+
+            gains.Add(ComputeGain(current, prev));
+        }
+
+        return gains;
+    }
+
     public static GpxGain ComputeGain(GpxPoint current, GpxPoint prev) {
         short planarDelta = (short)DistanceHelpers.Distance2D(current, prev);
         short eleDelta = (short)(current.Ele - prev.Ele);
@@ -40,6 +57,15 @@ public static class GpxHelpers {
         short slope = (short)(eleDelta / planarDelta * 100);
 
         return new GpxGain(planarDelta, eleDelta, slope, timeDelta);
+    }
+
+    public static GpxGainWithTime ComputeGain(GpxPointWithTime current, GpxPointWithTime prev) {
+        short planarDelta = (short)DistanceHelpers.Distance2D(current, prev);
+        short eleDelta = (short)(current.Ele - prev.Ele);
+        short timeDelta = (short)(current.Time - prev.Time).TotalSeconds;
+        short slope = (short)(eleDelta / planarDelta * 100);
+
+        return new GpxGainWithTime(planarDelta, eleDelta, slope, timeDelta);
     }
 
     public static (List<GpxPointWithTime>, List<GpxGainWithTime>) MapToTimed(
@@ -73,15 +99,14 @@ public static class GpxHelpers {
     public static GpxGainWithTime ToGainWithTime(this GpxGain p, short timeDelta) {
         return new GpxGainWithTime(p.DistanceDelta, p.ElevationDelta, p.Slope, timeDelta);
     }
-
-    public static double ToKph(this TimeSpan time, double distance) {
-        return time.TotalHours > 0 ? distance / 1000 / time.TotalHours : 0;
-    }
 }
 
 public static class DistanceHelpers {
     public static double Distance2D(GpxPoint p1, GpxPoint p2) {
-        return HaversineDistance(p1, p2);
+        return HaversineDistance(p1.Lat, p1.Lon, p2.Lat, p2.Lon);
+    }
+    public static double Distance2D(GpxPointWithTime p1, GpxPointWithTime p2) {
+        return HaversineDistance(p1.Lat, p1.Lon, p2.Lat, p2.Lon);
     }
 
     public static double Distance3D(GpxPoint p1, GpxPoint p2) {
@@ -94,13 +119,13 @@ public static class DistanceHelpers {
         return Math.Sqrt(planarDistance * planarDistance + elevationDelta * elevationDelta);
     }
 
-    private static double HaversineDistance(GpxPoint p1, GpxPoint p2) {
+    private static double HaversineDistance(double lat1, double lon1, double lat2, double lon2) {
         const double R = 6371000; // Earth radius in meters
 
-        double lat1Rad = DegreesToRadians(p1.Lat);
-        double lat2Rad = DegreesToRadians(p2.Lat);
-        double deltaLat = DegreesToRadians(p2.Lat - p1.Lat);
-        double deltaLon = DegreesToRadians(p2.Lon - p1.Lon);
+        double lat1Rad = DegreesToRadians(lat1);
+        double lat2Rad = DegreesToRadians(lat2);
+        double deltaLat = DegreesToRadians(lat2 - lat1);
+        double deltaLon = DegreesToRadians(lon2 - lon1);
 
         double a =
             Math.Sin(deltaLat / 2) * Math.Sin(deltaLat / 2)

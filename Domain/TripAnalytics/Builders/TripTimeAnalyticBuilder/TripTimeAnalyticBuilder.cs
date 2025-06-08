@@ -25,23 +25,21 @@ public static class TimeAnalyticsDirector {
         IdleSpeedTreshold = 0.2d,
     };
 
-    public static TripTimeAnalytic Create(TimeAnalyticData data, TimeAnalyticConfig? config = null) {
+    public static TimeAnalytic Create(TimeAnalyticData data, TimeAnalyticConfig? config = null) {
         config ??= defaultConfig;
 
         return new TripTimeAnalyticBuilder(data, config)
-            .WithTimeFrame()
+            .WithTimeFrame(data.TimeFrame.Start, data.TimeFrame.End)
             .WithAscentTime()
             .WithDescentTime()
-            .WithClimbSpeeds()
+            .WithClimbSpeeds(data.Analytics)
             .Build();
     }
 }
 
 internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig config) {
     readonly TimeAnalyticConfig _config = config;
-    readonly RouteAnalytic _analytics = data.Analytics;
     readonly List<GpxGainWithTime> _gains = data.Gains;
-    readonly TimeFrame _timeFrame = data.TimeFrame;
 
     #region mutable stats
 
@@ -63,12 +61,14 @@ internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig
 
     #endregion
 
-    public TripTimeAnalyticBuilder WithTimeFrame() {
-        StartTime = _timeFrame.Start;
-        EndTime = _timeFrame.End;
+    public TripTimeAnalyticBuilder WithTimeFrame(DateTime start, DateTime end) {
+        StartTime = start;
+        EndTime = end;
         Duration = EndTime - StartTime;
         return this;
     }
+
+
 
     public TripTimeAnalyticBuilder WithAscentTime() {
         double ascentTime = _gains
@@ -90,10 +90,10 @@ internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig
         return this;
     }
 
-    public TripTimeAnalyticBuilder WithClimbSpeeds() {
-        AverageSpeedKph = ActiveTime.ToKph(_analytics.TotalDistanceKm);
-        AverageAscentKph = AscentTime.ToKph(_analytics.TotalAscent);
-        AverageDescentKph = DescentTime.ToKph(_analytics.TotalDescent);
+    public TripTimeAnalyticBuilder WithClimbSpeeds(RouteAnalytic analytic) {
+        AverageSpeedKph = ActiveTime.ToKph(analytic.TotalDistanceKm);
+        AverageAscentKph = AscentTime.ToKph(analytic.TotalAscent);
+        AverageDescentKph = DescentTime.ToKph(analytic.TotalDescent);
 
         return this;
     }
@@ -109,8 +109,8 @@ internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig
         return this;
     }
 
-    public TripTimeAnalytic Build() {
-        return new TripTimeAnalytic() {
+    public TimeAnalytic Build() {
+        return new TimeAnalytic() {
             StartTime = StartTime,
             EndTime = EndTime,
             Duration = Duration,

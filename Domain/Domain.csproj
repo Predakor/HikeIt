@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Trips\Events\TimeAnalyticsAdded.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="TripAnalytics\Builders\RouteElevationProfileBuilder\" />
     <Folder Include="Trips\ValueObjects\TripAnalytics\" />
   </ItemGroup>

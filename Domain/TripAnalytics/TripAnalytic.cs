@@ -5,20 +5,19 @@ using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
 using Domain.Trips.ValueObjects;
 
 namespace Domain.TripAnalytics;
+
 public class TripAnalytic : IEntity<Guid> {
     public Guid Id { get; init; }
 
     #region Owned Types
     public RouteAnalytic? RouteAnalytics { get; init; }
-    public TripTimeAnalytic? TimeAnalytics { get; init; }
+    public TimeAnalytic? TimeAnalytics { get; init; }
     public PeaksAnalytic? PeaksAnalytics { get; init; }
     public ElevationProfile? ElevationProfile { get; init; }
 
     #endregion
 
     public static TripAnalytic Create(TripAnalyticData data) {
-
-
         return new TripAnalytic();
     }
 }

@@ -1,12 +1,11 @@
 ﻿using Application.Services.Peaks;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
-using Domain.TripAnalytics.Builders.RouteAnalyticBuilder;
+using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
-using Domain.TripAnalytics.Builders.TripTimeAnalyticBuilder;
+using Domain.TripAnalytics.Factories;
 using Domain.TripAnalytics.Services;
 using Domain.TripAnalytics.ValueObjects.PeaksAnalytics;
-using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.Trips.Builders.GpxDataBuilder;
 using Domain.Trips.ValueObjects;
 
@@ -21,39 +20,20 @@ public class TripAnalyticService(
 
     public async Task<TripAnalytic> GenerateAnalytic(TripAnalyticData data) {
         var points = GpxDataBuilder.ProcessData(data).Data;
+        var gains = points.ToGains();
 
         var builder = new TripAnalyticBuilder();
-        var gains = _tripDomainAnalyticService.GenerateGains(data.Data);
 
         //generate Route analytics
-        RouteAnalytic routeAnalytic = new RouteAnalyticsBuilder(points, gains)
-            .WithTotalDistance()
-            .WithTotalAscent()
-            .WithTotalDescent()
-            .WithHighestPoint()
-            .WithLowestPoint()
-            .WithAverageSlope()
-            .WithAverageDescentSlope()
-            .WithAverageAscentSlope()
-            .Build();
-
+        var routeAnalytic = RouteAnalyticFactory.Create(points, gains);
         builder.WithRouteAnalytic(routeAnalytic);
 
         //Time analytics might be null
-        List<GpxGainWithTime> gainsWithTime = gains.MapToTimed();
-        if (gainsWithTime.Count != 0) {
-            DateTime start = (DateTime)points.First().Time!;
-            DateTime end = (DateTime)points.Last().Time!;
-
-            TimeFrame tripTimeFrame = new(start, end);
-            TimeAnalyticData timeAnalyticsData = new(routeAnalytic, gainsWithTime, tripTimeFrame);
-
-            var analytics = TimeAnalyticsDirector.Create(timeAnalyticsData);
-
-            if (analytics != null) {
-                builder.WithTimeAnalytic(analytics);
-            }
+        var timeAnalytics = TimeAnalyticFactory.CreateAnalytics(new(routeAnalytic, points));
+        if (timeAnalytics != null) {
+            builder.WithTimeAnalytic(timeAnalytics);
         }
+
 
         //peak detection semi done
         var potentialPeaks = _tripDomainAnalyticService.FindLocalPeaks(points, gains);
@@ -73,7 +53,7 @@ public class TripAnalyticService(
                 reachedPeaks.MaxBy(p => p.Height).Id
             );
 
-            var peakAnalytics = new PeaksAnalytic() { Peaks = peaks, Highest = highestPeak };
+            var peakAnalytics = PeaksAnalytic.Create(peaks);
 
             builder.WithPeaksAnalytic(peakAnalytics);
         }

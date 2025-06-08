@@ -8,7 +8,7 @@ namespace Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 public class TripAnalyticBuilder {
     #region mutable
     RouteAnalytic _routeAnalytic;
-    TripTimeAnalytic _timeAnalytic;
+    TimeAnalytic _timeAnalytic;
     PeaksAnalytic _peakAnalytic;
     ElevationProfile _elevationProfile;
 
@@ -22,7 +22,7 @@ public class TripAnalyticBuilder {
         return this;
     }
 
-    public TripAnalyticBuilder WithTimeAnalytic(TripTimeAnalytic analytic) {
+    public TripAnalyticBuilder WithTimeAnalytic(TimeAnalytic analytic) {
         ArgumentException.ThrowIfNullOrEmpty(nameof(analytic));
 
         _timeAnalytic = analytic;
@@ -54,7 +54,9 @@ public class TripAnalyticBuilder {
     }
 }
 
-public class ElevationProfile { }
+public class ElevationProfile {
+    public required string Name { get; set; }
+}
 
 internal class TripAnalyticDataValidator(TripAnalyticData data) {
     readonly List<GpxPoint> _data = data.Data;
