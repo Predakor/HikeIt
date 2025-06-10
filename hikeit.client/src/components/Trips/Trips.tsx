@@ -1,5 +1,5 @@
 import useRegionMatcher from "@/hooks/useRegionMatcher";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Grid } from "@chakra-ui/react";
 import MapWrapper from "../Wrappers/Mapping";
 import TripCard from "./TripCard";
 import type { TripDto } from "@/types/ApiTypes/TripDtos";
@@ -14,12 +14,10 @@ function Trips({ trips }: Props) {
   const { matchRegion } = useRegionMatcher();
 
   return (
-    <Flex gap={5}>
-      <MapWrapper
-        items={trips}
-        renderItem={(trip) => <TripCard data={trip} key={trip.id} />}
-      />
-    </Flex>
+    <MapWrapper
+      items={trips}
+      renderItem={(trip) => <TripCard data={trip} key={trip.id} />}
+    />
   );
 }
 

@@ -13,7 +13,7 @@ export interface RouteAnalytic {
   averageDescentSlope: string;
 }
 
-export interface TripTimeAnalytics {
+export interface TimeAnalytics {
   duration: number; // in milliseconds
   startTime: Date;
   endTime: Date;

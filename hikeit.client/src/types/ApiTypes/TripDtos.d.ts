@@ -1,6 +1,6 @@
 import type {
   RouteAnalytic,
-  TripTimeAnalytics,
+  TimeAnalytics,
 } from "@/components/Trip/Types/TripAnalyticsTypes";
 
 export interface BaseTrip {
@@ -16,7 +16,7 @@ export interface TripDto {
 
 interface TripAnalytic {
   routeAnalytics: RouteAnalytic;
-  timeAnalytics?: TripTimeAnalytics;
+  timeAnalytics?: TimeAnalytics;
   peaksAnalytics?: PeaksAnalytic;
   elevationProfile?: {};
 }

@@ -1,5 +1,5 @@
 import type { BaseTrip, TripDtoFull } from "@/types/ApiTypes/TripDtos";
-import type { IconType } from "react-icons";
+import type { IconBaseProps, IconType } from "react-icons";
 import { CiCalendarDate } from "react-icons/ci";
 import {
   FaArrowDown,
@@ -8,10 +8,11 @@ import {
   FaArrowUp,
 } from "react-icons/fa6";
 import { GiJourney, GiPeaks } from "react-icons/gi";
-import type { PartialMap } from "../../../types/Utils/MappingTypes";
+import type { FullMap, PartialMap } from "../../../types/Utils/MappingTypes";
 import type { StatAddons } from "@/types/Utils/StatTypes";
-import type { RouteAnalytic } from "../Types/TripAnalyticsTypes";
+import type { RouteAnalytic, TimeAnalytics } from "../Types/TripAnalyticsTypes";
 import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
+import type { ReactNode } from "react";
 
 export const icons: PartialMap<BaseTrip, StatAddons> = {
   // distance: { IconSource: GiJourney, unit: "m" },
@@ -22,6 +23,13 @@ export const icons: PartialMap<BaseTrip, StatAddons> = {
 
 function routeFormatter(stat: any): string | number {
   return GenericFormatter(stat);
+}
+function durationFormatter(stat: any): string | number | null {
+  const [hours, minutes, seconds] = stat.split(":").map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes, seconds, 0);
+  return hours * 60 + date.getMinutes();
+  return stat;
 }
 
 export const routeAnalyticStatsInfo: PartialMap<RouteAnalytic, StatAddons> = {
@@ -60,6 +68,57 @@ export const routeAnalyticStatsInfo: PartialMap<RouteAnalytic, StatAddons> = {
     IconSource: FaArrowUp,
     unit: "%",
     formatt: routeFormatter,
+  },
+};
+
+export const timeAnalyticsStatsInfo: PartialMap<TimeAnalytics, StatAddons> = {
+  duration: {
+    IconSource: FaArrowUp,
+    unit: "min",
+    formatt: GenericFormatter,
+  },
+  startTime: {
+    IconSource: FaArrowUp,
+    formatt: GenericFormatter,
+  },
+  endTime: {
+    IconSource: FaArrowUp,
+    formatt: GenericFormatter,
+  },
+  activeTime: {
+    IconSource: FaArrowUp,
+    unit: "min",
+    formatt: durationFormatter,
+  },
+  idleTime: {
+    IconSource: FaArrowUp,
+    unit: "min",
+    formatt: durationFormatter,
+  },
+  ascentTime: {
+    IconSource: FaArrowUp,
+    unit: "min",
+    formatt: durationFormatter,
+  },
+  descentTime: {
+    IconSource: FaArrowUp,
+    unit: "min",
+    formatt: durationFormatter,
+  },
+  averageSpeedKph: {
+    IconSource: FaArrowUp,
+    unit: "km/hrs",
+    formatt: undefined,
+  },
+  averageAscentKph: {
+    IconSource: FaArrowUp,
+    unit: "km/hrs",
+    formatt: undefined,
+  },
+  averageDescentKph: {
+    IconSource: FaArrowDown,
+    unit: "km/hrs",
+    formatt: undefined,
   },
 };
 

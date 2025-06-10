@@ -1,74 +1,21 @@
-import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
-import { ToTitleCase } from "@/Utils/ObjectToArray";
 import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
-import type { EntryItem } from "@/types/Utils/OrderTypes";
-import { For, Heading, Tabs, VStack } from "@chakra-ui/react";
+import { Flex, Heading, VStack } from "@chakra-ui/react";
 import { tripDetailsTabs } from "../Data/tabOrder";
-import RenderTabEntry from "@/components/Utils/RenderTabs/RenderTabEntry";
+import { TripDetailsMenu } from "./TripDetailsMenu/TripDetailsTabs";
 
 function TripDetails({ data }: { data: TripDtoFull }) {
-  const tabOrder = tripDetailsTabs;
+  const tabOrder = tripDetailsTabs.filter((d) => {
+    return !(d.type !== "group" && d.key === "base");
+  });
 
   return (
-    <VStack h={"full"} w={"full"} alignItems={"flex-start"} gap={"2em"}>
-      <Heading fontSize={"4xl"}>{data.base.name}</Heading>
-      <Tabs.Root
-        lazyMount
-        unmountOnExit
-        orientation="vertical"
-        defaultValue={"base"}
-      >
-        <Tabs.List alignSelf={{ base: "flex-start" }}>
-          <For
-            each={tabOrder}
-            children={(entry) => (
-              <RenderTabEntry entry={entry} data={data} Renderer={TabTrigger} />
-            )}
-          />
-
-          <Tabs.Indicator bg={"bg.emphasized"} rounded="l2" />
-        </Tabs.List>
-
-        <Tabs.ContentGroup gap={8}>
-          <For
-            each={tabOrder}
-            children={(entry) => (
-              <RenderTabEntry entry={entry} data={data} Renderer={TabContent} />
-            )}
-          />
-        </Tabs.ContentGroup>
-      </Tabs.Root>
+    <VStack alignItems={"start"} w={{ base: "full", md: "60vw" }} gap={"2em"}>
+      <Flex alignItems={"flex-start"} gap={40}>
+        <Heading fontSize={"4xl"}>{data.base.name}</Heading>
+        <Heading fontSize={"2xl"}>{data.base.tripDay}</Heading>
+      </Flex>
+      <TripDetailsMenu data={data} config={tabOrder} />
     </VStack>
   );
 }
 export default TripDetails;
-
-function TabContent(
-  entry: EntryItem<keyof TripDtoFull, TripDtoFull>,
-  data: any
-) {
-  const { key, Component } = entry;
-  return (
-    <Tabs.Content value={key} key={key}>
-      {Component ? (
-        <Component data={data} key={key} />
-      ) : (
-        `Please add a component for key: ${key}`
-      )}
-    </Tabs.Content>
-  );
-}
-
-function TabTrigger(
-  entry: EntryItem<keyof TripDtoFull, TripDtoFull>,
-  data: any
-) {
-  const { key } = entry;
-  const label = entry.label || KeyToLabelFormatter(entry.key);
-
-  return (
-    <Tabs.Trigger value={key} disabled={!data} key={key}>
-      {ToTitleCase(label)}
-    </Tabs.Trigger>
-  );
-}

@@ -15,7 +15,16 @@ function TripCard({ data }: Props) {
 
   return (
     <Link to={`${data.id}`}>
-      <Card.Root w={"20vw"}>
+      <Card.Root
+        w={"20vw"}
+        transition="all .25s ease-in"
+        _hover={{
+          bg: "bg.emphasized",
+          transform: "scale(1.08)",
+          borderRadius: "5%",
+          transition: "all .15s ease-out",
+        }}
+      >
         <Card.Header>{region && region.name}</Card.Header>
         <Card.Body>
           <Stat.Root>

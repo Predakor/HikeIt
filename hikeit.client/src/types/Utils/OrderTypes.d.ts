@@ -34,21 +34,27 @@ interface EntryGroup<TKey, TFor> {
 
 export type OrderConfig<TFor extends object> = OrderEntry<TFor>[];
 
-export type OrderEntry<TFor> =
+export type OrderEntry<TFor extends object> =
   | OrderEntryItem<keyof TFor, TFor>
-  | EntryGroup<TFor>
+  | OrderEntryGroup<keyof TFor, TFor>
   | OrderEntryData<TFor>;
 
 // ---------------------------
 // Variants of OrderEntry
 // ---------------------------
 
-export interface OrderEntryItem<TKey, TFor> extends EntryItem<TKey, TFor> {
+export interface OrderEntryItem<TKey, TFor> {
+  type?: "item";
+  key: TKey;
   Icon?: IconType;
   data?: TFor;
 }
 
-export interface OrderEntryGroup<TFor> extends EntryGroup<TKey, TFor> {
+export interface OrderEntryGroup<TKey, TFor> {
+  type: "group";
+  label: string;
+  items: OrderConfig<TFor>;
+  base?: TKey;
   Wrapper?: FunctionComponent<{ children: ReactNode }>;
   dataGetter?: (data: TFor) => string;
 }

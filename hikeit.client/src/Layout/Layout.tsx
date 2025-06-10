@@ -1,10 +1,18 @@
-import { Center, Heading, Span, Stack } from "@chakra-ui/react";
+import { Heading, Span, Stack } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import Nav from "./Nav/Nav";
 
 function Layout({ children }: PropsWithChildren) {
   return (
-    <Stack p={"1em"} minH={"100vh"} align={"stretch"} gap={"2em"}>
+    <Stack
+      py={4}
+      px={6}
+      minH={"100vh"}
+      overflowX={"clip"}
+      align={"stretch"}
+      gap={8}
+      gapY={16}
+    >
       <header>
         <Heading fontSize={"4xl"}>
           Hike
@@ -14,9 +22,9 @@ function Layout({ children }: PropsWithChildren) {
         </Heading>
         <Nav />
       </header>
-      <Center as="main" flexGrow={1}>
+      <Stack as="main" flexGrow={1}>
         {children}
-      </Center>
+      </Stack>
       <footer>Footer placeholder </footer>
     </Stack>
   );
