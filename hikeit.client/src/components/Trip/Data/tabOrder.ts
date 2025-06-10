@@ -11,13 +11,35 @@ export const tripAnalyticTabs: TabConfig<TripAnalytic> = [
   { key: "peaksAnalytics", label: "Time", Component: RouteAnalytics },
 ];
 
+const trackAnalyticConfig: TabConfig<TripAnalytic> = [
+  {
+    key: "routeAnalytics",
+    label: "",
+    Component: RouteAnalytics,
+  },
+  {
+    key: "timeAnalytics",
+    label: "",
+  },
+  {
+    key: "peaksAnalytics",
+    label: "",
+  },
+  {
+    key: "elevationProfile",
+    label: "",
+  },
+];
+
 export const tripDetailsTabs: TabConfig<TripDtoFull> = [
   { key: "base", label: "Base", Component: TripBase },
   {
-    key: "trackAnalytic",
+    type: "group",
     label: "Analytics",
-    Component: RouteAnalytics,
+    base: "trackAnalytic",
+    items: trackAnalyticConfig,
+    // items: AnalyticTab,
   },
   { key: "region", label: "Region", Component: TripGraph },
   { key: "pictures", label: "pictures", Component: TripGraph },
-];
+] as const;

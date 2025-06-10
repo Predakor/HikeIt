@@ -1,11 +1,11 @@
-import type { OrderEntryGroup } from "@/types/Utils/OrderTypes";
+import type { EntryGroup } from "@/types/Utils/OrderTypes";
 import MapWrapper from "../../../Wrappers/Mapping/MapWrapper";
 import RenderEntry from "../GenericRenderer/GenericRenderer";
 import { Card, Center } from "@chakra-ui/react";
 import { ToTitleCase } from "@/Utils/ObjectToArray";
 
 interface Props<T> {
-  group: OrderEntryGroup<T>;
+  group: EntryGroup<T>;
   data: T;
 }
 

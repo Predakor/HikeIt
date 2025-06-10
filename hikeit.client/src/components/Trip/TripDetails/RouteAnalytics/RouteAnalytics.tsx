@@ -5,9 +5,10 @@ import { routeOrderConfig } from "./routeOrderConfig";
 
 export default function RouteAnalytics({ data }: { data: TripAnalytic }) {
   const orderConfig = routeOrderConfig;
+
   return (
     <Stack gap={4}>
-      <RenderFromConfig data={data.routeAnalytics} config={routeOrderConfig} />
+      <RenderFromConfig data={data} config={routeOrderConfig} />
     </Stack>
   );
 }

@@ -4,13 +4,28 @@ import type { ReactNode } from "react";
 // Base tab config types
 // ---------------------------
 
-export type TabConfig<TFor extends object> = TabEntry<keyof TFor>[];
+type ExtractObject<T> = T extends object ? (T extends null ? never : T) : never;
 
-export interface TabEntry<TKey> {
+type EntryType<TFor> =
+  | EntryItem<keyof TFor, TFor>
+  | EntryGroup<keyof TFor, TFor>;
+
+export type TabConfig<TFor extends object> = EntryType<TFor>[];
+
+interface EntryItem<TKey, TFor> {
+  type?: "item";
   key: TKey;
   label: string;
-  Icon?: IconType;
   Component?: FunctionComponent<{ data: any }>;
+}
+
+interface EntryGroup<TKey, TFor> {
+  type: "group";
+  label: string;
+  base: TKey;
+  items: TabConfig<ExtracObjcet<TFor[TKey]>>;
+  Wrapper?: FunctionComponent<{ children: ReactNode }>;
+  dataGetter?: (data: TFor) => string;
 }
 
 // ---------------------------
@@ -21,26 +36,19 @@ export type OrderConfig<TFor extends object> = OrderEntry<TFor>[];
 
 export type OrderEntry<TFor> =
   | OrderEntryItem<keyof TFor, TFor>
-  | OrderEntryGroup<TFor>
+  | EntryGroup<TFor>
   | OrderEntryData<TFor>;
 
 // ---------------------------
 // Variants of OrderEntry
 // ---------------------------
 
-export interface OrderEntryItem<TKey, TFor> extends TabEntry<TKey> {
-  type?: "entry";
-  key: TKey;
-  label: string;
+export interface OrderEntryItem<TKey, TFor> extends EntryItem<TKey, TFor> {
   Icon?: IconType;
-  Component?: FunctionComponent<{ data: any }>;
   data?: TFor;
 }
 
-export interface OrderEntryGroup<TFor> {
-  type: "group";
-  label: string;
-  items: OrderConfig<TFor>;
+export interface OrderEntryGroup<TFor> extends EntryGroup<TKey, TFor> {
   Wrapper?: FunctionComponent<{ children: ReactNode }>;
   dataGetter?: (data: TFor) => string;
 }

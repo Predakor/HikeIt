@@ -26,7 +26,7 @@ export interface TripDtoFull extends TripDto {
     id: number;
     name: string;
   };
-  trackAnalytic?: TripAnalytic;
+  trackAnalytic: TripAnalytic | null;
   trackGraph?: GraphData[];
   reachedPeaks?: ReachedPeak[];
   gpxFile?: {};
