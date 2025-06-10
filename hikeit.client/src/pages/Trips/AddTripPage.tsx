@@ -3,6 +3,8 @@ import DropFile from "@/components/AddTripForm/AddFile/DropFile";
 import AddTripPresenter from "@/components/AddTripForm/AddTripPresenter";
 import Divider from "@/components/Divider/Divider";
 import usePost from "@/hooks/usePost";
+import type { CreateTrip } from "@/types/ApiTypes/TripDtos";
+import type { FullMap, PartialMap } from "@/types/Utils/MappingTypes";
 import {
   Alert,
   Box,
@@ -15,27 +17,26 @@ import {
 import { useRef, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 
-const defaultValues = {
-  height: 0,
-  distance: 0,
-  duration: 0,
-  regionId: 0,
-  tripDay: "",
+const defaultValues: CreateTrip = {
+  base: {
+    name: "",
+    tripDay: "",
+  },
+  regionId: 1,
 };
 
-type FormData = {
-  height: number;
-  distance: number;
-  duration: number;
-  regionId: number;
-  tripDay: string;
-};
+const formInputs: PartialMap<
+  CreateTrip,
+  {
+    type: number | string | Date;
+  }
+> = {};
 
 function AddTripPage() {
   const fileRef = useRef<File | null>(null);
 
   const [post, result] = usePost();
-  const formHandler = useForm<FormData>({
+  const formHandler = useForm<CreateTrip>({
     defaultValues,
   });
 
@@ -51,11 +52,9 @@ function AddTripPage() {
 
     const formData = new FormData();
 
+    formData.append("Base.Name", data.base.name);
     formData.append("RegionId", data.regionId.toString());
-    formData.append("Base.Height", data.height.toString());
-    formData.append("Base.Distance", data.distance.toString());
-    formData.append("Base.Duration", data.duration.toString());
-    formData.append("Base.TripDay", data.tripDay);
+    formData.append("Base.TripDay", data.base.tripDay);
     formData.append("file", file);
 
     console.log({ formData, formHandler });
@@ -68,14 +67,9 @@ function AddTripPage() {
       const fileData = await GpxArrayBuilder.fromFile(newFile);
       const stats = fileData.smoothMedian().generateGains().getStats();
 
-      formHandler.setValue("height", stats.climbed);
-      formHandler.setValue("distance", stats.distance);
-
-      const duration = stats.duration ? parseInt(stats.duration.toFixed(1)) : 0;
       const tripDate = stats.startTime?.slice(0, 10) || "";
 
-      formHandler.setValue("duration", duration);
-      formHandler.setValue("tripDay", tripDate);
+      formHandler.setValue("base.tripDay", tripDate);
     };
 
     fileRef.current = newFile;

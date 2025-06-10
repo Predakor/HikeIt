@@ -1,8 +1,9 @@
+import type { TripDto } from "@/types/ApiTypes/TripDtos";
 import { Field, Input, InputGroup, Stack } from "@chakra-ui/react";
 import { type UseFormReturn } from "react-hook-form";
 import RegionSelect from "../RegionSelect/RegionSelect";
 import { tripFormConfig } from "./AddTrip/data";
-import type { TripDto } from "@/types/ApiTypes/TripDtos";
+import { ToTitleCase } from "@/Utils/ObjectToArray";
 
 interface Props {
   formHandler: UseFormReturn<TripDto>;
@@ -13,14 +14,11 @@ function AddTripPresenter({ formHandler }: Props) {
 
   return (
     <Stack>
-      {tripFormConfig.map((entry) => (
-        <Field.Root key={entry.name}>
-          <Field.Label>{entry.label}</Field.Label>
-          <InputGroup endElement={entry.unit}>
-            <Input
-              type={entry.type}
-              {...register(entry.name as keyof TripDto)}
-            />
+      {tripFormConfig.map(({ label, name, type, unitAddods }) => (
+        <Field.Root key={name}>
+          <Field.Label>{ToTitleCase(label)}</Field.Label>
+          <InputGroup endElement={unitAddods?.unit ?? null}>
+            <Input type={type} {...register(`base.${name}`)} />
           </InputGroup>
         </Field.Root>
       ))}

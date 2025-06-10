@@ -1,8 +1,8 @@
 import useRegionMatcher from "@/hooks/useRegionMatcher";
 import { Flex } from "@chakra-ui/react";
-import type { TripDto } from "../../types/types";
 import MapWrapper from "../Wrappers/Mapping";
 import TripCard from "./TripCard";
+import type { TripDto } from "@/types/ApiTypes/TripDtos";
 
 //TODO actually so some ui to show trip creation when no trips
 interface Props {

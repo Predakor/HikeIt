@@ -5,9 +5,10 @@ import { tripDetailsTabs } from "../Data/tabOrder";
 
 function TripDetails({ data }: { data: TripDtoFull }) {
   const tabOrder = tripDetailsTabs;
+
   return (
-    <VStack justifyItems={"center"} gap={"2em"}>
-      <Heading>Trip summary for {data.id}</Heading>
+    <VStack h={"full"} w={"full"} alignItems={"flex-start"} gap={"2em"}>
+      <Heading fontSize={"4xl"}>{data.base.name}</Heading>
 
       <Tabs.Root
         lazyMount

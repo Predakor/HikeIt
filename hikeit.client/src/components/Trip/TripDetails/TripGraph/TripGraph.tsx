@@ -21,7 +21,7 @@ export default function TripChart({ data }: Props) {
   });
 
   return (
-    <Box width={"90vw"} marginTop={"2.5em"}>
+    <Box marginTop={"2.5em"}>
       <Chart.Root maxH="sm" chart={chart}>
         <LineChart data={chart.data}>
           <CartesianGrid stroke={chart.color("border")} vertical={false} />

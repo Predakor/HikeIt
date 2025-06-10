@@ -1,27 +1,18 @@
-import type { FieldEntry } from "../../../types/types";
+import type { CreateTrip } from "@/types/ApiTypes/TripDtos";
+import type { StatAddons } from "@/types/Utils/StatTypes";
 
-export const tripFormConfig: FieldEntry[] = [
+export type CreateTripConfigEntry<T> = {
+  name: keyof T;
+  type: React.HTMLInputTypeAttribute;
+  label: string;
+  unitAddods?: StatAddons;
+};
+
+export const tripFormConfig: CreateTripConfigEntry<CreateTrip["base"]>[] = [
   {
-    name: "tripDay",
-    type: "date",
-    label: "Trip Day",
+    name: "name",
+    label: "trip name",
+    type: "string",
   },
-  {
-    name: "height",
-    type: "number",
-    label: "Height",
-    unit: "m",
-  },
-  {
-    name: "distance",
-    type: "number",
-    label: "Distance",
-    unit: "km",
-  },
-  {
-    name: "duration",
-    type: "number",
-    label: "Duration",
-    unit: "min",
-  },
+  { name: "tripDay", label: "trip day", type: "date" },
 ];

@@ -1,8 +1,8 @@
 import { dateOnlyToString } from "@/Utils/Formatters/dateFormats";
 import useRegion from "@/hooks/useRegion";
+import type { TripDto } from "@/types/ApiTypes/TripDtos";
 import { Card, Stat } from "@chakra-ui/react";
 import { Link } from "react-router";
-import type { TripDto } from "../../types/types";
 
 interface Props {
   data: TripDto;
@@ -15,24 +15,12 @@ function TripCard({ data }: Props) {
 
   return (
     <Link to={`${data.id}`}>
-      <Card.Root>
+      <Card.Root w={"20vw"}>
         <Card.Header>{region && region.name}</Card.Header>
         <Card.Body>
           <Stat.Root>
             <Stat.ValueText alignItems="baseline">
-              Total Distance {trip.distance} <Stat.ValueUnit>km</Stat.ValueUnit>
-            </Stat.ValueText>
-          </Stat.Root>
-
-          <Stat.Root>
-            <Stat.ValueText alignItems="baseline">
-              Total uphil {trip.height} <Stat.ValueUnit>Meters</Stat.ValueUnit>
-            </Stat.ValueText>
-          </Stat.Root>
-
-          <Stat.Root>
-            <Stat.ValueText alignItems="baseline">
-              Duration {trip.duration} <Stat.ValueUnit>Minutes</Stat.ValueUnit>
+              {data.base.name}{" "}
             </Stat.ValueText>
           </Stat.Root>
         </Card.Body>
