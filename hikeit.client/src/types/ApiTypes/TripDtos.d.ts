@@ -1,13 +1,24 @@
-import {
-  BaseTrip,
-  TripAnalytic,
-  GraphData,
-} from "../components/AddTripForm/AddTrip/tripTypes";
+import type {
+  RouteAnalytic,
+  TripTimeAnalytics,
+} from "@/components/Trip/Types/TripAnalyticsTypes";
+
+export interface BaseTrip {
+  name: string;
+  tripDay: string;
+}
 
 export interface TripDto {
-  id: number;
+  id: string;
   base: BaseTrip;
   regionId?: number;
+}
+
+interface TripAnalytic {
+  routeAnalytics: RouteAnalytic;
+  timeAnalytics?: TripTimeAnalytics;
+  peaksAnalytics?: PeaksAnalytic;
+  elevationProfile?: {};
 }
 
 export interface TripDtoFull extends TripDto {
@@ -19,6 +30,12 @@ export interface TripDtoFull extends TripDto {
   trackGraph?: GraphData[];
   reachedPeaks?: ReachedPeak[];
   gpxFile?: {};
+}
+
+export interface CreateTrip {
+  regionId: number;
+  base: BaseTrip;
+  file?: File;
 }
 
 export interface FieldEntry {
