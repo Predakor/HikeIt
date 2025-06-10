@@ -1,10 +1,10 @@
 import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 import { ToTitleCase } from "@/Utils/ObjectToArray";
 import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
-import type { EntryItem, EntryType } from "@/types/Utils/OrderTypes";
+import type { EntryItem } from "@/types/Utils/OrderTypes";
 import { For, Heading, Tabs, VStack } from "@chakra-ui/react";
-import type { ReactElement } from "react";
 import { tripDetailsTabs } from "../Data/tabOrder";
+import RenderTabEntry from "@/components/Utils/RenderTabs/RenderTabEntry";
 
 function TripDetails({ data }: { data: TripDtoFull }) {
   const tabOrder = tripDetailsTabs;
@@ -71,42 +71,4 @@ function TabTrigger(
       {ToTitleCase(label)}
     </Tabs.Trigger>
   );
-}
-
-interface Props<T> {
-  entry: EntryType<T>;
-  data: any;
-  Renderer?: (entry: EntryItem<keyof T, T>, data: any) => ReactElement;
-}
-
-function RenderTabEntry<T extends object>(props: Props<T>) {
-  const { entry, data, Renderer } = props;
-
-  if (entry.type == "group") {
-    const base = entry.base;
-    const dataBase = data[base] || data;
-
-    return entry.items.map((e, index) => (
-      <RenderTabEntry
-        entry={e as EntryType<T>}
-        data={dataBase}
-        Renderer={Renderer}
-        key={index}
-      />
-    ));
-  }
-
-  const { key, Component } = entry;
-  const stringKey = key as string;
-  const getData = data[stringKey];
-
-  if (Renderer) {
-    return Renderer(entry, getData);
-  }
-
-  if (Component) {
-    return <Component data={getData} />;
-  }
-
-  return <p>did you forget do define item to render</p>;
 }

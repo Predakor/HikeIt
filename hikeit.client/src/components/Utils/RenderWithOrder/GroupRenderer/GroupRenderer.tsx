@@ -5,7 +5,7 @@ import { Card, Center } from "@chakra-ui/react";
 import { ToTitleCase } from "@/Utils/ObjectToArray";
 
 interface Props<T> {
-  group: EntryGroup<T>;
+  group: EntryGroup<keyof T, T>;
   data: T;
 }
 

@@ -1,8 +1,8 @@
 import type {
-  EntryGroup,
-  OrderEntryData,
-  OrderEntryItem,
   OrderEntry,
+  OrderEntryData,
+  OrderEntryGroup,
+  OrderEntryItem,
 } from "@/types/Utils/OrderTypes";
 import type { ReactElement } from "react";
 import { GroupRenderer } from "../GroupRenderer/GroupRenderer";
@@ -10,7 +10,7 @@ import { ItemRenderer } from "../ItemRenderer/ItemRenderer";
 
 type Handlers<T> = {
   entry: (entry: OrderEntryItem<keyof T, T>) => ReactElement;
-  group: (entry: EntryGroup<T>) => ReactElement;
+  group: (entry: OrderEntryGroup<T>) => ReactElement;
   data: (entry: OrderEntryData<T>) => ReactElement;
 };
 

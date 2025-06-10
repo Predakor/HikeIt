@@ -8,7 +8,7 @@ export default function RouteAnalytics({ data }: { data: TripAnalytic }) {
 
   return (
     <Stack gap={4}>
-      <RenderFromConfig data={data} config={routeOrderConfig} />
+      <RenderFromConfig data={data} config={orderConfig} />
     </Stack>
   );
 }
