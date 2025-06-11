@@ -3,6 +3,6 @@ export const dateOnlyToString = (dateString: string): string => {
   return date.toLocaleDateString("en-UK", {
     year: "numeric",
     month: "long",
-    day: "2-digit",
+    day: "numeric",
   });
 };
