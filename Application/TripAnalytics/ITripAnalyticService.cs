@@ -1,7 +1,7 @@
 ﻿using Domain.TripAnalytics;
 using Domain.Trips.ValueObjects;
 
-namespace Application.Services;
+namespace Application.TripAnalytics;
 
 public interface ITripAnalyticService {
     Task<TripAnalytic> GenerateAnalytic(TripAnalyticData data);

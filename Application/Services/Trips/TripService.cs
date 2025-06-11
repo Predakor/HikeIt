@@ -1,4 +1,5 @@
 ﻿using Application.Services.Files;
+using Application.TripAnalytics;
 using Domain.Common;
 using Domain.TripAnalytics;
 using Domain.Trips;

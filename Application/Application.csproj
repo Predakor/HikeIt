@@ -14,4 +14,10 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TripAnalytics\RouteAnalytic\" />
+    <Folder Include="TripAnalytics\TimeAnalytic\" />
+    <Folder Include="TripAnalytics\Services\" />
+  </ItemGroup>
+
 </Project>
