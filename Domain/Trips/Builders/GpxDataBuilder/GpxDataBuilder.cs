@@ -3,44 +3,27 @@
 namespace Domain.Trips.Builders.GpxDataBuilder;
 
 internal class MutableGpxPoint(double lat, double lon, double ele, DateTime? time = null) {
-    public double Lat { get; set; } = lat;
-    public double Lon { get; set; } = lon;
-    public double Ele { get; set; } = ele;
-    public DateTime? Time { get; set; } = time;
-
-    public static MutableGpxPoint Create(GpxPoint point) {
-        return new(point.Lat, point.Lon, point.Ele, point.Time);
-    }
+    public double Lat = lat;
+    public double Lon = lon;
+    public double Ele = ele;
+    public DateTime? Time = time;
 }
 
-public class GpxDataBuilder {
-    List<MutableGpxPoint> _gpxPoints;
-
-    public GpxDataBuilder(TripAnalyticData data) {
-        _gpxPoints = data.Data.Select(MutableGpxPoint.Create).ToList();
-    }
-
-    public static TripAnalyticData ProcessData(TripAnalyticData data) {
-        return new GpxDataBuilder(data)
-            .RoundElevation()
-            .ClampElevationSpikes()
-            .ApplyMedianFilter()
-            .ApplyEmaSmoothing()
-            .Build();
-    }
+internal class GpxDataBuilder(List<GpxPoint> points) {
+    List<MutableGpxPoint> _gpxPoints = [.. points.Select(p => p.ToMutable())];
 
     public GpxDataBuilder ClampElevationSpikes(double maxSpike = .5d) {
-        _gpxPoints = Methods.ClampSpikes(_gpxPoints, maxSpike);
+        _gpxPoints.ClampSpikes(maxSpike);
         return this;
     }
 
     public GpxDataBuilder ApplyEmaSmoothing(float alpha = .4f) {
-        _gpxPoints = Methods.SmoothWithEma(_gpxPoints, alpha);
+        _gpxPoints.SmoothWithEma(alpha);
         return this;
     }
 
     public GpxDataBuilder ApplyMedianFilter(int medianSize = 5) {
-        _gpxPoints = Methods.MedianSmooth(_gpxPoints, medianSize);
+        _gpxPoints.MedianSmooth(medianSize);
         return this;
     }
 
@@ -52,64 +35,17 @@ public class GpxDataBuilder {
         return this;
     }
 
-    public TripAnalyticData Build() {
-        return new(_gpxPoints.Select(Helpers.CreateGpxPoint).ToList());
-    }
-}
-
-internal static class Methods {
-    public static List<MutableGpxPoint> SmoothWithEma(List<MutableGpxPoint> points, float alpha) {
-        var prevEma = points.First().Ele;
-
-        for (int i = 1; i < points.Count; i++) {
-            MutableGpxPoint current = points[i];
-            prevEma = alpha * current.Ele + (1 - alpha) * prevEma;
-            current.Ele = prevEma;
-        }
-
-        return points;
+    public GpxDataBuilder DownSample(int amount = 10) {
+        _gpxPoints = GpxBuilderMethods.DownSample(_gpxPoints, amount);
+        return this;
     }
 
-    public static List<MutableGpxPoint> MedianSmooth(List<MutableGpxPoint> data, int number) {
-        int half = (int)MathF.Floor(number / 2);
-
-        return data.Select(
-                (point, i) => {
-                    List<MutableGpxPoint> window = Helpers
-                        .GetArrayWindow(data, i, half)
-                        .OrderBy(p => p.Ele)
-                        .ToList();
-
-                    int center = (int)MathF.Floor(window.Count / 2);
-                    var median = window[center];
-                    point.Ele = median.Ele;
-                    return point;
-                }
-            )
-            .ToList();
-    }
-
-    public static List<MutableGpxPoint> ClampSpikes(List<MutableGpxPoint> points, double maxChange) {
-        var clampedPoints = new List<MutableGpxPoint> { points[0] };
-
-        for (int i = 1; i < points.Count; i++) {
-            MutableGpxPoint current = points[i];
-            MutableGpxPoint prev = points[i - 1];
-
-            double diff = current.Ele - prev.Ele;
-
-            double clampedDiff = Math.Clamp(diff, -maxChange, maxChange);
-            current.Ele = prev.Ele + clampedDiff;
-
-            clampedPoints.Add(current);
-        }
-        return clampedPoints;
+    public AnalyticData Build() {
+        return new(_gpxPoints.Select(p => p.ToGpxPoint()).ToList());
     }
 }
 
 internal class Helpers {
-    public static GpxPoint CreateGpxPoint(MutableGpxPoint p) => new(p.Lat, p.Lon, p.Ele, p.Time);
-
     public static IEnumerable<T> GetArrayWindow<T>(List<T> data, int i, int half) {
         var (start, end) = GetWindowBounds(data, i, half);
         return GetWindow(data, start, end);

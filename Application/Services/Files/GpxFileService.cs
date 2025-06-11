@@ -51,22 +51,22 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
         return Result<GpxFile>.Success(entity);
     }
 
-    public async Task<TripAnalyticData> GetGpxDataFromFile(IFormFile file) {
+    public async Task<AnalyticData> GetGpxDataFromFile(IFormFile file) {
         return await _parser.ParseAsync(file.OpenReadStream());
     }
 
-    public async Task<Result<TripAnalyticData>> GetGpxDataByFileIdAsync(Guid id) {
+    public async Task<Result<AnalyticData>> GetGpxDataByFileIdAsync(Guid id) {
         var result = await _repository.GetGpxFileStream(id);
         if (result == null) {
-            return Result<TripAnalyticData>.Failure(Error.NotFound("No file with id found"));
+            return Result<AnalyticData>.Failure(Error.NotFound("No file with id found"));
         }
 
         var data = await _parser.ParseAsync(result);
         if (data == null) {
-            return Result<TripAnalyticData>.Failure(Error.Unknown("something went wrong"));
+            return Result<AnalyticData>.Failure(Error.Unknown("something went wrong"));
         }
 
-        return Result<TripAnalyticData>.Success(data);
+        return Result<AnalyticData>.Success(data);
     }
 
     public Task<bool> DeleteAsync(int id) {

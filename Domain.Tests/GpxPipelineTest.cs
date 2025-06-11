@@ -9,7 +9,7 @@ namespace Domain.Tests;
 public class GpxPipelineTests {
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
-    public void Build_ShouldCalculateMaxAndMinElevation(TripAnalyticData data) {
+    public void Build_ShouldCalculateMaxAndMinElevation(AnalyticData data) {
         var analytics = CreateBuilder(data).WithHighestPoint().WithLowestPoint().Build();
 
         Assert.Equal(data.Data.Max(p => p.Ele), analytics.HighestElevation);
@@ -18,7 +18,7 @@ public class GpxPipelineTests {
 
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
-    public void Build_ShouldCalculateTotalAscentAndDescent(TripAnalyticData data) {
+    public void Build_ShouldCalculateTotalAscentAndDescent(AnalyticData data) {
         var analytics = CreateBuilder(data).WithTotalAscent().WithTotalDescent().Build();
 
         // Just assert ascent >= 0 and descent <= 0 (descent is negative sum)
@@ -28,7 +28,7 @@ public class GpxPipelineTests {
 
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
-    public void Builder_WithLowest_AndHighestPoints_Should_ContainThem(TripAnalyticData data) {
+    public void Builder_WithLowest_AndHighestPoints_Should_ContainThem(AnalyticData data) {
         var analytics = CreateBuilder(data).WithHighestPoint().WithLowestPoint().Build();
 
         Assert.NotEqual(default, analytics.HighestElevation);
@@ -37,9 +37,9 @@ public class GpxPipelineTests {
 
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
-    public void Builder_With_AverageSlopes_Should_ContainThem(TripAnalyticData data) {
+    public void Builder_With_AverageSlopes_Should_ContainThem(AnalyticData data) {
         var analytics = CreateBuilder(data)
-            //.WithAverageSlope()
+            .WithAverageSlope()
             .WithAverageAscentSlope()
             .WithAverageDescentSlope()
             .Build();
@@ -51,9 +51,9 @@ public class GpxPipelineTests {
 
     [Fact]
     public async Task Pipeline_Should_Genereta_TimeAnalytics_For_FileWithTimespams() {
-        TripAnalyticData data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
+        AnalyticData data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
 
-        var points = GpxDataBuilder.ProcessData(data).Data;
+        var points = GpxDataFactory.Create(data).Data;
         var routeAnalytics = new RouteAnalyticsBuilder(points, points.ToGains()).Build();
 
         var analytics = TimeAnalyticFactory.CreateAnalytics(new(routeAnalytics, points));
@@ -61,7 +61,7 @@ public class GpxPipelineTests {
         Assert.NotNull(analytics);
     }
 
-    static RouteAnalyticsBuilder CreateBuilder(TripAnalyticData data) {
+    static RouteAnalyticsBuilder CreateBuilder(AnalyticData data) {
         return new RouteAnalyticsBuilder(data.Data, data.Data.ToGains());
     }
 }

@@ -5,22 +5,34 @@ using Domain.Trips.ValueObjects;
 
 namespace Application.TripAnalytics.Commands;
 
-public record AnalyticData(List<GpxPoint> Points, List<GpxGain> Gains);
+internal class ProccesGpxDataCommand(AnalyticData data) : ICommand<AnalyticData> {
+    readonly AnalyticData _data = data;
 
-internal class ProccesGpxDataCommand(TripAnalyticData data) : ICommand<AnalyticData> {
-    readonly TripAnalyticData _data = data;
+    public static ICommand<AnalyticData> Create(AnalyticData data) {
+        return new ProccesGpxDataCommand(data);
+    }
+
+    public static Result<AnalyticData> Run(AnalyticData data) {
+        return new ProccesGpxDataCommand(data).Execute();
+    }
 
     public Result<AnalyticData> Execute() {
-        var points = GpxDataBuilder.ProcessData(_data).Data;
+        var points = GpxDataFactory.Create(_data).Data;
         var gains = points.ToGains();
         if (points == null || gains == null) {
-            return Result<AnalyticData>.Failure(Error.Unknown("invalid data"));
+            return CommandResult.Failure(Error.Unknown("invalid data"));
         }
         AnalyticData result = new(points, gains);
         return Result<AnalyticData>.Success(result);
     }
 
-    public static Result<AnalyticData> Run(TripAnalyticData data) {
-        return new ProccesGpxDataCommand(data).Execute();
+    static class CommandResult {
+        public static Result<AnalyticData> Success<T>(AnalyticData res) {
+            return Result<AnalyticData>.Success(res);
+        }
+
+        public static Result<AnalyticData> Failure(Error err) {
+            return Result<AnalyticData>.Failure(err);
+        }
     }
 }

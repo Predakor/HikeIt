@@ -5,7 +5,7 @@ using Domain.Trips.ValueObjects;
 namespace Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 
 public static class RouteAnalyticFactory {
-    public static RouteAnalytic Create(TripAnalyticData data) {
+    public static RouteAnalytic Create(AnalyticData data) {
         return RouteAnalyticsDirector.Complete(data.Data);
     }
 

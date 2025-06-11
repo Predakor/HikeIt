@@ -17,7 +17,7 @@ public class TripAnalytic : IEntity<Guid> {
 
     #endregion
 
-    public static TripAnalytic Create(TripAnalyticData data) {
+    public static TripAnalytic Create(AnalyticData data) {
         return new TripAnalytic();
     }
 }

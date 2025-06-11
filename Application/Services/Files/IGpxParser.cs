@@ -3,5 +3,5 @@
 namespace Application.Services.Files;
 
 public interface IGpxParser {
-    Task<TripAnalyticData> ParseAsync(Stream stream);
+    Task<AnalyticData> ParseAsync(Stream stream);
 }

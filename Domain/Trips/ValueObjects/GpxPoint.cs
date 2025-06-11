@@ -1,11 +1,10 @@
 ﻿namespace Domain.Trips.ValueObjects;
 
 public abstract record GpxPointBase(double Lat, double Lon) {
-    record GpxTimePoint(double Lat, double Lon, double Ele, DateTime Time)
-       : GpxPointBase(Lat, Lon);
+    record GpxTimePoint(double Lat, double Lon, double Ele, DateTime Time) : GpxPointBase(Lat, Lon);
 
     record GpxPoint(double Lat, double Lon, double Ele, DateTime? Time = null)
-       : GpxPointBase(Lat, Lon);
+        : GpxPointBase(Lat, Lon);
 }
 
 public record GpxPoint(double Lat, double Lon, double Ele, DateTime? Time = null);
@@ -21,4 +20,15 @@ public record GpxGainWithTime(
     float TimeDelta
 );
 
-public record TripAnalyticData(List<GpxPoint> Data);
+//scale 100x eg el gain of 0.01 -> 1
+public readonly struct ScaledGain(float distanceDelta, float elevationDelta, float timeDelta) {
+    readonly short _distanceDelta = (short)(distanceDelta * 100f);
+    readonly short _elevationDelta = (short)(elevationDelta * 100f);
+    readonly short _timeDelta = (short)timeDelta;
+
+    public float DistanceDelta => _distanceDelta / 100f;
+    public float ElevationDelta => _elevationDelta / 100f;
+    public float TimeDelta => _timeDelta;
+}
+
+public record AnalyticData(List<GpxPoint> Data, List<GpxGain>? Gains = null);

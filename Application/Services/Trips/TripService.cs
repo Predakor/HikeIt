@@ -1,5 +1,6 @@
 ﻿using Application.Services.Files;
 using Application.TripAnalytics;
+using Application.TripAnalytics.Commands;
 using Domain.Common;
 using Domain.TripAnalytics;
 using Domain.Trips;
@@ -64,31 +65,32 @@ public class TripService : ITripService {
     }
 
     public async Task<Result<Guid>> Add(Request.Create dto) {
-        var trip = Trip.Create(
-            dto.Base.Name,
-            dto.Base.TripDay,
-            GetLoggedUserId(),
-            dto.RegionId
-        );
+        var trip = Trip.Create(dto.Base.Name, dto.Base.TripDay, GetLoggedUserId(), dto.RegionId);
 
         await _tripRepository.AddAsync(trip);
         return Result<Guid>.Success(trip.Id);
     }
 
-    public async Task<Result<Guid>> Add(Request.Create dto, TripAnalyticData data) {
+    public async Task<Result<Guid>> Add(Request.Create newTrip, AnalyticData data) {
         var trip = Trip.Create(
-            dto.Base.Name,
-            dto.Base.TripDay,
+            newTrip.Base.Name,
+            newTrip.Base.TripDay,
             GetLoggedUserId(),
-            dto.RegionId
+            newTrip.RegionId
         );
 
-        var analytics = await _tripAnalyticService.GenerateAnalytic(data);
-        if (analytics != null) {
-            trip.AddAnalytics(analytics);
-        }
-
-        //Attach file id somewhere
+        ProccesGpxDataCommand
+            .Create(data)
+            .Execute()
+            .Match(
+                async proccesedData => {
+                    var analytics = await _tripAnalyticService.GenerateAnalytic(proccesedData);
+                    if (analytics != null) {
+                        trip.AddAnalytics(analytics);
+                    }
+                },
+                e => throw new Exception(e.Message)
+            );
 
         await _tripRepository.AddAsync(trip);
         return Result<Guid>.Success(trip.Id);

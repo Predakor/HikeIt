@@ -77,12 +77,20 @@ public static class GpxHelpers {
             .ToList();
     }
 
+    public static List<ScaledGain> ToScaled(this List<GpxGain> gains) {
+        return gains.Select(g => g.ToScaled()).ToList();
+    }
+
     public static GpxPointWithTime ToGpxWithTime(this GpxPoint p, DateTime time) {
         return new GpxPointWithTime(p.Lat, p.Lon, p.Ele, time);
     }
 
     public static GpxGainWithTime ToGainWithTime(this GpxGain p, float timeDelta) {
         return new GpxGainWithTime(p.DistanceDelta, p.ElevationDelta, p.Slope, timeDelta);
+    }
+
+    public static ScaledGain ToScaled(this GpxGain g) {
+        return new(g.DistanceDelta, g.ElevationDelta, g.TimeDelta ?? 0);
     }
 }
 

@@ -19,15 +19,8 @@ public class TripAnalyticService(
     readonly ITripDomainAnalyticService _tripDomainAnalyticService = tripDomainAnalyticService;
     readonly ITripAnalyticRepository _tripAnalyticRepository = tripAnalyticRepository;
 
-    public async Task<TripAnalytic> GenerateAnalytic(TripAnalyticData data) {
-
-        //could be a different step or done before since 
-        //its neccesary for analytics creation
-        var analyticData = ProccesGpxDataCommand.Run(data);
-        if (analyticData.HasErrors(out var error)) {
-            throw new Exception(error.Message);
-        }
-        var (points, gains) = analyticData.Value!;
+    public async Task<TripAnalytic> GenerateAnalytic(AnalyticData data) {
+        var (points, gains) = data;
 
         var builder = new TripAnalyticBuilder();
 
@@ -56,8 +49,14 @@ public class TripAnalyticService(
                 error => Console.WriteLine($"couldn't create peak analytics reason{error.Message}")
             );
 
-        //Elevation profile wip
-        var elevationProfile = points.Where((p, i) => i % 10 == 0).ToList();
+        //Elevation implement actual downsampling
+        CreateElevationProfileCommand
+            .Create(new(data, null))
+            .Execute()
+            .Match(
+                data => builder.WithElevationProfile(data),
+                error => Console.WriteLine(error.Message)
+            );
 
         //PeaksAnalytics not done
         //ElevationProfile not done

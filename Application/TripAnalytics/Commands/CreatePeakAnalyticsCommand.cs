@@ -8,16 +8,6 @@ namespace Application.TripAnalytics.Commands;
 
 record CommandData(List<PeakDto.Reached> ReachedPeaks, Guid TripId, Guid UserId);
 
-internal static class CommandResult {
-    public static Result<PeaksAnalytic> Success(PeaksAnalytic analytics) {
-        return Result<PeaksAnalytic>.Success(analytics);
-    }
-
-    public static Result<PeaksAnalytic> Failure(Error error) {
-        return Result<PeaksAnalytic>.Failure(error);
-    }
-}
-
 internal class CreatePeakAnalyticsCommand(CommandData data) : ICommand<PeaksAnalytic> {
     readonly List<PeakDto.Reached> _reachedPeaks = data.ReachedPeaks;
     readonly Guid _tripId = data.TripId;
@@ -44,5 +34,15 @@ internal class CreatePeakAnalyticsCommand(CommandData data) : ICommand<PeaksAnal
 
     public static ICommand<PeaksAnalytic> Create(CommandData data) {
         return new CreatePeakAnalyticsCommand(data);
+    }
+
+    static class CommandResult {
+        public static Result<PeaksAnalytic> Success(PeaksAnalytic analytics) {
+            return Result<PeaksAnalytic>.Success(analytics);
+        }
+
+        public static Result<PeaksAnalytic> Failure(Error error) {
+            return Result<PeaksAnalytic>.Failure(error);
+        }
     }
 }

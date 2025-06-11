@@ -55,17 +55,20 @@ public class TripAnalyticBuilder {
 }
 
 public class ElevationProfile {
-    public required string Name { get; set; }
+    public required GpxPoint Start { get; init; }
+    public required ICollection<ScaledGain> Gains { get; init; }
 }
 
-internal class TripAnalyticDataValidator(TripAnalyticData data) {
+
+
+internal class TripAnalyticDataValidator(AnalyticData data) {
     readonly List<GpxPoint> _data = data.Data;
 
     public bool Validate() {
         return _data.Count > 2;
     }
 
-    public static bool ValidateData(TripAnalyticData data) {
+    public static bool ValidateData(AnalyticData data) {
         return new TripAnalyticDataValidator(data).Validate();
     }
 }

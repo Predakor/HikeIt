@@ -1,23 +1,41 @@
 ﻿using Application.Commons.Interfaces;
 using Domain.Common;
 using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
-using Domain.Trips.ValueObjects;
+using Domain.Trips.Builders.GpxDataBuilder;
 
 namespace Application.TripAnalytics.Commands;
 
-
-record PointsToPreserve(List<GpxPoint> Maximas, List<GpxPoint> Minimas);
-record ElevationProfileData(AnalyticData Data, PointsToPreserve? Points);
-
 internal class CreateElevationProfileCommand : ICommand<ElevationProfile> {
-    //elevation Profile 
-    //probbably a starting point
-    //and array of deltas?
-    public Result<ElevationProfile> Execute() {
-        throw new NotImplementedException();
-    }
-}
+    readonly ElevationProfileData _data;
 
-public class ElevationProfileBuilder() {
+    public CreateElevationProfileCommand(ElevationProfileData eleData) {
+        _data = eleData;
+    }
+
+    public static CreateElevationProfileCommand Create(ElevationProfileData eleData) {
+        return new CreateElevationProfileCommand(eleData);
+    }
+
+    public Result<ElevationProfile> Execute() {
+        var elevationData = GpxDataFactory.Create(_data);
+        if (elevationData == null) {
+            var error = Error.Unknown("Something went wrong while generating elevation profile");
+            return Result<ElevationProfile>.Failure(error);
+        }
+        if (elevationData.Data.Count == 0) {
+            var error = Error.Unknown("Looks like you elevation data is empty");
+            return Result<ElevationProfile>.Failure(error);
+        }
+
+        var points = elevationData.Data;
+
+        ElevationProfile elevationProfile = new() {
+            Start = points.First(),
+            Gains = points.ToGains().ToScaled(),
+        };
+
+        return Result<ElevationProfile>.Success(elevationProfile);
+    }
+
 
 }
