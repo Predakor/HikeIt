@@ -7,7 +7,7 @@ namespace Application.Dto;
 /// <summary>
 /// Core trip properties shared by all trip DTOs.
 /// </summary>
-public record TripBase(float Height, float Distance, float Duration, DateOnly TripDay);
+public record TripBase(string Name, DateOnly TripDay);
 
 public record TripBasePartial(float? Height, float? Distance, float? Duration, DateOnly? TripDay);
 

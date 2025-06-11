@@ -11,6 +11,8 @@ using Application.Services.Users;
 using Domain.Entiites.Peaks;
 using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
+using Domain.ReachedPeaks;
+using Domain.TripAnalytics.Interfaces;
 using Domain.TripAnalytics.Services;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
@@ -91,6 +93,8 @@ static void InjectRepositories(WebApplicationBuilder builder) {
     builder.Services.AddScoped<ITripRepository, TripRepository>();
     builder.Services.AddScoped<IRegionRepository, RegionRepository>();
     builder.Services.AddScoped<IGpxFileRepository, GpxFileRepository>();
+    builder.Services.AddScoped<ITripAnalyticRepository, TripAnalyticRepository>();
+    builder.Services.AddScoped<IReachedPeakRepository, ReachedPeakRepository>();
 }
 
 static void InjectServices(WebApplicationBuilder builder) {
@@ -101,6 +105,7 @@ static void InjectServices(WebApplicationBuilder builder) {
     builder.Services.AddScoped<IGpxFileService, GpxFileService>();
     builder.Services.AddScoped<ITripAnalyticService, TripAnalyticService>();
     builder.Services.AddScoped<ITripDomainAnalyticService, TripDomainAnalyticsService>();
+
 }
 static void InjectMappers(WebApplicationBuilder builder) {
     builder.Services.AddScoped<PeakMapper>();

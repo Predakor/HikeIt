@@ -1,6 +1,6 @@
-﻿using Application.Dto;
-using Application.Services.Files;
+﻿using Application.Services.Files;
 using Domain.Common;
+using Domain.TripAnalytics;
 using Domain.Trips;
 using Domain.Trips.ValueObjects;
 using static Application.Dto.TripDto;
@@ -34,11 +34,7 @@ public class TripService : ITripService {
             return null;
         }
         var mappedTrips = trips
-            .Select(p => new TripDto.Request.ResponseBasic(
-                p.Id,
-                p.RegionId,
-                new(1, 1, 1, p.TripDay)
-            ))
+            .Select(p => new Request.ResponseBasic(p.Id, p.RegionId, new(p.Name, p.TripDay)))
             .ToList();
 
         return mappedTrips;
@@ -49,20 +45,29 @@ public class TripService : ITripService {
         if (trip == null) {
             return null;
         }
-        return new(
+        TripAnalytic? analytic = null;
+
+        if (trip.TripAnalyticId != null) {
+            analytic = await _tripAnalyticService.GetAnalytic((Guid)trip.TripAnalyticId!);
+        }
+
+        Partial response = new(
             trip.Id,
-            trip.Analytics,
+            analytic,
             trip.GpxFile,
             trip.Region,
-            new(1, 1, 1, trip.TripDay)
+            new(trip.Name, trip.TripDay)
         );
+
+        return response;
     }
 
     public async Task<Result<Guid>> Add(Request.Create dto) {
         var trip = Trip.Create(
-            dto.Base.TripDay.ToShortDateString(),
+            dto.Base.Name,
             dto.Base.TripDay,
-            GetLoggedUserId()
+            GetLoggedUserId(),
+            dto.RegionId
         );
 
         await _tripRepository.AddAsync(trip);
@@ -71,12 +76,11 @@ public class TripService : ITripService {
 
     public async Task<Result<Guid>> Add(Request.Create dto, TripAnalyticData data) {
         var trip = Trip.Create(
-            dto.Base.TripDay.ToShortDateString(),
+            dto.Base.Name,
             dto.Base.TripDay,
-            GetLoggedUserId()
+            GetLoggedUserId(),
+            dto.RegionId
         );
-
-        trip.ChangeRegion(dto.RegionId);
 
         var analytics = await _tripAnalyticService.GenerateAnalytic(data);
         if (analytics != null) {

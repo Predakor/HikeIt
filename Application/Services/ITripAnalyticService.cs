@@ -5,4 +5,5 @@ namespace Application.Services;
 
 public interface ITripAnalyticService {
     Task<TripAnalytic> GenerateAnalytic(TripAnalyticData data);
+    Task<TripAnalytic?> GetAnalytic(Guid id);
 }

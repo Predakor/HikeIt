@@ -1,4 +1,5 @@
-﻿using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
+﻿using Domain.Common;
+using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.Trips.ValueObjects;
 
 namespace Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
@@ -26,6 +27,7 @@ public static class RouteAnalyticsDirector {
             .WithAverageAscentSlope()
             .Build();
     }
+
     public static RouteAnalytic Basic(List<GpxPoint> points, List<GpxGain>? gains = null) {
         return new RouteAnalyticsBuilder(points, gains ?? points.ToGains())
             .WithTotalDistance()
@@ -49,9 +51,9 @@ public class RouteAnalyticsBuilder(List<GpxPoint> points, List<GpxGain> gains) {
     double _minElevation;
     double _maxElevation;
 
-    short _averageSlope;
-    short _averageAscentSlope;
-    short _averageDescentSlope;
+    float _averageSlope;
+    float _averageAscentSlope;
+    float _averageDescentSlope;
 
     #endregion
 
@@ -83,12 +85,13 @@ public class RouteAnalyticsBuilder(List<GpxPoint> points, List<GpxGain> gains) {
     }
 
     public RouteAnalyticsBuilder WithAverageSlope() {
-        _averageSlope = (short)_gains.Average(p => p.Slope);
+        var avg = _gains.Average(p => p.Slope);
+        _averageSlope = avg;
         return this;
     }
 
     public RouteAnalyticsBuilder WithAverageAscentSlope() {
-        _averageAscentSlope = (short)_gains.Where(p => p.Slope > 0).Average(p => p.Slope);
+        _averageAscentSlope = _gains.Where(p => p.Slope > 0).Average(p => p.Slope);
         return this;
     }
 

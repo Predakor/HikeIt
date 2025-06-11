@@ -1,9 +1,11 @@
 ﻿using Application.Services.Peaks;
+using Domain.Common;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 using Domain.TripAnalytics.Factories;
+using Domain.TripAnalytics.Interfaces;
 using Domain.TripAnalytics.Services;
 using Domain.TripAnalytics.ValueObjects.PeaksAnalytics;
 using Domain.Trips.Builders.GpxDataBuilder;
@@ -13,10 +15,12 @@ namespace Application.Services;
 
 public class TripAnalyticService(
     IPeakService peakService,
-    ITripDomainAnalyticService tripDomainAnalyticService
+    ITripDomainAnalyticService tripDomainAnalyticService,
+    ITripAnalyticRepository tripAnalyticRepository
 ) : ITripAnalyticService {
     readonly IPeakService _peakRepository = peakService;
     readonly ITripDomainAnalyticService _tripDomainAnalyticService = tripDomainAnalyticService;
+    readonly ITripAnalyticRepository _tripAnalyticRepository = tripAnalyticRepository;
 
     public async Task<TripAnalytic> GenerateAnalytic(TripAnalyticData data) {
         var points = GpxDataBuilder.ProcessData(data).Data;
@@ -33,7 +37,6 @@ public class TripAnalyticService(
         if (timeAnalytics != null) {
             builder.WithTimeAnalytic(timeAnalytics);
         }
-
 
         //peak detection semi done
         var potentialPeaks = _tripDomainAnalyticService.FindLocalPeaks(points, gains);
@@ -55,19 +58,32 @@ public class TripAnalyticService(
 
             var peakAnalytics = PeaksAnalytic.Create(peaks);
 
-            builder.WithPeaksAnalytic(peakAnalytics);
+
+            //add latter
+            //builder.WithPeaksAnalytic(peakAnalytics);
         }
 
         //Elevation profile wip
-        var elevationProfile = points.Select((p, i) => i == 10 ? p : null);
-        while (elevationProfile.Count() > 100) {
-            elevationProfile = elevationProfile.Select((p, i) => i == 10 ? p : null);
-        }
+        var elevationProfile = points
+            .Where((p, i) => i % 10 == 0)
+            .ToList();
 
-        var r = builder.Build();
         //PeaksAnalytics not done
         //ElevationProfile not done
 
-        throw new NotImplementedException();
+
+        var entity = builder.Build();
+
+        var result = await _tripAnalyticRepository.AddAsync(entity);
+
+        if (result == false) {
+            throw new Exception();
+        }
+
+        return entity;
+    }
+
+    public async Task<TripAnalytic?> GetAnalytic(Guid id) {
+        return await _tripAnalyticRepository.GetByIdAsync(id);
     }
 }

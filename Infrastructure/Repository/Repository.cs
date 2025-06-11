@@ -9,7 +9,6 @@ public abstract class Repository<T, TKey>(TripDbContext context)
     protected readonly TripDbContext Context = context;
     protected readonly DbSet<T> DbSet = context.Set<T>();
 
-
     public virtual async Task<T?> GetByIdAsync(TKey id) => await DbSet.FindAsync(id).AsTask();
 
     public virtual async Task<IEnumerable<T>> GetAllAsync() => await DbSet.ToListAsync();

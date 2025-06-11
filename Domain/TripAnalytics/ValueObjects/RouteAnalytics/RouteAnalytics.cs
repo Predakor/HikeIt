@@ -2,6 +2,13 @@
 
 //Owned Type
 public class RouteAnalytic {
+
+    //Ideas
+    //avg elevation gain per m
+    //total ascent/acerageAscentSlope
+    // same for descend
+    // and ascent
+
     public required double TotalDistanceKm { get; init; }
     public required double TotalAscent { get; init; }
     public required double TotalDescent { get; init; }
@@ -9,8 +16,8 @@ public class RouteAnalytic {
     public required double HighestElevation { get; init; }
     public required double LowestElevation { get; init; }
 
-    public required short AverageSlope { get; init; }
-    public required short AverageAscentSlope { get; init; }
-    public required short AverageDescentSlope { get; init; }
+    public required float AverageSlope { get; init; }
+    public required float AverageAscentSlope { get; init; }
+    public required float AverageDescentSlope { get; init; }
 
 }

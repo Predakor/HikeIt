@@ -48,7 +48,7 @@ public class TripsController : ControllerBase {
         }
 
         var gpxData = await _fileService.GetGpxDataFromFile(file);
-        if (gpxData == null) {
+        if (gpxData == null || gpxData.Data.Count == 0) {
             return BadRequest("file was wrong");
         }
 

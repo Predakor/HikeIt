@@ -1,4 +1,5 @@
-﻿using Domain.Trips.ValueObjects;
+﻿using Domain.Common;
+using Domain.Trips.ValueObjects;
 
 namespace Domain.TripAnalytics.Services;
 

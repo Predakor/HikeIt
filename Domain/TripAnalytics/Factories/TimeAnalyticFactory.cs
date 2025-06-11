@@ -1,5 +1,6 @@
 ﻿
 
+using Domain.Common;
 using Domain.TripAnalytics.Builders.TripTimeAnalyticBuilder;
 using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;

@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    partial class TripDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250608224708_ChangedGainsDataTypeToFloat")]
+    partial class ChangedGainsDataTypeToFloat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -377,7 +380,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("RegionId")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TripAnalyticId")
+                    b.Property<Guid?>("TripAnalyticID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("TripDay")
@@ -396,9 +399,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.HasIndex("TripAnalyticId")
+                    b.HasIndex("TripAnalyticID")
                         .IsUnique()
-                        .HasFilter("[TripAnalyticId] IS NOT NULL");
+                        .HasFilter("[TripAnalyticID] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -614,7 +617,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.TripAnalytics.TripAnalytic", "Analytics")
                         .WithOne()
-                        .HasForeignKey("Domain.Trips.Trip", "TripAnalyticId")
+                        .HasForeignKey("Domain.Trips.Trip", "TripAnalyticID")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entiites.Users.User", "User")

@@ -66,7 +66,7 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
             builder
                 .HasOne(t => t.Analytics)
                 .WithOne()
-                .HasForeignKey<Trip>(t => t.TripAnalyticID)
+                .HasForeignKey<Trip>(t => t.TripAnalyticId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasData(DataSeed.Trips);
