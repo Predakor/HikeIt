@@ -22,12 +22,12 @@ internal class CreateElevationProfileCommand : ICommand<ElevationProfile> {
             var error = Error.Unknown("Something went wrong while generating elevation profile");
             return Result<ElevationProfile>.Failure(error);
         }
-        if (elevationData.Data.Count == 0) {
+        if (elevationData.Points.Count == 0) {
             var error = Error.Unknown("Looks like you elevation data is empty");
             return Result<ElevationProfile>.Failure(error);
         }
 
-        var points = elevationData.Data;
+        var points = elevationData.Points;
 
         var profile = ElevationProfile.Create(points.First(), points.ToGains());
 

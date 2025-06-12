@@ -7,7 +7,7 @@ public class GpxDataBuilderTest {
 
     [Fact]
     public void TripAnalyticsBuilder_Should_ReturnBuilder() {
-        var builder = new GpxDataBuilder(GpxTestData.DownUpPath.Data);
+        var builder = new GpxDataBuilder(GpxTestData.DownUpPath.Points);
 
         Assert.NotNull(builder);
     }
@@ -15,7 +15,7 @@ public class GpxDataBuilderTest {
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
     public void TripAnalyticsBuilder_Should_DampenSpikes(AnalyticData data) {
-        var points = new GpxDataBuilder(data.Data).ApplyMedianFilter(5).Build();
+        var points = new GpxDataBuilder(data.Points).ApplyMedianFilter(5).Build();
 
         double MaxElevationJump(List<GpxPoint> points) {
             double maxJump = 0;
@@ -27,7 +27,7 @@ public class GpxDataBuilderTest {
             return maxJump;
         }
 
-        var biggestSpike = MaxElevationJump(points.Data);
+        var biggestSpike = MaxElevationJump(points.Points);
 
         Assert.True(biggestSpike < 5);
     }
@@ -39,10 +39,10 @@ public class GpxDataBuilderTest {
     ) {
         const float jitterThreshold = 0.5f; // use same threshold as in method
 
-        var smoothedPoints = new GpxDataBuilder(data.Data)
+        var smoothedPoints = new GpxDataBuilder(data.Points)
             .ApplyEmaSmoothing(jitterThreshold)
             .Build()
-            .Data;
+            .Points;
 
         for (int i = 1; i < smoothedPoints.Count; i++) {
             double diff = Math.Abs(smoothedPoints[i].Ele - smoothedPoints[i - 1].Ele);

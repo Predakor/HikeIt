@@ -50,7 +50,7 @@ public class TripAnalyticBuilder {
 }
 
 internal class TripAnalyticDataValidator(AnalyticData data) {
-    readonly List<GpxPoint> _data = data.Data;
+    readonly List<GpxPoint> _data = data.Points;
 
     public bool Validate() {
         return _data.Count > 2;

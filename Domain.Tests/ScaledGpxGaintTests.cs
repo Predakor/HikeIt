@@ -36,7 +36,7 @@ public class ScaledGainTests {
 
     [Fact]
     public void ScaledGainSerializer_Should_SerializeAndDeserialize() {
-        var gains = data.Select(g => g.ToScaled()).ToArray();
+        var gains = data.ToArray();
 
         var bytes = ScaledGainSerializer.Serialize(gains);
         var deserialized = ScaledGainSerializer.Deserialize(bytes);
@@ -54,7 +54,7 @@ public class ScaledGainTests {
                 gains[i].ElevationDelta - 0.01f,
                 gains[i].ElevationDelta + 0.01f
             );
-            Assert.Equal((short)gains[i].TimeDelta, (short)deserialized[i].TimeDelta);
+            Assert.Equal(gains[i].TimeDelta, deserialized[i].TimeDelta);
         }
     }
 
@@ -68,8 +68,7 @@ public class ScaledGainTests {
 
     [Fact]
     public void DeserializedSerializedValue_ShouldBe_TheSameAS_Original() {
-        GpxGain gain = new(1, 1, 1);
-        var original = gain.ToScaled();
+        GpxGain original = new(1, 1, 1);
 
         var bytes = ScaledGainSerializer.Serialize([original]);
         var serialized = ScaledGainSerializer.Deserialize(bytes);

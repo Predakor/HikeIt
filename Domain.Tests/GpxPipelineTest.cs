@@ -12,8 +12,8 @@ public class GpxPipelineTests {
     public void Build_ShouldCalculateMaxAndMinElevation(AnalyticData data) {
         var analytics = CreateBuilder(data).WithHighestPoint().WithLowestPoint().Build();
 
-        Assert.Equal(data.Data.Max(p => p.Ele), analytics.HighestElevation);
-        Assert.Equal(data.Data.Min(p => p.Ele), analytics.LowestElevation);
+        Assert.Equal(data.Points.Max(p => p.Ele), analytics.HighestElevation);
+        Assert.Equal(data.Points.Min(p => p.Ele), analytics.LowestElevation);
     }
 
     [Theory]
@@ -53,7 +53,7 @@ public class GpxPipelineTests {
     public async Task Pipeline_Should_Genereta_TimeAnalytics_For_FileWithTimespams() {
         AnalyticData data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
 
-        var points = GpxDataFactory.Create(data).Data;
+        var points = GpxDataFactory.Create(data).Points;
         var routeAnalytics = new RouteAnalyticsBuilder(points, points.ToGains()).Build();
 
         var analytics = TimeAnalyticFactory.CreateAnalytics(new(routeAnalytics, points));
@@ -62,6 +62,6 @@ public class GpxPipelineTests {
     }
 
     static RouteAnalyticsBuilder CreateBuilder(AnalyticData data) {
-        return new RouteAnalyticsBuilder(data.Data, data.Data.ToGains());
+        return new RouteAnalyticsBuilder(data.Points, data.Points.ToGains());
     }
 }

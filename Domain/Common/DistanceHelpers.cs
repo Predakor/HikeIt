@@ -3,11 +3,7 @@
 namespace Domain.Common;
 
 public static class DistanceHelpers {
-    public static double Distance2D(GpxPoint p1, GpxPoint p2) {
-        return HaversineDistance(p1.Lat, p1.Lon, p2.Lat, p2.Lon);
-    }
-
-    public static double Distance2D(GpxPointWithTime p1, GpxPointWithTime p2) {
+    public static double Distance2D(IGeoPoint p1, IGeoPoint p2) {
         return HaversineDistance(p1.Lat, p1.Lon, p2.Lat, p2.Lon);
     }
 

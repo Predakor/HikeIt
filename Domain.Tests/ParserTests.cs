@@ -25,16 +25,16 @@ public class ParserTests {
     public async Task ParsedFiles_ShouldContain_AllGpxParams() {
         AnalyticData data = await ParseFromGpxFile("data/trip_small.gpx");
 
-        Assert.Contains(data.Data, e => e.Lat != 0);
-        Assert.Contains(data.Data, e => e.Lon != 0);
-        Assert.Contains(data.Data, e => e.Ele != 0);
+        Assert.Contains(data.Points, e => e.Lat != 0);
+        Assert.Contains(data.Points, e => e.Lon != 0);
+        Assert.Contains(data.Points, e => e.Ele != 0);
     }
 
     [Fact]
     public async Task ParsedFile_WithTimes_ShouldContain_GpxParamWithTime() {
         AnalyticData data = await ParseFromGpxFile("data/trip_small.gpx");
 
-        Assert.Contains(data.Data, e => e.Time != null);
+        Assert.Contains(data.Points, e => e.Time != null);
     }
 
     public static async Task<AnalyticData> ParseFromGpxFile(string relativePath) {

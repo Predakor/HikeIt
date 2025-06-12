@@ -6,7 +6,7 @@ namespace Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 
 public static class RouteAnalyticFactory {
     public static RouteAnalytic Create(AnalyticData data) {
-        return RouteAnalyticsDirector.Complete(data.Data);
+        return RouteAnalyticsDirector.Complete(data.Points);
     }
 
     public static RouteAnalytic Create(List<GpxPoint> points, List<GpxGain>? gains = null) {

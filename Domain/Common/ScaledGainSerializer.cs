@@ -3,26 +3,35 @@
 namespace Domain.Common;
 
 public static class ScaledGainSerializer {
-    public static byte[] Serialize(ScaledGain[] gains) {
-        var buffer = new byte[gains.Length * 6]; // 3 shorts per item (2 bytes each)
+    // 4 shorts per item (2 bytes each)
+    readonly static short Size = 8;
+
+    public static byte[] Serialize(GpxGain[] gains, float scale = 100) {
+        var buffer = new byte[gains.Length * Size];
         for (int i = 0; i < gains.Length; i++) {
-            var offset = i * 6;
-            BitConverter.TryWriteBytes(buffer.AsSpan(offset, 2), gains[i].rawDistanceDelta);
-            BitConverter.TryWriteBytes(buffer.AsSpan(offset + 2, 2), gains[i].rawElevationDelta);
-            BitConverter.TryWriteBytes(buffer.AsSpan(offset + 4, 2), gains[i].rawTimeDelta);
+            var offset = i * Size;
+            var scaled = ScaledGainFactory.FromGain(gains[i], scale);
+
+            BitConverter.TryWriteBytes(buffer.AsSpan(offset, 2), scaled.ScaledDistanceDelta);
+            BitConverter.TryWriteBytes(buffer.AsSpan(offset + 2, 2), scaled.ScaledElevationDelta);
+            BitConverter.TryWriteBytes(buffer.AsSpan(offset + 4, 2), scaled.ScaledTimeDelta);
+            BitConverter.TryWriteBytes(buffer.AsSpan(offset + 6, 2), scaled.Scale);
         }
         return buffer;
     }
 
     public static ScaledGain[] Deserialize(byte[] data) {
-        var count = data.Length / 6;
+        var count = data.Length / Size;
         var gains = new ScaledGain[count];
         for (int i = 0; i < count; i++) {
-            var offset = i * 6;
+            var offset = i * Size;
             short distance = BitConverter.ToInt16(data, offset);
             short elevation = BitConverter.ToInt16(data, offset + 2);
             short time = BitConverter.ToInt16(data, offset + 4);
-            gains[i] = ScaledGainFactory.Create(distance, elevation, time);
+            short scale = BitConverter.ToInt16(data, offset + 6);
+
+            //keep values from scaling again
+            gains[i] = ScaledGainFactory.FromRaw(distance, elevation, time, scale);
         }
         return gains;
     }

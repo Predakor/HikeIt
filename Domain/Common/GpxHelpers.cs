@@ -81,32 +81,23 @@ public static class GpxHelpers {
         return gains.Select(g => g.ToScaled()).ToList();
     }
 
-    public static GpxPointWithTime ToGpxWithTime(this GpxPoint p, DateTime time) {
+    internal static GpxPointWithTime ToGpxWithTime(this GpxPoint p, DateTime time) {
         return new GpxPointWithTime(p.Lat, p.Lon, p.Ele, time);
     }
 
-    public static GpxGainWithTime ToGainWithTime(this GpxGain p, float timeDelta) {
+    internal static GpxGainWithTime ToGainWithTime(this GpxGain p, float timeDelta) {
         return new GpxGainWithTime(p.DistanceDelta, p.ElevationDelta, p.Slope, timeDelta);
     }
 
-    public static ScaledGain ToScaled(this GpxGain g) {
-        return ScaledGainFactory.Create(g.DistanceDelta, g.ElevationDelta, g.TimeDelta ?? 0);
+    internal static ScaledGain ToScaled(this GpxGain g, float scale = 100) {
+        return ScaledGainFactory.FromGain(g, scale);
     }
 }
 
 internal static class GpxHelperMethods {
     public static (float distDelta, float eleDelta) GetDistanceDeltas(
-        GpxPoint curr,
-        GpxPoint prev
-    ) {
-        var planarDelta = (float)DistanceHelpers.Distance2D(curr, prev);
-        var eleDelta = (float)(curr.Ele - prev.Ele);
-        return (planarDelta, eleDelta);
-    }
-
-    public static (float distDelta, float eleDelta) GetDistanceDeltas(
-        GpxPointWithTime curr,
-        GpxPointWithTime prev
+        IGeoPoint curr,
+        IGeoPoint prev
     ) {
         var planarDelta = (float)DistanceHelpers.Distance2D(curr, prev);
         var eleDelta = (float)(curr.Ele - prev.Ele);
