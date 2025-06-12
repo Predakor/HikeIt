@@ -63,21 +63,21 @@ public static class GpxHelpers {
         return (pointsWithTime, gainsWithTime);
     }
 
-    public static List<GpxPointWithTime> MapToTimed(this List<GpxPoint> points) {
+    public static List<GpxPointWithTime> MapToTimed(this ICollection<GpxPoint> points) {
         return points
             .Where(p => p.Time != null)
             .Select(p => p.ToGpxWithTime((DateTime)p.Time!))
             .ToList();
     }
 
-    public static List<GpxGainWithTime> MapToTimed(this List<GpxGain> gains) {
+    public static List<GpxGainWithTime> MapToTimed(this ICollection<GpxGain> gains) {
         return gains
             .Where(p => p.TimeDelta != null)
             .Select(p => p.ToGainWithTime((float)p.TimeDelta!))
             .ToList();
     }
 
-    public static List<ScaledGain> ToScaled(this List<GpxGain> gains) {
+    public static List<ScaledGain> ToScaled(this ICollection<GpxGain> gains) {
         return gains.Select(g => g.ToScaled()).ToList();
     }
 
@@ -90,7 +90,7 @@ public static class GpxHelpers {
     }
 
     public static ScaledGain ToScaled(this GpxGain g) {
-        return new(g.DistanceDelta, g.ElevationDelta, g.TimeDelta ?? 0);
+        return ScaledGainFactory.Create(g.DistanceDelta, g.ElevationDelta, g.TimeDelta ?? 0);
     }
 }
 

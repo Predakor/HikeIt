@@ -41,12 +41,13 @@ public class TripAnalyticService(
         var tripId = Guid.NewGuid(); //Add actual value
         var userId = Guid.NewGuid(); //Add actual value
 
+        //Implement peak mapping
         CreatePeakAnalyticsCommand
             .Create(new(reachedPeaks, tripId, userId))
             .Execute()
             .Match(
                 data => builder.WithPeaksAnalytic(data),
-                error => Console.WriteLine($"couldn't create peak analytics reason{error.Message}")
+                error => Console.WriteLine($"couldn't create peak analytics reason: {error.Message}")
             );
 
         //Elevation implement actual downsampling

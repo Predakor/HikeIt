@@ -2,7 +2,7 @@
 using Application.Dto;
 using Domain.Common;
 using Domain.ReachedPeaks;
-using Domain.TripAnalytics.ValueObjects.PeaksAnalytics;
+using Domain.TripAnalytics.Entities.PeaksAnalytics;
 
 namespace Application.TripAnalytics.Commands;
 

@@ -1,4 +1,5 @@
-﻿using Domain.TripAnalytics.ValueObjects.PeaksAnalytics;
+﻿using Domain.TripAnalytics.Entities.ElevationProfile;
+using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
 using Domain.Trips.ValueObjects;
@@ -44,22 +45,9 @@ public class TripAnalyticBuilder {
     }
 
     public TripAnalytic Build() {
-        return new() {
-            Id = Guid.NewGuid(),
-            RouteAnalytics = _routeAnalytic,
-            TimeAnalytics = _timeAnalytic,
-            PeaksAnalytics = _peakAnalytic,
-            ElevationProfile = _elevationProfile,
-        };
+        return TripAnalytic.Create(_routeAnalytic, _timeAnalytic, _peakAnalytic, _elevationProfile);
     }
 }
-
-public class ElevationProfile {
-    public required GpxPoint Start { get; init; }
-    public required ICollection<ScaledGain> Gains { get; init; }
-}
-
-
 
 internal class TripAnalyticDataValidator(AnalyticData data) {
     readonly List<GpxPoint> _data = data.Data;

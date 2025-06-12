@@ -1,6 +1,6 @@
 ﻿using Application.Commons.Interfaces;
 using Domain.Common;
-using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
+using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.Trips.Builders.GpxDataBuilder;
 
 namespace Application.TripAnalytics.Commands;
@@ -29,13 +29,8 @@ internal class CreateElevationProfileCommand : ICommand<ElevationProfile> {
 
         var points = elevationData.Data;
 
-        ElevationProfile elevationProfile = new() {
-            Start = points.First(),
-            Gains = points.ToGains().ToScaled(),
-        };
+        var profile = ElevationProfile.Create(points.First(), points.ToGains());
 
-        return Result<ElevationProfile>.Success(elevationProfile);
+        return Result<ElevationProfile>.Success(profile);
     }
-
-
 }

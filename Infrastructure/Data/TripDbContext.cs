@@ -3,7 +3,7 @@ using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
-using Domain.TripAnalytics.ValueObjects.PeaksAnalytics;
+using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
 using Microsoft.EntityFrameworkCore;
@@ -96,5 +96,11 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                 .HasForeignKey("NewPeaksAnalyticId") // Explicit shadow FK
                 .OnDelete(DeleteBehavior.NoAction);
         });
+
+        //modelBuilder.Entity<ElevationProfile>(builder => {
+        //    builder.OwnsMany(ep => ep.Gains);
+
+
+        //});
     }
 }

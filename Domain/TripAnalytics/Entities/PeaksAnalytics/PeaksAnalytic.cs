@@ -1,6 +1,6 @@
 ﻿using Domain.ReachedPeaks;
 
-namespace Domain.TripAnalytics.ValueObjects.PeaksAnalytics;
+namespace Domain.TripAnalytics.Entities.PeaksAnalytics;
 
 public class PeaksAnalytic : IEntity<Guid> {
     public Guid Id { get; init; }

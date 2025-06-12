@@ -11,7 +11,12 @@ public record GpxPoint(double Lat, double Lon, double Ele, DateTime? Time = null
 
 public record GpxPointWithTime(double Lat, double Lon, double Ele, DateTime Time);
 
-public record GpxGain(float DistanceDelta, float ElevationDelta, float Slope, float? TimeDelta);
+public record GpxGain(
+    float DistanceDelta,
+    float ElevationDelta,
+    float Slope,
+    float? TimeDelta = null
+);
 
 public record GpxGainWithTime(
     float DistanceDelta,
@@ -20,15 +25,29 @@ public record GpxGainWithTime(
     float TimeDelta
 );
 
-//scale 100x eg el gain of 0.01 -> 1
-public readonly struct ScaledGain(float distanceDelta, float elevationDelta, float timeDelta) {
-    readonly short _distanceDelta = (short)(distanceDelta * 100f);
-    readonly short _elevationDelta = (short)(elevationDelta * 100f);
-    readonly short _timeDelta = (short)timeDelta;
+public static class ScaledGainFactory {
+    public static ScaledGain Create(float distanceDelta, float elevationDelta, float timeDelta) {
+        return new ScaledGain(
+            (short)(distanceDelta * 100f),
+            (short)(elevationDelta * 100f),
+            (short)timeDelta
+        );
+    }
 
-    public float DistanceDelta => _distanceDelta / 100f;
-    public float ElevationDelta => _elevationDelta / 100f;
-    public float TimeDelta => _timeDelta;
+    public static ScaledGain Create(short distanceDelta, short elevationDelta, short timeDelta) {
+        return new ScaledGain(distanceDelta, elevationDelta, timeDelta);
+    }
+}
+
+//scale 100x eg el gain of 0.01 -> 1
+public readonly struct ScaledGain(short distanceDelta, short elevationDelta, short timeDelta) {
+    public readonly short rawDistanceDelta = distanceDelta;
+    public readonly short rawElevationDelta = elevationDelta;
+    public readonly short rawTimeDelta = timeDelta;
+
+    public float DistanceDelta => rawDistanceDelta / 100f;
+    public float ElevationDelta => rawElevationDelta / 100f;
+    public float TimeDelta => rawTimeDelta;
 }
 
 public record AnalyticData(List<GpxPoint> Data, List<GpxGain>? Gains = null);
