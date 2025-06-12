@@ -14,8 +14,12 @@ public class TripAnalytic : IEntity<Guid> {
     #endregion
 
     #region Foreign types
-    public PeaksAnalytic? PeaksAnalytics { get; private set; }
-    public ElevationProfile? ElevationProfile { get; private set; }
+    public Guid? PeaksAnalyticsId { get; private set; }
+    public Guid? ElevationProfileId { get; private set; }
+
+    //navigation
+    public PeaksAnalytic? PeaksAnalytic { get; set; }
+    public ElevationProfile? ElevationProfile { get; set; }
 
     public static TripAnalytic Create(
         RouteAnalytic? routeAnalytics,
@@ -23,17 +27,32 @@ public class TripAnalytic : IEntity<Guid> {
         PeaksAnalytic? peaksAnalytics,
         ElevationProfile? elevationProfile
     ) {
-        return new TripAnalytic() {
+        var analytics = new TripAnalytic() {
+            Id = Guid.NewGuid(),
             RouteAnalytics = routeAnalytics,
             TimeAnalytics = timeAnalytics,
-            PeaksAnalytics = peaksAnalytics,
-            ElevationProfile = elevationProfile,
         };
+
+        if (peaksAnalytics != null) {
+            analytics.AddPeaksAnalytic(peaksAnalytics);
+        }
+
+        if (elevationProfile != null) {
+            analytics.AddElevationProfile(elevationProfile);
+        }
+        return analytics;
     }
 
     public void AddPeaksAnalytic(PeaksAnalytic analytics) {
         ArgumentNullException.ThrowIfNull(analytics);
-        PeaksAnalytics = analytics;
+        PeaksAnalyticsId = analytics.Id;
+        PeaksAnalytic = analytics;
+    }
+
+    public void AddElevationProfile(ElevationProfile profile) {
+        ArgumentNullException.ThrowIfNull(profile);
+        ElevationProfileId = profile.Id;
+        ElevationProfile = profile;
     }
 
     public void AddTimeAnalytics(TimeAnalytic analytics) {
@@ -45,13 +64,6 @@ public class TripAnalytic : IEntity<Guid> {
         ArgumentNullException.ThrowIfNull(analytics);
         RouteAnalytics = analytics;
     }
-
-    public void AddElevationProfile(ElevationProfile profile) {
-        ArgumentNullException.ThrowIfNull(profile);
-        ElevationProfile = profile;
-    }
-
-
 
     #endregion
 }

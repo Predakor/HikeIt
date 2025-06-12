@@ -1,4 +1,5 @@
-﻿using Domain.Entiites.Peaks;
+﻿using Application.Services.Peaks;
+using Domain.Entiites.Peaks;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,12 +14,5 @@ public class PeakRepository : Repository<Peak, int>, IPeakRepository {
 
     public override async Task<Peak?> GetByIdAsync(int id) {
         return await DbSet.Include(x => x.Region).FirstOrDefaultAsync(e => e.Id == id);
-    }
-
-    public async Task<bool> AddAsync(Peak peak) {
-        await DbSet.AddAsync(peak);
-        await SaveChangesAsync();
-        return true;
-
     }
 }

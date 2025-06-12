@@ -3,6 +3,7 @@ using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
+using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
@@ -16,6 +17,8 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
     public DbSet<Peak> Peaks { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<GpxFile> GpxFiles { get; set; }
+    public DbSet<TripAnalytic> TripAnalytics { get; set; }
+    public DbSet<ElevationProfile> ElevationProfiles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.Entity<Region>().HasData(DataSeed.Regions);
@@ -75,12 +78,18 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
         modelBuilder.Entity<TripAnalytic>(builder => {
             builder.OwnsOne(a => a.RouteAnalytics).WithOwner();
             builder.OwnsOne(a => a.TimeAnalytics).WithOwner();
-            builder.OwnsOne(a => a.ElevationProfile).WithOwner();
 
             builder
-                .HasOne(a => a.PeaksAnalytics)
+                .HasOne(a => a.ElevationProfile)
                 .WithOne()
-                .HasForeignKey<PeaksAnalytic>(pa => pa.Id);
+                .HasForeignKey<TripAnalytic>(t => t.ElevationProfileId)
+                .IsRequired(false);
+
+            builder
+                .HasOne(a => a.PeaksAnalytic)
+                .WithOne()
+                .HasForeignKey<TripAnalytic>(t => t.PeaksAnalyticsId)
+                .IsRequired(false);
         });
 
         modelBuilder.Entity<PeaksAnalytic>(builder => {
@@ -97,10 +106,6 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
-        //modelBuilder.Entity<ElevationProfile>(builder => {
-        //    builder.OwnsMany(ep => ep.Gains);
-
-
-        //});
+        modelBuilder.Entity<ElevationProfile>().OwnsOne(ep => ep.Start).WithOwner();
     }
 }

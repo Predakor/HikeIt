@@ -1,6 +1,5 @@
 ﻿using Application.Dto;
 using Application.Mappers.Implementations;
-using Domain.Entiites.Peaks;
 using Domain.Trips.ValueObjects;
 
 namespace Application.Services.Peaks;
@@ -21,16 +20,10 @@ public class PeakService(IPeakRepository repo, PeakMapper peakMapper) : IPeakSer
         return _peakMapper.MapToCompleteDto(peak);
     }
 
-    public async Task CreatePeakAsync(PeakDto.Simple peakDto) {
-        var newPeak = _peakMapper.MapToEntity(peakDto);
-        await _repo.AddAsync(newPeak);
-    }
-
     public async Task<List<PeakDto.Reached>> GetMatchingPeaks(List<GpxPoint> points) {
         //TOIMPlemtn
         await Task.Delay(1);
         return [new(1, 1065)];
-        throw new NotImplementedException();
     }
 
     public async Task<List<PeakDto.Reached>> GetMatchingPeaks(List<GpxPointWithTime> points) {

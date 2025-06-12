@@ -5,7 +5,6 @@ namespace Application.Services.Peaks;
 public interface IPeakService {
     Task<IEnumerable<PeakDto.Complete>> GetAllPeaksAsync();
     Task<PeakDto.Complete> GetPeakByIdAsync(int id);
-    Task CreatePeakAsync(PeakDto.Simple peakDto);
     Task<List<PeakDto.Reached>> GetMatchingPeaks(List<GpxPoint> points);
     Task<List<PeakDto.Reached>> GetMatchingPeaks(List<GpxPointWithTime> points);
 

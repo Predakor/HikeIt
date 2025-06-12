@@ -12,10 +12,6 @@ internal class CreateElevationProfileCommand : ICommand<ElevationProfile> {
         _data = eleData;
     }
 
-    public static CreateElevationProfileCommand Create(ElevationProfileData eleData) {
-        return new CreateElevationProfileCommand(eleData);
-    }
-
     public Result<ElevationProfile> Execute() {
         var elevationData = GpxDataFactory.Create(_data);
         if (elevationData == null) {
@@ -32,5 +28,9 @@ internal class CreateElevationProfileCommand : ICommand<ElevationProfile> {
         var profile = ElevationProfile.Create(points.First(), points.ToGains());
 
         return Result<ElevationProfile>.Success(profile);
+    }
+
+    public static CreateElevationProfileCommand Create(ElevationProfileData eleData) {
+        return new CreateElevationProfileCommand(eleData);
     }
 }

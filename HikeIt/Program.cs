@@ -8,11 +8,12 @@ using Application.Services.Region;
 using Application.Services.Trips;
 using Application.Services.Users;
 using Application.TripAnalytics;
-using Domain.Entiites.Peaks;
+using Application.TripAnalytics.Services;
 using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Interfaces;
+using Domain.TripAnalytics.Repositories;
 using Domain.TripAnalytics.Services;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
@@ -21,6 +22,7 @@ using Infrastructure.Data;
 using Infrastructure.Parsers;
 using Infrastructure.Repository;
 using Infrastructure.Storage;
+using Infrastructure.UnitOfWorks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,11 +78,12 @@ static void InjectDependencies(WebApplicationBuilder builder) {
     InjectStorages(builder);
     InjectServices(builder);
     InjectParsers(builder);
+    InjectUnitOfWorks(builder);
 }
 
 
 static void InjectParsers(WebApplicationBuilder builder) {
-    builder.Services.AddSingleton<IGpxParser, GpxParser>();
+    builder.Services.AddScoped<IGpxParser, GpxParser>();
 }
 
 static void InjectStorages(WebApplicationBuilder builder) {
@@ -95,6 +98,7 @@ static void InjectRepositories(WebApplicationBuilder builder) {
     builder.Services.AddScoped<IGpxFileRepository, GpxFileRepository>();
     builder.Services.AddScoped<ITripAnalyticRepository, TripAnalyticRepository>();
     builder.Services.AddScoped<IReachedPeakRepository, ReachedPeakRepository>();
+    builder.Services.AddScoped<IElevationProfileRepository, ElevationProfileRepository>();
 }
 
 static void InjectServices(WebApplicationBuilder builder) {
@@ -104,12 +108,17 @@ static void InjectServices(WebApplicationBuilder builder) {
     builder.Services.AddScoped<IRegionService, RegionService>();
     builder.Services.AddScoped<IGpxFileService, GpxFileService>();
     builder.Services.AddScoped<ITripAnalyticService, TripAnalyticService>();
+    builder.Services.AddScoped<IElevationProfileService, ElevationProfileService>();
     builder.Services.AddScoped<ITripDomainAnalyticService, TripDomainAnalyticsService>();
 
 }
 static void InjectMappers(WebApplicationBuilder builder) {
     builder.Services.AddScoped<PeakMapper>();
     builder.Services.AddScoped<RegionMapper>();
+}
+
+static void InjectUnitOfWorks(WebApplicationBuilder builder) {
+    builder.Services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
 }
 
 static CorsConfig ConfigureCors(WebApplicationBuilder builder) {

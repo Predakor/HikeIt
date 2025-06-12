@@ -1,5 +1,6 @@
 ﻿using Application.Services.Peaks;
 using Application.TripAnalytics.Commands;
+using Application.TripAnalytics.Services;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
@@ -13,16 +14,18 @@ namespace Application.TripAnalytics;
 public class TripAnalyticService(
     IPeakService peakService,
     ITripDomainAnalyticService tripDomainAnalyticService,
-    ITripAnalyticRepository tripAnalyticRepository
+    IElevationProfileService elevationProfileService,
+    ITripAnalyticUnitOfWork unitOfWork
 ) : ITripAnalyticService {
-    readonly IPeakService _peakRepository = peakService;
+    readonly IPeakService _peakService = peakService;
     readonly ITripDomainAnalyticService _tripDomainAnalyticService = tripDomainAnalyticService;
-    readonly ITripAnalyticRepository _tripAnalyticRepository = tripAnalyticRepository;
+    readonly IElevationProfileService _elevationService = elevationProfileService;
+    readonly ITripAnalyticUnitOfWork unitOfWork = unitOfWork;
 
     public async Task<TripAnalytic> GenerateAnalytic(AnalyticData data) {
         var (points, gains) = data;
 
-        var builder = new TripAnalyticBuilder();
+        var builder = new TripAnalyticBuilder(_elevationService);
 
         //generate Route analytics
         var routeAnalytic = RouteAnalyticFactory.Create(points, gains);
@@ -36,36 +39,45 @@ public class TripAnalyticService(
 
         //peak detection semi done
         var potentialPeaks = _tripDomainAnalyticService.FindLocalPeaks(points, gains);
-        var reachedPeaks = await _peakRepository.GetMatchingPeaks(potentialPeaks);
+
+        //var reachedPeaks = await _peakService.GetMatchingPeaks(potentialPeaks);
 
         var tripId = Guid.NewGuid(); //Add actual value
         var userId = Guid.NewGuid(); //Add actual value
 
         //Implement peak mapping
-        CreatePeakAnalyticsCommand
-            .Create(new(reachedPeaks, tripId, userId))
-            .Execute()
-            .Match(
-                data => builder.WithPeaksAnalytic(data),
-                error => Console.WriteLine($"couldn't create peak analytics reason: {error.Message}")
-            );
+        //CreatePeakAnalyticsCommand
+        //    .Create(new(reachedPeaks, tripId, userId))
+        //    .Execute()
+        //    .Match(
+        //        data => builder.WithPeaksAnalytic(data),
+        //        error => Console.WriteLine($"couldn't create peak analytics reason: {error.Message}")
+        //    );
 
         //Elevation implement actual downsampling
         CreateElevationProfileCommand
-            .Create(new(data, null))
-            .Execute()
-            .Match(
-                data => builder.WithElevationProfile(data),
-                error => Console.WriteLine(error.Message)
-            );
+           .Create(new(data, null))
+           .Execute()
+           .Match(
+               async eleProfile => {
+                   var querry = await unitOfWork.Elevations.Create(eleProfile);
+                   querry.Match(
+                       data => builder.WithElevationProfile(data),
+                       error => Console.WriteLine(error.Message)
+                   );
+               },
+               error => Console.WriteLine(error.Message)
+           );
+
+        // lets place it somewher
 
         //PeaksAnalytics not done
         //ElevationProfile not done
 
         var entity = builder.Build();
 
-        var result = await _tripAnalyticRepository.AddAsync(entity);
-
+        var result = await unitOfWork.TripAnalytics.AddAsync(entity);
+        await unitOfWork.SaveChangesAsync();
         if (result == false) {
             throw new Exception();
         }
@@ -74,6 +86,6 @@ public class TripAnalyticService(
     }
 
     public async Task<TripAnalytic?> GetAnalytic(Guid id) {
-        return await _tripAnalyticRepository.GetByIdAsync(id);
+        return await unitOfWork.TripAnalytics.GetByIdAsync(id);
     }
 }

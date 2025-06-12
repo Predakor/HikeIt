@@ -68,8 +68,6 @@ internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig
         return this;
     }
 
-
-
     public TripTimeAnalyticBuilder WithAscentTime() {
         double ascentTime = _gains
             .Where(g => g.ElevationDelta > _config.AscentTreshold)

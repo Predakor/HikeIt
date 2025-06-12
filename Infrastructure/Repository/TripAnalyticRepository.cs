@@ -9,11 +9,8 @@ public class TripAnalyticRepository : Repository<TripAnalytic, Guid>, ITripAnaly
         : base(context) { }
 
     public async Task<bool> AddAsync(TripAnalytic entity) {
-        var r = await DbSet.AddAsync(entity);
-        if (await SaveChangesAsync()) {
-            return true;
-        }
-        return false;
+        return await DbSet.AddAsync(entity) != null;
+
     }
 
     public Task<bool> RemoveAsync(Guid id) {
