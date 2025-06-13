@@ -89,21 +89,21 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                 .HasOne(a => a.PeaksAnalytic)
                 .WithOne()
                 .HasForeignKey<TripAnalytic>(t => t.PeaksAnalyticsId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
         });
 
         modelBuilder.Entity<PeaksAnalytic>(builder => {
             builder
                 .HasMany(pa => pa.ReachedPeaks)
                 .WithOne() // No nav back on ReachedPeak
-                .HasForeignKey("PeaksAnalyticId") // Explicit shadow FK
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey("PeaksAnalyticId"); // Explicit shadow FK
 
             builder
                 .HasMany(pa => pa.NewPeaks)
                 .WithOne() // No nav back on ReachedPeak
-                .HasForeignKey("NewPeaksAnalyticId") // Explicit shadow FK
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey("NewPeaksAnalyticId"); // Explicit shadow FK
         });
 
         modelBuilder.Entity<ElevationProfile>().OwnsOne(ep => ep.Start).WithOwner();
