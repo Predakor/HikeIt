@@ -93,11 +93,3 @@ public class Result<TResult> {
         return false;
     }
 }
-
-public record Error(string Code, string Message) {
-    public static Error NotFound(string message) => new("not found", message);
-
-    public static Error BadRequest(string message) => new("bad request", message);
-
-    public static Error Unknown(string? message = "") => new("unknown", message ?? "");
-}
