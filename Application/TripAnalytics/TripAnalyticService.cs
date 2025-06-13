@@ -2,11 +2,11 @@
 using Application.TripAnalytics.Commands;
 using Application.TripAnalytics.Interfaces;
 using Application.TripAnalytics.Services;
+using Domain.Common;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 using Domain.TripAnalytics.Entities.ElevationProfile;
-using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.TripAnalytics.Factories;
 using Domain.TripAnalytics.Interfaces;
 using Domain.TripAnalytics.Services;
@@ -41,30 +41,30 @@ public class TripAnalyticService(
         }
 
         //peak detection semi done
-        var potentialPeaks = _tripDomainAnalyticService.FindLocalPeaks(points, gains);
-        var reachedPeaks = await _peakService.GetMatchingPeaks(potentialPeaks);
 
         var tripId = Guid.NewGuid(); //Add actual value
         var userId = Guid.NewGuid(); //Add actual value
 
+        //var potentialPeaks = _tripDomainAnalyticService.FindLocalPeaks(points, gains);
+        //var reachedPeaks = await _peakService.GetMatchingPeaks(potentialPeaks);
         //Create reached peaks
-        CreateReachedPeaks
-            .Create(new([], tripId, userId))
-            .Execute()
-            .Match(
-                async peaks => {
-                    var query = await unitOfWork.ReachedPeaks.AddRangeAsync(peaks);
-                    query.Match(
-                        data => {
-                            var analytics = PeaksAnalytic.Create(data);
-                            //unitOfWork.
-                            builder.WithPeaksAnalytic(PeaksAnalytic.Create(data));
-                        },
-                        error => { }
-                    );
-                },
-                error => Console.WriteLine($"Failed to create peak analytics: {error.Message}")
-            );
+        //CreateReachedPeaksCommand
+        //    .Create(new(reachedPeaks, tripId, userId))
+        //    .Execute()
+        //    .Match(
+        //        async peaks => {
+        //            var query = await unitOfWork.ReachedPeaks.AddRangeAsync(peaks);
+        //            query.Match(
+        //                data => {
+        //                    var analytics = PeaksAnalytic.Create(data);
+        //                    //unitOfWork.
+        //                    builder.WithPeaksAnalytic(PeaksAnalytic.Create(data));
+        //                },
+        //                error => { }
+        //            );
+        //        },
+        //        error => Console.WriteLine($"Failed to create peak analytics: {error.Message}")
+        //    );
 
         //Elevation implement actual downsampling
         CreateElevationProfileCommand
@@ -92,8 +92,15 @@ public class TripAnalyticService(
         return await unitOfWork.TripAnalytics.GetByIdAsync(id);
     }
 
-    public async Task<ElevationProfile?> GetELevationProfile(Guid id) {
-        var query = await unitOfWork.Elevations.GetById(id);
-        return query.Map(data => data, error => null);
+    public async Task<Result<TripAnalytic>> GetCompleteAnalytic(Guid id) {
+        var query = await unitOfWork.TripAnalytics.GetCompleteAnalytic(id);
+        return query;
+    }
+
+    public async Task<ElevationProfile> GetElevationProfile(Guid id) {
+        return (await unitOfWork.Elevations.GetById(id)).Map(
+            data => data,
+            error => throw new Exception(error.Message)
+        );
     }
 }

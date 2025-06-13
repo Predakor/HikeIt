@@ -1,20 +1,29 @@
 ﻿using Application.Services.Files;
 using Application.Services.Trips;
+using Application.TripAnalytics.Interfaces;
 using Domain.Common;
+using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
+using static Application.Dto.TripAnalyticsDto;
 using static Application.Dto.TripDto;
 
-namespace Api.Controllers;
+namespace Api.Controllers.Trips;
 
 [ApiController]
 [Route("api/[controller]")]
 public class TripsController : ControllerBase {
     readonly ITripService _tripService;
     readonly IGpxFileService _fileService;
+    readonly ITripAnalyticService _tripAnalyticService;
 
-    public TripsController(ITripService service, IGpxFileService fileService) {
+    public TripsController(
+        ITripService service,
+        IGpxFileService fileService,
+        ITripAnalyticService tripAnalyticService
+    ) {
         _tripService = service;
         _fileService = fileService;
+        _tripAnalyticService = tripAnalyticService;
     }
 
     [HttpGet]
@@ -24,11 +33,68 @@ public class TripsController : ControllerBase {
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Request.Partial>> GetById(Guid id) {
+    public async Task<ActionResult<Partial>> GetById(Guid id) {
         var trip = await _tripService.GetById(id);
         if (trip is null)
             return NotFound();
         return Ok(trip);
+    }
+
+    [HttpGet("{id}/analytics")]
+    public async Task<ActionResult<Partial>> GetAnalytics(Guid id) {
+        var trip = await _tripService.GetById(id);
+        if (trip?.TrackAnalytic?.Id == null) {
+            return NotFound();
+        }
+
+        var query = await _tripAnalyticService.GetCompleteAnalytic(trip.TrackAnalytic.Id);
+
+        var result = query.Value;
+
+        if (result == null) {
+            return NotFound();
+        }
+
+        var gains = result.ElevationProfile?.GainsData;
+        if (gains == null) {
+            return BadRequest();
+        }
+        var scaledGains = ScaledGainSerializer.Deserialize(gains);
+
+        static GainDto FromScaledGain(ScaledGain scaledGain) {
+            return new GainDto(
+                scaledGain.DistanceDelta,
+                scaledGain.ElevationDelta,
+                scaledGain.TimeDelta
+            );
+        }
+
+        var decodedGains = scaledGains.Select(FromScaledGain).ToArray();
+
+        var elevationDto = new ElevationProfileDto(result.ElevationProfile.Start, decodedGains);
+
+        var analytics = new Full(
+            result.RouteAnalytics ?? null,
+            result.TimeAnalytics ?? null,
+            result.PeaksAnalytic ?? null,
+            elevationDto,
+            result.Id
+        );
+
+        var tripWithAnalytic = new Partial(
+            trip.Id,
+            analytics,
+            trip.GpxFile,
+            trip.Region,
+            trip.Base
+        );
+        return Ok(tripWithAnalytic);
+
+        //return query.Map<ActionResult<TripAnalytic>>(
+        //    analytics => Ok(analytics),
+        //    notFound => NotFound(notFound.Message),
+        //    error => BadRequest(error.Message)
+        //);
     }
 
     [HttpPost]

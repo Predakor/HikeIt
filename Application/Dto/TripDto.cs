@@ -14,11 +14,20 @@ public record TripBasePartial(float? Height, float? Distance, float? Duration, D
 public abstract record TripDto(TripBase Base) {
     public record Partial(
         Guid Id,
+        TripAnalyticsDto.Full? TrackAnalytic,
+        GpxFile? GpxFile,
+        Region? Region,
+        TripBase Base
+    ) : TripDto(Base);
+
+    public record Partial2(
+        Guid Id,
         TripAnalytic? TrackAnalytic,
         GpxFile? GpxFile,
         Region? Region,
         TripBase Base
     ) : TripDto(Base);
+
 
     public record PartialLinked(
         TripAnalytic? TrackAnalytic,

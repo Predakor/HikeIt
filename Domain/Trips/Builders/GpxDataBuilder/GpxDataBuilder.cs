@@ -35,7 +35,7 @@ internal class GpxDataBuilder(List<GpxPoint> points) {
         return this;
     }
 
-    public GpxDataBuilder DownSample(int amount = 10) {
+    public GpxDataBuilder DownSample(int amount = 5) {
         _gpxPoints = GpxBuilderMethods.DownSample(_gpxPoints, amount);
         return this;
     }

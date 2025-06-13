@@ -14,6 +14,7 @@ public class TripRepository : Repository<Trip, Guid>, ITripRepository {
         return await DbSet
             .Include(x => x.Region)
             .Include(x => x.GpxFile)
+            .Include(x => x.Analytics)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 

@@ -12,6 +12,6 @@ public interface ITripService {
     public Task<bool> UpdateGpxFile(Guid tripId, Guid gpxFileId);
     public Task<bool> Delete(Guid id);
 
-    public Task<TripDto.Partial?> GetById(Guid id);
+    public Task<TripDto.Partial2?> GetById(Guid id);
     public Task<List<TripDto.Request.ResponseBasic>> GetAll();
 }

@@ -7,7 +7,7 @@ namespace Application.TripAnalytics.Commands;
 
 record CommandData(List<PeakDto.Reached> ReachedPeaks, Guid TripId, Guid UserId);
 
-internal class CreateReachedPeaks(CommandData data) : ICommand<List<ReachedPeak>> {
+internal class CreateReachedPeaksCommand(CommandData data) : ICommand<List<ReachedPeak>> {
     readonly List<PeakDto.Reached> _reachedPeaks = data.ReachedPeaks;
     readonly Guid _tripId = data.TripId;
     readonly Guid _userId = data.UserId;
@@ -26,7 +26,7 @@ internal class CreateReachedPeaks(CommandData data) : ICommand<List<ReachedPeak>
     }
 
     public static ICommand<List<ReachedPeak>> Create(CommandData data) {
-        return new CreateReachedPeaks(data);
+        return new CreateReachedPeaksCommand(data);
     }
 
     static class CommandResult {

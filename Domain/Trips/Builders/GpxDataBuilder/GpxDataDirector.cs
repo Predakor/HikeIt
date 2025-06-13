@@ -19,10 +19,7 @@ internal static class GpxDataDirector {
     public static AnalyticData ElevationProfile(ElevationProfileData data) {
         return new GpxDataBuilder(data.Data.Points)
             .DownSample()
-            .RoundElevation()
-            .ClampElevationSpikes()
-            .ApplyMedianFilter()
-            .ApplyEmaSmoothing()
+
             .Build();
     }
 }

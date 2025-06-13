@@ -12,7 +12,7 @@ function TripDetailsPage() {
 
   const request = useQuery<TripDtoFull>({
     queryKey: ["trip", tripId],
-    queryFn: () => apiClient<TripDtoFull>(`trips/${tripId}`),
+    queryFn: () => apiClient<TripDtoFull>(`trips/${tripId}/analytics`),
     enabled: !!tripId,
     staleTime: staleTime,
   });

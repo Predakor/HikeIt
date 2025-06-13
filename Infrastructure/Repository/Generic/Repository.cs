@@ -40,8 +40,8 @@ public abstract class CrudRepository<T, TKey> : Repository<T, TKey>, ICrudReposi
     protected CrudRepository(TripDbContext context)
         : base(context) { }
 
-    public Task<bool> AddAsync(T entity) {
-        throw new NotImplementedException();
+    public async Task<bool> AddAsync(T entity) {
+        return await DbSet.AddAsync(entity) != null;
     }
 
     public Task<bool> RemoveAsync(TKey id) {

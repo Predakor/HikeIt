@@ -29,6 +29,7 @@ const trackAnalyticConfig: TabConfig<TripAnalytic> = [
   {
     key: "elevationProfile",
     label: "",
+    Component: TripGraph,
   },
 ];
 

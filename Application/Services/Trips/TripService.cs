@@ -2,7 +2,6 @@
 using Application.TripAnalytics.Commands;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
-using Domain.TripAnalytics;
 using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;
 using Domain.Trips.ValueObjects;
@@ -46,20 +45,15 @@ public class TripService : ITripService {
         return mappedTrips;
     }
 
-    public async Task<Partial?> GetById(Guid id) {
-        var trip = await _tripRepository.GetByIdAsync(id);
+    public async Task<Partial2?> GetById(Guid id) {
+        var trip = await _unitOfWork.TripRepository.GetByIdAsync(id);
         if (trip == null) {
             return null;
         }
-        TripAnalytic? analytic = null;
 
-        if (trip.TripAnalyticId != null) {
-            analytic = await _tripAnalyticService.GetAnalytic((Guid)trip.TripAnalyticId!);
-        }
-
-        Partial response = new(
+        Partial2 response = new(
             trip.Id,
-            analytic,
+            trip.Analytics,
             trip.GpxFile,
             trip.Region,
             new(trip.Name, trip.TripDay)

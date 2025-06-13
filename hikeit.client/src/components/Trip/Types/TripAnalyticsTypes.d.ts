@@ -19,7 +19,7 @@ export interface TimeAnalytics {
   endTime: Date;
 
   activeTime: number;
-  idleTime: number;
+  idleTime: number; 
   ascentTime: number;
   descentTime: number;
 

@@ -56,7 +56,6 @@ export type GpxEntry = {
   lon: number;
   ele: number;
   time?: string;
-  gains?: Gains;
 };
 
 export type GpxArray = Array<GpxEntry>;
