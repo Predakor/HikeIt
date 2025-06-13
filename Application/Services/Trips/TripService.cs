@@ -1,8 +1,9 @@
 ﻿using Application.Services.Files;
-using Application.TripAnalytics;
 using Application.TripAnalytics.Commands;
+using Application.TripAnalytics.Interfaces;
 using Domain.Common;
 using Domain.TripAnalytics;
+using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;
 using Domain.Trips.ValueObjects;
 using static Application.Dto.TripDto;
@@ -12,15 +13,18 @@ namespace Application.Services.Trips;
 public class TripService : ITripService {
     readonly ITripRepository _tripRepository;
     readonly IGpxFileService _gpxFileService;
+    readonly ITripAnalyticUnitOfWork _unitOfWork;
     readonly ITripAnalyticService _tripAnalyticService;
 
     public TripService(
         ITripRepository trips,
         IGpxFileService gpxFileService,
-        ITripAnalyticService tripAnalyticService
+        ITripAnalyticService tripAnalyticService,
+        ITripAnalyticUnitOfWork unitOfWork
     ) {
         _tripRepository = trips;
         _gpxFileService = gpxFileService;
+        _unitOfWork = unitOfWork;
         _tripAnalyticService = tripAnalyticService;
     }
 
@@ -93,7 +97,11 @@ public class TripService : ITripService {
             );
 
         await _tripRepository.AddAsync(trip);
-        return Result<Guid>.Success(trip.Id);
+        var saveChanges = await _unitOfWork.SaveChangesAsync();
+        return saveChanges.Map(
+            succes => Result<Guid>.Success(trip.Id),
+            error => Result<Guid>.Failure(error)
+        );
     }
 
     public async Task<bool> Delete(Guid id) {

@@ -1,6 +1,7 @@
 ﻿using Domain.Common;
 using Domain.ReachedPeaks;
 using Infrastructure.Data;
+using Infrastructure.Repository.Generic;
 
 namespace Infrastructure.Repository;
 
@@ -10,12 +11,18 @@ public class ReachedPeakRepository : Repository<ReachedPeak, Guid>, IReachedPeak
 
     public async Task<bool> AddAsync(ReachedPeak entity) {
         var querry = await DbSet.AddAsync(entity);
+        return querry != null;
+    }
 
-        if (querry == null) {
-            return false;
+    public async Task<Result<List<ReachedPeak>>> AddRangeAsync(List<ReachedPeak> peaks) {
+        try {
+            await DbSet.AddRangeAsync(peaks);
+            return Result<List<ReachedPeak>>.Success(peaks);
         }
-
-        return await SaveChangesAsync();
+        catch (Exception err) {
+            return Result<List<ReachedPeak>>.Failure(Errors.Unknown(err.Message));
+            throw;
+        }
     }
 
     public Task<Result<List<ReachedPeak>>> GetReached() {

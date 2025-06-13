@@ -20,7 +20,7 @@ internal class ProccesGpxDataCommand(AnalyticData data) : ICommand<AnalyticData>
         var points = GpxDataFactory.Create(_data).Points;
         var gains = points.ToGains();
         if (points == null || gains == null) {
-            return CommandResult.Failure(Error.Unknown("invalid data"));
+            return CommandResult.Failure(Errors.Unknown("invalid data"));
         }
         AnalyticData result = new(points, gains);
         return Result<AnalyticData>.Success(result);

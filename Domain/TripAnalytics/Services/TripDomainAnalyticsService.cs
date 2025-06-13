@@ -11,6 +11,8 @@ public class TripDomainAnalyticsService : ITripDomainAnalyticService {
             var current = gains[i];
             var prev = gains[i - 1];
 
+
+            //its catching every point while descending
             bool isDescending = current.ElevationDelta < prev.ElevationDelta;
             if (isDescending) {
                 localPeaks.Add(points[i]);

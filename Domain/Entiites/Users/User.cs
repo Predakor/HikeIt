@@ -1,4 +1,6 @@
-﻿namespace Domain.Entiites.Users;
+﻿using Domain.Interfaces;
+
+namespace Domain.Entiites.Users;
 
 public class User : IEntity<Guid> {
     public Guid Id { get; set; }

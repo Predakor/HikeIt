@@ -1,4 +1,5 @@
-﻿using Domain.ReachedPeaks;
+﻿using Domain.Interfaces;
+using Domain.ReachedPeaks;
 
 namespace Domain.TripAnalytics.Entities.PeaksAnalytics;
 

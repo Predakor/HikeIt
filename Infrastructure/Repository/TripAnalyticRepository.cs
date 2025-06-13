@@ -1,6 +1,7 @@
 ﻿using Domain.TripAnalytics;
 using Domain.TripAnalytics.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Repository.Generic;
 
 namespace Infrastructure.Repository;
 

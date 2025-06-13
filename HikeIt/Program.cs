@@ -8,6 +8,7 @@ using Application.Services.Region;
 using Application.Services.Trips;
 using Application.Services.Users;
 using Application.TripAnalytics;
+using Application.TripAnalytics.Interfaces;
 using Application.TripAnalytics.Services;
 using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
@@ -96,8 +97,9 @@ static void InjectRepositories(WebApplicationBuilder builder) {
     builder.Services.AddScoped<ITripRepository, TripRepository>();
     builder.Services.AddScoped<IRegionRepository, RegionRepository>();
     builder.Services.AddScoped<IGpxFileRepository, GpxFileRepository>();
-    builder.Services.AddScoped<ITripAnalyticRepository, TripAnalyticRepository>();
     builder.Services.AddScoped<IReachedPeakRepository, ReachedPeakRepository>();
+    builder.Services.AddScoped<IPeakAnalyticRepository, PeakAnalyticRepository>();
+    builder.Services.AddScoped<ITripAnalyticRepository, TripAnalyticRepository>();
     builder.Services.AddScoped<IElevationProfileRepository, ElevationProfileRepository>();
 }
 

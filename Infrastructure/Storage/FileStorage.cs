@@ -31,7 +31,7 @@ public class FileStorage(string root = "wwwroot", string subFolder = "uploads") 
             return Result<FileCreationInfo>.Success(info);
         }
         catch (Exception ex) {
-            Error error = new("", $"Could not save file: {ex.Message}");
+            var error = Errors.Unknown($"Could not save file: {ex.Message}");
             return Result<FileCreationInfo>.Failure(error);
         }
     }

@@ -15,7 +15,8 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
     public async Task<Result<GpxFile>> CreateAsync(IFormFile file) {
         var (isValid, errors) = FileValidation.Validate(file);
         if (!isValid) {
-            var err = new Error("multiple validation errors", errors.ToString());
+            string errorstring = errors.Select(e => e.ToString()).ToString();
+            var err = Errors.Unknown(errorstring);
             return Result<GpxFile>.Failure(err);
         }
 
@@ -26,7 +27,7 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
 
         if (result.HasErrors(out var error)) {
             Console.WriteLine(error.Message);
-            return Result<GpxFile>.Failure(new("saving", error.Message));
+            return Result<GpxFile>.Failure(Errors.File(error.Message));
         }
 
         FileCreationInfo info = result.Value!;
@@ -58,12 +59,12 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
     public async Task<Result<AnalyticData>> GetGpxDataByFileIdAsync(Guid id) {
         var result = await _repository.GetGpxFileStream(id);
         if (result == null) {
-            return Result<AnalyticData>.Failure(Error.NotFound("No file with id found"));
+            return Result<AnalyticData>.Failure(Errors.NotFound("No file with id found"));
         }
 
         var data = await _parser.ParseAsync(result);
         if (data == null) {
-            return Result<AnalyticData>.Failure(Error.Unknown("something went wrong"));
+            return Result<AnalyticData>.Failure(Errors.Unknown("something went wrong"));
         }
 
         return Result<AnalyticData>.Success(data);
@@ -81,7 +82,6 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
         throw new NotImplementedException();
     }
 
-
     public Task<GpxFileDto> GetByIdAsync(Guid id) {
         throw new NotImplementedException();
     }
@@ -91,33 +91,52 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
     }
 }
 
-
 internal static class FileValidation {
+    class MaxFileSizeRule(IFormFile file, double maxSize) : IRule {
+        public string Message => $"File is too large. Max size: {maxSize:F1} MB.";
+
+        public Result<bool> Check() {
+            if (file.Length > maxSize) {
+                double maxSizeInMB = maxSize / 1024f / 1024f;
+                return Result<bool>.Failure(Errors.RuleViolation(this));
+            }
+            return Result<bool>.Success(true);
+        }
+    }
+
+    class FileShouldBeOfType(IFormFile file, string allowedExtension) : IRule {
+        public string Message =>
+            $"\"Invalid extention\", $\"Only {{allowedExtension}} files are allowed.\"";
+
+        public Result<bool> Check() {
+            if (!file.FileName.EndsWith(allowedExtension, StringComparison.OrdinalIgnoreCase)) {
+                return Result<bool>.Failure(Errors.RuleViolation(this));
+            }
+
+            return Result<bool>.Success(true);
+        }
+    }
+
     public static (bool isValid, List<Error> errors) Validate(IFormFile? file) {
+        // Return immediately here; can't proceed with other checks
+        if (file == null || file.Length == 0) {
+            return (false, [Errors.NotFound("No file uploaded.")]);
+        }
+
+        var errors = new List<Error>();
         const int maxSizeInBytes = 1024 * 1024 / 2; // 0.5 MB
         const string allowedExtension = ".gpx";
 
-        var errors = new List<Error>();
+        List<IRule> rules =
+        [
+            new MaxFileSizeRule(file, maxSizeInBytes),
+            new FileShouldBeOfType(file, allowedExtension),
+        ];
 
-        void AddError(string code, string message) {
-            errors.Add(new Error(code, message));
-        }
-
-        if (file == null || file.Length == 0) {
-            AddError("nullRef", "No file uploaded.");
-            return (false, errors); // Return immediately here; can't proceed with other checks
-        }
-
-        if (!file.FileName.EndsWith(allowedExtension, StringComparison.OrdinalIgnoreCase)) {
-            AddError("Invalid extention", $"Only {allowedExtension} files are allowed.");
-        }
-
-        if (file.Length > maxSizeInBytes) {
-            double maxSizeInMB = maxSizeInBytes / 1024f / 1024f;
-            AddError("File size", $"File is too large. Max size: {maxSizeInMB:F1} MB.");
+        foreach (var rule in rules) {
+            rule.Check().Match(ok => { }, errors.Add);
         }
 
         return (errors.Count == 0, errors);
     }
-
 }

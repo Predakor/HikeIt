@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Interfaces;
 using Domain.Trips.ValueObjects;
 
 namespace Domain.TripAnalytics.Entities.ElevationProfile;

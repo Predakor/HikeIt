@@ -1,6 +1,7 @@
 ﻿using Application.Services.Peaks;
 using Domain.Entiites.Peaks;
 using Infrastructure.Data;
+using Infrastructure.Repository.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;

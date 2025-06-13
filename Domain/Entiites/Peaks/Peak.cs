@@ -1,4 +1,5 @@
 ﻿using Domain.Entiites.Regions;
+using Domain.Interfaces;
 
 namespace Domain.Entiites.Peaks;
 

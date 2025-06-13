@@ -1,4 +1,5 @@
 ﻿using Domain.Entiites.Users;
+using Domain.Interfaces;
 
 namespace Domain.Trips.Entities.GpxFiles;
 

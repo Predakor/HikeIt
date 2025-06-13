@@ -1,5 +1,6 @@
 ﻿using Domain.Entiites.Peaks;
 using Domain.Entiites.Users;
+using Domain.Interfaces;
 using Domain.Trips;
 
 namespace Domain.ReachedPeaks;

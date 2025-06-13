@@ -2,6 +2,7 @@
 using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Repositories;
 using Infrastructure.Data;
+using Infrastructure.Repository.Generic;
 
 namespace Infrastructure.Repository;
 
@@ -14,7 +15,7 @@ public class ElevationProfileRepository
     public async Task<Result<ElevationProfile>> GetById(Guid id) {
         var r = await DbSet.FindAsync(id);
         if (r == null) {
-            Error err = Error.NotFound("no elevation profile for " + id + " found");
+            Error err = Errors.NotFound("no elevation profile for " + id + " found");
             return RepoResult.Fail<ElevationProfile>(err);
         }
         return RepoResult.Success(r);
@@ -24,7 +25,7 @@ public class ElevationProfileRepository
         var result = await DbSet.AddAsync(profile);
 
         if (result == null) {
-            Error error = Error.Unknown("something went wrong");
+            Error error = Errors.Unknown("something went wrong");
             return RepoResult.Fail<ElevationProfile>(error);
         }
 

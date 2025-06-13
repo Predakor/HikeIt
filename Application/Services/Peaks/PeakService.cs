@@ -20,16 +20,9 @@ public class PeakService(IPeakRepository repo, PeakMapper peakMapper) : IPeakSer
         return _peakMapper.MapToCompleteDto(peak);
     }
 
-    public async Task<List<PeakDto.Reached>> GetMatchingPeaks(List<GpxPoint> points) {
+    public async Task<List<PeakDto.Reached>> GetMatchingPeaks(IEnumerable<IGeoPoint> points) {
         //TOIMPlemtn
         await Task.Delay(1);
         return [new(1, 1065)];
-    }
-
-    public async Task<List<PeakDto.Reached>> GetMatchingPeaks(List<GpxPointWithTime> points) {
-        //TOIMPlemtn
-        await Task.Delay(1);
-        return [new(1, 1065, DateTime.Now)];
-        throw new NotImplementedException();
     }
 }

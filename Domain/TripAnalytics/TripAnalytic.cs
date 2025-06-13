@@ -1,4 +1,5 @@
-﻿using Domain.TripAnalytics.Entities.ElevationProfile;
+﻿using Domain.Interfaces;
+using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;

@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using Domain.Trips;
 using Infrastructure.Data;
+using Infrastructure.Repository.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;
@@ -17,9 +18,7 @@ public class TripRepository : Repository<Trip, Guid>, ITripRepository {
     }
 
     public async Task<bool> AddAsync(Trip entity) {
-        await DbSet.AddAsync(entity);
-        await SaveChangesAsync();
-        return true;
+        return await DbSet.AddAsync(entity) != null;
     }
 
     public async Task<bool> RemoveAsync(Guid id) {
@@ -40,9 +39,6 @@ public class TripRepository : Repository<Trip, Guid>, ITripRepository {
 
         //TODO change it{
 
-
         return await SaveChangesAsync();
     }
-
-
 }

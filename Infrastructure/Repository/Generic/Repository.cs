@@ -1,8 +1,8 @@
-﻿using Domain;
+﻿using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repository;
+namespace Infrastructure.Repository.Generic;
 
 public abstract class BaseRepository<T, TKey> : IRepository<T, TKey>
     where T : class, IEntity<TKey> {
@@ -17,7 +17,8 @@ public abstract class BaseRepository<T, TKey> : IRepository<T, TKey>
 
 public abstract class Repository<T, TKey> : BaseRepository<T, TKey>
     where T : class, IEntity<TKey> {
-    protected Repository(TripDbContext context) : base(context) { }
+    protected Repository(TripDbContext context)
+        : base(context) { }
 
     public virtual async Task<T?> GetByIdAsync(TKey id) => await DbSet.FindAsync(id).AsTask();
 
@@ -29,7 +30,25 @@ public abstract class Repository<T, TKey> : BaseRepository<T, TKey>
         }
         catch (Exception ex) {
             Console.WriteLine(ex);
-            throw;
+            return false;
         }
+    }
+}
+
+public abstract class CrudRepository<T, TKey> : Repository<T, TKey>, ICrudRepository<T, TKey>
+    where T : class, IEntity<TKey> {
+    protected CrudRepository(TripDbContext context)
+        : base(context) { }
+
+    public Task<bool> AddAsync(T entity) {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> RemoveAsync(TKey id) {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> UpdateAsync(TKey id) {
+        throw new NotImplementedException();
     }
 }

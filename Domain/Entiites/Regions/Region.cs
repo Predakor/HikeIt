@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entiites.Regions;
 

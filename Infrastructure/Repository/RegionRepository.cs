@@ -1,5 +1,6 @@
 ﻿using Domain.Entiites.Regions;
 using Infrastructure.Data;
+using Infrastructure.Repository.Generic;
 
 namespace Infrastructure.Repository;
 

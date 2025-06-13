@@ -15,11 +15,11 @@ internal class CreateElevationProfileCommand : ICommand<ElevationProfile> {
     public Result<ElevationProfile> Execute() {
         var elevationData = GpxDataFactory.Create(_data);
         if (elevationData == null) {
-            var error = Error.Unknown("Something went wrong while generating elevation profile");
+            var error = Errors.Unknown("Something went wrong while generating elevation profile");
             return Result<ElevationProfile>.Failure(error);
         }
         if (elevationData.Points.Count == 0) {
-            var error = Error.Unknown("Looks like you elevation data is empty");
+            var error = Errors.Unknown("Looks like you elevation data is empty");
             return Result<ElevationProfile>.Failure(error);
         }
 
