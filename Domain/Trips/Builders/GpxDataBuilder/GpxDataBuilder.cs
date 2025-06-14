@@ -12,7 +12,7 @@ internal class MutableGpxPoint(double lat, double lon, double ele, DateTime? tim
 internal class GpxDataBuilder(List<GpxPoint> points) {
     List<MutableGpxPoint> _gpxPoints = [.. points.Select(p => p.ToMutable())];
 
-    public GpxDataBuilder ClampElevationSpikes(double maxSpike = .5d) {
+    public GpxDataBuilder ClampElevationSpikes(double maxSpike = 10d) {
         _gpxPoints.ClampSpikes(maxSpike);
         return this;
     }
