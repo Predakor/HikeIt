@@ -21,6 +21,9 @@ public class Result<TResult> {
 
     public static Result<TResult> Failure(Error error) => new(error);
 
+    public static implicit operator Result<TResult>(TResult value) => new(value);
+    public static implicit operator Result<TResult>(Error Error) => new(Error);
+
     public TReturn Map<TReturn>(Func<TResult, TReturn> onSuccess, Func<Error, TReturn> onFailure) {
         return this switch {
             { IsSuccess: true, Value: not null } => onSuccess(Value),
