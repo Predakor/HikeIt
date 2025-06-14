@@ -3,6 +3,7 @@ import type { TabConfig } from "@/types/Utils/OrderTypes";
 import RouteAnalytics from "../TripDetails/RouteAnalytics/RouteAnalytics";
 import TripGraph from "../TripDetails/TripGraph/TripGraph";
 import TimeAnalytics from "../TripDetails/TimeAnalytics/TimeAnalytics";
+import PreviewGraphDevOnly from "../TripDetails/TripGraph/Dev_PreviewGraph/PreviewGraphDevOnly";
 
 export const tripAnalyticTabs: TabConfig<TripAnalytic> = [
   { key: "routeAnalytics", label: "Time", Component: RouteAnalytics },
@@ -29,7 +30,7 @@ const trackAnalyticConfig: TabConfig<TripAnalytic> = [
   {
     key: "elevationProfile",
     label: "",
-    Component: TripGraph,
+    Component: PreviewGraphDevOnly,
   },
 ];
 

@@ -1,46 +1,52 @@
-import { Chart, useChart } from "@chakra-ui/charts";
+import { useChart, Chart } from "@chakra-ui/charts";
 import { Flex } from "@chakra-ui/react";
+import { useState } from "react";
 import {
-  CartesianGrid,
-  Line,
   LineChart,
-  Tooltip,
+  CartesianGrid,
   XAxis,
   YAxis,
+  Tooltip,
+  Line,
 } from "recharts";
-import type { ChartData } from "./_graph_types";
-import { GenerateChartData } from "./GenerateChartData";
-
+import { DevConfig } from "./DevPreview.tsx";
+import type { ChartData } from "../_graph_types";
+import { GenerateChartDataWithPreview } from "./GenerateChartDataWithPreview.ts";
 interface Props {
   data: ChartData;
 }
 
-export default function ElevationGraph({ data }: Props) {
+function PreviewGraphDevOnly({ data }: Props) {
   const { gains, start } = data;
 
-  const chartPoints = GenerateChartData(gains, start);
+  const [preview, setPreview] = useState();
+
+  const chartPoints = GenerateChartDataWithPreview(gains, start, preview);
   const chart = useChart({
     data: chartPoints,
-    series: [{ name: "ele", color: "blue" }],
+    series: [
+      { name: "ele", color: "gray.subtle" },
+      { name: "previewEle", color: "red" },
+    ],
   });
-
-  const numberFormatter = (value: number) =>
-    chart.formatNumber({
-      style: "unit",
-      unit: "kilometer",
-      unitDisplay: "narrow",
-      maximumFractionDigits: 1,
-    })(value / 1000);
 
   return (
     <Flex gapX={8}>
-      <Chart.Root minW={"breakpoint-2xl"} w={"full"} maxH={"lg"} chart={chart}>
+      <Chart.Root minW={"80vw"} w={"full"} maxH={"lg"} chart={chart}>
         <LineChart data={chart.data}>
           <CartesianGrid stroke={chart.color("border")} vertical={false} />
           <XAxis
             axisLine={false}
             dataKey={chart.key("dist")}
-            tickFormatter={numberFormatter}
+            tickFormatter={
+              (value: number) =>
+                chart.formatNumber({
+                  style: "unit",
+                  unit: "kilometer",
+                  unitDisplay: "narrow",
+                  maximumFractionDigits: 1,
+                })(value / 1000) // ← convert meters to kilometers
+            }
             stroke={chart.color("border")}
           />
           <YAxis
@@ -67,6 +73,9 @@ export default function ElevationGraph({ data }: Props) {
           ))}
         </LineChart>
       </Chart.Root>
+      <DevConfig onSubmit={(data: ChartData) => setPreview(data.gains)} />
     </Flex>
   );
 }
+
+export default PreviewGraphDevOnly;

@@ -3,7 +3,7 @@ import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 import { AllObjectEntriesToArray } from "@/Utils/ObjectToArray";
 import { Button, Field, Input, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import type { ChartData } from "./TripGraph";
+import type { ChartData } from "../TripGraph";
 
 type ElevationProfileConfig = {
   MaxElevationSpike: number;
