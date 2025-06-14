@@ -10,6 +10,8 @@ interface Props {
   config: TabConfig<TripDtoFull>;
 }
 export function TripDetailsMenu({ data, config }: Props) {
+  console.log(data);
+
   return (
     <Tabs.Root
       lazyMount

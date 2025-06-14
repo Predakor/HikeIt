@@ -7,6 +7,7 @@ function TripDetails({ data }: { data: TripDtoFull }) {
   const tabOrder = tripDetailsTabs.filter((d) => {
     return !(d.type !== "group" && d.key === "base");
   });
+  console.log(data);
 
   return (
     <VStack alignItems={"start"} w={{ base: "full", md: "60vw" }} gap={"2em"}>

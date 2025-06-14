@@ -1,6 +1,7 @@
-import type { GpxArray, GpxPoint } from "@/types/ApiTypes/TripDtos";
+import type { GpxEntry } from "@/types/ApiTypes/TripDtos";
 import { Chart, useChart } from "@chakra-ui/charts";
-import { Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
+import { useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -9,23 +10,25 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-type GainDto = {
+import { DevConfig } from "./DevPreview";
+import { useChartDataWithPreview } from "./usePreviewChartData";
+export type GainDto = {
   dist: number;
   ele: number;
   time: number;
 };
 
-interface ChartData {
-  start: GpxPoint;
+export interface ChartData {
+  start: GpxEntry;
   gains: GainDto[];
 }
 
-type GpxGainPoint = {
+export interface GpxGainPoint {
   dist: number;
   ele: number;
   slope: number;
   time?: number;
-};
+}
 
 interface Props {
   data: ChartData;
@@ -34,40 +37,19 @@ interface Props {
 export default function ElevationGraph({ data }: Props) {
   const { gains, start } = data;
 
-  const chartPoints: GpxGainPoint[] = new Array(gains.length);
+  const [preview, setPreview] = useState();
 
-  chartPoints[0] = {
-    dist: 0,
-    ele: start.ele,
-    slope: 0,
-    time: 0,
-  };
-
-  for (let i = 1; i < chartPoints.length; i++) {
-    const prev = chartPoints[i - 1];
-
-    const dist = prev.dist + gains[i].dist;
-    const ele = prev.ele + gains[i].ele;
-
-    const current: GpxGainPoint = {
-      dist: dist,
-      ele: ele,
-      slope: ele / dist,
-      time: prev?.time || 0 + gains[i]?.time || 0,
-    };
-
-    chartPoints[i] = current;
-  }
-
+  const chartPoints = useChartDataWithPreview(gains, start, preview);
   const chart = useChart({
     data: chartPoints,
-    series: [{ name: "ele", color: "blue" }],
+    series: [
+      { name: "ele", color: "gray.subtle" },
+      { name: "previewEle", color: "red" },
+    ],
   });
 
-  console.log(chart.series);
-
   return (
-    <Box marginTop={"2.5em"}>
+    <Flex gapX={8}>
       <Chart.Root minW={"80vw"} w={"full"} maxH={"lg"} chart={chart}>
         <LineChart data={chart.data}>
           <CartesianGrid stroke={chart.color("border")} vertical={false} />
@@ -100,7 +82,7 @@ export default function ElevationGraph({ data }: Props) {
           {chart.series.map((item) => (
             <Line
               key={item.name}
-              isAnimationActive={false}
+              isAnimationActive={true}
               dataKey={chart.key(item.name)}
               stroke={chart.color(item.color)}
               strokeWidth={2}
@@ -109,6 +91,7 @@ export default function ElevationGraph({ data }: Props) {
           ))}
         </LineChart>
       </Chart.Root>
-    </Box>
+      <DevConfig onSubmit={(data: ChartData) => setPreview(data.gains)} />
+    </Flex>
   );
 }
