@@ -1,25 +1,43 @@
 import { menuIcons } from "@/components/Trip/Data/statsInfo";
-import { Group, Heading, Icon, LinkBox, Span } from "@chakra-ui/react";
+import {
+  Flex,
+  Group,
+  Heading,
+  Icon,
+  LinkBox,
+  Span,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import type { IconType } from "react-icons";
 import { NavLink } from "react-router";
+import MobileNav from "../Nav/MobileNav";
 import NavContent from "../Nav/Nav";
 
 export default function Header() {
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   return (
     <header>
-      <Group gapX={8} justifyItems={"end"} as="nav">
-        <LinkBox asChild>
+      <Flex fontSize={"xl"} gapX={8} alignItems={"center"} as="nav">
+        <LinkBox flexGrow={{ base: 1, lg: 0 }}>
           <NavLink to="/">
             <PageLogo />
           </NavLink>
         </LinkBox>
-        <NavContent />
-      </Group>
+
+        {isMobile ? (
+          <MobileNav>
+            <NavContent />
+          </MobileNav>
+        ) : (
+          <NavContent />
+        )}
+      </Flex>
     </header>
   );
 }
 
-function PageLogo() {
+export function PageLogo() {
   const IconSource = menuIcons["reachedPeaks"] as IconType;
 
   return (

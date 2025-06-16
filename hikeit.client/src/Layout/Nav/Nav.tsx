@@ -6,7 +6,7 @@ function NavContent() {
   const visibleRoutes = routes.filter((route) => !route.hidden);
 
   return visibleRoutes.map(({ path, label }) => (
-    <LinkBox fontSize={"xl"} asChild>
+    <LinkBox fontSize={"inherit"} asChild>
       <NavLink to={path} aria-label={label} key={path}>
         {({ isActive }) => {
           const color = isActive ? "fg" : "fg.muted";
