@@ -35,7 +35,18 @@ function usePost(): [LazyFetch, PostResponse] {
 
     try {
       const response = await fetch(requestPath, options);
+
       if (response.ok) {
+        //created
+        if (response.status === 201) {
+          for (const [key, value] of response.headers.entries()) {
+            console.log(`Header: ${key} => ${value}`);
+          }
+          const location = response.headers.get("Location");
+          console.log(location);
+
+          setResult(location);
+        }
         setResult("succes");
       }
     } catch (err) {

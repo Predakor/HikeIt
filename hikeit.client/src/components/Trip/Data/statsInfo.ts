@@ -1,5 +1,7 @@
+import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
 import type { BaseTrip, TripDtoFull } from "@/types/ApiTypes/TripDtos";
-import type { IconBaseProps, IconType } from "react-icons";
+import type { StatAddons } from "@/types/Utils/StatTypes";
+import type { IconType } from "react-icons";
 import { CiCalendarDate } from "react-icons/ci";
 import {
   FaArrowDown,
@@ -8,11 +10,8 @@ import {
   FaArrowUp,
 } from "react-icons/fa6";
 import { GiJourney, GiPeaks } from "react-icons/gi";
-import type { FullMap, PartialMap } from "../../../types/Utils/MappingTypes";
-import type { StatAddons } from "@/types/Utils/StatTypes";
+import type { PartialMap } from "../../../types/Utils/MappingTypes";
 import type { RouteAnalytic, TimeAnalytics } from "../Types/TripAnalyticsTypes";
-import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
-import type { ReactNode } from "react";
 
 export const icons: PartialMap<BaseTrip, StatAddons> = {
   // distance: { IconSource: GiJourney, unit: "m" },
@@ -29,7 +28,6 @@ function durationFormatter(stat: any): string | number | null {
   const date = new Date();
   date.setHours(hours, minutes, seconds, 0);
   return hours * 60 + date.getMinutes();
-  return stat;
 }
 
 export const routeAnalyticStatsInfo: PartialMap<RouteAnalytic, StatAddons> = {

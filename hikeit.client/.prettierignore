@@ -1,0 +1,44 @@
+# Node
+node_modules
+build
+dist
+
+# Visual Studio junk
+bin
+obj
+.vs
+*.user
+*.suo
+
+# Environment / Config
+.env
+.env.*.local
+
+# IDE/editor
+.idea/
+*.log
+*.tmp
+*.bak
+
+# Output from npm/yarn
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Compiled frontend assets
+**/wwwroot/js/
+**/wwwroot/css/
+
+# Coverage/test outputs
+coverage
+*.coverage
+*.lcov
+
+# Don't format these files (if generated or API bindings)
+src/api/generated/
+src/types/generated/
+src/assets/svg/
+
+# Ignore individual files
+.DS_Store
+Thumbs.db

@@ -1,24 +1,33 @@
 import { routes } from "@/data/routes";
-import { Flex, Text } from "@chakra-ui/react";
+import { LinkBox, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router";
 
-function Nav() {
+function NavContent() {
   const visibleRoutes = routes.filter((route) => !route.hidden);
 
-  return (
-    <nav>
-      <Flex gap={20}>
-        {visibleRoutes.map(({ path, label }) => (
-          <NavLink to={path} aria-label={label} key={path}>
-            {({ isActive }) => {
-              const size = isActive ? "2xl" : "lg";
-              return <Text textStyle={size}>{label}</Text>;
-            }}
-          </NavLink>
-        ))}
-      </Flex>
-    </nav>
-  );
+  return visibleRoutes.map(({ path, label }) => (
+    <LinkBox fontSize={"xl"} asChild>
+      <NavLink to={path} aria-label={label} key={path}>
+        {({ isActive }) => {
+          const color = isActive ? "fg" : "fg.muted";
+          return (
+            <Text
+              transition={"color 100ms"}
+              scale={isActive ? 1.1 : 1}
+              color={color}
+              _hover={{
+                color: "fg",
+                scale: 1.1,
+                transition: "scale 100ms",
+              }}
+            >
+              {label}
+            </Text>
+          );
+        }}
+      </NavLink>
+    </LinkBox>
+  ));
 }
 
-export default Nav;
+export default NavContent;

@@ -4,7 +4,6 @@ import AddTripPresenter from "@/components/AddTripForm/AddTripPresenter";
 import Divider from "@/components/Divider/Divider";
 import usePost from "@/hooks/usePost";
 import type { CreateTrip } from "@/types/ApiTypes/TripDtos";
-import type { FullMap, PartialMap } from "@/types/Utils/MappingTypes";
 import {
   Alert,
   Box,
@@ -16,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 
 const defaultValues: CreateTrip = {
   base: {
@@ -25,16 +25,10 @@ const defaultValues: CreateTrip = {
   regionId: 1,
 };
 
-const formInputs: PartialMap<
-  CreateTrip,
-  {
-    type: number | string | Date;
-  }
-> = {};
-
 function AddTripPage() {
   const fileRef = useRef<File | null>(null);
 
+  const navigation = useNavigate();
   const [post, result] = usePost();
   const formHandler = useForm<CreateTrip>({
     defaultValues,
@@ -98,11 +92,14 @@ function AddTripPage() {
           status={result.result === typeof Error ? "error" : "neutral"}
         >
           <Alert.Indicator />
-          <Alert.Content>
+          <Alert.Content
+            onClick={() => {
+              console.log(result.result);
+              result.result;
+            }}
+          >
             <Alert.Title>{result.result.toString()}</Alert.Title>
-            <Alert.Description>
-              Your form has some errors. Please fix them and try again.
-            </Alert.Description>
+            <Alert.Description>Trip Created succesfully</Alert.Description>
           </Alert.Content>
         </Alert.Root>
       )}

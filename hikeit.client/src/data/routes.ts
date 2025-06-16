@@ -18,6 +18,7 @@ export const routes: RouteData[] = [
   {
     path: "/",
     label: "Home",
+    hidden: true,
     Page: LandingPage,
     // Icon: HomeIcon, // example icon placeholder
   },
@@ -41,7 +42,6 @@ export const routes: RouteData[] = [
     Page: TripDetailsPage,
     // Icon: BadgeIcon,
   },
-
   {
     path: "/regions",
     label: "Regions",

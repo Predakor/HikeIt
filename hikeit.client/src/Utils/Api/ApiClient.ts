@@ -23,7 +23,15 @@ async function apiClient<T>(
       console.warn("Unauthorized! Redirecting to login...");
       // window.location.href = "/login";
     }
+    if (response.status === 204) {
+      return null as unknown as T;
+    }
+
     throw new Error(`API error: ${response.status} ${response.statusText}`);
+  }
+
+  if (response.status === 204) {
+    return null as unknown as T;
   }
 
   return response.json();
