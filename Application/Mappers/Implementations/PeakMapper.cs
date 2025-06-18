@@ -19,18 +19,5 @@ public class PeakMapper : IEntityDtoMapper<Peak, PeakDto> {
         return new PeakDto.Complete(entity.Height, entity.Name, regionDto);
     }
 
-    public Peak MapToEntity(PeakDto dto) {
-        return dto switch {
-            PeakDto.Simple entity => new Peak() {
-                Name = entity.Name,
-                Height = entity.Height,
-            },
-            PeakDto.Complete entity => new Peak() {
-                Name = entity.Name,
-                Height = entity.Height,
-                RegionID = entity.Region.Id,
-            },
-            _ => throw new Exception("Incorect PeakDto"),
-        };
-    }
+
 }

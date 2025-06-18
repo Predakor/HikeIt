@@ -9,7 +9,7 @@ public class TripDbContextFactory : IDesignTimeDbContextFactory<TripDbContext> {
         string connectionString =
             "Server=localhost\\sqlexpress;Database=hikeit;Trusted_Connection=True;TrustServerCertificate=True;";
         // Provide your connection string here (or load from config/env)
-        optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.UseSqlServer(connectionString, x => x.UseNetTopologySuite());
 
         return new TripDbContext(optionsBuilder.Options);
     }

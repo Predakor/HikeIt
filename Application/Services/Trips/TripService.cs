@@ -2,6 +2,7 @@
 using Application.TripAnalytics.Commands;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
+using Domain.Common.Result;
 using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;
 using Domain.Trips.ValueObjects;
@@ -18,12 +19,12 @@ public class TripService : ITripService {
     public TripService(
         ITripRepository trips,
         IGpxFileService gpxFileService,
-        ITripAnalyticService tripAnalyticService,
-        ITripAnalyticUnitOfWork unitOfWork
+        ITripAnalyticUnitOfWork unitOfWork,
+        ITripAnalyticService tripAnalyticService
     ) {
         _tripRepository = trips;
-        _gpxFileService = gpxFileService;
         _unitOfWork = unitOfWork;
+        _gpxFileService = gpxFileService;
         _tripAnalyticService = tripAnalyticService;
     }
 
@@ -69,33 +70,38 @@ public class TripService : ITripService {
         return Result<Guid>.Success(trip.Id);
     }
 
-    public async Task<Result<Guid>> Add(Request.Create newTrip, AnalyticData data) {
+    public async Task<Result<Guid>> Add(Request.Create newTrip, AnalyticData data, Guid fileId) {
         var trip = Trip.Create(
             newTrip.Base.Name,
             newTrip.Base.TripDay,
             GetLoggedUserId(),
             newTrip.RegionId
         );
+        trip.AddGpxFile(fileId);
 
         ProccesGpxDataCommand
             .Create(data)
             .Execute()
             .Match(
                 async proccesedData => {
-                    var analytics = await _tripAnalyticService.GenerateAnalytic(proccesedData);
-                    if (analytics != null) {
-                        trip.AddAnalytics(analytics);
-                    }
+                    var generatedAnalytics = await _tripAnalyticService.GenerateAnalytic(
+                        proccesedData,
+                        trip
+                    );
+                    generatedAnalytics.Match(
+                        analytics => trip.AddAnalytics(analytics),
+                        error => { }
+                    );
                 },
                 e => throw new Exception(e.Message)
             );
 
         await _tripRepository.AddAsync(trip);
         var saveChanges = await _unitOfWork.SaveChangesAsync();
-        return saveChanges.Map(
-            succes => Result<Guid>.Success(trip.Id),
-            error => Result<Guid>.Failure(error)
-        );
+
+        return saveChanges != null
+            ? (Result<Guid>)trip.Id
+            : (Result<Guid>)Errors.DbError("couldn't save");
     }
 
     public async Task<bool> Delete(Guid id) {

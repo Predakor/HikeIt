@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Result;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Interfaces;
 using Domain.TripAnalytics.Repositories;

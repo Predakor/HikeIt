@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+﻿using Domain.Common.Result;
 using Domain.Interfaces;
 
 namespace Domain.TripAnalytics.Interfaces;

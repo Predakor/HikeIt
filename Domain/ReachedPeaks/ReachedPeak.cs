@@ -10,9 +10,9 @@ public class ReachedPeak : IEntity<Guid> {
     public DateTime? TimeReached { get; set; }
 
     // Foreign Keys
-    public required Guid TripId { get; set; }
-    public required Guid UserId { get; set; }
-    public required int PeakId { get; set; }
+    public required Guid TripId { get; init; }
+    public required Guid UserId { get; init; }
+    public required int PeakId { get; init; }
 
     // Navigation
     public Trip? Trip { get; set; }
@@ -28,4 +28,17 @@ public class ReachedPeak : IEntity<Guid> {
             TimeReached = reachTime
         };
     }
+    public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null) {
+        return new ReachedPeak {
+            Id = new Guid(),
+            PeakId = peak.Id,
+            TripId = trip.Id,
+            UserId = user.Id,
+            Peak = peak,
+            Trip = trip,
+            User = user,
+            TimeReached = reachTime
+        };
+    }
+
 }

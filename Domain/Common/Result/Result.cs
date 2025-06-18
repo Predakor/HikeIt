@@ -1,6 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿
+using System.Diagnostics.CodeAnalysis;
 
-namespace Domain.Common;
+namespace Domain.Common.Result;
 
 public class Result<TResult> {
     public TResult? Value { get; protected set; }
@@ -22,8 +23,11 @@ public class Result<TResult> {
     public static Result<TResult> Failure(Error error) => new(error);
 
     public static implicit operator Result<TResult>(TResult value) => new(value);
+
     public static implicit operator Result<TResult>(Error Error) => new(Error);
 
+
+    [Obsolete]
     public TReturn Map<TReturn>(Func<TResult, TReturn> onSuccess, Func<Error, TReturn> onFailure) {
         return this switch {
             { IsSuccess: true, Value: not null } => onSuccess(Value),
@@ -32,23 +36,12 @@ public class Result<TResult> {
         };
     }
 
-    public void Match(Action<TResult> onSuccess, Action<Error> onFailure) {
-        if (IsSuccess && Value is not null) {
-            onSuccess(Value);
-        }
-        else if (Error is not null) {
-            onFailure(Error);
-        }
-        else {
-            throw new InvalidOperationException("Invalid Result state.");
-        }
-    }
-
+    [Obsolete]
     public TReturn Map<TReturn>(
-        Func<TResult, TReturn> onSuccess,
-        Func<Error, TReturn> onNotFound,
-        Func<Error, TReturn> onFailure
-    ) {
+    Func<TResult, TReturn> onSuccess,
+    Func<Error, TReturn> onNotFound,
+    Func<Error, TReturn> onFailure
+) {
         return this switch {
             { IsSuccess: true, Value: not null } => onSuccess(Value),
             { Error.Code: "not found" } => onNotFound(Error),
@@ -57,6 +50,7 @@ public class Result<TResult> {
         };
     }
 
+    [Obsolete]
     public async Task<TReturn> AsyncMap<TReturn>(
         Func<TResult, Task<TReturn>> onSuccess,
         Func<Error, Task<TReturn>> onNotFound,
@@ -70,23 +64,6 @@ public class Result<TResult> {
         };
     }
 
-    public void Match(Action<TResult> onSuccess, Action<Error> onNotFound, Action<Error> onFailure) {
-        if (IsSuccess && Value is not null) {
-            onSuccess(Value);
-        }
-        else if (Error is not null) {
-            if (Error.Code == "not found") {
-                onNotFound(Error);
-            }
-            else {
-                onFailure(Error);
-            }
-        }
-        else {
-            throw new InvalidOperationException("Invalid Result state.");
-        }
-    }
-
     public bool HasErrors([NotNullWhen(true)] out Error? error) {
         if (Error != null) {
             error = Error!;
@@ -96,3 +73,4 @@ public class Result<TResult> {
         return false;
     }
 }
+

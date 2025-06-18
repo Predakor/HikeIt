@@ -7,6 +7,7 @@ using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
+using Infrastructure.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
@@ -91,7 +92,6 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                 .HasForeignKey<TripAnalytic>(t => t.PeaksAnalyticsId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
-
         });
 
         modelBuilder.Entity<PeaksAnalytic>(builder => {

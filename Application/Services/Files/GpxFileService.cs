@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Result;
 using Domain.Entiites.Users;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.ValueObjects;
@@ -17,7 +18,7 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
         if (!isValid) {
             string errorstring = errors.Select(e => e.ToString()).ToString();
             var err = Errors.Unknown(errorstring);
-            return Result<GpxFile>.Failure(err);
+            return err;
         }
 
         User? user = null;
@@ -27,7 +28,7 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
 
         if (result.HasErrors(out var error)) {
             Console.WriteLine(error.Message);
-            return Result<GpxFile>.Failure(Errors.File(error.Message));
+            return Errors.File(error.Message);
         }
 
         FileCreationInfo info = result.Value!;
@@ -42,14 +43,7 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
         await _repository.AddAsync(entity);
         var succes = await _repository.SaveChangesAsync();
 
-        Console.WriteLine(succes);
-        Console.WriteLine(entity.Name);
-        //if (!succes) {
-        //    return Result<GpxFile>.Failure(
-        //        Error.Unknown("something went wrong while saving your file")
-        //    );
-        //}
-        return Result<GpxFile>.Success(entity);
+        return entity;
     }
 
     public async Task<AnalyticData> GetGpxDataFromFile(IFormFile file) {
@@ -59,15 +53,15 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
     public async Task<Result<AnalyticData>> GetGpxDataByFileIdAsync(Guid id) {
         var result = await _repository.GetGpxFileStream(id);
         if (result == null) {
-            return Result<AnalyticData>.Failure(Errors.NotFound("No file with id found"));
+            return Errors.NotFound("No file with id found");
         }
 
         var data = await _parser.ParseAsync(result);
         if (data == null) {
-            return Result<AnalyticData>.Failure(Errors.Unknown("something went wrong"));
+            return Errors.Unknown("something went wrong");
         }
 
-        return Result<AnalyticData>.Success(data);
+        return data;
     }
 
     public Task<bool> DeleteAsync(int id) {

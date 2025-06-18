@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Result;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Interfaces;
 using Infrastructure.Data;

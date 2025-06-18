@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+﻿using Domain.Common.Result;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;

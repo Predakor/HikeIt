@@ -1,104 +1,142 @@
 ﻿using Application.Services.Peaks;
 using Application.TripAnalytics.Commands;
 using Application.TripAnalytics.Interfaces;
-using Application.TripAnalytics.Services;
 using Domain.Common;
+using Domain.Common.Result;
+using Domain.Entiites.Users;
+using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
+using Domain.TripAnalytics.Commands;
 using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Factories;
 using Domain.TripAnalytics.Interfaces;
 using Domain.TripAnalytics.Services;
+using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
+using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
+using Domain.Trips;
+using Domain.Trips.Builders.GpxDataBuilder;
 using Domain.Trips.ValueObjects;
 
 namespace Application.TripAnalytics;
 
 public class TripAnalyticService(
     IPeakService peakService,
-    ITripDomainAnalyticService tripDomainAnalyticService,
-    IElevationProfileService elevationProfileService,
-    ITripAnalyticUnitOfWork unitOfWork
+    ITripAnalyticUnitOfWork unitOfWork,
+    IReachedPeakService reachedPeakService,
+    IPeakAnalyticService peakAnalyticService,
+    ITripDomainAnalyticService tripDomainAnalyticService
 ) : ITripAnalyticService {
     readonly IPeakService _peakService = peakService;
+    readonly ITripAnalyticUnitOfWork _unitOfWork = unitOfWork;
+    readonly IReachedPeakService _reachedPeakService = reachedPeakService;
+    readonly IPeakAnalyticService _peakAnalyticService = peakAnalyticService;
     readonly ITripDomainAnalyticService _tripDomainAnalyticService = tripDomainAnalyticService;
-    readonly IElevationProfileService _elevationService = elevationProfileService;
-    readonly ITripAnalyticUnitOfWork unitOfWork = unitOfWork;
 
-    public async Task<TripAnalytic> GenerateAnalytic(AnalyticData data) {
+    public async Task<Result<TripAnalytic>> GenerateAnalytic(AnalyticData data, Trip trip) {
         var (points, gains) = data;
+        var builder = new TripAnalyticBuilder();
 
-        var builder = new TripAnalyticBuilder(_elevationService);
+        //Add actual value
+        var user = new User() {
+            Id = Guid.Parse("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"),
+            Name = "Janusz",
+            Email = "mistrzbiznesu@wp.pl",
+            BirthDay = new DateOnly(2002, 4, 15),
+        };
 
-        //generate Route analytics
-        var routeAnalytic = RouteAnalyticFactory.Create(points, gains);
-        builder.WithRouteAnalytic(routeAnalytic);
+        //generate Route and Time analytics
+        GenerateRouteAnalytics(data)
+            .Bind(d => {
+                builder.WithRouteAnalytic(d);
+                return Result<RouteAnalytic>.Success(d);
+            })
+            .Bind(routeAnalytics => GenerateTimeAnalytics(routeAnalytics, points))
+            .Match(timeAnalytics => builder.WithTimeAnalytic(timeAnalytics), err => { });
 
-        //Time analytics might be null
-        var timeAnalytics = TimeAnalyticFactory.CreateAnalytics(new(routeAnalytic, points));
-        if (timeAnalytics != null) {
-            builder.WithTimeAnalytic(timeAnalytics);
-        }
+        //Reached Peaks
+        await FindLocalMaximasCommand
+            .Create(data)
+            .Execute()
+            .Bind(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 50f))
+            .Bind(foundPeaks => _reachedPeakService.ToReachedPeaks(foundPeaks, trip, user))
+            .Bind(reachedPeaks => {
+                _unitOfWork.ReachedPeaks.AddRangeAsync(reachedPeaks);
+                return _peakAnalyticService.Create([.. reachedPeaks]);
+            })
+            .MatchAsync(
+                peakAnalytics => builder.WithPeaksAnalytic(peakAnalytics),
+                error => Console.WriteLine("Couldn't generate peak analytics")
+            );
 
-        //peak detection semi done
-
-        var tripId = Guid.NewGuid(); //Add actual value
-        var userId = Guid.NewGuid(); //Add actual value
-
-        //var potentialPeaks = _tripDomainAnalyticService.FindLocalPeaks(points, gains);
-        //var reachedPeaks = await _peakService.GetMatchingPeaks(potentialPeaks);
-        //Create reached peaks
-        //CreateReachedPeaksCommand
-        //    .Create(new(reachedPeaks, tripId, userId))
-        //    .Execute()
-        //    .Match(
-        //        async peaks => {
-        //            var query = await unitOfWork.ReachedPeaks.AddRangeAsync(peaks);
-        //            query.Match(
-        //                data => {
-        //                    var analytics = PeaksAnalytic.Create(data);
-        //                    //unitOfWork.
-        //                    builder.WithPeaksAnalytic(PeaksAnalytic.Create(data));
-        //                },
-        //                error => { }
-        //            );
-        //        },
-        //        error => Console.WriteLine($"Failed to create peak analytics: {error.Message}")
-        //    );
-
-        //Elevation implement actual downsampling
-        CreateElevationProfileCommand
+        //Elevation Profile
+        await CreateElevationProfileCommand
             .Create(new(data, null))
             .Execute()
-            .Match(
-                async eleProfile => {
-                    var querry = await unitOfWork.Elevations.Create(eleProfile);
-                    querry.Match(
-                        data => builder.WithElevationProfile(data),
-                        error => Console.WriteLine(error.Message)
-                    );
-                },
+            .Bind(_unitOfWork.Elevations.Create)
+            .MatchAsync(
+                elevationProfile => builder.WithElevationProfile(elevationProfile),
                 error => Console.WriteLine(error.Message)
             );
 
         var entity = builder.Build();
 
-        var result = await unitOfWork.TripAnalytics.AddAsync(entity);
+        var result = await _unitOfWork.TripAnalytics.AddAsync(entity);
 
         return entity;
     }
 
+    public Result<RouteAnalytic> GenerateRouteAnalytics(AnalyticData data) {
+        var (points, gains) = data;
+        if (points == null) {
+            return Errors.EmptyCollection("points");
+        }
+        if (gains == null) {
+            return Errors.EmptyCollection("gains");
+        }
+
+        var routeAnalytic = RouteAnalyticFactory.Create(points, gains);
+        if (routeAnalytic == null) {
+            return Errors.Unknown("something went wrong while generatin route anlaytics");
+        }
+
+        return routeAnalytic;
+    }
+
+    public Result<TimeAnalytic> GenerateTimeAnalytics(
+        RouteAnalytic analytics,
+        List<GpxPoint> points
+    ) {
+        var timeAnalytics = TimeAnalyticFactory.CreateAnalytics(new(analytics, points));
+        if (timeAnalytics == null) {
+            return Errors.Unknown("Unsuficient data for time anlaytics");
+        }
+
+        return timeAnalytics;
+    }
+
+    public async Task<ElevationProfile> CreateElevationProfile(
+        ElevationDataWithConfig dataWithConfig
+    ) {
+        var elevationData = GpxDataFactory.Create(dataWithConfig);
+        var points = elevationData.Points;
+
+        var profile = ElevationProfile.Create(points.First(), points.ToGains());
+        return profile;
+    }
+
     public async Task<TripAnalytic?> GetAnalytic(Guid id) {
-        return await unitOfWork.TripAnalytics.GetByIdAsync(id);
+        return await _unitOfWork.TripAnalytics.GetByIdAsync(id);
     }
 
     public async Task<Result<TripAnalytic>> GetCompleteAnalytic(Guid id) {
-        var query = await unitOfWork.TripAnalytics.GetCompleteAnalytic(id);
+        var query = await _unitOfWork.TripAnalytics.GetCompleteAnalytic(id);
         return query;
     }
 
     public async Task<ElevationProfile> GetElevationProfile(Guid id) {
-        return (await unitOfWork.Elevations.GetById(id)).Map(
+        return (await _unitOfWork.Elevations.GetById(id)).Map(
             data => data,
             error => throw new Exception(error.Message)
         );

@@ -1,6 +1,7 @@
-﻿using Application.Commons.Interfaces;
-using Application.Dto;
+﻿using Application.Dto;
 using Domain.Common;
+using Domain.Common.Interfaces;
+using Domain.Common.Result;
 using Domain.ReachedPeaks;
 
 namespace Application.TripAnalytics.Commands;
@@ -14,28 +15,18 @@ internal class CreateReachedPeaksCommand(CommandData data) : ICommand<List<Reach
 
     public Result<List<ReachedPeak>> Execute() {
         if (_reachedPeaks.Count == 0) {
-            var error = Errors.Unknown("Passed empty array");
-            return CommandResult.Failure(error);
+            return Errors.Unknown("Passed empty array");
         }
 
         List<ReachedPeak> peaks = _reachedPeaks
             .Select(p => ReachedPeak.Create(_tripId, _userId, p.Id))
             .ToList();
 
-        return CommandResult.Success(peaks);
+        return peaks;
     }
 
     public static ICommand<List<ReachedPeak>> Create(CommandData data) {
         return new CreateReachedPeaksCommand(data);
     }
 
-    static class CommandResult {
-        public static Result<List<ReachedPeak>> Success(List<ReachedPeak> analytics) {
-            return Result<List<ReachedPeak>>.Success(analytics);
-        }
-
-        public static Result<List<ReachedPeak>> Failure(Error error) {
-            return Result<List<ReachedPeak>>.Failure(error);
-        }
-    }
 }

@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+﻿using Domain.Common.Result;
 
 namespace Domain.Interfaces;
 public interface IReadResultRepository<TEntity, TKey> : IRepository<TEntity, TKey>

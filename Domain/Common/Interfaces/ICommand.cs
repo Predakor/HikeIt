@@ -1,6 +1,6 @@
-﻿using Domain.Common;
+﻿using Domain.Common.Result;
 
-namespace Application.Commons.Interfaces;
+namespace Domain.Common.Interfaces;
 
 public interface ICommandBase { }
 

@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Result;
 using Domain.ReachedPeaks;
 using Infrastructure.Data;
 using Infrastructure.Repository.Generic;
@@ -14,18 +15,18 @@ public class ReachedPeakRepository : Repository<ReachedPeak, Guid>, IReachedPeak
         return querry != null;
     }
 
-    public async Task<Result<List<ReachedPeak>>> AddRangeAsync(List<ReachedPeak> peaks) {
+    public async Task<Result<IList<ReachedPeak>>> AddRangeAsync(IEnumerable<ReachedPeak> peaks) {
         try {
             await DbSet.AddRangeAsync(peaks);
-            return Result<List<ReachedPeak>>.Success(peaks);
+            return peaks.ToList();
         }
         catch (Exception err) {
-            return Result<List<ReachedPeak>>.Failure(Errors.Unknown(err.Message));
+            return Errors.Unknown(err.Message);
             throw;
         }
     }
 
-    public Task<Result<List<ReachedPeak>>> GetReached() {
+    public Task<Result<IList<ReachedPeak>>> GetReached() {
         throw new NotImplementedException();
     }
 

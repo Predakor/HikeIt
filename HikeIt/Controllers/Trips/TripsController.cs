@@ -118,7 +118,7 @@ public class TripsController : ControllerBase {
             return BadRequest("file was wrong");
         }
 
-        var tripResult = await _tripService.Add(newTrip, gpxData);
+        var tripResult = await _tripService.Add(newTrip, gpxData, savedFile.Value.Id);
         if (tripResult.HasErrors(out error)) {
             return BadRequest(error);
         }

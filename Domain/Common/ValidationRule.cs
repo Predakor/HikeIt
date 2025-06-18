@@ -1,4 +1,6 @@
-﻿namespace Domain.Common;
+﻿using Domain.Common.Result;
+
+namespace Domain.Common;
 
 public interface IRule {
     Result<bool> Check();

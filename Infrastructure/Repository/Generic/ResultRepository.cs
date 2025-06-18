@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Result;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

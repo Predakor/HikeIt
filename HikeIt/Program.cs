@@ -3,32 +3,17 @@ using Api.Configuration.Cors.Models;
 using Api.Endpoints;
 using Application.Mappers.Implementations;
 using Application.Services.Files;
-using Application.Services.Peaks;
-using Application.Services.Region;
-using Application.Services.Trips;
-using Application.Services.Users;
-using Application.TripAnalytics;
-using Application.TripAnalytics.Interfaces;
-using Application.TripAnalytics.Services;
-using Domain.Entiites.Regions;
-using Domain.Entiites.Users;
-using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Interfaces;
-using Domain.TripAnalytics.Repositories;
-using Domain.TripAnalytics.Services;
-using Domain.Trips;
-using Domain.Trips.Entities.GpxFiles;
 using Infrastructure;
 using Infrastructure.Data;
 using Infrastructure.Parsers;
-using Infrastructure.Repository;
 using Infrastructure.Storage;
 using Infrastructure.UnitOfWorks;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -71,17 +56,18 @@ static void MapEndpoints(WebApplication app) {
     app.MapFilesEndpoints();
 }
 
-
-
 static void InjectDependencies(WebApplicationBuilder builder) {
+    var assemblies = new[] { "Application", "Infrastructure", "Domain", "Api" }
+        .Select(Assembly.Load)
+        .ToArray();
+
     InjectMappers(builder);
-    InjectRepositories(builder);
+    InjectRepositories(builder, assemblies);
     InjectStorages(builder);
-    InjectServices(builder);
+    InjectServices(builder, assemblies);
     InjectParsers(builder);
     InjectUnitOfWorks(builder);
 }
-
 
 static void InjectParsers(WebApplicationBuilder builder) {
     builder.Services.AddScoped<IGpxParser, GpxParser>();
@@ -91,28 +77,28 @@ static void InjectStorages(WebApplicationBuilder builder) {
     builder.Services.AddScoped<IFileStorage, FileStorage>();
 }
 
-static void InjectRepositories(WebApplicationBuilder builder) {
-    builder.Services.AddScoped<IPeakRepository, PeakRepository>();
-    builder.Services.AddScoped<IUserRepository, UserRepository>();
-    builder.Services.AddScoped<ITripRepository, TripRepository>();
-    builder.Services.AddScoped<IRegionRepository, RegionRepository>();
-    builder.Services.AddScoped<IGpxFileRepository, GpxFileRepository>();
-    builder.Services.AddScoped<IReachedPeakRepository, ReachedPeakRepository>();
-    builder.Services.AddScoped<IPeakAnalyticRepository, PeakAnalyticRepository>();
-    builder.Services.AddScoped<ITripAnalyticRepository, TripAnalyticRepository>();
-    builder.Services.AddScoped<IElevationProfileRepository, ElevationProfileRepository>();
+static void InjectRepositories(WebApplicationBuilder builder, Assembly[] targetAssemblies) {
+    builder.Services.Scan(scan =>
+        scan.FromAssemblies(targetAssemblies)
+            .AddClasses(classes =>
+                classes.Where(type =>
+                    type.Name.EndsWith("Repository") && type.IsClass && !type.IsAbstract
+                )
+            )
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+    );
 }
 
-static void InjectServices(WebApplicationBuilder builder) {
-    builder.Services.AddScoped<IPeakService, PeakService>();
-    builder.Services.AddScoped<IUserService, UserService>();
-    builder.Services.AddScoped<ITripService, TripService>();
-    builder.Services.AddScoped<IRegionService, RegionService>();
-    builder.Services.AddScoped<IGpxFileService, GpxFileService>();
-    builder.Services.AddScoped<ITripAnalyticService, TripAnalyticService>();
-    builder.Services.AddScoped<IElevationProfileService, ElevationProfileService>();
-    builder.Services.AddScoped<ITripDomainAnalyticService, TripDomainAnalyticsService>();
-
+static void InjectServices(WebApplicationBuilder builder, Assembly[] targetAssemblies) {
+    builder.Services.Scan(scan =>
+        scan.FromAssemblies(targetAssemblies)
+            .AddClasses(classes =>
+                classes.Where(t => t.Name.EndsWith("Service") && t.IsClass && !t.IsAbstract)
+            )
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+    );
 }
 static void InjectMappers(WebApplicationBuilder builder) {
     builder.Services.AddScoped<PeakMapper>();

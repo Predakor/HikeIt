@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.Result;
 using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Repositories;
 using Infrastructure.Data;

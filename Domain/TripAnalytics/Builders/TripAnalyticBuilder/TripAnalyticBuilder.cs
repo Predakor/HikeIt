@@ -1,5 +1,4 @@
-﻿using Application.TripAnalytics.Services;
-using Domain.TripAnalytics.Entities.ElevationProfile;
+﻿using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
@@ -8,7 +7,6 @@ using Domain.Trips.ValueObjects;
 namespace Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 
 public class TripAnalyticBuilder {
-    readonly IElevationProfileService _elevationService;
 
     #region mutable
     RouteAnalytic? _routeAnalytic;
@@ -17,9 +15,6 @@ public class TripAnalyticBuilder {
     ElevationProfile? _elevationProfile;
 
     #endregion
-    public TripAnalyticBuilder(IElevationProfileService service) {
-        _elevationService = service;
-    }
 
     public TripAnalyticBuilder WithRouteAnalytic(RouteAnalytic analytic) {
         ArgumentException.ThrowIfNullOrEmpty(nameof(analytic));

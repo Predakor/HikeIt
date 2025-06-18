@@ -1,5 +1,6 @@
-﻿using Application.Commons.Interfaces;
-using Domain.Common;
+﻿using Domain.Common;
+using Domain.Common.Interfaces;
+using Domain.Common.Result;
 using Domain.Trips.Builders.GpxDataBuilder;
 using Domain.Trips.ValueObjects;
 

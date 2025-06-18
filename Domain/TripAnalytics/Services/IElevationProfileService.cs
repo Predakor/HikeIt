@@ -1,7 +1,7 @@
-﻿using Domain.Common;
+﻿using Domain.Common.Result;
 using Domain.TripAnalytics.Entities.ElevationProfile;
 
-namespace Application.TripAnalytics.Services;
+namespace Domain.TripAnalytics.Services;
 public interface IElevationProfileService {
     public Task<Result<ElevationProfile>> FindOrCreate(ElevationProfile profile);
 

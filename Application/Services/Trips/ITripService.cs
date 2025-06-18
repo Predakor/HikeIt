@@ -1,12 +1,12 @@
 ﻿using Application.Dto;
-using Domain.Common;
+using Domain.Common.Result;
 using Domain.Trips.ValueObjects;
 
 namespace Application.Services.Trips;
 
 public interface ITripService {
     public Task<Result<Guid>> Add(TripDto.Request.Create dto);
-    public Task<Result<Guid>> Add(TripDto.Request.Create dto, AnalyticData data);
+    public Task<Result<Guid>> Add(TripDto.Request.Create dto, AnalyticData data, Guid fileId);
 
     public Task<bool> Update(TripDto.Request.Update dto);
     public Task<bool> UpdateGpxFile(Guid tripId, Guid gpxFileId);

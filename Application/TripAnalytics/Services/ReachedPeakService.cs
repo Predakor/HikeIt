@@ -1,0 +1,22 @@
+﻿using Domain.Common;
+using Domain.Common.Result;
+using Domain.Entiites.Peaks;
+using Domain.Entiites.Users;
+using Domain.ReachedPeaks;
+using Domain.Trips;
+
+namespace Application.TripAnalytics.Services;
+
+public class ReachedPeakService : IReachedPeakService {
+    public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user) {
+        return ReachedPeak.Create(peak, trip, user);
+    }
+
+    public Result<IList<ReachedPeak>> ToReachedPeaks(IEnumerable<Peak> peaks, Trip trip, User user) {
+        if (!peaks.Any()) {
+            return Errors.EmptyCollection("Peaks");
+        }
+
+        return peaks.Select(p => ReachedPeak.Create(p, trip, user)).ToList();
+    }
+}
