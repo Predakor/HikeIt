@@ -8,7 +8,12 @@
 
   <ItemGroup>
     <Folder Include="TripAnalytics\Builders\RouteElevationProfileBuilder\" />
+    <Folder Include="TripAnalytics\Commands\" />
     <Folder Include="Trips\ValueObjects\TripAnalytics\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite" Version="2.6.0" />
   </ItemGroup>
 
 </Project>

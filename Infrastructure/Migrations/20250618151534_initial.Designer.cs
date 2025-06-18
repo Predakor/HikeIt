@@ -6,14 +6,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250608224708_ChangedGainsDataTypeToFloat")]
-    partial class ChangedGainsDataTypeToFloat
+    [Migration("20250618151534_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +37,10 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Height")
                         .HasColumnType("int");
 
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geography");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -53,6 +58,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             Height = 1603,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.736 15.739)"),
                             Name = "Śnieżka",
                             RegionID = 22
                         },
@@ -60,6 +66,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 2,
                             Height = 1346,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.179 20.088)"),
                             Name = "Rysy",
                             RegionID = 1
                         },
@@ -67,6 +74,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 3,
                             Height = 2050,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.303 19.926)"),
                             Name = "Giewont",
                             RegionID = 1
                         },
@@ -74,8 +82,137 @@ namespace Infrastructure.Migrations
                         {
                             Id = 4,
                             Height = 1367,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.784 19.102)"),
                             Name = "Czupel",
                             RegionID = 3
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Height = 1725,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.21 20.04)"),
+                            Name = "Lodowy Szczyt",
+                            RegionID = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Height = 1894,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.606 19.546)"),
+                            Name = "Babia Góra",
+                            RegionID = 4
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Height = 1153,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.624 19.523)"),
+                            Name = "Pilsko",
+                            RegionID = 4
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Height = 982,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.467 20.535)"),
+                            Name = "Radziejowa",
+                            RegionID = 9
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Height = 1050,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.828 16.7)"),
+                            Name = "Ślęża",
+                            RegionID = 22
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Height = 948,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.464 20.966)"),
+                            Name = "Jaworzyna Krynicka",
+                            RegionID = 9
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Height = 1335,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.616 19.269)"),
+                            Name = "Wielka Racza",
+                            RegionID = 5
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Height = 1257,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.645 19.866)"),
+                            Name = "Luboń Wielki",
+                            RegionID = 6
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Height = 1152,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.635 19.335)"),
+                            Name = "Kiczera",
+                            RegionID = 3
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Height = 1050,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.79 20.792)"),
+                            Name = "Łysica",
+                            RegionID = 12
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Height = 944,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.716 16.27)"),
+                            Name = "Chełmiec",
+                            RegionID = 21
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Height = 746,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (51.116 15.776)"),
+                            Name = "Trójgarb",
+                            RegionID = 24
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Height = 860,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.796 19.847)"),
+                            Name = "Lubomir",
+                            RegionID = 7
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Height = 1150,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.643 20.281)"),
+                            Name = "Mogielica",
+                            RegionID = 7
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Height = 970,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.9 15.73)"),
+                            Name = "Jelenia Góra",
+                            RegionID = 22
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Height = 1685,
+                            Location = (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.218 20.02)"),
+                            Name = "Orla Perć",
+                            RegionID = 1
                         });
                 });
 
@@ -316,7 +453,22 @@ namespace Infrastructure.Migrations
                     b.ToTable("ReachedPeak");
                 });
 
-            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
+            modelBuilder.Entity("Domain.TripAnalytics.Entities.ElevationProfile.ElevationProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("GainsData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ElevationProfiles");
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -324,17 +476,32 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TripAnalytic");
+                    b.ToTable("PeaksAnalytic");
                 });
 
-            modelBuilder.Entity("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", b =>
+            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ElevationProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PeaksAnalyticsId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.ToTable("PeaksAnalytic");
+                    b.HasIndex("ElevationProfileId")
+                        .IsUnique()
+                        .HasFilter("[ElevationProfileId] IS NOT NULL");
+
+                    b.HasIndex("PeaksAnalyticsId")
+                        .IsUnique()
+                        .HasFilter("[PeaksAnalyticsId] IS NOT NULL");
+
+                    b.ToTable("TripAnalytics");
                 });
 
             modelBuilder.Entity("Domain.Trips.Entities.GpxFiles.GpxFile", b =>
@@ -380,7 +547,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("RegionId")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TripAnalyticID")
+                    b.Property<Guid?>("TripAnalyticId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("TripDay")
@@ -399,9 +566,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.HasIndex("TripAnalyticID")
+                    b.HasIndex("TripAnalyticId")
                         .IsUnique()
-                        .HasFilter("[TripAnalyticID] IS NOT NULL");
+                        .HasFilter("[TripAnalyticId] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -439,10 +606,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.ReachedPeaks.ReachedPeak", b =>
                 {
-                    b.HasOne("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", null)
+                    b.HasOne("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", null)
                         .WithMany("NewPeaks")
-                        .HasForeignKey("NewPeaksAnalyticId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("NewPeaksAnalyticId");
 
                     b.HasOne("Domain.Entiites.Peaks.Peak", "Peak")
                         .WithMany()
@@ -450,10 +616,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", null)
+                    b.HasOne("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", null)
                         .WithMany("ReachedPeaks")
-                        .HasForeignKey("PeaksAnalyticId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("PeaksAnalyticId");
 
                     b.HasOne("Domain.Trips.Trip", "Trip")
                         .WithOne()
@@ -474,24 +639,47 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
+            modelBuilder.Entity("Domain.TripAnalytics.Entities.ElevationProfile.ElevationProfile", b =>
                 {
-                    b.OwnsOne("Domain.TripAnalytics.Builders.TripAnalyticBuilder.ElevationProfile", "ElevationProfile", b1 =>
+                    b.OwnsOne("Domain.Trips.ValueObjects.GpxPoint", "Start", b1 =>
                         {
-                            b1.Property<Guid>("TripAnalyticId")
+                            b1.Property<Guid>("ElevationProfileId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<string>("Name")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
+                            b1.Property<double>("Ele")
+                                .HasColumnType("float");
 
-                            b1.HasKey("TripAnalyticId");
+                            b1.Property<double>("Lat")
+                                .HasColumnType("float");
 
-                            b1.ToTable("TripAnalytic");
+                            b1.Property<double>("Lon")
+                                .HasColumnType("float");
+
+                            b1.Property<DateTime?>("Time")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("ElevationProfileId");
+
+                            b1.ToTable("ElevationProfiles");
 
                             b1.WithOwner()
-                                .HasForeignKey("TripAnalyticId");
+                                .HasForeignKey("ElevationProfileId");
                         });
+
+                    b.Navigation("Start")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
+                {
+                    b.HasOne("Domain.TripAnalytics.Entities.ElevationProfile.ElevationProfile", "ElevationProfile")
+                        .WithOne()
+                        .HasForeignKey("Domain.TripAnalytics.TripAnalytic", "ElevationProfileId");
+
+                    b.HasOne("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", "PeaksAnalytic")
+                        .WithOne()
+                        .HasForeignKey("Domain.TripAnalytics.TripAnalytic", "PeaksAnalyticsId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.OwnsOne("Domain.TripAnalytics.ValueObjects.RouteAnalytics.RouteAnalytic", "RouteAnalytics", b1 =>
                         {
@@ -524,7 +712,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("TripAnalyticId");
 
-                            b1.ToTable("TripAnalytic");
+                            b1.ToTable("TripAnalytics");
 
                             b1.WithOwner()
                                 .HasForeignKey("TripAnalyticId");
@@ -567,7 +755,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("TripAnalyticId");
 
-                            b1.ToTable("TripAnalytic");
+                            b1.ToTable("TripAnalytics");
 
                             b1.WithOwner()
                                 .HasForeignKey("TripAnalyticId");
@@ -575,18 +763,11 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("ElevationProfile");
 
+                    b.Navigation("PeaksAnalytic");
+
                     b.Navigation("RouteAnalytics");
 
                     b.Navigation("TimeAnalytics");
-                });
-
-            modelBuilder.Entity("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", b =>
-                {
-                    b.HasOne("Domain.TripAnalytics.TripAnalytic", null)
-                        .WithOne("PeaksAnalytics")
-                        .HasForeignKey("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Trips.Entities.GpxFiles.GpxFile", b =>
@@ -617,7 +798,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.TripAnalytics.TripAnalytic", "Analytics")
                         .WithOne()
-                        .HasForeignKey("Domain.Trips.Trip", "TripAnalyticID")
+                        .HasForeignKey("Domain.Trips.Trip", "TripAnalyticId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entiites.Users.User", "User")
@@ -637,12 +818,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
-                {
-                    b.Navigation("PeaksAnalytics");
-                });
-
-            modelBuilder.Entity("Domain.TripAnalytics.ValueObjects.PeaksAnalytics.PeaksAnalytic", b =>
+            modelBuilder.Entity("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", b =>
                 {
                     b.Navigation("NewPeaks");
 
