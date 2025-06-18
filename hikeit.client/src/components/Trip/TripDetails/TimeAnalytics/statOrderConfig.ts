@@ -1,7 +1,8 @@
+import StatGroup from "@/components/Stats/StatGroup";
 import type { OrderConfig } from "@/types/Utils/OrderTypes";
-import type { TimeAnalytics } from "../../Types/TripAnalyticsTypes";
+import type { TimeAnalytic } from "../../Types/TripAnalyticsTypes";
 
-export const timeAnalyticOrderConfig: OrderConfig<TimeAnalytics> = [
+export const timeAnalyticOrderConfig: OrderConfig<TimeAnalytic> = [
   {
     type: "group",
     label: "Activity",

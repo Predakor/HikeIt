@@ -1,5 +1,5 @@
 import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
-import { Button, Flex, Heading, VStack } from "@chakra-ui/react";
+import { Button, Flex, Heading, Stack, VStack } from "@chakra-ui/react";
 import { tripDetailsTabs } from "../Data/tabOrder";
 import { TripDetailsMenu } from "./TripDetailsMenu/TripDetailsTabs";
 import apiClient from "@/Utils/Api/ApiClient";
@@ -20,15 +20,19 @@ function TripDetails({ data }: { data: TripDtoFull }) {
   };
 
   return (
-    <VStack alignItems={"start"} w={{ base: "full", md: "60vw" }} gap={"2em"}>
-      <Flex alignItems={"flex-start"} gap={40}>
-        <Heading fontSize={"4xl"}>{data.base.name}</Heading>
-        <Heading fontSize={"2xl"}>{data.base.tripDay}</Heading>
+    <VStack alignItems={"start"} gap={"2em"}>
+      <Flex alignItems={"center"} gapX={4}>
+        <Heading size={{ base: "2xl", lg: "4xl" }}>{data.base.name}</Heading>
+        <Heading color={"fg.muted"} size={{ base: "xl", lg: "2xl" }}>
+          {data.base.tripDay}
+        </Heading>
         <Button onClick={deleteHandler} colorPalette={"red"} variant={"solid"}>
           Delete
         </Button>
       </Flex>
-      <TripDetailsMenu data={data} config={tabOrder} />
+      <Stack w={"full"} justifyItems={"center"} gap={8}>
+        <TripDetailsMenu data={data} config={tabOrder} />
+      </Stack>
     </VStack>
   );
 }

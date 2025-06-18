@@ -2,8 +2,8 @@ import type { TripAnalytic, TripDtoFull } from "@/types/ApiTypes/TripDtos";
 import type { TabConfig } from "@/types/Utils/OrderTypes";
 import RouteAnalytics from "../TripDetails/RouteAnalytics/RouteAnalytics";
 import TripGraph from "../TripDetails/TripGraph/TripGraph";
-import TimeAnalytics from "../TripDetails/TimeAnalytics/TimeAnalytics";
 import PreviewGraphDevOnly from "../TripDetails/TripGraph/Dev_PreviewGraph/PreviewGraphDevOnly";
+import TimeAnalytic from "../TripDetails/TimeAnalytics/TimeAnalytics";
 
 export const tripAnalyticTabs: TabConfig<TripAnalytic> = [
   { key: "routeAnalytics", label: "Time", Component: RouteAnalytics },
@@ -21,7 +21,7 @@ const trackAnalyticConfig: TabConfig<TripAnalytic> = [
   {
     key: "timeAnalytics",
     label: "",
-    Component: TimeAnalytics,
+    Component: TimeAnalytic,
   },
   {
     key: "peaksAnalytics",

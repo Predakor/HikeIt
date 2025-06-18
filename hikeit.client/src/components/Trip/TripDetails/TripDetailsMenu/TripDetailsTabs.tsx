@@ -2,28 +2,24 @@ import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 import { ToTitleCase } from "@/Utils/ObjectToArray";
 import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
 import type { EntryItem, TabConfig } from "@/types/Utils/OrderTypes";
-import { For, Tabs } from "@chakra-ui/react";
+import { For, Stack, Tabs } from "@chakra-ui/react";
 import RenderTabEntry from "@/components/Utils/RenderTabs/RenderTabEntry";
 
 interface Props {
   data: TripDtoFull;
   config: TabConfig<TripDtoFull>;
 }
+
 export function TripDetailsMenu({ data, config }: Props) {
   console.log(data);
 
   return (
-    <Tabs.Root
-      lazyMount
-      unmountOnExit
-      orientation="vertical"
-      defaultValue={"base"}
-      size={"lg"}
-    >
+    <Tabs.Root lazyMount unmountOnExit defaultValue={"base"}>
       <Tabs.List
-        alignSelf={{
-          base: "flex-start",
-        }}
+        display={"flex"}
+        gapX={{ base: 12, lg: 4 }}
+        maxW={"100vw"}
+        overflowX={{ base: "scroll", lg: "clip" }}
       >
         <For
           each={config}
@@ -36,12 +32,14 @@ export function TripDetailsMenu({ data, config }: Props) {
       </Tabs.List>
 
       <Tabs.ContentGroup gap={8}>
-        <For
-          each={config}
-          children={(entry) => (
-            <RenderTabEntry entry={entry} data={data} Renderer={TabContent} />
-          )}
-        />
+        <Stack w={"full"} justifyItems={"center"} gap={8}>
+          <For
+            each={config}
+            children={(entry) => (
+              <RenderTabEntry entry={entry} data={data} Renderer={TabContent} />
+            )}
+          />
+        </Stack>
       </Tabs.ContentGroup>
     </Tabs.Root>
   );

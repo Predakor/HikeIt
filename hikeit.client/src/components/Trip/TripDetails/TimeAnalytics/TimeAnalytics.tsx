@@ -1,13 +1,8 @@
 import RenderFromConfig from "@/components/Utils/RenderWithOrder";
-import type { TimeAnalytics } from "../../Types/TripAnalyticsTypes";
-import { timeAnalyticOrderConfig } from "./orderConfig";
-import { Flex } from "@chakra-ui/react";
+import type { TimeAnalytic } from "../../Types/TripAnalyticsTypes";
+import { timeAnalyticOrderConfig } from "./statOrderConfig";
 
-function TimeAnalytics({ data }: { data: TimeAnalytics }) {
-  return (
-    <Flex justifyItems={"center"} gap={8}>
-      <RenderFromConfig config={timeAnalyticOrderConfig} data={data} />
-    </Flex>
-  );
+function TimeAnalytics({ data }: { data: TimeAnalytic }) {
+  return <RenderFromConfig config={timeAnalyticOrderConfig} data={data} />;
 }
 export default TimeAnalytics;

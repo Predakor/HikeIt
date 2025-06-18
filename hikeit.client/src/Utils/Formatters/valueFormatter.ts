@@ -10,6 +10,10 @@ export function GenericFormatter<T extends string | number>(value: T) {
   }
 }
 
+export function NumberFormatter(value: number, decimals = 1) {
+  return value.toFixed(decimals);
+}
+
 export function KeyToLabelFormatter(key: string) {
   const detectedWords: string[] = [];
 

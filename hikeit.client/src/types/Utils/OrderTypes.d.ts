@@ -56,6 +56,7 @@ export interface OrderEntryGroup<TKey, TFor> {
   items: OrderConfig<TFor>;
   base?: TKey;
   Wrapper?: FunctionComponent<{ children: ReactNode }>;
+  RenderWith?: FunctionComponent<any>;
   dataGetter?: (data: TFor) => string;
 }
 

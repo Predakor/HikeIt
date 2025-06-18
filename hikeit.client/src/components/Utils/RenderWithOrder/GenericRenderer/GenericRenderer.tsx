@@ -10,22 +10,25 @@ import { ItemRenderer } from "../ItemRenderer/ItemRenderer";
 
 type Handlers<T> = {
   entry: (entry: OrderEntryItem<keyof T, T>) => ReactElement;
-  group: (entry: OrderEntryGroup<T>) => ReactElement;
+  group: (entry: OrderEntryGroup<keyof T, T>) => ReactElement;
   data: (entry: OrderEntryData<T>) => ReactElement;
 };
 
-function matchEntry<T>(entry: OrderEntry<T>, handlers: Handlers<T>) {
+function matchEntry<T extends object>(
+  entry: OrderEntry<T>,
+  handlers: Handlers<T>
+) {
   if (entry.type === "group") return handlers.group(entry);
   if (entry.type === "data") return handlers.data(entry);
   return handlers.entry(entry);
 }
 
-interface GenericRendererProps<T> {
+interface GenericRendererProps<T extends object> {
   entry: OrderEntry<T>;
   data: T;
 }
 
-export default function GenericRenderer<T>({
+export default function GenericRenderer<T extends object>({
   entry,
   data,
 }: GenericRendererProps<T>) {

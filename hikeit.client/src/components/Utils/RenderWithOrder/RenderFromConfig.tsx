@@ -1,6 +1,7 @@
-import { For } from "@chakra-ui/react";
-import RenderEntry from "./GenericRenderer/GenericRenderer";
+import MapWrapper from "@/components/Wrappers/Mapping/MapWrapper";
 import type { OrderConfig } from "@/types/Utils/OrderTypes";
+import { SimpleGrid } from "@chakra-ui/react";
+import RenderEntry from "./GenericRenderer/GenericRenderer";
 
 export interface RenderOrderConfig<TFor extends object> {
   data: TFor;
@@ -13,9 +14,20 @@ export default function RenderFromConfig<T extends object>(
   const { data, config } = props;
 
   return (
-    <For
-      each={config}
-      children={(entry, i) => <RenderEntry entry={entry} data={data} key={i} />}
+    <MapWrapper
+      items={config}
+      Wrapper={({ children }) => (
+        <SimpleGrid
+          gridTemplateColumns={{ base: "1", lg: "repeat(2,1fr)" }}
+          w={"full"}
+          gap={4}
+        >
+          {children}
+        </SimpleGrid>
+      )}
+      renderItem={(entry, i) => (
+        <RenderEntry entry={entry} data={data} key={i} />
+      )}
     />
   );
 }

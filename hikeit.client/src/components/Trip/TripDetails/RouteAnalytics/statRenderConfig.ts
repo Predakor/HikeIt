@@ -1,17 +1,14 @@
 import type { OrderConfig } from "@/types/Utils/OrderTypes";
-import { Flex } from "@chakra-ui/react";
 import type { RouteAnalytic } from "../../Types/TripAnalyticsTypes";
+import StatGroup from "@/components/Stats/StatGroup";
 
-export const routeOrderConfig: OrderConfig<RouteAnalytic> = [
+export const routeAnalyticsRenderConfig: OrderConfig<RouteAnalytic> = [
   {
     type: "group",
     label: "distance",
-    Wrapper: Flex,
+    RenderWith: StatGroup,
     items: [
-      {
-        key: "totalDistanceKm",
-        label: "Total distance",
-      },
+      { key: "totalDistanceKm", label: "Total distance" },
       { key: "totalAscent", label: "" },
       { key: "totalDescent", label: "" },
     ],
@@ -20,7 +17,7 @@ export const routeOrderConfig: OrderConfig<RouteAnalytic> = [
   {
     type: "group",
     label: "elevation",
-    Wrapper: Flex,
+    RenderWith: StatGroup,
     items: [
       { key: "highestElevation", label: "" },
       { key: "lowestElevation", label: "" },
@@ -30,7 +27,7 @@ export const routeOrderConfig: OrderConfig<RouteAnalytic> = [
   {
     type: "group",
     label: "slopes",
-    Wrapper: Flex,
+    RenderWith: StatGroup,
     items: [
       { key: "averageSlope", label: "" },
       { key: "averageAscentSlope", label: "" },

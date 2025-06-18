@@ -5,15 +5,7 @@ import Footer from "./Footer/Footer";
 
 function Layout({ children }: PropsWithChildren) {
   return (
-    <Stack
-      py={4}
-      px={6}
-      minH={"100vh"}
-      overflowX={"clip"}
-      align={"stretch"}
-      gap={8}
-      gapY={16}
-    >
+    <Stack minH={"100vh"} align={"stretch"} overflowX={"clip"} p={4} gap={4}>
       <Header />
       <Stack as="main" flexGrow={1}>
         {children}

@@ -1,17 +1,28 @@
-import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
+import {
+  GenericFormatter,
+  NumberFormatter,
+} from "@/Utils/Formatters/valueFormatter";
 import type { BaseTrip, TripDtoFull } from "@/types/ApiTypes/TripDtos";
 import type { StatAddons } from "@/types/Utils/StatTypes";
 import type { IconType } from "react-icons";
 import { CiCalendarDate } from "react-icons/ci";
+import { FaPauseCircle } from "react-icons/fa";
 import {
   FaArrowDown,
   FaArrowTrendDown,
   FaArrowTrendUp,
   FaArrowUp,
+  FaMountain,
+  FaMountainSun,
+  FaPersonHiking,
+  FaPlay,
+  FaRegClock,
+  FaStop,
 } from "react-icons/fa6";
 import { GiJourney, GiPeaks } from "react-icons/gi";
+import { SiSpeedtest } from "react-icons/si";
 import type { PartialMap } from "../../../types/Utils/MappingTypes";
-import type { RouteAnalytic, TimeAnalytics } from "../Types/TripAnalyticsTypes";
+import type { RouteAnalytic, TimeAnalytic } from "../Types/TripAnalyticsTypes";
 
 export const icons: PartialMap<BaseTrip, StatAddons> = {
   // distance: { IconSource: GiJourney, unit: "m" },
@@ -69,54 +80,54 @@ export const routeAnalyticStatsInfo: PartialMap<RouteAnalytic, StatAddons> = {
   },
 };
 
-export const timeAnalyticsStatsInfo: PartialMap<TimeAnalytics, StatAddons> = {
+export const timeAnalyticsStatsInfo: PartialMap<TimeAnalytic, StatAddons> = {
   duration: {
-    IconSource: FaArrowUp,
+    IconSource: FaRegClock,
     unit: "min",
     formatt: GenericFormatter,
   },
   startTime: {
-    IconSource: FaArrowUp,
+    IconSource: FaPlay,
     formatt: GenericFormatter,
   },
   endTime: {
-    IconSource: FaArrowUp,
+    IconSource: FaStop,
     formatt: GenericFormatter,
   },
   activeTime: {
-    IconSource: FaArrowUp,
+    IconSource: FaPersonHiking,
     unit: "min",
     formatt: durationFormatter,
   },
   idleTime: {
-    IconSource: FaArrowUp,
+    IconSource: FaPauseCircle,
     unit: "min",
     formatt: durationFormatter,
   },
   ascentTime: {
-    IconSource: FaArrowUp,
+    IconSource: FaMountainSun,
     unit: "min",
     formatt: durationFormatter,
   },
   descentTime: {
-    IconSource: FaArrowUp,
+    IconSource: FaMountain,
     unit: "min",
     formatt: durationFormatter,
   },
   averageSpeedKph: {
-    IconSource: FaArrowUp,
+    IconSource: SiSpeedtest,
     unit: "km/hrs",
-    formatt: undefined,
+    formatt: (num) => NumberFormatter(num, 2),
   },
   averageAscentKph: {
-    IconSource: FaArrowUp,
+    IconSource: FaArrowTrendUp,
     unit: "km/hrs",
-    formatt: undefined,
+    formatt: (num) => NumberFormatter(num, 2),
   },
   averageDescentKph: {
-    IconSource: FaArrowDown,
+    IconSource: FaArrowTrendDown,
     unit: "km/hrs",
-    formatt: undefined,
+    formatt: (num) => NumberFormatter(num, 2),
   },
 };
 

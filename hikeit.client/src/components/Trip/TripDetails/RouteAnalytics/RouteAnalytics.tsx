@@ -1,14 +1,9 @@
 import RenderFromConfig from "@/components/Utils/RenderWithOrder/RenderFromConfig";
 import type { TripAnalytic } from "@/types/ApiTypes/TripDtos";
-import { Stack } from "@chakra-ui/react";
-import { routeOrderConfig } from "./routeOrderConfig";
+import { routeAnalyticsRenderConfig } from "./statRenderConfig";
 
 export default function RouteAnalytics({ data }: { data: TripAnalytic }) {
-  const orderConfig = routeOrderConfig;
+  const orderConfig = routeAnalyticsRenderConfig;
 
-  return (
-    <Stack gap={4}>
-      <RenderFromConfig data={data} config={orderConfig} />
-    </Stack>
-  );
+  return <RenderFromConfig data={data} config={orderConfig} />;
 }
