@@ -12,15 +12,16 @@ public static class Errors {
     public static Error EmptyCollection(string message) => new Error.EmptyCollection(message);
 
     public static Error RuleViolation(IRule rule) => new Error.RuleViolation(rule);
+
     public static Error File(string message = "") => new Error.File(message);
+    public static Error NotAuthorized() => new Error.NotAuthorized();
 }
 
 public abstract record Error(string Code, string Message) {
     internal sealed record NotFound(string Target)
         : Error("not_found", $"Entity '{Target}' was not found.");
 
-    internal sealed record BadRequest(string Reason)
-        : Error("bad_request", Reason);
+    internal sealed record BadRequest(string Reason) : Error("bad_request", Reason);
 
     internal sealed record DbError(string Detail = "A database error occurred.")
         : Error("db_error", Detail);
@@ -29,7 +30,7 @@ public abstract record Error(string Code, string Message) {
         : Error("empty", $"{Context} is empty.");
 
     internal sealed record Unknown(string? Detail)
-    : Error("unknown", Detail ?? "Something went wrong.");
+        : Error("unknown", Detail ?? "Something went wrong.");
 
     internal sealed record File(string? Detail)
         : Error("file", Detail ?? "something went wrong while proccesing your file.");
@@ -37,4 +38,6 @@ public abstract record Error(string Code, string Message) {
     internal sealed record RuleViolation(IRule Rule)
         : Error("rule_violation", $"{Rule}: {Rule.Message}" ?? "Rule Violation error.");
 
+    internal sealed record NotAuthorized()
+        : Error("not_authorized", $"you're not authorized to do this please log in");
 }

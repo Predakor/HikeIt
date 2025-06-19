@@ -79,24 +79,33 @@ public class TripService : ITripService {
         );
         trip.AddGpxFile(fileId);
 
-        ProccesGpxDataCommand
+        var requestingUser = await _unitOfWork.UserRepository.GetByIdAsync(GetLoggedUserId());
+
+        if (requestingUser == null) {
+            return Errors.NotAuthorized();
+        }
+
+        await ProccesGpxDataCommand
             .Create(data)
             .Execute()
-            .Match(
-                async proccesedData => {
-                    var generatedAnalytics = await _tripAnalyticService.GenerateAnalytic(
-                        proccesedData,
-                        trip
-                    );
-                    generatedAnalytics.Match(
-                        analytics => trip.AddAnalytics(analytics),
-                        error => { }
-                    );
+            .Bind(proccesedData =>
+                _tripAnalyticService.GenerateAnalytic(proccesedData, trip, requestingUser)
+            )
+            .MatchAsync(
+                async analytics => {
+                    var result = await _unitOfWork.TripAnalytics.AddAsync(analytics);
+                    trip.AddAnalytics(analytics);
                 },
-                e => throw new Exception(e.Message)
+                error => throw new Exception(error.Message)
             );
 
-        await _tripRepository.AddAsync(trip);
+        try {
+            await _unitOfWork.TripRepository.AddAsync(trip);
+        }
+        catch (Exception) {
+            throw;
+        }
+
         var saveChanges = await _unitOfWork.SaveChangesAsync();
 
         return saveChanges != null

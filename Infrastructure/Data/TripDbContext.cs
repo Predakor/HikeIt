@@ -40,7 +40,7 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
                 .HasOne(rp => rp.Trip)
                 .WithOne()
                 .HasForeignKey<ReachedPeak>(t => t.TripId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
             builder
                 .HasOne(rp => rp.User)
                 .WithMany()
@@ -64,14 +64,12 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
             builder
                 .HasOne(t => t.GpxFile)
                 .WithOne()
-                .HasForeignKey<Trip>(t => t.GpxFileId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey<Trip>(t => t.GpxFileId);
 
             builder
                 .HasOne(t => t.Analytics)
                 .WithOne()
-                .HasForeignKey<Trip>(t => t.TripAnalyticId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey<Trip>(t => t.TripAnalyticId);
 
             builder.HasData(DataSeed.Trips);
         });

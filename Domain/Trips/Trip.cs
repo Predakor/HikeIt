@@ -8,9 +8,6 @@ using Domain.Trips.Entities.GpxFiles;
 namespace Domain.Trips;
 
 public class Trip : IEntity<Guid> {
-    readonly List<IDomainEvent> _domainEvents = new();
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-
     public Guid Id { get; init; }
     public required string Name { get; set; }
     public required DateOnly TripDay { get; set; }
@@ -53,6 +50,7 @@ public class Trip : IEntity<Guid> {
     public void AddAnalytics(TripAnalytic analytic) {
         ArgumentNullException.ThrowIfNull(analytic);
         TripAnalyticId = analytic.Id;
+        Analytics = analytic;
     }
 
     public void ChangeRegion(int regionID) {

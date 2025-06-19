@@ -19,26 +19,31 @@ public class ReachedPeak : IEntity<Guid> {
     public User? User { get; set; }
     public Peak? Peak { get; set; }
 
-    public static ReachedPeak Create(Guid TripId, Guid UserId, int PeakId, DateTime? reachTime = null) {
+    public static ReachedPeak Create(
+        int PeakId,
+        Guid TripId,
+        Guid UserId,
+        DateTime? reachTime = null
+    ) {
         return new ReachedPeak {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             TripId = TripId,
             UserId = UserId,
             PeakId = PeakId,
-            TimeReached = reachTime
+            TimeReached = reachTime,
         };
     }
+
     public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null) {
         return new ReachedPeak {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             PeakId = peak.Id,
             TripId = trip.Id,
             UserId = user.Id,
             Peak = peak,
             Trip = trip,
             User = user,
-            TimeReached = reachTime
+            TimeReached = reachTime,
         };
     }
-
 }

@@ -7,7 +7,6 @@ using Domain.Trips.ValueObjects;
 namespace Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 
 public class TripAnalyticBuilder {
-
     #region mutable
     RouteAnalytic? _routeAnalytic;
     TimeAnalytic? _timeAnalytic;
@@ -44,9 +43,6 @@ public class TripAnalyticBuilder {
     }
 
     public TripAnalytic Build() {
-
-        //_elevationProfile;
-
         return TripAnalytic.Create(_routeAnalytic, _timeAnalytic, _peakAnalytic, _elevationProfile);
     }
 }

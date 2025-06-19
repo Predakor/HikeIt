@@ -48,7 +48,7 @@ public class PeakService(IPeakRepository repo, PeakMapper peakMapper) : IPeakSer
 internal static class PeakExtentions {
     public static Point ToGpxPoint(this GpxPoint point) {
         var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-        var gpxLocation = geometryFactory.CreatePoint(new Coordinate(point.Lon, point.Lat));
+        var gpxLocation = geometryFactory.CreatePoint(new Coordinate(point.Lat, point.Lon));
         return gpxLocation;
     }
 

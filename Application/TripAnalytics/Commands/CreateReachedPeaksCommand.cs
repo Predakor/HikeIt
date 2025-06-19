@@ -19,7 +19,7 @@ internal class CreateReachedPeaksCommand(CommandData data) : ICommand<List<Reach
         }
 
         List<ReachedPeak> peaks = _reachedPeaks
-            .Select(p => ReachedPeak.Create(_tripId, _userId, p.Id))
+            .Select(p => ReachedPeak.Create(p.Id, _tripId, _userId))
             .ToList();
 
         return peaks;

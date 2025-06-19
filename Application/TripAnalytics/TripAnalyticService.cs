@@ -34,17 +34,9 @@ public class TripAnalyticService(
     readonly IPeakAnalyticService _peakAnalyticService = peakAnalyticService;
     readonly ITripDomainAnalyticService _tripDomainAnalyticService = tripDomainAnalyticService;
 
-    public async Task<Result<TripAnalytic>> GenerateAnalytic(AnalyticData data, Trip trip) {
+    public async Task<Result<TripAnalytic>> GenerateAnalytic(AnalyticData data, Trip trip, User user) {
         var (points, gains) = data;
         var builder = new TripAnalyticBuilder();
-
-        //Add actual value
-        var user = new User() {
-            Id = Guid.Parse("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"),
-            Name = "Janusz",
-            Email = "mistrzbiznesu@wp.pl",
-            BirthDay = new DateOnly(2002, 4, 15),
-        };
 
         //generate Route and Time analytics
         GenerateRouteAnalytics(data)
@@ -59,14 +51,17 @@ public class TripAnalyticService(
         await FindLocalMaximasCommand
             .Create(data)
             .Execute()
-            .Bind(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 50f))
+            .Bind(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 200f))
             .Bind(foundPeaks => _reachedPeakService.ToReachedPeaks(foundPeaks, trip, user))
             .Bind(reachedPeaks => {
                 _unitOfWork.ReachedPeaks.AddRangeAsync(reachedPeaks);
                 return _peakAnalyticService.Create([.. reachedPeaks]);
             })
             .MatchAsync(
-                peakAnalytics => builder.WithPeaksAnalytic(peakAnalytics),
+                async peakAnalytics => {
+                    await _unitOfWork.PeakAnalytics.AddAsync(peakAnalytics);
+                    builder.WithPeaksAnalytic(peakAnalytics);
+                },
                 error => Console.WriteLine("Couldn't generate peak analytics")
             );
 
@@ -81,9 +76,6 @@ public class TripAnalyticService(
             );
 
         var entity = builder.Build();
-
-        var result = await _unitOfWork.TripAnalytics.AddAsync(entity);
-
         return entity;
     }
 
