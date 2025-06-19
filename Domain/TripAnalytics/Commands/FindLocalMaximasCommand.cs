@@ -11,14 +11,25 @@ public class FindLocalMaximasCommand(AnalyticData data) : ICommand<List<GpxPoint
         gains ??= points.ToGains();
 
         var localPeaks = new List<GpxPoint>();
+        bool isAscendingFlag = true;
 
         for (int i = 1; i < gains.Count; i++) {
             var current = gains[i];
-            var prev = gains[i - 1];
 
-            //its catching every point while descending
-            bool isDescending = current.ElevationDelta < prev.ElevationDelta;
+            bool isDescending = current.ElevationDelta < 0;
+
+            //flip flag after we start ascending again
+            if (!isDescending) {
+                isAscendingFlag = true;
+            }
+
             if (isDescending) {
+                //dont collect every descending point
+                if (!isAscendingFlag) {
+                    continue;
+                }
+
+                isAscendingFlag = false;
                 localPeaks.Add(points[i]);
             }
         }
