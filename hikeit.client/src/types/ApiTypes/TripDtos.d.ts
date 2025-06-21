@@ -17,7 +17,7 @@ export interface TripDto {
 interface TripAnalytic {
   routeAnalytics: RouteAnalytic;
   timeAnalytics?: TimeAnalytic;
-  peaksAnalytics?: PeaksAnalytic;
+  peakAnalytics?: PeaksAnalytic;
   elevationProfile?: {};
 }
 

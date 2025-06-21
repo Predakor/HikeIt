@@ -29,7 +29,13 @@ export interface TimeAnalytic {
 }
 
 export interface PeaksAnalytic {
-  reachedPeaks: ReachedPeak[];
-  highestPeak?: ReachedPeak;
-  newPeaks?: ReachedPeak[];
+  summary: PeakSummary;
+  reached: ReachedPeak[];
+}
+
+export interface PeakSummary {
+  total: number;
+  unique: number;
+  highest: ReachedPeak;
+  firstTimeVisits: number;
 }

@@ -14,7 +14,7 @@ export type IconUnit = {
 };
 
 export type StatAddons = {
-  IconSource: IconType;
+  IconSource?: IconType;
   unit?: UnitTypes;
   badge?: ReactElement;
   formatt?: (stat) => string | number | null;

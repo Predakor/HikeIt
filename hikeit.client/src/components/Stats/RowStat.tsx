@@ -1,6 +1,6 @@
 import { ToTitleCase } from "@/Utils/ObjectToArray";
 import type { StatAddons } from "@/types/Utils/StatTypes";
-import { HStack, Icon, Span, Stat } from "@chakra-ui/react";
+import { HStack, Icon, Stat } from "@chakra-ui/react";
 
 interface Props {
   value: string | number;
@@ -15,14 +15,14 @@ export default function RowStat({ value, label, addons }: Props) {
   return (
     <Stat.Root>
       <Stat.Label>{ToTitleCase(label)}</Stat.Label>
-      <HStack fontSize={"lg"}>
+      <HStack alignItems={"baseline"} fontSize={"lg"}>
         {IconSource && (
           <Icon size={"md"}>
             <IconSource />
           </Icon>
         )}
         <Stat.ValueText fontSize={"3xl"}>{statValue}</Stat.ValueText>
-        {unit && <Span alignSelf={"flex-end"}>{unit}</Span>}
+        {unit && <Stat.ValueUnit fontSize={"xl"}>{unit}</Stat.ValueUnit>}
         {badge && badge}
       </HStack>
     </Stat.Root>

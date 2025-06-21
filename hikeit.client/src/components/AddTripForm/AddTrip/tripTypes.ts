@@ -5,4 +5,9 @@ export interface GraphData {
 }
 [];
 
-export interface ReachedPeak {}
+export interface ReachedPeak {
+  name: string;
+  height: number;
+  reachedAt?: string;
+  firstTime: boolean;
+}

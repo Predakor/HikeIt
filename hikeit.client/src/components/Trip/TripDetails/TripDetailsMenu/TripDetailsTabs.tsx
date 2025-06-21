@@ -32,7 +32,7 @@ export function TripDetailsMenu({ data, config }: Props) {
       </Tabs.List>
 
       <Tabs.ContentGroup gap={8}>
-        <Stack w={"full"} justifyItems={"center"} gap={8}>
+        <Stack w={"full"} paddingX={4} justifyItems={"center"} gap={8}>
           <For
             each={config}
             children={(entry) => (
