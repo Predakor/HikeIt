@@ -9,11 +9,53 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class rebase : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BirthDay = table.Column<DateOnly>(type: "date", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Regions",
                 columns: table => new
@@ -28,17 +70,128 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GpxFiles",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BirthDay = table.Column<DateOnly>(type: "date", nullable: false)
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_GpxFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GpxFiles_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -64,25 +217,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GpxFiles",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GpxFiles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GpxFiles_Users_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Trips",
                 columns: table => new
                 {
@@ -98,6 +232,11 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Trips", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Trips_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Trips_GpxFiles_GpxFileId",
                         column: x => x.GpxFileId,
                         principalTable: "GpxFiles",
@@ -112,11 +251,38 @@ namespace Infrastructure.Migrations
                         column: x => x.RegionId,
                         principalTable: "Regions",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReachedPeaks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstTime = table.Column<bool>(type: "bit", nullable: false),
+                    TimeReached = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TripId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PeakId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReachedPeaks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Trips_Users_UserId",
+                        name: "FK_ReachedPeaks_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ReachedPeaks_Peaks_PeakId",
+                        column: x => x.PeakId,
+                        principalTable: "Peaks",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ReachedPeaks_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -179,7 +345,8 @@ namespace Infrastructure.Migrations
                 name: "PeaksAnalytic",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Summary_TotalPeaks = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -192,47 +359,15 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ReachedPeaks",
-                columns: table => new
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "BirthDay", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TimeReached = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TripId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PeakId = table.Column<int>(type: "int", nullable: false),
-                    NewPeaksAnalyticId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PeaksAnalyticId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ReachedPeaks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ReachedPeaks_PeaksAnalytic_NewPeaksAnalyticId",
-                        column: x => x.NewPeaksAnalyticId,
-                        principalTable: "PeaksAnalytic",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ReachedPeaks_PeaksAnalytic_PeaksAnalyticId",
-                        column: x => x.PeaksAnalyticId,
-                        principalTable: "PeaksAnalytic",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ReachedPeaks_Peaks_PeakId",
-                        column: x => x.PeakId,
-                        principalTable: "Peaks",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ReachedPeaks_Trips_TripId",
-                        column: x => x.TripId,
-                        principalTable: "Trips",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ReachedPeaks_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
+                    { new Guid("183a96d7-9c20-4b18-b65b-d5d6676b57aa"), 0, new DateOnly(1995, 8, 20), "8c8a2d96-9fef-429e-a493-7c813e123f9b", "kasia.wandziak@wp.pl", false, "Janusz", "Kowalski", false, null, null, null, null, null, false, null, false, "Kasia" },
+                    { new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"), 0, new DateOnly(2002, 4, 15), "7c78143f-e56d-476c-b361-8917b1d4d8ba", "mistrzbiznesu@wp.pl", false, "Janusz", "Kowalski", false, null, null, null, null, null, false, null, false, "Janusz" },
+                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c90"), 0, new DateOnly(1990, 12, 11), "b35502fa-d808-41d9-bb53-e06a2c71ef3d", "ewa.nowak@outlook.com", false, "Janusz", "Kowalski", false, null, null, null, null, null, false, null, false, "Ewa" },
+                    { new Guid("e5be7d3d-8320-4ef9-b60d-92b5464f2f1b"), 0, new DateOnly(1988, 3, 2), "b00d7a10-74af-4159-9c62-301a0dd49751", "marek.kowalski@gmail.com", false, "Janusz", "Kowalski", false, null, null, null, null, null, false, null, false, "Marek" }
                 });
 
             migrationBuilder.InsertData(
@@ -265,17 +400,6 @@ namespace Infrastructure.Migrations
                     { 23, "Góry Izerskie" },
                     { 24, "Rudawy Janowickie" },
                     { 25, "Sudety Wałbrzyskie" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "BirthDay", "Email", "Name" },
-                values: new object[,]
-                {
-                    { new Guid("183a96d7-9c20-4b18-b65b-d5d6676b57aa"), new DateOnly(1995, 8, 20), "kasia.wandziak@wp.pl", "Kasia" },
-                    { new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"), new DateOnly(2002, 4, 15), "mistrzbiznesu@wp.pl", "Janusz" },
-                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c90"), new DateOnly(1990, 12, 11), "ewa.nowak@outlook.com", "Ewa" },
-                    { new Guid("e5be7d3d-8320-4ef9-b60d-92b5464f2f1b"), new DateOnly(1988, 3, 2), "marek.kowalski@gmail.com", "Marek" }
                 });
 
             migrationBuilder.InsertData(
@@ -315,6 +439,45 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GpxFiles_OwnerId",
                 table: "GpxFiles",
                 column: "OwnerId");
@@ -325,19 +488,9 @@ namespace Infrastructure.Migrations
                 column: "RegionID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReachedPeaks_NewPeaksAnalyticId",
-                table: "ReachedPeaks",
-                column: "NewPeaksAnalyticId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ReachedPeaks_PeakId",
                 table: "ReachedPeaks",
                 column: "PeakId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ReachedPeaks_PeaksAnalyticId",
-                table: "ReachedPeaks",
-                column: "PeaksAnalyticId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReachedPeaks_TripId",
@@ -377,13 +530,31 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
                 name: "ElevationProfiles");
+
+            migrationBuilder.DropTable(
+                name: "PeaksAnalytic");
 
             migrationBuilder.DropTable(
                 name: "ReachedPeaks");
 
             migrationBuilder.DropTable(
-                name: "PeaksAnalytic");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "TripAnalytics");
@@ -398,7 +569,7 @@ namespace Infrastructure.Migrations
                 name: "Peaks");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Regions");

@@ -10,28 +10,36 @@ internal static partial class DataSeed {
         new()
         {
             Id = Guid.Parse("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"),
-            Name = "Janusz",
+            FirstName ="Janusz",
+            LastName="Kowalski",
+            UserName = "Janusz",
             Email = "mistrzbiznesu@wp.pl",
             BirthDay = new DateOnly(2002, 4, 15),
         },
         new()
         {
             Id = Guid.Parse("183a96d7-9c20-4b18-b65b-d5d6676b57aa"),
-            Name = "Kasia",
+            FirstName ="Janusz",
+            LastName="Kowalski",
+            UserName = "Kasia",
             Email = "kasia.wandziak@wp.pl",
             BirthDay = new DateOnly(1995, 8, 20),
         },
         new()
         {
             Id = Guid.Parse("e5be7d3d-8320-4ef9-b60d-92b5464f2f1b"),
-            Name = "Marek",
+            FirstName ="Janusz",
+            LastName="Kowalski",
+            UserName = "Marek",
             Email = "marek.kowalski@gmail.com",
             BirthDay = new DateOnly(1988, 3, 2),
         },
         new()
         {
             Id = Guid.Parse("b91a0ed5-40a1-447e-8f48-c8d1e89c7c90"),
-            Name = "Ewa",
+            FirstName ="Janusz",
+            LastName="Kowalski",
+            UserName = "Ewa",
             Email = "ewa.nowak@outlook.com",
             BirthDay = new DateOnly(1990, 12, 11),
         },

@@ -12,7 +12,9 @@ public class ProductionCorsPolicy(CorsConfig.Production config) : ICorsPolicy {
                     policy
                     .WithOrigins(config.Origins)
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+
                 }
             );
         });

@@ -2,11 +2,13 @@
 using Application.Services.Trips;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Application.Dto.TripDto;
 
 namespace Api.Controllers.Trips;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TripsController : ControllerBase {

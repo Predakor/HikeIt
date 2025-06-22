@@ -1,10 +1,10 @@
 ﻿using Domain.Interfaces;
-
+using Microsoft.AspNetCore.Identity;
 namespace Domain.Entiites.Users;
 
-public class User : IEntity<Guid> {
-    public Guid Id { get; set; }
-    public required string Name { get; set; }
-    public string Email { get; set; }
+public class User : IdentityUser<Guid>, IEntity<Guid> {
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
+
     public DateOnly BirthDay { get; set; }
 }

@@ -1,4 +1,5 @@
-﻿using Api.Configuration.Cors.Models;
+﻿
+using Api.Configuration.Cors.Models;
 
 namespace Api.Configuration.Cors.Factories;
 

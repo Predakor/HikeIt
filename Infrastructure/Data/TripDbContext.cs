@@ -8,14 +8,18 @@ using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
 using Infrastructure.Data.Seeding;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(options) {
+public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
+    public TripDbContext(DbContextOptions<TripDbContext> options)
+        : base(options) { }
+
     public DbSet<Trip> Trips { get; set; }
     public DbSet<Peak> Peaks { get; set; }
-    public DbSet<User> Users { get; set; }
     public DbSet<Region> Regions { get; set; }
     public DbSet<GpxFile> GpxFiles { get; set; }
     public DbSet<ReachedPeak> ReachedPeaks { get; set; }
@@ -23,8 +27,11 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
     public DbSet<ElevationProfile> ElevationProfiles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Region>().HasData(DataSeed.Regions);
-        modelBuilder.Entity<User>().HasData(DataSeed.Users);
+        modelBuilder.Entity<User>(e => {
+            e.HasData(DataSeed.Users);
+        });
 
         modelBuilder.Entity<Peak>(entity => {
             entity.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);

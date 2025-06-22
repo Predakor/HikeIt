@@ -10,9 +10,10 @@ public class DevCorsPolicy(CorsConfig.Development config) : ICorsPolicy {
                 config.Name,
                 policy => {
                     policy
-                    .AllowAnyOrigin()
+                    .WithOrigins("http://localhost:54840")
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
                 }
             );
         });

@@ -8,7 +8,7 @@ public class UserService(IUserRepository repository) : IUserService {
 
     public async Task<IEnumerable<UserDto.Complete>> GetAllUsersAsync() {
         var users = await _repository.GetAllAsync();
-        return users.Select(user => new UserDto.Complete(user.Name, user.Email, user.BirthDay));
+        return users.Select(user => new UserDto.Complete(user.UserName, user.Email, user.BirthDay));
     }
 
     public async Task<UserDto.Complete?> GetUserByIdAsync(Guid id) {
@@ -17,12 +17,14 @@ public class UserService(IUserRepository repository) : IUserService {
             return null;
         }
 
-        return new UserDto.Complete(user.Name, user.Email, user.BirthDay);
+        return new UserDto.Complete(user.UserName, user.Email, user.BirthDay);
     }
 
     public async Task CreateUserAsync(UserDto.Complete dto) {
         var user = new User {
-            Name = dto.Name,
+            FirstName = "jausz",
+            LastName = "bizensme",
+            UserName = dto.UserName,
             Email = dto.Email,
             BirthDay = dto.BirthDay,
         };

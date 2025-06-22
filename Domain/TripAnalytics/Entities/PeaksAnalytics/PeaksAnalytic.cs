@@ -21,6 +21,7 @@ public class PeaksAnalytic : IEntity<Guid> {
 //owned type will it be
 public class PeakSummary {
 
+    public required int TotalPeaks { get; set; } = 5;
     //number of  total reached peaks
     //highest peak
     //number of total unique peaks
