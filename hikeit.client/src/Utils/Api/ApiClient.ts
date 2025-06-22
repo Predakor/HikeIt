@@ -13,6 +13,7 @@ async function apiClient<T>(
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
+    credentials: "include",
   };
 
   const response = await fetch(apiPath + path, finalOptions);

@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { LuUser } from "react-icons/lu";
 
 interface LoginForm {
-  username: string;
+  userName: string;
   password: string;
 }
 
@@ -25,7 +25,11 @@ function LoginPage() {
     formState: { errors },
   } = useForm<LoginForm>();
 
-  const onSubmit = handleSubmit((data) => apiClient("auth/login"));
+  const onSubmit = handleSubmit((data) =>
+    console.log(
+      apiClient("auth/login", { method: "POST", body: JSON.stringify(data) })
+    )
+  );
 
   return (
     <Stack flexGrow={1} alignItems={"center"} paddingTop={8}>
@@ -41,10 +45,10 @@ function LoginPage() {
 
         <form onSubmit={onSubmit}>
           <Fieldset.Content gapY={6}>
-            <Field.Root invalid={!!errors.username}>
+            <Field.Root invalid={!!errors.userName}>
               <InputGroup endElement={<LuUser size={"18"} />}>
                 <Input
-                  {...register("username", {
+                  {...register("userName", {
                     required: true,
                     minLength: 3,
                     maxLength: 64,
@@ -53,7 +57,7 @@ function LoginPage() {
                   size={"xl"}
                 />
               </InputGroup>
-              <Field.ErrorText>{errors.username?.type}</Field.ErrorText>
+              <Field.ErrorText>{errors.userName?.type}</Field.ErrorText>
             </Field.Root>
 
             <Field.Root invalid={!!errors.password}>
