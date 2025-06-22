@@ -21,7 +21,7 @@ async function apiClient<T>(
     if (response.status === 401) {
       // Handle unauthorized — redirect to login, refresh token, etc.
       console.warn("Unauthorized! Redirecting to login...");
-      // window.location.href = "/login";
+      window.location.href = "auth/login";
     }
     if (response.status === 204) {
       return null as unknown as T;
