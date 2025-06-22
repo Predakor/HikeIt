@@ -13,7 +13,7 @@ export default function RowStat({ value, label, addons }: Props) {
 
   const statValue = formatt ? formatt(value) : value;
   return (
-    <Stat.Root>
+    <Stat.Root alignItems={{ base: "start", lg: "center" }}>
       <Stat.Label>{ToTitleCase(label)}</Stat.Label>
       <HStack alignItems={"baseline"} fontSize={"lg"}>
         {IconSource && (

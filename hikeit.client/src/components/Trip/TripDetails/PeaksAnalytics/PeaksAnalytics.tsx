@@ -1,34 +1,37 @@
 import { dateOnlyToString } from "@/Utils/Formatters/dateFormats";
-import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
-import type {
-  ReachedPeak,
-  ReachedPeak as ReachedPeakListItem,
-} from "@/components/AddTripForm/AddTrip/tripTypes";
+import type { ReachedPeak } from "@/components/AddTripForm/AddTrip/tripTypes";
 import RowStat from "@/components/Stats/RowStat";
+import { BarSegment, useChart } from "@chakra-ui/charts";
 import {
   Badge,
+  Box,
   Card,
   Flex,
-  For,
-  Heading,
+  Group,
   Icon,
+  Show,
   SimpleGrid,
+  Span,
   Stack,
   Stat,
-  Text,
 } from "@chakra-ui/react";
 import { GiMountaintop } from "react-icons/gi";
-import type { PeaksAnalytic } from "../../Types/TripAnalyticsTypes";
-import GetStatsMeta from "@/Utils/GetStatsMeta";
+import type {
+  PeakSummary,
+  PeaksAnalytic,
+} from "../../Types/TripAnalyticsTypes";
+import { HighestPeak } from "./HighestPeak";
+import ReachedPeaksList from "./ReachedPeaksList";
+import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 
-interface ReachedPeakWithBadges extends ReachedPeak {
+export interface ReachedPeakWithBadges extends ReachedPeak {
   isHighest: boolean;
 }
 
 export default function PeaksAnalytics({ data }: { data: PeaksAnalytic }) {
   let highest = data.reached.reduce((max, item) =>
     item.height > max.height ? item : max
-  );
+  ) as ReachedPeakWithBadges;
 
   const peaks: ReachedPeakWithBadges[] = data.reached
     .concat(data.reached)
@@ -38,132 +41,90 @@ export default function PeaksAnalytics({ data }: { data: PeaksAnalytic }) {
     .concat(data.reached)
     .map((p) => ({
       ...p,
+      firstTime: Math.random() * 10 > 7,
       reachedAt: dateOnlyToString(new Date().toISOString().split("T")[0]),
-      isHighest: p.height === highest.height,
+      isHighest: Math.random() * 10 > 7,
     }));
 
   highest = {
     ...highest,
+    isHighest: true,
     reachedAt: dateOnlyToString(new Date().toISOString().split("T")[0]),
   };
-  const secondarySpace = "-4 / span 4 ";
+
+  const secondarySpace = "-5 / span 4 ";
 
   return (
     <SimpleGrid
-      gridTemplateRows={{ base: "", lg: "repeat(4,1rf)" }}
-      gridTemplateColumns={{ base: "", lg: "repeat(7,1fr)" }}
-      gap={8}
+      display={{ base: "flex", lg: "grid" }}
+      flexFlow={"column"}
+      gridTemplateRows={"repeat(5,1fr)"}
+      gridTemplateColumns={"repeat(7,1fr)"}
+      gap={4}
     >
-      <Card.Root gridRow={"2/5"} gridColumn={secondarySpace}>
+      <Card.Root gridRow={"4 / span 2"} gridColumn={secondarySpace}>
         <Card.Header>
           <PeakCardTitle title={"Peaks Summary"} />
         </Card.Header>
-        <Card.Body>
-          <Stack>
-            <PeakStat value={5} label={"Total"} />
-            <PeakStat value={3} label={"Unique"} />
-            <PeakStat value={1} label={"First"} />
+        <Card.Body justifyContent={"space-evenly"} gapY={8}>
+          <PeakSummary summary={data.summary} />
+        </Card.Body>
+      </Card.Root>
+
+      <Card.Root gridRow={"1 / span 3"} gridColumn={secondarySpace}>
+        <Card.Header flexFlow={"row"} justifyContent={"space-between"}>
+          <PeakCardTitle title={"Highest Peak"} />
+          <Show when={!highest.firstTime}>
+            <PeakBadge color="yellow" text={"Reached for the first time"} />
+          </Show>
+        </Card.Header>
+        <Card.Body justifyContent={"space-around"} gapY={8}>
+          <HighestPeak highest={highest} />
+          <Stack justifyItems={"start"} direction={"row"}>
+            <RankStat value={5} maxValue={23} label={"in the region"} />
+            <RankStat value={7} maxValue={50} label={"in your history"} />
           </Stack>
         </Card.Body>
       </Card.Root>
 
-      <Card.Root gridRow={"1"} gridColumn={secondarySpace}>
-        <Card.Header
-          display={"flex"}
-          justifyContent={"space-between"}
-          flexFlow={"row"}
-        >
-          <PeakCardTitle title={"Highest Peak"} />
-          {!highest.firstTime && (
-            <PeakBadge color="green" text={"Reached for the first time"} />
-          )}
-        </Card.Header>
-        <Card.Body justifyContent={"center"}>
-          <Flex alignItems={"center"} gapX={8}>
-            <Icon fontSize={52}>
-              <GiMountaintop />
-            </Icon>
-
-            <RowStat value={highest.name} label={"name"} />
-
-            <RowStat
-              value={highest.height}
-              addons={{ unit: "m" }}
-              label={"height"}
-            />
-
-            {highest.reachedAt && (
-              <RowStat value={highest.reachedAt} label={"reached at"} />
-            )}
-          </Flex>
-        </Card.Body>
-      </Card.Root>
-
-      <Card.Root gridRow={"1/5"} gridColumn={"1 / span 4"}>
+      <Card.Root gridRow={"1/6"} gridColumn={"1 / span 3"}>
         <Card.Header>
           <PeakCardTitle title={"Reached Peaks"} />
         </Card.Header>
-        <Card.Body>
-          <Stack gapY={6}>
-            <For each={peaks}>
-              {(peak) => (
-                <Flex alignItems={"center"} gapX={12}>
-                  <ReachedPeakListItem peak={peak} />
-                </Flex>
-              )}
-            </For>
-          </Stack>
+        <Card.Body gapY={8}>
+          <ReachedPeaksList peaks={peaks} />
         </Card.Body>
       </Card.Root>
     </SimpleGrid>
   );
+
+  function RankStat({
+    value,
+    maxValue,
+    label,
+  }: {
+    value: string | number;
+    maxValue: string | number;
+    label: string;
+  }) {
+    return (
+      <Stat.Root alignItems={"center"} gapY={2}>
+        <Stat.ValueText alignItems={"baseline"} fontSize={"4xl"}>
+          <Span fontSize={"3xl"}>#</Span>
+          {value}
+          <Stat.ValueUnit fontSize={"lg"}>/{maxValue}</Stat.ValueUnit>
+        </Stat.ValueText>
+        <Stat.Label fontSize={"md"}>{KeyToLabelFormatter(label)}</Stat.Label>
+      </Stat.Root>
+    );
+  }
 }
 
-function PeakStat({ value, label }: { value: string | number; label: string }) {
+export function PeakIcon() {
   return (
-    <Stat.Root>
-      <Flex alignItems={"baseline"} gapX={4}>
-        <Stat.Label>{label}</Stat.Label>
-        <Stat.ValueText>{value}</Stat.ValueText>
-      </Flex>
-    </Stat.Root>
-  );
-}
-
-function ReachedPeakListItem({ peak }: { peak: ReachedPeakWithBadges }) {
-  const { name, height, firstTime, isHighest, reachedAt } = peak;
-  const __mockupDistance__ = (Math.random() * 2000).toFixed(0);
-  const __mockupTotalDistance__ = (Math.random() * 20000).toFixed(0);
-
-  return (
-    <>
-      <Flex alignItems={"center"} gapX={4}>
-        <Icon fontSize={52}>
-          <GiMountaintop />
-        </Icon>
-
-        <Stack>
-          <Heading fontSize={"2xl"}>{name}</Heading>
-          <Text color={"fg.muted"}>{height}m</Text>
-        </Stack>
-      </Flex>
-      {reachedAt && (
-        <Stack>
-          <Heading fontSize={"xl"}>8:50</Heading>
-          <Text color={"fg.muted"}>{reachedAt}</Text>
-        </Stack>
-      )}
-
-      {reachedAt && (
-        <Stack>
-          <Heading fontSize={"xl"}>+{__mockupDistance__}m</Heading>
-          <Text color={"fg.muted"}>{__mockupTotalDistance__}m</Text>
-        </Stack>
-      )}
-
-      {isHighest && <PeakBadge text={"Highest"} color="green" />}
-      {firstTime && <PeakBadge text={"First time reached"} />}
-    </>
+    <Icon hideBelow={"lg"} fontSize={{ base: 32, md: 40, xl: 52 }}>
+      <GiMountaintop />
+    </Icon>
   );
 }
 
@@ -172,9 +133,13 @@ interface Props {
   color?: "orange" | "yellow" | "green" | "teal" | "blue";
 }
 
-function PeakBadge({ text, color }: Props) {
+export function PeakBadge({ text, color }: Props) {
   return (
-    <Badge size={"lg"} colorPalette={color || "blue"}>
+    <Badge
+      size={{ base: "xs", lg: "lg" }}
+      colorPalette={color || "blue"}
+      truncate
+    >
       {text}
     </Badge>
   );
@@ -185,5 +150,34 @@ function PeakCardTitle({ title }: { title: string }) {
     <Card.Title color={"fg.muted"} fontSize={"2xl"}>
       {title}
     </Card.Title>
+  );
+}
+
+function PeakSummary({}: { summary: PeakSummary }) {
+  const chart = useChart({
+    sort: { by: "value", direction: "desc" },
+    data: [
+      { name: "Unique", value: 3, color: "purple.solid" },
+      { name: "First Summits", value: 1, color: "orange" },
+    ],
+  });
+
+  return (
+    <>
+      <Stack direction={{ base: "column", lg: "row" }}>
+        <RowStat value={5} label={"total peaks"} />
+        <RowStat value={3} label={"Unique peaks"} />
+        <RowStat value={1} label={"First Summits"} />
+      </Stack>
+      <Box>
+        <BarSegment.Root chart={chart}>
+          <BarSegment.Content>
+            <BarSegment.Value />
+            <BarSegment.Bar />
+            <BarSegment.Label />
+          </BarSegment.Content>
+        </BarSegment.Root>
+      </Box>
+    </>
   );
 }
