@@ -13,7 +13,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddDatabase(builder.Configuration.GetConnectionString("TripDbCS"));
 
-builder.InjectSwagger().InjectIdentity().InjectServices();
+builder.InjectSwagger();
+builder.InjectIdentity();
+builder.InjectServices();
 
 var corsConfig = ConfigureCors(builder);
 
@@ -31,13 +33,13 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseCors(corsConfig.Name);
 
-MapEndpoints(app);
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+MapEndpoints(app);
 app.MapControllers();
 
 app.Run();

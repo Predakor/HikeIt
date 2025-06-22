@@ -19,11 +19,23 @@ public static partial class DIextentions {
             options.LoginPath = "/auth/login";
             options.Cookie.Name = "HikeItAuth";
             options.ExpireTimeSpan = TimeSpan.FromDays(1);
+
+            options.Events.OnRedirectToLogin = ctx => {
+                if (
+                    ctx.Request.Path.StartsWithSegments("/api")
+                    && ctx.Response.StatusCode == StatusCodes.Status200OK
+                ) {
+                    ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                }
+
+                ctx.Response.Redirect(ctx.RedirectUri);
+                return Task.CompletedTask;
+            };
         });
 
         builder.Services.AddAuthorization();
 
         return builder;
     }
-
 }
