@@ -14,10 +14,11 @@ namespace Infrastructure.Data;
 
 public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(options) {
     public DbSet<Trip> Trips { get; set; }
-    public DbSet<Region> Regions { get; set; }
     public DbSet<Peak> Peaks { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Region> Regions { get; set; }
     public DbSet<GpxFile> GpxFiles { get; set; }
+    public DbSet<ReachedPeak> ReachedPeaks { get; set; }
     public DbSet<TripAnalytic> TripAnalytics { get; set; }
     public DbSet<ElevationProfile> ElevationProfiles { get; set; }
 
@@ -25,85 +26,73 @@ public class TripDbContext(DbContextOptions<TripDbContext> options) : DbContext(
         modelBuilder.Entity<Region>().HasData(DataSeed.Regions);
         modelBuilder.Entity<User>().HasData(DataSeed.Users);
 
-        modelBuilder.Entity<Peak>(builder => {
-            builder.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);
-            builder.HasData(DataSeed.Peaks);
+        modelBuilder.Entity<Peak>(entity => {
+            entity.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);
+            entity.HasData(DataSeed.Peaks);
         });
 
-        modelBuilder.Entity<ReachedPeak>(builder => {
-            builder
+        modelBuilder.Entity<ReachedPeak>(entity => {
+            entity
                 .HasOne(rp => rp.Peak)
                 .WithMany()
                 .HasForeignKey(rp => rp.PeakId)
                 .OnDelete(DeleteBehavior.NoAction);
-            builder
+            entity
                 .HasOne(rp => rp.Trip)
                 .WithOne()
                 .HasForeignKey<ReachedPeak>(t => t.TripId)
                 .OnDelete(DeleteBehavior.Cascade);
-            builder
+            entity
                 .HasOne(rp => rp.User)
                 .WithMany()
                 .HasForeignKey(u => u.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
         });
 
-        modelBuilder.Entity<Trip>(builder => {
-            builder
+        modelBuilder.Entity<Trip>(entity => {
+            entity
                 .HasOne(t => t.User)
                 .WithMany()
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder
+            entity
                 .HasOne(t => t.Region)
                 .WithMany()
                 .HasForeignKey(t => t.RegionId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder
-                .HasOne(t => t.GpxFile)
-                .WithOne()
-                .HasForeignKey<Trip>(t => t.GpxFileId);
+            entity.HasOne(t => t.GpxFile).WithOne().HasForeignKey<Trip>(t => t.GpxFileId);
 
-            builder
-                .HasOne(t => t.Analytics)
-                .WithOne()
-                .HasForeignKey<Trip>(t => t.TripAnalyticId);
+            entity.HasOne(t => t.Analytics).WithOne().HasForeignKey<TripAnalytic>(t => t.Id);
 
-            builder.HasData(DataSeed.Trips);
+            entity.HasData(DataSeed.Trips);
         });
 
-        modelBuilder.Entity<TripAnalytic>(builder => {
-            builder.OwnsOne(a => a.RouteAnalytics).WithOwner();
-            builder.OwnsOne(a => a.TimeAnalytics).WithOwner();
+        modelBuilder.Entity<TripAnalytic>(entity => {
+            entity.OwnsOne(a => a.RouteAnalytics).WithOwner();
+            entity.OwnsOne(a => a.TimeAnalytics).WithOwner();
 
-            builder
+            entity
                 .HasOne(a => a.ElevationProfile)
                 .WithOne()
-                .HasForeignKey<TripAnalytic>(t => t.ElevationProfileId)
+                .HasForeignKey<ElevationProfile>(t => t.Id)
                 .IsRequired(false);
 
-            builder
+            entity
                 .HasOne(a => a.PeaksAnalytic)
                 .WithOne()
-                .HasForeignKey<TripAnalytic>(t => t.PeaksAnalyticsId)
+                .HasForeignKey<PeaksAnalytic>(t => t.Id)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<PeaksAnalytic>(builder => {
-            builder
-                .HasMany(pa => pa.ReachedPeaks)
-                .WithOne() // No nav back on ReachedPeak
-                .HasForeignKey("PeaksAnalyticId"); // Explicit shadow FK
-
-            builder
-                .HasMany(pa => pa.NewPeaks)
-                .WithOne() // No nav back on ReachedPeak
-                .HasForeignKey("NewPeaksAnalyticId"); // Explicit shadow FK
+        modelBuilder.Entity<PeaksAnalytic>(entity => {
+            entity.OwnsOne(pa => pa.Summary).WithOwner();
         });
 
-        modelBuilder.Entity<ElevationProfile>().OwnsOne(ep => ep.Start).WithOwner();
+        modelBuilder.Entity<ElevationProfile>(e => {
+            e.OwnsOne(e => e.Start).WithOwner();
+        });
     }
 }

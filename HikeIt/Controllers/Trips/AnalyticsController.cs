@@ -1,12 +1,12 @@
-﻿using Application.Services.Files;
+﻿using Application.Dto;
+using Application.Services.Files;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
 using Domain.TripAnalytics;
-using Domain.TripAnalytics.Configs;
 using Domain.Trips.Builders.GpxDataBuilder;
+using Domain.Trips.Config;
 using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
-using static Application.Dto.TripAnalyticsDto;
 
 namespace Api.Controllers.Trips;
 
@@ -65,7 +65,7 @@ public class AnalyticsController : ControllerBase {
     [HttpPost("elevations/{fileId}/preview")]
     public async Task<ActionResult<ElevationProfileDto?>> DevAnalyticPreview(
         Guid fileId,
-        [FromBody] ElevationProfileConfig config
+        [FromBody] ConfigBase.Nullable config
     ) {
         var file = await _fileService.GetGpxDataByFileIdAsync(fileId);
 

@@ -7,7 +7,7 @@ public record PointsToPreserve(IEnumerable<GpxPoint> Maximas, IEnumerable<GpxPoi
 
 public record ElevationProfileData(AnalyticData Data, PointsToPreserve? Points = null);
 
-public record ElevationDataWithConfig(ElevationProfileData Data);
+public record ElevationDataWithConfig(ElevationProfileData Data, ConfigBase Config);
 
 internal static class GpxDataDirector {
     public static AnalyticData AnalyticData(List<GpxPoint> points) {

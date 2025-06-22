@@ -2,9 +2,7 @@
 using Application.Services.Trips;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
-using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
-using static Application.Dto.TripAnalyticsDto;
 using static Application.Dto.TripDto;
 
 namespace Api.Controllers.Trips;
@@ -44,57 +42,19 @@ public class TripsController : ControllerBase {
     public async Task<ActionResult<Partial>> GetAnalytics(Guid id) {
         var trip = await _tripService.GetById(id);
         if (trip?.TrackAnalytic?.Id == null) {
-            return NotFound();
+            return NotFound("trip");
         }
 
-        var query = await _tripAnalyticService.GetCompleteAnalytic(trip.TrackAnalytic.Id);
+        var analytics = await _tripAnalyticService.GetCompleteAnalytic(trip.TrackAnalytic.Id);
 
-        var result = query.Value;
-
-        if (result == null) {
-            return NotFound();
+        if (analytics.HasErrors(out Error err)) {
+            if (err is Error.NotFound) {
+                return NotFound("analytics");
+            }
+            return BadRequest(err);
         }
 
-        var gains = result.ElevationProfile?.GainsData;
-        if (gains == null) {
-            return BadRequest();
-        }
-        var scaledGains = ScaledGainSerializer.Deserialize(gains);
-
-        static GainDto FromScaledGain(ScaledGain scaledGain) {
-            return new GainDto(
-                scaledGain.DistanceDelta,
-                scaledGain.ElevationDelta,
-                scaledGain.TimeDelta
-            );
-        }
-
-        var decodedGains = scaledGains.Select(FromScaledGain).ToArray();
-
-        var elevationDto = new ElevationProfileDto(result.ElevationProfile.Start, decodedGains);
-
-        var analytics = new Full(
-            result.RouteAnalytics ?? null,
-            result.TimeAnalytics ?? null,
-            result.PeaksAnalytic ?? null,
-            elevationDto,
-            result.Id
-        );
-
-        var tripWithAnalytic = new Partial(
-            trip.Id,
-            analytics,
-            trip.GpxFile,
-            trip.Region,
-            trip.Base
-        );
-        return Ok(tripWithAnalytic);
-
-        //return query.Map<ActionResult<TripAnalytic>>(
-        //    analytics => Ok(analytics),
-        //    notFound => NotFound(notFound.Message),
-        //    error => BadRequest(error.Message)
-        //);
+        return Ok(new Partial(trip.Id, analytics.Value!, trip.GpxFile, trip.Region, trip.Base));
     }
 
     [HttpPost]

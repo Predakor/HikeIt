@@ -99,13 +99,7 @@ public class TripService : ITripService {
                 error => throw new Exception(error.Message)
             );
 
-        try {
-            await _unitOfWork.TripRepository.AddAsync(trip);
-        }
-        catch (Exception) {
-            throw;
-        }
-
+        await _unitOfWork.TripRepository.AddAsync(trip);
         var saveChanges = await _unitOfWork.SaveChangesAsync();
 
         return saveChanges != null

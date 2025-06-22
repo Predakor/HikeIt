@@ -1,6 +1,7 @@
-﻿using Application.Services.Peaks;
-using Application.TripAnalytics.Commands;
+﻿using Application.Dto;
+using Application.Services.Peaks;
 using Application.TripAnalytics.Interfaces;
+using Application.TripAnalytics.Services;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Entiites.Users;
@@ -10,33 +11,36 @@ using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
 using Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 using Domain.TripAnalytics.Commands;
 using Domain.TripAnalytics.Entities.ElevationProfile;
+using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.TripAnalytics.Factories;
 using Domain.TripAnalytics.Interfaces;
-using Domain.TripAnalytics.Services;
 using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
 using Domain.Trips;
-using Domain.Trips.Builders.GpxDataBuilder;
+using Domain.Trips.Config;
 using Domain.Trips.ValueObjects;
+using static Application.Dto.TripAnalyticsDto;
 
 namespace Application.TripAnalytics;
 
 public class TripAnalyticService(
     IPeakService peakService,
     ITripAnalyticUnitOfWork unitOfWork,
-    IReachedPeakService reachedPeakService,
-    IPeakAnalyticService peakAnalyticService,
-    ITripDomainAnalyticService tripDomainAnalyticService
+    IReachedPeakService reachedPeakService
 ) : ITripAnalyticService {
     readonly IPeakService _peakService = peakService;
     readonly ITripAnalyticUnitOfWork _unitOfWork = unitOfWork;
     readonly IReachedPeakService _reachedPeakService = reachedPeakService;
-    readonly IPeakAnalyticService _peakAnalyticService = peakAnalyticService;
-    readonly ITripDomainAnalyticService _tripDomainAnalyticService = tripDomainAnalyticService;
 
-    public async Task<Result<TripAnalytic>> GenerateAnalytic(AnalyticData data, Trip trip, User user) {
+    public async Task<Result<TripAnalytic>> GenerateAnalytic(
+        AnalyticData data,
+        Trip trip,
+        User user
+    ) {
         var (points, gains) = data;
         var builder = new TripAnalyticBuilder();
+
+        builder.WithId(trip.Id);
 
         //generate Route and Time analytics
         GenerateRouteAnalytics(data)
@@ -48,28 +52,14 @@ public class TripAnalyticService(
             .Match(timeAnalytics => builder.WithTimeAnalytic(timeAnalytics), err => { });
 
         //Reached Peaks
-        await FindLocalMaximasCommand
-            .Create(data)
-            .Execute()
-            .Bind(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 200f))
-            .Bind(foundPeaks => _reachedPeakService.ToReachedPeaks(foundPeaks, trip, user))
-            .Bind(reachedPeaks => {
-                _unitOfWork.ReachedPeaks.AddRangeAsync(reachedPeaks);
-                return _peakAnalyticService.Create([.. reachedPeaks]);
-            })
+        await CreatePeakAnalytics(data, trip, user)
             .MatchAsync(
-                async peakAnalytics => {
-                    await _unitOfWork.PeakAnalytics.AddAsync(peakAnalytics);
-                    builder.WithPeaksAnalytic(peakAnalytics);
-                },
+                peakAnalytics => builder.WithPeaksAnalytic(peakAnalytics),
                 error => Console.WriteLine("Couldn't generate peak analytics")
             );
 
         //Elevation Profile
-        await CreateElevationProfileCommand
-            .Create(new(data, null))
-            .Execute()
-            .Bind(_unitOfWork.Elevations.Create)
+        await CreateElevationProfile(data, trip)
             .MatchAsync(
                 elevationProfile => builder.WithElevationProfile(elevationProfile),
                 error => Console.WriteLine(error.Message)
@@ -108,23 +98,64 @@ public class TripAnalyticService(
         return timeAnalytics;
     }
 
-    public async Task<ElevationProfile> CreateElevationProfile(
-        ElevationDataWithConfig dataWithConfig
-    ) {
-        var elevationData = GpxDataFactory.Create(dataWithConfig);
-        var points = elevationData.Points;
-
-        var profile = ElevationProfile.Create(points.First(), points.ToGains());
-        return profile;
-    }
-
     public async Task<TripAnalytic?> GetAnalytic(Guid id) {
         return await _unitOfWork.TripAnalytics.GetByIdAsync(id);
     }
 
-    public async Task<Result<TripAnalytic>> GetCompleteAnalytic(Guid id) {
+    public async Task<Result<PeaksAnalytic>> CreatePeakAnalytics(
+        AnalyticData data,
+        Trip trip,
+        User user
+    ) {
+        return await FindLocalMaximasCommand
+            .Create(data)
+            .Execute()
+            .Bind(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 200f))
+            .Bind(foundPeaks => _reachedPeakService.ToReachedPeaks(foundPeaks, trip, user))
+            .Bind(_unitOfWork.ReachedPeaks.AddRangeAsync)
+            .Bind(reachedPeaks =>
+                CreatePeakAnalyticsCommand.Create(trip.Id, new(reachedPeaks, null)).Execute()
+            )
+            .Bind(_unitOfWork.PeakAnalytics.AddAsync);
+    }
+
+    public async Task<Result<ElevationProfile>> CreateElevationProfile(AnalyticData data, Trip trip) {
+        return await CreateElevationProfileDataCommand
+            .Create(data, GpxDataConfigs.ElevationProfile)
+            .Execute()
+            .Bind(eleData => CreateElevationProfileCommand.Create(eleData, trip.Id).Execute())
+            .Bind(eleProfile => _unitOfWork.Elevations.AddAsync(eleProfile));
+    }
+
+    public async Task<Result<Full>> GetCompleteAnalytic(Guid id) {
         var query = await _unitOfWork.TripAnalytics.GetCompleteAnalytic(id);
-        return query;
+
+        if (query.HasErrors(out var error)) {
+            return Errors.Unknown(error.Message);
+        }
+
+        var result = query.Value;
+        if (result == null) {
+            return Errors.NotFound("result");
+        }
+
+        var gains = result.ElevationProfile?.GainsData;
+        if (gains == null) {
+            return Errors.NotFound("No gains");
+        }
+
+        var elevationDto = result.ElevationProfile?.ToDto();
+        var peakAnalyticDto = result.PeaksAnalytic?.ToDto();
+
+        var analytics = new Full(
+            result.RouteAnalytics ?? null,
+            result.TimeAnalytics ?? null,
+            peakAnalyticDto,
+            elevationDto,
+            result.Id
+        );
+
+        return analytics;
     }
 
     public async Task<ElevationProfile> GetElevationProfile(Guid id) {

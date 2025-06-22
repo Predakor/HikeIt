@@ -18,7 +18,7 @@ public static class Errors {
 }
 
 public abstract record Error(string Code, string Message) {
-    internal sealed record NotFound(string Target)
+    public sealed record NotFound(string Target)
         : Error("not_found", $"Entity '{Target}' was not found.");
 
     internal sealed record BadRequest(string Reason) : Error("bad_request", Reason);

@@ -13,7 +13,7 @@ public class ElevationProfileService : IElevationProfileService {
     }
 
     public async Task<Result<ElevationProfile>> Create(ElevationProfile profile) {
-        var query = await _repository.Create(profile);
+        var query = await _repository.AddAsync(profile);
         return query;
     }
 

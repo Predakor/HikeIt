@@ -6,7 +6,7 @@ public abstract record ConfigBase() {
         float EmaSmoothingAlpha = 0.88f,
         int MedianFilterWindowSize = 7,
         int RoundingDecimalsCount = 1
-    );
+    ) : ConfigBase;
 
     public record ElevationProfile(
         float MaxElevationSpike = 10f,
@@ -14,7 +14,7 @@ public abstract record ConfigBase() {
         int MedianFilterWindowSize = 7,
         int RoundingDecimalsCount = 1,
         int DownsamplingFactor = 10
-    );
+    ) : ConfigBase;
 
     public record Nullable(
         float? MaxElevationSpike = null,
@@ -22,7 +22,7 @@ public abstract record ConfigBase() {
         int? MedianFilterWindowSize = null,
         int? RoundingDecimalsCount = null,
         int? DownsamplingFactor = null
-    );
+    ) : ConfigBase;
 }
 
 public static class GpxDataConfigs {

@@ -13,8 +13,8 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250618151534_initial")]
-    partial class initial
+    [Migration("20250621095737_rebase")]
+    partial class rebase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -450,13 +450,12 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ReachedPeak");
+                    b.ToTable("ReachedPeaks");
                 });
 
             modelBuilder.Entity("Domain.TripAnalytics.Entities.ElevationProfile.ElevationProfile", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("GainsData")
@@ -471,7 +470,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -482,24 +480,9 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ElevationProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("PeaksAnalyticsId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ElevationProfileId")
-                        .IsUnique()
-                        .HasFilter("[ElevationProfileId] IS NOT NULL");
-
-                    b.HasIndex("PeaksAnalyticsId")
-                        .IsUnique()
-                        .HasFilter("[PeaksAnalyticsId] IS NOT NULL");
 
                     b.ToTable("TripAnalytics");
                 });
@@ -547,9 +530,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("RegionId")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TripAnalyticId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateOnly>("TripDay")
                         .HasColumnType("date");
 
@@ -565,10 +545,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("PeakId");
 
                     b.HasIndex("RegionId");
-
-                    b.HasIndex("TripAnalyticId")
-                        .IsUnique()
-                        .HasFilter("[TripAnalyticId] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -623,7 +599,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Trips.Trip", "Trip")
                         .WithOne()
                         .HasForeignKey("Domain.ReachedPeaks.ReachedPeak", "TripId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entiites.Users.User", "User")
@@ -641,6 +617,10 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.TripAnalytics.Entities.ElevationProfile.ElevationProfile", b =>
                 {
+                    b.HasOne("Domain.TripAnalytics.TripAnalytic", null)
+                        .WithOne("ElevationProfile")
+                        .HasForeignKey("Domain.TripAnalytics.Entities.ElevationProfile.ElevationProfile", "Id");
+
                     b.OwnsOne("Domain.Trips.ValueObjects.GpxPoint", "Start", b1 =>
                         {
                             b1.Property<Guid>("ElevationProfileId")
@@ -670,16 +650,21 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", b =>
+                {
+                    b.HasOne("Domain.TripAnalytics.TripAnalytic", null)
+                        .WithOne("PeaksAnalytic")
+                        .HasForeignKey("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", "Id")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
                 {
-                    b.HasOne("Domain.TripAnalytics.Entities.ElevationProfile.ElevationProfile", "ElevationProfile")
-                        .WithOne()
-                        .HasForeignKey("Domain.TripAnalytics.TripAnalytic", "ElevationProfileId");
-
-                    b.HasOne("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", "PeaksAnalytic")
-                        .WithOne()
-                        .HasForeignKey("Domain.TripAnalytics.TripAnalytic", "PeaksAnalyticsId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("Domain.Trips.Trip", null)
+                        .WithOne("Analytics")
+                        .HasForeignKey("Domain.TripAnalytics.TripAnalytic", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.OwnsOne("Domain.TripAnalytics.ValueObjects.RouteAnalytics.RouteAnalytic", "RouteAnalytics", b1 =>
                         {
@@ -761,10 +746,6 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("TripAnalyticId");
                         });
 
-                    b.Navigation("ElevationProfile");
-
-                    b.Navigation("PeaksAnalytic");
-
                     b.Navigation("RouteAnalytics");
 
                     b.Navigation("TimeAnalytics");
@@ -783,8 +764,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Trips.Entities.GpxFiles.GpxFile", "GpxFile")
                         .WithOne()
-                        .HasForeignKey("Domain.Trips.Trip", "GpxFileId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("Domain.Trips.Trip", "GpxFileId");
 
                     b.HasOne("Domain.Entiites.Peaks.Peak", "Target")
                         .WithMany()
@@ -796,18 +776,11 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Domain.TripAnalytics.TripAnalytic", "Analytics")
-                        .WithOne()
-                        .HasForeignKey("Domain.Trips.Trip", "TripAnalyticId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Domain.Entiites.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Analytics");
 
                     b.Navigation("GpxFile");
 
@@ -823,6 +796,18 @@ namespace Infrastructure.Migrations
                     b.Navigation("NewPeaks");
 
                     b.Navigation("ReachedPeaks");
+                });
+
+            modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
+                {
+                    b.Navigation("ElevationProfile");
+
+                    b.Navigation("PeaksAnalytic");
+                });
+
+            modelBuilder.Entity("Domain.Trips.Trip", b =>
+                {
+                    b.Navigation("Analytics");
                 });
 #pragma warning restore 612, 618
         }

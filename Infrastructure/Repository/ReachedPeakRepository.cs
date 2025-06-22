@@ -10,6 +10,7 @@ public class ReachedPeakRepository : Repository<ReachedPeak, Guid>, IReachedPeak
     public ReachedPeakRepository(TripDbContext context)
         : base(context) { }
 
+
     public async Task<bool> AddAsync(ReachedPeak entity) {
         var querry = await DbSet.AddAsync(entity);
         return querry != null;

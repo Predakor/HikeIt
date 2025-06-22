@@ -16,12 +16,20 @@ public class TripAnalyticRepository : CrudRepository<TripAnalytic, Guid>, ITripA
         var analytics = await DbSet
             .Include(a => a.PeaksAnalytic)
             .Include(a => a.ElevationProfile)
+            .Include(a => a.PeaksAnalytic)
             .FirstAsync(a => a.Id == id);
 
-        if (analytics == null) {
-            return Result<TripAnalytic>.Failure(Errors.NotFound("analytics"));
+        if (analytics.PeaksAnalytic != null) {
+            var reachedPeaks = Context
+                .ReachedPeaks.Where(peak => peak.TripId == id)
+                .Include(p => p.Peak);
+            analytics.PeaksAnalytic.ReachedPeaks = reachedPeaks.ToList();
         }
 
-        return Result<TripAnalytic>.Success(analytics);
+        if (analytics == null) {
+            return Errors.NotFound("analytics");
+        }
+
+        return analytics;
     }
 }

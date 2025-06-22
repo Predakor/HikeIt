@@ -26,8 +26,6 @@ public class Result<TResult> {
 
     public static implicit operator Result<TResult>(Error Error) => new(Error);
 
-
-    [Obsolete]
     public TReturn Map<TReturn>(Func<TResult, TReturn> onSuccess, Func<Error, TReturn> onFailure) {
         return this switch {
             { IsSuccess: true, Value: not null } => onSuccess(Value),
@@ -64,12 +62,12 @@ public class Result<TResult> {
         };
     }
 
-    public bool HasErrors([NotNullWhen(true)] out Error? error) {
+    public bool HasErrors([NotNullWhen(true)] out Error error) {
         if (Error != null) {
             error = Error!;
             return true;
         }
-        error = null;
+        error = null!;
         return false;
     }
 }

@@ -8,12 +8,20 @@ namespace Domain.TripAnalytics.Builders.TripAnalyticBuilder;
 
 public class TripAnalyticBuilder {
     #region mutable
+    Guid _id;
     RouteAnalytic? _routeAnalytic;
     TimeAnalytic? _timeAnalytic;
     PeaksAnalytic? _peakAnalytic;
     ElevationProfile? _elevationProfile;
 
     #endregion
+
+    public TripAnalyticBuilder WithId(Guid id) {
+        ArgumentException.ThrowIfNullOrEmpty(nameof(id));
+
+        _id = id;
+        return this;
+    }
 
     public TripAnalyticBuilder WithRouteAnalytic(RouteAnalytic analytic) {
         ArgumentException.ThrowIfNullOrEmpty(nameof(analytic));
@@ -43,7 +51,7 @@ public class TripAnalyticBuilder {
     }
 
     public TripAnalytic Build() {
-        return TripAnalytic.Create(_routeAnalytic, _timeAnalytic, _peakAnalytic, _elevationProfile);
+        return TripAnalytic.Create(_id, _routeAnalytic, _timeAnalytic, _peakAnalytic, _elevationProfile);
     }
 }
 

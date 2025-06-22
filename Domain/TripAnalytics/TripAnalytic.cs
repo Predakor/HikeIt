@@ -14,22 +14,19 @@ public class TripAnalytic : IEntity<Guid> {
     public TimeAnalytic? TimeAnalytics { get; private set; }
     #endregion
 
-    #region Foreign types
-    public Guid? PeaksAnalyticsId { get; private set; }
-    public Guid? ElevationProfileId { get; private set; }
-
     //navigation
     public PeaksAnalytic? PeaksAnalytic { get; set; }
     public ElevationProfile? ElevationProfile { get; set; }
 
     public static TripAnalytic Create(
+        Guid id,
         RouteAnalytic? routeAnalytics,
         TimeAnalytic? timeAnalytics,
         PeaksAnalytic? peaksAnalytics,
         ElevationProfile? elevationProfile
     ) {
         var analytics = new TripAnalytic() {
-            Id = Guid.NewGuid(),
+            Id = id,
             RouteAnalytics = routeAnalytics,
             TimeAnalytics = timeAnalytics,
         };
@@ -46,13 +43,11 @@ public class TripAnalytic : IEntity<Guid> {
 
     public void AddPeaksAnalytic(PeaksAnalytic analytics) {
         ArgumentNullException.ThrowIfNull(analytics);
-        PeaksAnalyticsId = analytics.Id;
         PeaksAnalytic = analytics;
     }
 
     public void AddElevationProfile(ElevationProfile profile) {
         ArgumentNullException.ThrowIfNull(profile);
-        ElevationProfileId = profile.Id;
         ElevationProfile = profile;
     }
 
@@ -66,5 +61,5 @@ public class TripAnalytic : IEntity<Guid> {
         RouteAnalytics = analytics;
     }
 
-    #endregion
+
 }

@@ -9,38 +9,11 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class rebase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "ElevationProfiles",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Start_Lat = table.Column<double>(type: "float", nullable: false),
-                    Start_Lon = table.Column<double>(type: "float", nullable: false),
-                    Start_Ele = table.Column<double>(type: "float", nullable: false),
-                    Start_Time = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GainsData = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ElevationProfiles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PeaksAnalytic",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PeaksAnalytic", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Regions",
                 columns: table => new
@@ -66,48 +39,6 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TripAnalytics",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RouteAnalytics_TotalDistanceKm = table.Column<double>(type: "float", nullable: true),
-                    RouteAnalytics_TotalAscent = table.Column<double>(type: "float", nullable: true),
-                    RouteAnalytics_TotalDescent = table.Column<double>(type: "float", nullable: true),
-                    RouteAnalytics_HighestElevation = table.Column<double>(type: "float", nullable: true),
-                    RouteAnalytics_LowestElevation = table.Column<double>(type: "float", nullable: true),
-                    RouteAnalytics_AverageSlope = table.Column<float>(type: "real", nullable: true),
-                    RouteAnalytics_AverageAscentSlope = table.Column<float>(type: "real", nullable: true),
-                    RouteAnalytics_AverageDescentSlope = table.Column<float>(type: "real", nullable: true),
-                    TimeAnalytics_Duration = table.Column<TimeSpan>(type: "time", nullable: true),
-                    TimeAnalytics_StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TimeAnalytics_EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TimeAnalytics_ActiveTime = table.Column<TimeSpan>(type: "time", nullable: true),
-                    TimeAnalytics_IdleTime = table.Column<TimeSpan>(type: "time", nullable: true),
-                    TimeAnalytics_AscentTime = table.Column<TimeSpan>(type: "time", nullable: true),
-                    TimeAnalytics_DescentTime = table.Column<TimeSpan>(type: "time", nullable: true),
-                    TimeAnalytics_AverageSpeedKph = table.Column<double>(type: "float", nullable: true),
-                    TimeAnalytics_AverageAscentKph = table.Column<double>(type: "float", nullable: true),
-                    TimeAnalytics_AverageDescentKph = table.Column<double>(type: "float", nullable: true),
-                    PeaksAnalyticsId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ElevationProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TripAnalytics", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TripAnalytics_ElevationProfiles_ElevationProfileId",
-                        column: x => x.ElevationProfileId,
-                        principalTable: "ElevationProfiles",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_TripAnalytics_PeaksAnalytic_PeaksAnalyticsId",
-                        column: x => x.PeaksAnalyticsId,
-                        principalTable: "PeaksAnalytic",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -161,7 +92,6 @@ namespace Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RegionId = table.Column<int>(type: "int", nullable: false),
                     PeakId = table.Column<int>(type: "int", nullable: true),
-                    TripAnalyticId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     GpxFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -183,11 +113,6 @@ namespace Infrastructure.Migrations
                         principalTable: "Regions",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Trips_TripAnalytics_TripAnalyticId",
-                        column: x => x.TripAnalyticId,
-                        principalTable: "TripAnalytics",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Trips_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
@@ -195,7 +120,80 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReachedPeak",
+                name: "TripAnalytics",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RouteAnalytics_TotalDistanceKm = table.Column<double>(type: "float", nullable: true),
+                    RouteAnalytics_TotalAscent = table.Column<double>(type: "float", nullable: true),
+                    RouteAnalytics_TotalDescent = table.Column<double>(type: "float", nullable: true),
+                    RouteAnalytics_HighestElevation = table.Column<double>(type: "float", nullable: true),
+                    RouteAnalytics_LowestElevation = table.Column<double>(type: "float", nullable: true),
+                    RouteAnalytics_AverageSlope = table.Column<float>(type: "real", nullable: true),
+                    RouteAnalytics_AverageAscentSlope = table.Column<float>(type: "real", nullable: true),
+                    RouteAnalytics_AverageDescentSlope = table.Column<float>(type: "real", nullable: true),
+                    TimeAnalytics_Duration = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TimeAnalytics_StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TimeAnalytics_EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TimeAnalytics_ActiveTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TimeAnalytics_IdleTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TimeAnalytics_AscentTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TimeAnalytics_DescentTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    TimeAnalytics_AverageSpeedKph = table.Column<double>(type: "float", nullable: true),
+                    TimeAnalytics_AverageAscentKph = table.Column<double>(type: "float", nullable: true),
+                    TimeAnalytics_AverageDescentKph = table.Column<double>(type: "float", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripAnalytics", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripAnalytics_Trips_Id",
+                        column: x => x.Id,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ElevationProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Start_Lat = table.Column<double>(type: "float", nullable: false),
+                    Start_Lon = table.Column<double>(type: "float", nullable: false),
+                    Start_Ele = table.Column<double>(type: "float", nullable: false),
+                    Start_Time = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    GainsData = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ElevationProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ElevationProfiles_TripAnalytics_Id",
+                        column: x => x.Id,
+                        principalTable: "TripAnalytics",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PeaksAnalytic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PeaksAnalytic", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PeaksAnalytic_TripAnalytics_Id",
+                        column: x => x.Id,
+                        principalTable: "TripAnalytics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReachedPeaks",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -208,29 +206,30 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReachedPeak", x => x.Id);
+                    table.PrimaryKey("PK_ReachedPeaks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReachedPeak_PeaksAnalytic_NewPeaksAnalyticId",
+                        name: "FK_ReachedPeaks_PeaksAnalytic_NewPeaksAnalyticId",
                         column: x => x.NewPeaksAnalyticId,
                         principalTable: "PeaksAnalytic",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ReachedPeak_PeaksAnalytic_PeaksAnalyticId",
+                        name: "FK_ReachedPeaks_PeaksAnalytic_PeaksAnalyticId",
                         column: x => x.PeaksAnalyticId,
                         principalTable: "PeaksAnalytic",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ReachedPeak_Peaks_PeakId",
+                        name: "FK_ReachedPeaks_Peaks_PeakId",
                         column: x => x.PeakId,
                         principalTable: "Peaks",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ReachedPeak_Trips_TripId",
+                        name: "FK_ReachedPeaks_Trips_TripId",
                         column: x => x.TripId,
                         principalTable: "Trips",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReachedPeak_Users_UserId",
+                        name: "FK_ReachedPeaks_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -308,11 +307,11 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Trips",
-                columns: new[] { "Id", "GpxFileId", "Name", "PeakId", "RegionId", "TripAnalyticId", "TripDay", "UserId" },
+                columns: new[] { "Id", "GpxFileId", "Name", "PeakId", "RegionId", "TripDay", "UserId" },
                 values: new object[,]
                 {
-                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c91"), null, "Wycieczka na śnieżke", null, 22, null, new DateOnly(2023, 5, 1), new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380") },
-                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c92"), null, "Śnieżne kotły", null, 22, null, new DateOnly(2025, 1, 16), new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380") }
+                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c91"), null, "Wycieczka na śnieżke", null, 22, new DateOnly(2023, 5, 1), new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380") },
+                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c92"), null, "Śnieżne kotły", null, 22, new DateOnly(2025, 1, 16), new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380") }
                 });
 
             migrationBuilder.CreateIndex(
@@ -326,44 +325,30 @@ namespace Infrastructure.Migrations
                 column: "RegionID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReachedPeak_NewPeaksAnalyticId",
-                table: "ReachedPeak",
+                name: "IX_ReachedPeaks_NewPeaksAnalyticId",
+                table: "ReachedPeaks",
                 column: "NewPeaksAnalyticId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReachedPeak_PeakId",
-                table: "ReachedPeak",
+                name: "IX_ReachedPeaks_PeakId",
+                table: "ReachedPeaks",
                 column: "PeakId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReachedPeak_PeaksAnalyticId",
-                table: "ReachedPeak",
+                name: "IX_ReachedPeaks_PeaksAnalyticId",
+                table: "ReachedPeaks",
                 column: "PeaksAnalyticId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReachedPeak_TripId",
-                table: "ReachedPeak",
+                name: "IX_ReachedPeaks_TripId",
+                table: "ReachedPeaks",
                 column: "TripId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReachedPeak_UserId",
-                table: "ReachedPeak",
+                name: "IX_ReachedPeaks_UserId",
+                table: "ReachedPeaks",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TripAnalytics_ElevationProfileId",
-                table: "TripAnalytics",
-                column: "ElevationProfileId",
-                unique: true,
-                filter: "[ElevationProfileId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TripAnalytics_PeaksAnalyticsId",
-                table: "TripAnalytics",
-                column: "PeaksAnalyticsId",
-                unique: true,
-                filter: "[PeaksAnalyticsId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trips_GpxFileId",
@@ -383,13 +368,6 @@ namespace Infrastructure.Migrations
                 column: "RegionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Trips_TripAnalyticId",
-                table: "Trips",
-                column: "TripAnalyticId",
-                unique: true,
-                filter: "[TripAnalyticId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Trips_UserId",
                 table: "Trips",
                 column: "UserId");
@@ -399,7 +377,16 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ReachedPeak");
+                name: "ElevationProfiles");
+
+            migrationBuilder.DropTable(
+                name: "ReachedPeaks");
+
+            migrationBuilder.DropTable(
+                name: "PeaksAnalytic");
+
+            migrationBuilder.DropTable(
+                name: "TripAnalytics");
 
             migrationBuilder.DropTable(
                 name: "Trips");
@@ -411,19 +398,10 @@ namespace Infrastructure.Migrations
                 name: "Peaks");
 
             migrationBuilder.DropTable(
-                name: "TripAnalytics");
-
-            migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Regions");
-
-            migrationBuilder.DropTable(
-                name: "ElevationProfiles");
-
-            migrationBuilder.DropTable(
-                name: "PeaksAnalytic");
         }
     }
 }

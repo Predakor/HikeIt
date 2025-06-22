@@ -17,7 +17,7 @@ public class Trip : IEntity<Guid> {
     public Guid UserId { get; private set; }
     public int RegionId { get; private set; }
     public int? PeakId { get; private set; }
-    public Guid? TripAnalyticId { get; private set; }
+    public TripAnalytic? Analytics { get; set; }
     public Guid? GpxFileId { get; private set; }
     #endregion
 
@@ -26,7 +26,6 @@ public class Trip : IEntity<Guid> {
     public Peak? Target { get; set; }
     public Region? Region { get; set; }
     public GpxFile? GpxFile { get; set; }
-    public TripAnalytic? Analytics { get; set; }
     #endregion
 
     public static Trip Create(
@@ -49,7 +48,6 @@ public class Trip : IEntity<Guid> {
 
     public void AddAnalytics(TripAnalytic analytic) {
         ArgumentNullException.ThrowIfNull(analytic);
-        TripAnalyticId = analytic.Id;
         Analytics = analytic;
     }
 
