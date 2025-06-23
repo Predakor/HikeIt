@@ -23,7 +23,9 @@ internal static class GpxDataDirector {
     public static AnalyticData ElevationProfile(ElevationProfileData data) {
         var config = GpxDataConfigs.ElevationProfile;
 
-        return new GpxDataBuilder(data.Data.Points).DownSample(config.DownsamplingFactor).Build();
+        return new GpxDataBuilder(data.Data.Points)
+            //.DownSample(config.DownsamplingFactor)
+            .Build();
     }
 
     public static AnalyticData FromConfig(ElevationProfileData data, ConfigBase.Nullable config) {

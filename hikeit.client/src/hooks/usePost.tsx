@@ -29,6 +29,7 @@ function usePost(): [LazyFetch, PostResponse] {
       method: "POST",
       headers: headerType,
       body: body,
+      credentials: "include",
     };
 
     const requestPath = apiPath + urlPath;

@@ -1,9 +1,10 @@
 import apiClient from "@/Utils/Api/ApiClient";
-import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
-import { AllObjectEntriesToArray } from "@/Utils/ObjectToArray";
+import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
+import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import { Button, Field, Input, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import type { ChartData } from "../TripGraph";
+import type { ChartData } from "../_graph_types";
+import { copyToClipboard } from "@/Utils/CopyToClipboard";
 
 type ElevationProfileConfig = {
   MaxElevationSpike: number;
@@ -14,30 +15,27 @@ type ElevationProfileConfig = {
   fileId: string;
 };
 
-const elevationDevConfig = {
-  MaxElevationSpike: {
-    type: "number",
-  },
-  EmaSmoothingAlpha: {
+const elevationDevConfig: InputsConfig = [
+  { key: "MaxElevationSpike", label: "", type: "range", min: 1, max: 10 },
+  {
+    key: "EmaSmoothingAlpha",
+    label: "",
     type: "range",
+    min: 1,
+    max: 50,
+    formatValue: (value) => value / 100,
   },
-  MedianFilterWindowSize: {
-    type: "number",
-  },
-  RoundingDecimalsCount: {
-    type: "number",
-  },
-  DownsamplingFactor: {
-    type: "number",
-  },
-};
+  { key: "MedianFilterWindowSize", label: "", type: "range", min: 3, max: 10 },
+  { key: "RoundingDecimalsCount", label: "", type: "range", min: 0, max: 10 },
+  { key: "DownsamplingFactor", label: "", type: "range", min: 1, max: 10 },
+];
 
 interface Props {
   onSubmit: (data: ChartData) => void;
 }
 
 export function DevConfig({ onSubmit }: Props) {
-  const { register, handleSubmit, getValues } =
+  const { control, register, handleSubmit, getValues } =
     useForm<ElevationProfileConfig>();
 
   const uploadHandler = handleSubmit(async (data) => {
@@ -49,60 +47,34 @@ export function DevConfig({ onSubmit }: Props) {
         method: "POST",
         body: JSON.stringify({
           MaxElevationSpike: data.MaxElevationSpike || null,
-          EmaSmoothingAlpha: data.EmaSmoothingAlpha / 100 || null,
+          EmaSmoothingAlpha: data.EmaSmoothingAlpha || null,
           MedianFilterWindowSize: data.MedianFilterWindowSize || null,
           RoundingDecimalsCount: data.RoundingDecimalsCount || null,
           DownsamplingFactor: data.DownsamplingFactor || null,
         }),
       }
     );
-    console.log(data.EmaSmoothingAlpha / 100);
 
     if (request) {
       onSubmit(request);
     }
   });
 
-  const handleCopySettings = () => {
-    const values = getValues();
-
-    const { fileId, ...config } = values;
-
-    const transformed = {
-      ...config,
-      EmaSmoothingAlpha: config.EmaSmoothingAlpha
-        ? config.EmaSmoothingAlpha / 100
-        : null,
-    };
-
-    const textToCopy = JSON.stringify(transformed, null, 2);
-
-    navigator.clipboard
-      .writeText(textToCopy)
-      .then(() => {
-        console.log("Settings copied to clipboard!");
-      })
-      .catch((err) => {
-        console.error("Failed to copy settings:", err);
-      });
-  };
-
-  const x = AllObjectEntriesToArray(elevationDevConfig);
   return (
     <form onSubmit={uploadHandler}>
       <Stack flexGrow={1}>
-        {x.map(([key, value]) => (
-          <Field.Root key={key} w={40}>
-            <Field.Label>{KeyToLabelFormatter(key)}</Field.Label>
-            <Input type={value.type} {...register(key)} />
-          </Field.Root>
-        ))}
+        <RenderInputs
+          config={elevationDevConfig}
+          register={register}
+          control={control}
+        />
+
         <Button type={"submit"}>Preview</Button>
         <Field.Root>
           <Field.Label>FileID</Field.Label>
           <Input {...register("fileId")} />
         </Field.Root>
-        <Button onClick={handleCopySettings}>Copyy</Button>
+        <Button onClick={() => copyToClipboard(getValues())}>Copyy</Button>
       </Stack>
     </form>
   );

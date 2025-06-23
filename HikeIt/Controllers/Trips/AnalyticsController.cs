@@ -87,8 +87,9 @@ public class AnalyticsController : ControllerBase {
 
         var data = file.Value!;
 
+
         ElevationDataWithConfig eleData = new(new(data), config);
-        var eleDataFromConfig = GpxDataFactory.Create(eleData);
+        var eleDataFromConfig = GpxDataFactory.CreateFromConfig(eleData);
         var gains = eleDataFromConfig.Gains ?? eleDataFromConfig.Points.ToGains();
 
         var gainsDtos = gains.Select(ToGainDto).ToArray();
