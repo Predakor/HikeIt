@@ -11,7 +11,7 @@ import {
 import type { IconType } from "react-icons";
 import { NavLink } from "react-router";
 import MobileNav from "../Nav/MobileNav";
-import NavContent from "../Nav/Nav";
+import NavContent from "../Nav/NavContent";
 
 export default function Header() {
   const isMobile = useBreakpointValue({ base: true, md: false });

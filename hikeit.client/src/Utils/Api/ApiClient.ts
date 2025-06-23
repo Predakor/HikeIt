@@ -4,37 +4,38 @@ async function apiClient<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = localStorage.getItem("accessToken"); // or from context/store
-
   const finalOptions: RequestInit = {
-    ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
     credentials: "include",
+    ...options,
   };
 
   const response = await fetch(apiPath + path, finalOptions);
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      // Handle unauthorized — redirect to login, refresh token, etc.
-      console.warn("Unauthorized! Redirecting to login...");
-      window.location.href = "auth/login";
-    }
-    if (response.status === 204) {
-      return null as unknown as T;
-    }
+  if (response.status === 204) return null as T;
 
+  if (response.status === 401) {
+    console.warn("Unauthorized — redirecting to login");
+    if (window.location.pathname !== "/auth/login") {
+      window.location.href = "/auth/login";
+    }
+    throw new Error("Unauthorized");
+  }
+
+  if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`);
   }
 
-  if (response.status === 204) {
-    return null as unknown as T;
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    return response.json();
   }
 
-  return response.json();
+  return null;
 }
+
 export default apiClient;

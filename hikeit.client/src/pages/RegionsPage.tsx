@@ -10,7 +10,7 @@ const staleTime = 3600 * 24 * 30;
 function RegionsPage() {
   const request = useQuery<Region[]>({
     queryKey: ["regions"],
-    queryFn: () => apiClient("regions"),
+    queryFn: () => apiClient<Region[]>("regions"),
     staleTime: staleTime,
   });
 

@@ -1,5 +1,6 @@
 import apiClient from "@/Utils/Api/ApiClient";
 import { PasswordInput } from "@/components/ui/password-input";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Button,
   Field,
@@ -19,16 +20,16 @@ interface LoginForm {
 }
 
 function LoginPage() {
+  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginForm>();
 
-  const onSubmit = handleSubmit((data) =>
-    console.log(
-      apiClient("auth/login", { method: "POST", body: JSON.stringify(data) })
-    )
+  const onSubmit = handleSubmit(({ userName, password }) =>
+    login(userName, password)
   );
 
   return (

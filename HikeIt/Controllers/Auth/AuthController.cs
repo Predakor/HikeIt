@@ -47,12 +47,22 @@ public class AuthController : ControllerBase {
             return Unauthorized("Invalid credentials.");
         }
 
-        return Ok("Logged in.");
+        return Ok();
     }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout() {
         await _signInManager.SignOutAsync();
-        return Ok("Loged out");
+        return Ok();
+    }
+
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDto.Basic>> Me() {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) {
+            return Unauthorized();
+        }
+
+        return Ok(UserDtoFactory.CreateBasic(user));
     }
 }

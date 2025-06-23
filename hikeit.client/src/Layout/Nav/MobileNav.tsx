@@ -18,8 +18,8 @@ export default function MobileNav({ children }: { children: ReactElement }) {
       </Drawer.Trigger>
       <Portal>
         <Drawer.Positioner>
-          <Drawer.Content>
-            <Drawer.Header fontSize={fontSize} py={6} px={4}>
+          <Drawer.Content py={3}>
+            <Drawer.Header fontSize={fontSize}>
               <Drawer.Title fontSize={"inherit"}>Navigation</Drawer.Title>
               <Drawer.CloseTrigger fontSize={fontSize} asChild pos="initial">
                 <Icon onClick={close}>

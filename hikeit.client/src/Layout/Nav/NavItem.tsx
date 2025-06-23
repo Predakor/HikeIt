@@ -1,11 +1,14 @@
-import { routes } from "@/data/routes";
 import { LinkBox, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router";
 
-function NavContent() {
-  const visibleRoutes = routes.filter((route) => !route.hidden);
+export function NavItem({ path, label }: { path: string; label: string }) {
+  const hover = {
+    color: "fg",
+    scale: 1.1,
+    transition: "scale 100ms",
+  };
 
-  return visibleRoutes.map(({ path, label }) => (
+  return (
     <LinkBox fontSize={"inherit"} asChild>
       <NavLink to={path} aria-label={label} key={path}>
         {({ isActive }) => {
@@ -15,11 +18,7 @@ function NavContent() {
               transition={"color 100ms"}
               scale={isActive ? 1.1 : 1}
               color={color}
-              _hover={{
-                color: "fg",
-                scale: 1.1,
-                transition: "scale 100ms",
-              }}
+              _hover={hover}
             >
               {label}
             </Text>
@@ -27,7 +26,5 @@ function NavContent() {
         }}
       </NavLink>
     </LinkBox>
-  ));
+  );
 }
-
-export default NavContent;
