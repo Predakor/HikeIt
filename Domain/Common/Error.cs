@@ -21,23 +21,23 @@ public abstract record Error(string Code, string Message) {
     public sealed record NotFound(string Target)
         : Error("not_found", $"Entity '{Target}' was not found.");
 
-    internal sealed record BadRequest(string Reason) : Error("bad_request", Reason);
+    public sealed record BadRequest(string Reason) : Error("bad_request", Reason);
 
-    internal sealed record DbError(string Detail = "A database error occurred.")
+    public sealed record DbError(string Detail = "A database error occurred.")
         : Error("db_error", Detail);
 
-    internal sealed record EmptyCollection(string Context = "Collection")
+    public sealed record EmptyCollection(string Context = "Collection")
         : Error("empty", $"{Context} is empty.");
 
-    internal sealed record Unknown(string? Detail)
+    public sealed record Unknown(string? Detail)
         : Error("unknown", Detail ?? "Something went wrong.");
 
-    internal sealed record File(string? Detail)
+    public sealed record File(string? Detail)
         : Error("file", Detail ?? "something went wrong while proccesing your file.");
 
-    internal sealed record RuleViolation(IRule Rule)
+    public sealed record RuleViolation(IRule Rule)
         : Error("rule_violation", $"{Rule}: {Rule.Message}" ?? "Rule Violation error.");
 
-    internal sealed record NotAuthorized()
+    public sealed record NotAuthorized()
         : Error("not_authorized", $"you're not authorized to do this please log in");
 }

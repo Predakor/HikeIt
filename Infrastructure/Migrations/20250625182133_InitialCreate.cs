@@ -36,6 +36,7 @@ namespace Infrastructure.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDay = table.Column<DateOnly>(type: "date", nullable: false),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -360,17 +361,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "BirthDay", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[,]
-                {
-                    { new Guid("183a96d7-9c20-4b18-b65b-d5d6676b57aa"), 0, new DateOnly(1995, 8, 20), "8c8a2d96-9fef-429e-a493-7c813e123f9b", "kasia.wandziak@wp.pl", false, "Janusz", "Kowalski", false, null, null, null, null, null, false, null, false, "Kasia" },
-                    { new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"), 0, new DateOnly(2002, 4, 15), "7c78143f-e56d-476c-b361-8917b1d4d8ba", "mistrzbiznesu@wp.pl", false, "Janusz", "Kowalski", false, null, null, null, null, null, false, null, false, "Janusz" },
-                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c90"), 0, new DateOnly(1990, 12, 11), "b35502fa-d808-41d9-bb53-e06a2c71ef3d", "ewa.nowak@outlook.com", false, "Janusz", "Kowalski", false, null, null, null, null, null, false, null, false, "Ewa" },
-                    { new Guid("e5be7d3d-8320-4ef9-b60d-92b5464f2f1b"), 0, new DateOnly(1988, 3, 2), "b00d7a10-74af-4159-9c62-301a0dd49751", "marek.kowalski@gmail.com", false, "Janusz", "Kowalski", false, null, null, null, null, null, false, null, false, "Marek" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Regions",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -427,15 +417,6 @@ namespace Infrastructure.Migrations
                     { 18, 1150, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.643 20.281)"), "Mogielica", 7 },
                     { 19, 970, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.9 15.73)"), "Jelenia Góra", 22 },
                     { 20, 1685, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.218 20.02)"), "Orla Perć", 1 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Trips",
-                columns: new[] { "Id", "GpxFileId", "Name", "PeakId", "RegionId", "TripDay", "UserId" },
-                values: new object[,]
-                {
-                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c91"), null, "Wycieczka na śnieżke", null, 22, new DateOnly(2023, 5, 1), new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380") },
-                    { new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c92"), null, "Śnieżne kotły", null, 22, new DateOnly(2025, 1, 16), new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380") }
                 });
 
             migrationBuilder.CreateIndex(

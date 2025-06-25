@@ -13,6 +13,6 @@ public static class ElevationProfileExtentios {
         return DecodeGainsDataCommand
             .Create(profile.GainsData)
             .Execute()
-            .Map(gains => new ElevationProfileDto(profile.Start, gains), error => null);
+            .Match(gains => new ElevationProfileDto(profile.Start, gains), error => null);
     }
 }

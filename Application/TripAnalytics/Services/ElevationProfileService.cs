@@ -1,4 +1,5 @@
-﻿using Domain.Common.Result;
+﻿using Domain.Common;
+using Domain.Common.Result;
 using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Repositories;
 using Domain.TripAnalytics.Services;
@@ -18,23 +19,12 @@ public class ElevationProfileService : IElevationProfileService {
     }
 
     public async Task<Result<ElevationProfile>> FindOrCreate(ElevationProfile profile) {
-        var query = await _repository.GetById(profile.Id);
-
-        var con = query.AsyncMap(
-            async found => {
-                await Task.CompletedTask;
-                return Result<ElevationProfile>.Success(found);
-            },
-            async notFound => {
-                var res = await Create(profile);
-                return res;
-            },
-            async error => {
-                await Task.CompletedTask;
-                return Result<ElevationProfile>.Failure(error);
-            }
-        );
-        return await con;
+        return await _repository
+            .GetById(profile.Id)
+            .MatchAsync(
+                profile => profile,
+                async error => error is Error.NotFound ? await Create(profile) : error
+            );
     }
 
     public Task<Result<ElevationProfile>> GetById(Guid id) {

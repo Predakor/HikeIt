@@ -58,7 +58,7 @@ public class ReachedPeak : IEntity<Guid> {
     public Result<ReachedPeak> AddReachTime(DateTime time) {
         var rule = new TimeMustBeSmallerThanToday(time);
         return rule.Check()
-            .Map<Result<ReachedPeak>>(
+            .Match<Result<ReachedPeak>>(
                 ok => {
                     TimeReached = time;
                     return this;

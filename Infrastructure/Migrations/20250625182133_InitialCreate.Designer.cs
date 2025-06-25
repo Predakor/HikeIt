@@ -13,7 +13,7 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250622164432_InitialCreate")]
+    [Migration("20250625182133_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -370,6 +370,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateOnly>("BirthDay")
                         .HasColumnType("date");
 
@@ -436,68 +439,6 @@ namespace Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"),
-                            AccessFailedCount = 0,
-                            BirthDay = new DateOnly(2002, 4, 15),
-                            ConcurrencyStamp = "7c78143f-e56d-476c-b361-8917b1d4d8ba",
-                            Email = "mistrzbiznesu@wp.pl",
-                            EmailConfirmed = false,
-                            FirstName = "Janusz",
-                            LastName = "Kowalski",
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "Janusz"
-                        },
-                        new
-                        {
-                            Id = new Guid("183a96d7-9c20-4b18-b65b-d5d6676b57aa"),
-                            AccessFailedCount = 0,
-                            BirthDay = new DateOnly(1995, 8, 20),
-                            ConcurrencyStamp = "8c8a2d96-9fef-429e-a493-7c813e123f9b",
-                            Email = "kasia.wandziak@wp.pl",
-                            EmailConfirmed = false,
-                            FirstName = "Janusz",
-                            LastName = "Kowalski",
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "Kasia"
-                        },
-                        new
-                        {
-                            Id = new Guid("e5be7d3d-8320-4ef9-b60d-92b5464f2f1b"),
-                            AccessFailedCount = 0,
-                            BirthDay = new DateOnly(1988, 3, 2),
-                            ConcurrencyStamp = "b00d7a10-74af-4159-9c62-301a0dd49751",
-                            Email = "marek.kowalski@gmail.com",
-                            EmailConfirmed = false,
-                            FirstName = "Janusz",
-                            LastName = "Kowalski",
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "Marek"
-                        },
-                        new
-                        {
-                            Id = new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c90"),
-                            AccessFailedCount = 0,
-                            BirthDay = new DateOnly(1990, 12, 11),
-                            ConcurrencyStamp = "b35502fa-d808-41d9-bb53-e06a2c71ef3d",
-                            Email = "ewa.nowak@outlook.com",
-                            EmailConfirmed = false,
-                            FirstName = "Janusz",
-                            LastName = "Kowalski",
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "Ewa"
-                        });
                 });
 
             modelBuilder.Entity("Domain.ReachedPeaks.ReachedPeak", b =>
@@ -629,24 +570,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Trips");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c91"),
-                            Name = "Wycieczka na śnieżke",
-                            RegionId = 22,
-                            TripDay = new DateOnly(2023, 5, 1),
-                            UserId = new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380")
-                        },
-                        new
-                        {
-                            Id = new Guid("b91a0ed5-40a1-447e-8f48-c8d1e89c7c92"),
-                            Name = "Śnieżne kotły",
-                            RegionId = 22,
-                            TripDay = new DateOnly(2025, 1, 16),
-                            UserId = new Guid("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380")
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>

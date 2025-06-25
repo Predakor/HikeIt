@@ -88,7 +88,7 @@ public class TripService : ITripService {
         await ProccesGpxDataCommand
             .Create(data)
             .Execute()
-            .Bind(proccesedData =>
+            .BindAsync(proccesedData =>
                 _tripAnalyticService.GenerateAnalytic(proccesedData, trip, requestingUser)
             )
             .MatchAsync(

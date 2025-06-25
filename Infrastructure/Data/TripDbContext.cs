@@ -29,9 +29,6 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Region>().HasData(DataSeed.Regions);
-        modelBuilder.Entity<User>(e => {
-            e.HasData(DataSeed.Users);
-        });
 
         modelBuilder.Entity<Peak>(entity => {
             entity.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);
@@ -72,8 +69,6 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
             entity.HasOne(t => t.GpxFile).WithOne().HasForeignKey<Trip>(t => t.GpxFileId);
 
             entity.HasOne(t => t.Analytics).WithOne().HasForeignKey<TripAnalytic>(t => t.Id);
-
-            entity.HasData(DataSeed.Trips);
         });
 
         modelBuilder.Entity<TripAnalytic>(entity => {

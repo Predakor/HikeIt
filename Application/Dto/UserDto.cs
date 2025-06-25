@@ -7,7 +7,16 @@ public abstract record UserDto(string UserName) {
 
     public record WithBirthDay(string UserName, DateOnly BirthDay) : UserDto(UserName);
 
-    public record Complete(string UserName, string Email, DateOnly BirthDay) : UserDto(UserName);
+    public record PublicProfile(string FirstName, string UserName, string Avatar = "")
+        : UserDto(UserName);
+
+    public record Complete(
+        string FirstName,
+        string LastName,
+        string UserName,
+        string Email,
+        DateOnly BirthDay
+    ) : UserDto(UserName);
 
     public record Basic(
         string UserName,
@@ -30,6 +39,25 @@ public abstract record UserDto(string UserName) {
 
 public static class UserDtoFactory {
     public static UserDto.Basic CreateBasic(User user) {
-        return new(user.UserName ?? "not specified", user.FirstName, user.LastName, user.Email ?? "unknown");
+        return new(
+            user.UserName ?? "not specified",
+            user.FirstName,
+            user.LastName,
+            user.Email ?? "unknown"
+        );
+    }
+
+    public static UserDto.Complete CreateComplete(User user) {
+        return new(
+            user.FirstName,
+            user.LastName,
+            user.UserName ?? "",
+            user.Email ?? "",
+            user.BirthDay
+        );
+    }
+
+    public static UserDto.PublicProfile CreatePublicProfile(User user) {
+        return new(user.FirstName, user.UserName, user.Avatar = "");
     }
 }

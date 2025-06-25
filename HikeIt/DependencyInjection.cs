@@ -15,6 +15,7 @@ public static class DependencyInjection {
             .ToArray();
 
         builder
+            .Services.AddHttpContextAccessor()
             .InjectMappers()
             .InjectRepositories(assemblies)
             .InjectStorages()
@@ -25,27 +26,27 @@ public static class DependencyInjection {
         return builder;
     }
 
-    static WebApplicationBuilder InjectParsers(this WebApplicationBuilder builder) {
-        builder.Services.AddScoped<IGpxParser, GpxParser>();
-        return builder;
+    static IServiceCollection InjectParsers(this IServiceCollection services) {
+        services.AddScoped<IGpxParser, GpxParser>();
+        return services;
     }
 
-    static WebApplicationBuilder InjectStorages(this WebApplicationBuilder builder) {
-        builder.Services.AddScoped<IFileStorage, FileStorage>();
-        return builder;
+    static IServiceCollection InjectStorages(this IServiceCollection services) {
+        services.AddScoped<IFileStorage, FileStorage>();
+        return services;
     }
 
-    static WebApplicationBuilder InjectMappers(this WebApplicationBuilder builder) {
-        builder.Services.AddScoped<PeakMapper>();
-        builder.Services.AddScoped<RegionMapper>();
-        return builder;
+    static IServiceCollection InjectMappers(this IServiceCollection services) {
+        services.AddScoped<PeakMapper>();
+        services.AddScoped<RegionMapper>();
+        return services;
     }
 
-    static WebApplicationBuilder InjectRepositories(
-        this WebApplicationBuilder builder,
+    static IServiceCollection InjectRepositories(
+        this IServiceCollection services,
         Assembly[] targetAssemblies
     ) {
-        builder.Services.Scan(scan =>
+        services.Scan(scan =>
             scan.FromAssemblies(targetAssemblies)
                 .AddClasses(classes =>
                     classes.Where(type =>
@@ -55,14 +56,14 @@ public static class DependencyInjection {
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
-        return builder;
+        return services;
     }
 
-    static WebApplicationBuilder InjectServices(
-        this WebApplicationBuilder builder,
+    static IServiceCollection InjectServices(
+        this IServiceCollection services,
         Assembly[] targetAssemblies
     ) {
-        builder.Services.Scan(scan =>
+        services.Scan(scan =>
             scan.FromAssemblies(targetAssemblies)
                 .AddClasses(classes =>
                     classes.Where(t => t.Name.EndsWith("Service") && t.IsClass && !t.IsAbstract)
@@ -70,11 +71,11 @@ public static class DependencyInjection {
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
-        return builder;
+        return services;
     }
 
-    static WebApplicationBuilder InjectUnitOfWorks(this WebApplicationBuilder builder) {
-        builder.Services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
-        return builder;
+    static IServiceCollection InjectUnitOfWorks(this IServiceCollection services) {
+        services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
+        return services;
     }
 }

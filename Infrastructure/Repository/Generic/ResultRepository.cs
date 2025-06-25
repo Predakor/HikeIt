@@ -42,12 +42,11 @@ public class CrudResultRepository<T, TKey>
     }
 
     public async Task<Result<bool>> RemoveAsync(TKey id) {
-        var entity = await GetByIdAsync(id);
-        return entity.Map(
-            found => Result<bool>.Success(DbSet.Remove(found) != null),
-            notFound => Result<bool>.Failure(Errors.NotFound(id?.ToString() ?? "")),
-            error => Result<bool>.Failure(Errors.Unknown())
-        );
+        return await GetByIdAsync(id)
+            .MatchAsync(
+                found => Result<bool>.Success(DbSet.Remove(found) != null),
+                error => Result<bool>.Failure(Errors.Unknown())
+            );
     }
 
     public Task<Result<T>> UpdateAsync(T entity) {

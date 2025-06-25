@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Services.Auth;
 using Domain.Entiites.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,16 @@ namespace Api.Controllers.Auth;
 public class AuthController : ControllerBase {
     readonly UserManager<User> _userManager;
     readonly SignInManager<User> _signInManager;
+    readonly IAuthService _authService;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager) {
+    public AuthController(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAuthService authService
+    ) {
         _userManager = userManager;
         _signInManager = signInManager;
+        _authService = authService;
     }
 
     [HttpPost("register")]
@@ -27,11 +34,8 @@ public class AuthController : ControllerBase {
 
         var result = await _userManager.CreateAsync(user, dto.Password);
 
-        if (!result.Succeeded) {
-            return BadRequest(result.Errors);
-        }
+        return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
 
-        return Ok("User registered successfully");
     }
 
     [HttpPost("login")]
@@ -58,11 +62,11 @@ public class AuthController : ControllerBase {
 
     [HttpGet("me")]
     public async Task<ActionResult<UserDto.Basic>> Me() {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) {
-            return Unauthorized();
-        }
+        var query = await _authService.Me();
 
-        return Ok(UserDtoFactory.CreateBasic(user));
+        return query.Match<ActionResult<UserDto.Basic>>(
+            user => Ok(UserDtoFactory.CreateBasic(user)),
+            error => Unauthorized()
+        );
     }
 }

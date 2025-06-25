@@ -1,26 +1,32 @@
 ﻿using Application.Dto;
+using Application.Services.Auth;
+using Domain.Common;
+using Domain.Common.Result;
 using Domain.Entiites.Users;
 
 namespace Application.Services.Users;
 
-public class UserService(IUserRepository repository) : IUserService {
+public class UserService(IUserRepository repository, IAuthService authService) : IUserService {
     readonly IUserRepository _repository = repository;
+    readonly IAuthService _authService = authService;
 
-    public async Task<IEnumerable<UserDto.Complete>> GetAllUsersAsync() {
-        var users = await _repository.GetAllAsync();
-        return users.Select(user => new UserDto.Complete(user.UserName, user.Email, user.BirthDay));
+    public async Task<Result<UserDto.Complete>> GetMe() {
+        return await _authService
+            .Me()
+            .MapAsync(user => _repository.GetByIdAsync(user.Id))
+            .MapAsync(user => UserDtoFactory.CreateComplete(user));
     }
 
-    public async Task<UserDto.Complete?> GetUserByIdAsync(Guid id) {
+    public async Task<Result<UserDto.PublicProfile>> GetUserAsync(Guid id) {
         var user = await _repository.GetByIdAsync(id);
         if (user is null) {
-            return null;
+            return Errors.NotFound("user");
         }
 
-        return new UserDto.Complete(user.UserName, user.Email, user.BirthDay);
+        return UserDtoFactory.CreatePublicProfile(user);
     }
 
-    public async Task CreateUserAsync(UserDto.Complete dto) {
+    public async Task<Result<User>> CreateUserAsync(UserDto.Complete dto) {
         var user = new User {
             FirstName = "jausz",
             LastName = "bizensme",
@@ -29,6 +35,10 @@ public class UserService(IUserRepository repository) : IUserService {
             BirthDay = dto.BirthDay,
         };
 
-        await _repository.Create(user);
+        if (await _repository.Create(user)) {
+            return Errors.Unknown("couldn't save user");
+        }
+
+        return user;
     }
 }

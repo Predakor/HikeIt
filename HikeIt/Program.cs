@@ -47,7 +47,6 @@ app.Run();
 static void MapEndpoints(WebApplication app) {
     app.MapPeaksEndpoints();
     app.MapRegionsEndpoints();
-    app.MapUserEndpoints().RequireAuthorization();
     app.MapFilesEndpoints().RequireAuthorization();
 }
 

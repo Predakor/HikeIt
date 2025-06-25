@@ -128,7 +128,9 @@ internal static class FileValidation {
         ];
 
         foreach (var rule in rules) {
-            rule.Check().Match(ok => { }, errors.Add);
+            if (rule.Check().HasErrors(out var error)) {
+                errors.Add(error);
+            }
         }
 
         return (errors.Count == 0, errors);
