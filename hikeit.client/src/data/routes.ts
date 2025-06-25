@@ -1,4 +1,5 @@
 import LoginPage from "@/pages/Auth/LoginPage";
+import RegisterPage from "@/pages/Auth/RegisterPage";
 import AddTripPage from "@/pages/Trips/AddTripPage";
 import TripDetailsPage from "@/pages/Trips/TripDetailsPage";
 import TripsPage from "@/pages/Trips/TripsPage";
@@ -17,7 +18,7 @@ interface RouteData {
 
 export const routes: RouteData[] = [
   { path: "/auth/login", label: "Auth", hidden: true, Page: LoginPage },
-  { path: "/auth/register", label: "Auth", hidden: true, Page: LoginPage },
+  { path: "/auth/register", label: "Auth", hidden: true, Page: RegisterPage },
 
   {
     path: "/",

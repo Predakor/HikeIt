@@ -1,43 +1,62 @@
-interface InputCoonfigEntryBase {
+interface InputConfigEntryBase {
   key: string;
   label: string;
   type: React.HTMLInputTypeAttribute;
+  min: number;
+  max: number;
+  required?: booleand;
 }
 
 export type InputConfigEntry =
+  | PasswordInputConfigEntry
   | RangeInputConfigEntry
   | NumberInputConfigEntry
   | DateInputConfigEntry
   | CheckboxInputConfigEntry
   | TextInputConfigEntry;
 
-interface RangeInputConfigEntry extends InputCoonfigEntryBase {
+interface RangeInputConfigEntry extends InputConfigEntryBase {
   type: "range";
   min: number;
   max: number;
   formatValue?: (value: number) => number;
 }
 
-interface NumberInputConfigEntry extends InputCoonfigEntryBase {
-  type: "number";
-  max: number;
-  min: number;
+interface PasswordInputConfigEntry extends InputConfigEntryBase {
+  type: "password";
+  pattern: ?Regex;
 }
 
-interface DateInputConfigEntry extends InputCoonfigEntryBase {
+interface TextInputConfigEntry extends InputConfigEntryBase {
+  type: "text";
+  pattern?: RegExp;
+
+  placeholder?: string;
+}
+
+interface NumberInputConfigEntry extends InputConfigEntryBase {
+  type: "number";
+}
+
+interface DateInputConfigEntry extends InputConfigEntryBase {
   type: "date";
   defaultChecked?: boolean;
 }
 
-interface CheckboxInputConfigEntry extends InputCoonfigEntryBase {
+interface CheckboxInputConfigEntry extends InputConfigEntryBase {
   type: "checkbox";
   defaultChecked?: boolean;
 }
 
-interface TextInputConfigEntry extends InputCoonfigEntryBase {
-  type: "text";
-  pattern?: RegExp;
-  placeholder?: string;
-}
-
 export type InputsConfig = InputConfigEntry[];
+
+///other types
+export interface DisplayOptions {
+  label?: "inline" | "ontop";
+  size?: "2xl" | "xl" | "lg" | "md" | "sm" | "xs";
+}
+interface RenderInputBaseProps<T extends FieldValues> {
+  control: Control<T, any, T>;
+  register: UseFormRegister<T>;
+  displayOptions?: DisplayOptions;
+}

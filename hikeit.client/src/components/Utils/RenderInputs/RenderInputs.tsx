@@ -1,60 +1,31 @@
 import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
-import { Field, Input } from "@chakra-ui/react";
-import {
-  type Control,
-  type FieldValues,
-  type Path,
-  type UseFormRegister,
-} from "react-hook-form";
-import { Range } from "./Range";
-import type { InputConfigEntry, InputsConfig } from "./inputTypes";
+import { Field } from "@chakra-ui/react";
+import { type FieldValues } from "react-hook-form";
+import MapEntry from "./MapEntry/MapEntry";
+import type { InputsConfig, RenderInputBaseProps } from "./inputTypes";
 
-interface Props<TFor extends FieldValues> {
+interface Props<T extends FieldValues> extends RenderInputBaseProps<T> {
   config: InputsConfig;
-  control: Control;
-  register: UseFormRegister<TFor>;
 }
 
-function RenderInputs<T extends FieldValues>({
-  config,
-  control,
-  register,
-}: Props<T>) {
+function RenderInputs<T extends FieldValues>(props: Props<T>) {
+  const { config, control, register, displayOptions: options } = props;
+
   const mappedConfig = config.map((entry) => ({
     ...entry,
     label: !!entry.label || KeyToLabelFormatter(entry.key),
   })) as InputsConfig;
 
   return mappedConfig.map((entry) => (
-    <Field.Root key={entry.key} w={40}>
-      <MapEntry entry={entry} control={control} register={register} />
+    <Field.Root key={entry.key} minWidth={40}>
+      <MapEntry
+        entry={entry}
+        control={control}
+        register={register}
+        displayOptions={options}
+      />
     </Field.Root>
   ));
-}
-
-interface MapProps<TFor extends FieldValues> {
-  entry: InputConfigEntry;
-  control: Control;
-  register: UseFormRegister<TFor>;
-}
-
-function MapEntry<TFor extends FieldValues>({
-  entry,
-  control,
-  register,
-}: MapProps<TFor>) {
-  const { key, label, type } = entry;
-
-  if (type === "range") {
-    return <Range entry={entry} control={control} />;
-  }
-
-  return (
-    <>
-      <Field.Label>{label}</Field.Label>
-      <Input type={type} {...register(key as Path<TFor>)} />
-    </>
-  );
 }
 
 export default RenderInputs;

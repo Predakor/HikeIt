@@ -1,4 +1,5 @@
 import apiClient from "@/Utils/Api/ApiClient";
+import NavButton from "@/components/Utils/NavButton/NavButton";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -7,12 +8,14 @@ import {
   Fieldset,
   Input,
   InputGroup,
+  LinkBox,
   Separator,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { LuUser } from "react-icons/lu";
+import { NavLink } from "react-router";
 
 interface LoginForm {
   userName: string;
@@ -91,13 +94,8 @@ function LoginPage() {
           <Text color={"fg.muted"}>Dont have a account? </Text>
 
           {/* //it should be a link */}
-          <Button
-            size={{ base: "md", lg: "lg" }}
-            colorPalette={"green"}
-            type={"submit"}
-          >
-            Register Now
-          </Button>
+
+          <NavButton to={"/auth/register"} label={"Register instead"} />
         </Stack>
       </Fieldset.Root>
     </Stack>

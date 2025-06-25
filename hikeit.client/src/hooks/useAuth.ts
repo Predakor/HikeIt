@@ -1,5 +1,6 @@
 import apiClient from "@/Utils/Api/ApiClient";
 import type { UserType } from "@/components/User/User";
+import type { RegisterForm } from "@/pages/Auth/RegisterPage";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
@@ -48,5 +49,14 @@ export function useAuth() {
     } catch (error) {}
   };
 
-  return { login, logout, me };
+  const register = async (data: RegisterForm) => {
+    try {
+      await apiClient("auth/register", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    } catch (error) {}
+  };
+
+  return { login, logout, me, register };
 }

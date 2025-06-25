@@ -4,7 +4,7 @@ import type { RangeInputConfigEntry } from "./inputTypes";
 
 interface RangeProps {
   entry: RangeInputConfigEntry;
-  control: Control;
+  control: Control<any, any, any>;
 }
 
 export function Range({ entry, control }: RangeProps) {
