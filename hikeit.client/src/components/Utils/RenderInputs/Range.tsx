@@ -1,13 +1,12 @@
 import { Field, HStack, Slider } from "@chakra-ui/react";
-import { Controller, type Control } from "react-hook-form";
-import type { RangeInputConfigEntry } from "./inputTypes";
+import { Controller } from "react-hook-form";
+import type { RangeInputConfigEntry, RenderInputBaseProps } from "./inputTypes";
 
-interface RangeProps {
+interface RangeProps<T> extends RenderInputBaseProps<T> {
   entry: RangeInputConfigEntry;
-  control: Control<any, any, any>;
 }
 
-export function Range({ entry, control }: RangeProps) {
+export function Range<T>({ entry, control }: RangeProps<T>) {
   const { key, label } = entry;
 
   const formatNumber = (value: number) => {

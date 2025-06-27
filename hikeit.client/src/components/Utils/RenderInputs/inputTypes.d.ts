@@ -1,10 +1,13 @@
+import type { FullMap } from "@/types/Utils/MappingTypes";
+import type { CollectionType } from "@components/RegionSelect/useCollection";
+
 interface InputConfigEntryBase {
   key: string;
   label: string;
   type: React.HTMLInputTypeAttribute;
   min: number;
   max: number;
-  required?: booleand;
+  required?: boolean;
 }
 
 export type InputConfigEntry =
@@ -13,7 +16,8 @@ export type InputConfigEntry =
   | NumberInputConfigEntry
   | DateInputConfigEntry
   | CheckboxInputConfigEntry
-  | TextInputConfigEntry;
+  | TextInputConfigEntry
+  | SelectInputConfigEntry;
 
 interface RangeInputConfigEntry extends InputConfigEntryBase {
   type: "range";
@@ -43,6 +47,12 @@ interface DateInputConfigEntry extends InputConfigEntryBase {
   defaultChecked?: boolean;
 }
 
+interface SelectInputConfigEntry
+  extends Omit<InputConfigEntryBase, "min" | "max"> {
+  type: "select";
+  collection: CollectionType;
+}
+
 interface CheckboxInputConfigEntry extends InputConfigEntryBase {
   type: "checkbox";
   defaultChecked?: boolean;
@@ -50,6 +60,7 @@ interface CheckboxInputConfigEntry extends InputConfigEntryBase {
 
 export type InputsConfig = InputConfigEntry[];
 
+export type InputsConfigFor<T> = FullMap<InputConfigEntry, T>[];
 ///other types
 export interface DisplayOptions {
   label?: "inline" | "ontop";

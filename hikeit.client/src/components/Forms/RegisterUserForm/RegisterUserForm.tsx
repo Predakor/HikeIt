@@ -1,6 +1,6 @@
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import { Button, Fieldset, Separator } from "@chakra-ui/react";
-import useRegister from "./UseRegister";
+import useRegister from "./useRegister";
 
 interface Props {
   submitHandler: Function;

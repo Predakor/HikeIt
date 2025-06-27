@@ -1,9 +1,10 @@
 import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
 import DropFile from "@/components/AddTripForm/AddFile/DropFile";
-import AddTripPresenter from "@/components/AddTripForm/AddTripPresenter";
 import Divider from "@/components/Divider/Divider";
+import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
+import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
+import { regionsList } from "@/data/regionsList";
 import usePost from "@/hooks/usePost";
-import type { CreateTrip } from "@/types/ApiTypes/TripDtos";
 import {
   Alert,
   Box,
@@ -13,48 +14,51 @@ import {
   ProgressCircle,
   Stack,
 } from "@chakra-ui/react";
-import { useRef, type FormEvent } from "react";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
 
-const defaultValues: CreateTrip = {
-  base: {
-    name: "",
-    tripDay: "",
+interface CreateTripForm {
+  name: string;
+  tripDay: string;
+  regionId: number;
+}
+
+const addTripFormConfig: InputsConfig = [
+  { key: "name", label: "Trip name", type: "text", min: 3, max: 63 },
+  { key: "tripDay", label: "", type: "date", min: 0, max: Date.now() },
+  {
+    key: "regionId",
+    label: "Region",
+    type: "select",
+    collection: { items: regionsList, type: "static" },
   },
-  regionId: 1,
-};
+];
 
 function AddTripPage() {
   const fileRef = useRef<File | null>(null);
 
-  const navigation = useNavigate();
   const [post, result] = usePost();
-  const formHandler = useForm<CreateTrip>({
-    defaultValues,
-  });
 
-  const submitHandler = async (e: FormEvent) => {
-    e.preventDefault();
-    const data = formHandler.getValues();
+  const { handleSubmit, control, register, setValue } =
+    useForm<CreateTripForm>();
+
+  const submitHandler = handleSubmit(async (data) => {
     const file = fileRef.current;
 
     if (!file) {
       alert("Please provide a .gpx file.");
       return;
     }
-
     const formData = new FormData();
 
-    formData.append("Base.Name", data.base.name);
+    formData.append("Base.Name", data.name);
     formData.append("RegionId", data.regionId.toString());
-    formData.append("Base.TripDay", data.base.tripDay);
+    formData.append("Base.TripDay", data.tripDay);
     formData.append("file", file);
-
-    console.log({ formData, formHandler });
+    console.log(data);
 
     await post("trips/form", formData);
-  };
+  });
 
   const fileChangeHandler = (newFile: File) => {
     const mapFromFile = async () => {
@@ -63,7 +67,9 @@ function AddTripPage() {
 
       const tripDate = stats.startTime?.slice(0, 10) || "";
 
-      formHandler.setValue("base.tripDay", tripDate);
+      if (tripDate) {
+        setValue("tripDay", tripDate);
+      }
     };
 
     fileRef.current = newFile;
@@ -115,7 +121,14 @@ function AddTripPage() {
             <Heading fontSize={"2xl"} py={"1em"}>
               Manually
             </Heading>
-            <AddTripPresenter formHandler={formHandler} />
+            <Stack>
+              <RenderInputs
+                config={addTripFormConfig}
+                control={control}
+                register={register}
+                displayOptions={{ label: "ontop", size: "lg" }}
+              />
+            </Stack>
           </Box>
 
           <Divider />

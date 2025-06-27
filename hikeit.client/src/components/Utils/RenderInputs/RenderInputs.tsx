@@ -13,7 +13,7 @@ function RenderInputs<T extends FieldValues>(props: Props<T>) {
 
   const mappedConfig = config.map((entry) => ({
     ...entry,
-    label: !!entry.label || KeyToLabelFormatter(entry.key),
+    label: entry.label ? entry.label : KeyToLabelFormatter(entry.key),
   })) as InputsConfig;
 
   return mappedConfig.map((entry) => (

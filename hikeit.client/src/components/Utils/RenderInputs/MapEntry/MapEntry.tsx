@@ -1,8 +1,10 @@
 import { PasswordInput } from "@/components/ui/password-input";
-import { Field, Input, VisuallyHidden } from "@chakra-ui/react";
+import { Input } from "@chakra-ui/react";
 import type { FieldValues } from "react-hook-form";
 import { Range } from "../Range";
 import type { InputConfigEntry, RenderInputBaseProps } from "../inputTypes";
+import InputLabel from "./InputLabel";
+import Select from "../Select";
 
 interface Props<T extends FieldValues> extends RenderInputBaseProps<T> {
   entry: InputConfigEntry;
@@ -25,14 +27,14 @@ export default function MapEntry<TFor extends FieldValues>({
   };
 
   if (type === "range") {
-    return <Range entry={entry} control={control} />;
+    return <Range entry={entry} control={control} register={undefined} />;
+  }
+
+  if (type === "select") {
+    return <Select entry={entry} control={control} register={undefined} />;
   }
 
   if (type === "checkbox") {
-    return "not impleneted checkbox type";
-  }
-
-  if (type === "date") {
     return "not impleneted checkbox type";
   }
 
@@ -66,21 +68,4 @@ export default function MapEntry<TFor extends FieldValues>({
       />
     </>
   );
-}
-
-interface InputLabelProps {
-  label: string;
-  option: "inline" | "ontop" | undefined;
-}
-
-function InputLabel({ label, option }: InputLabelProps) {
-  if (option === "inline") {
-    return (
-      <VisuallyHidden>
-        <Field.Label>{label}</Field.Label>
-      </VisuallyHidden>
-    );
-  }
-
-  return <Field.Label>{label}</Field.Label>;
 }
