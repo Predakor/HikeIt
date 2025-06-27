@@ -1,6 +1,5 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
@@ -13,16 +12,13 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
     readonly IGpxFileRepository _repository = repository;
     readonly IGpxParser _parser = parser;
 
-    public async Task<Result<GpxFile>> CreateAsync(IFormFile file) {
+    public async Task<Result<GpxFile>> CreateAsync(IFormFile file, Guid userId) {
         var (isValid, errors) = FileValidation.Validate(file);
         if (!isValid) {
             string errorstring = errors.Select(e => e.ToString()).ToString();
             var err = Errors.Unknown(errorstring);
             return err;
         }
-
-        User? user = null;
-        Guid userId = Guid.Parse("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380");
 
         var result = await _fileStorage.Save(file, userId.ToString());
 
@@ -32,9 +28,8 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
         }
 
         FileCreationInfo info = result.Value!;
-        Guid id = Guid.NewGuid();
         GpxFile entity = new() {
-            Id = id,
+            Id = Guid.NewGuid(),
             Name = info.Name,
             Path = info.Path,
             OwnerId = userId,
@@ -42,7 +37,6 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
 
         await _repository.AddAsync(entity);
         var succes = await _repository.SaveChangesAsync();
-
         return entity;
     }
 

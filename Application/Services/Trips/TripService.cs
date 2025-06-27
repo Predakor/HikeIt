@@ -3,6 +3,7 @@ using Application.TripAnalytics.Commands;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
 using Domain.Common.Result;
+using Domain.Entiites.Users;
 using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;
 using Domain.Trips.ValueObjects;
@@ -70,26 +71,21 @@ public class TripService : ITripService {
         return Result<Guid>.Success(trip.Id);
     }
 
-    public async Task<Result<Guid>> Add(Request.Create newTrip, AnalyticData data, Guid fileId) {
+    public async Task<Result<Guid>> Add(Request.Create newTrip, AnalyticData data, Guid fileId, User user) {
         var trip = Trip.Create(
             newTrip.Base.Name,
             newTrip.Base.TripDay,
-            GetLoggedUserId(),
+            user.Id,
             newTrip.RegionId
         );
         trip.AddGpxFile(fileId);
 
-        var requestingUser = await _unitOfWork.UserRepository.GetByIdAsync(GetLoggedUserId());
-
-        if (requestingUser == null) {
-            return Errors.NotAuthorized();
-        }
 
         await ProccesGpxDataCommand
             .Create(data)
             .Execute()
             .BindAsync(proccesedData =>
-                _tripAnalyticService.GenerateAnalytic(proccesedData, trip, requestingUser)
+                _tripAnalyticService.GenerateAnalytic(proccesedData, trip, user)
             )
             .MatchAsync(
                 async analytics => {

@@ -61,10 +61,10 @@ public class AuthController : ControllerBase {
     }
 
     [HttpGet("me")]
-    public async Task<ActionResult<UserDto.Basic>> Me() {
+    public async Task<IActionResult> Me() {
         var query = await _authService.Me();
 
-        return query.Match<ActionResult<UserDto.Basic>>(
+        return query.Match<IActionResult>(
             user => Ok(UserDtoFactory.CreateBasic(user)),
             error => Unauthorized()
         );

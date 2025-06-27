@@ -1,4 +1,5 @@
-﻿using Application.Services.Files;
+﻿using Application.Services.Auth;
+using Application.Services.Files;
 using Application.Services.Trips;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
@@ -12,6 +13,7 @@ namespace Api.Controllers.Trips;
 [ApiController]
 [Route("api/[controller]")]
 public class TripsController : ControllerBase {
+    readonly IAuthService _authService;
     readonly ITripService _tripService;
     readonly IGpxFileService _fileService;
     readonly ITripAnalyticService _tripAnalyticService;
@@ -19,11 +21,13 @@ public class TripsController : ControllerBase {
     public TripsController(
         ITripService service,
         IGpxFileService fileService,
-        ITripAnalyticService tripAnalyticService
+        ITripAnalyticService tripAnalyticService,
+        IAuthService authService
     ) {
         _tripService = service;
         _fileService = fileService;
         _tripAnalyticService = tripAnalyticService;
+        _authService = authService;
     }
 
     [HttpGet]
@@ -70,7 +74,12 @@ public class TripsController : ControllerBase {
         [FromForm] Request.Create newTrip,
         IFormFile file
     ) {
-        var savedFile = await _fileService.CreateAsync(file);
+        var user = (await _authService.Me()).Value;
+        if (user == null) {
+            return Unauthorized();
+        }
+
+        var savedFile = await _fileService.CreateAsync(file, user.Id);
         if (savedFile.HasErrors(out Error error)) {
             return BadRequest(error);
         }
@@ -78,10 +87,14 @@ public class TripsController : ControllerBase {
         var gpxData = await _fileService.GetGpxDataFromFile(file);
         if (gpxData == null || gpxData.Points.Count == 0) {
             return BadRequest("file was wrong");
+
         }
 
-        var tripResult = await _tripService.Add(newTrip, gpxData, savedFile.Value.Id);
+        var tripResult = await _tripService.Add(newTrip, gpxData, savedFile.Value.Id, user);
         if (tripResult.HasErrors(out error)) {
+            Console.WriteLine("error in file tripsresult");
+            Console.WriteLine("error in file tripsresult");
+            Console.WriteLine("error in file tripsresult");
             return BadRequest(error);
         }
 
@@ -98,12 +111,19 @@ public class TripsController : ControllerBase {
 
     [HttpPut("{id}/attach")]
     public async Task<IActionResult> Attach(Guid id, IFormFile file) {
+        var user = (await _authService.Me()).Value;
+        if (user == null) {
+            return Unauthorized();
+        }
+
+
+
         var trip = await _tripService.GetById(id);
         if (trip == null) {
             return NotFound("invalid trip id");
         }
 
-        var savedFile = await _fileService.CreateAsync(file);
+        var savedFile = await _fileService.CreateAsync(file, user.Id);
         if (savedFile.HasErrors(out Error error)) {
             return BadRequest(error);
         }

@@ -1,7 +1,6 @@
 import apiClient from "@/Utils/Api/ApiClient";
 import api from "@/Utils/Api/apiRequest";
 import type { UserType } from "@/components/User/User";
-import type { RegisterForm } from "@/pages/Auth/RegisterPage";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
@@ -10,7 +9,20 @@ export type AuthError = {
   description: string;
 };
 
-type AuthResponse<T> = T | AuthError[];
+export interface RegisterForm {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  userName: string;
+}
+
+export interface LoginForm {
+  login: string;
+  password: string;
+}
+
+type AuthResponse<T> = T | { errors: AuthError[] };
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -71,7 +83,7 @@ export function useAuth() {
       return errors;
     }
 
-    return true;
+    return null;
   };
 
   return { login, logout, me, register };

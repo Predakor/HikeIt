@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 namespace Application.Services.Files;
 public interface IGpxFileService {
     Task<GpxFileDto> GetByIdAsync(Guid id);
-    Task<Result<GpxFile>> CreateAsync(IFormFile file);
+    Task<Result<GpxFile>> CreateAsync(IFormFile file, Guid userId);
     Task<Result<AnalyticData>> GetGpxDataByFileIdAsync(Guid id);
 
     Task<AnalyticData> GetGpxDataFromFile(IFormFile file);

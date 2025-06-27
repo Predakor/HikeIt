@@ -34,8 +34,8 @@ public static class FilesEndpoints {
         return Results.Ok(res);
     }
 
-    static async Task<IResult> AddFile(IFormFile file, IGpxFileService service) {
-        var result = await service.CreateAsync(file);
+    static async Task<IResult> AddFile(IFormFile file, IGpxFileService service, Guid userID) {
+        var result = await service.CreateAsync(file, userID);
         if (result.HasErrors(out Error? error)) {
             return Results.BadRequest(error);
         }
@@ -46,9 +46,10 @@ public static class FilesEndpoints {
         Guid id,
         IFormFile file,
         ITripService tripService,
-        IGpxFileService service
+        IGpxFileService service,
+        Guid userId
     ) {
-        var result = await service.CreateAsync(file);
+        var result = await service.CreateAsync(file, userId);
         if (result.HasErrors(out Error? error)) {
             return Results.BadRequest(error);
         }
