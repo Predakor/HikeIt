@@ -66,9 +66,17 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
                 .HasForeignKey(t => t.RegionId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasOne(t => t.GpxFile).WithOne().HasForeignKey<Trip>(t => t.GpxFileId);
+            entity
+                .HasOne(t => t.GpxFile)
+                .WithOne()
+                .HasForeignKey<Trip>(t => t.GpxFileId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(t => t.Analytics).WithOne().HasForeignKey<TripAnalytic>(t => t.Id);
+            entity
+                .HasOne(t => t.Analytics)
+                .WithOne()
+                .HasForeignKey<TripAnalytic>(t => t.Id)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<TripAnalytic>(entity => {
@@ -79,7 +87,8 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
                 .HasOne(a => a.ElevationProfile)
                 .WithOne()
                 .HasForeignKey<ElevationProfile>(t => t.Id)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity
                 .HasOne(a => a.PeaksAnalytic)
