@@ -1,15 +1,16 @@
 import NavButton from "@/components/Utils/NavButton/NavButton";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, type AuthError } from "@/hooks/useAuth";
 import {
+  Alert,
   Button,
   Fieldset,
   Separator,
-  SimpleGrid,
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export interface RegisterForm {
@@ -66,6 +67,7 @@ const registerFormConfgig: InputsConfig = [
 
 function LoginPage() {
   const authActions = useAuth();
+  const [requestErrors, setRequestErrors] = useState<AuthError[]>(null);
 
   const {
     control,
@@ -75,8 +77,10 @@ function LoginPage() {
   } = useForm<RegisterForm>();
 
   const onSubmit = handleSubmit(async (data) => {
-    var x = await authActions.register(data);
-    console.log(x);
+    var errors = await authActions.register(data);
+    if (errors) {
+      setRequestErrors(errors);
+    }
   });
 
   return (
@@ -90,6 +94,18 @@ function LoginPage() {
             Start your's now
           </Fieldset.Legend>
         </Stack>
+
+        {requestErrors && (
+          <Alert.Root colorPalette={"red"}>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{requestErrors[0].code}</Alert.Title>
+              <Alert.Description>
+                {requestErrors[0].description}
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+        )}
 
         <form onSubmit={(d) => onSubmit(d)}>
           <Fieldset.Content>

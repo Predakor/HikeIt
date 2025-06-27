@@ -1,8 +1,16 @@
 import apiClient from "@/Utils/Api/ApiClient";
+import api from "@/Utils/Api/apiRequest";
 import type { UserType } from "@/components/User/User";
 import type { RegisterForm } from "@/pages/Auth/RegisterPage";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
+
+export type AuthError = {
+  code: string;
+  description: string;
+};
+
+type AuthResponse<T> = T | AuthError[];
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -15,9 +23,7 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await apiClient("auth/logout", {
-        method: "POST",
-      });
+      await api.post("auth/logout", resolveAuthResponse);
       removeUserQueries();
       navigate("/auth/login");
     } catch (error) {}
@@ -33,30 +39,51 @@ export function useAuth() {
   };
 
   const login = async (username: string, password: string) => {
-    try {
-      await apiClient("auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      });
+    var response = await api.post<AuthResponse<null>>(
+      "auth/login",
+      {
+        username,
+        password,
+      },
+      resolveAuthResponse
+    );
 
-      //prefetch
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-      queryClient.refetchQueries({ queryKey: ["user"] });
-      navigate("/trips");
-    } catch (error) {}
+    const errors = response?.errors;
+    if (errors) {
+      return errors;
+    }
+
+    //prefetch
+    queryClient.invalidateQueries({ queryKey: ["user"] });
+    queryClient.refetchQueries({ queryKey: ["user"] });
+    navigate("/trips");
   };
 
   const register = async (data: RegisterForm) => {
-    try {
-      await apiClient("auth/register", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-    } catch (error) {}
+    var request = await api.post<AuthResponse<null>>(
+      "auth/register",
+      data,
+      resolveAuthResponse
+    );
+
+    const errors = request?.errors;
+    if (errors) {
+      return errors;
+    }
+
+    return true;
   };
 
   return { login, logout, me, register };
 }
+
+const resolveAuthResponse = async <T>(
+  response: Response
+): Promise<AuthResponse<T>> => {
+  if (!response.ok) {
+    var result = await response.json();
+    return { errors: result };
+  }
+
+  return null as T;
+};

@@ -1,8 +1,11 @@
 import { apiPath } from "@/data/apiPaths";
 
+export type ResponseResolver<T> = (reponse: Response) => Promise<T>;
+
 async function apiClient<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  resolveWith?: ResponseResolver<T>
 ): Promise<T> {
   const finalOptions: RequestInit = {
     headers: {
@@ -15,14 +18,21 @@ async function apiClient<T>(
 
   const response = await fetch(apiPath + path, finalOptions);
 
+  if (resolveWith) {
+    return resolveWith(response);
+  }
+
+  return resolveApiResponse<T>(response);
+}
+
+export async function resolveApiResponse<T>(response: Response) {
   if (response.status === 204) return null as T;
 
   if (response.status === 401) {
     console.warn("Unauthorized — redirecting to login");
-    if (window.location.pathname !== "/auth/login") {
+    if (!window.location.pathname.startsWith("/auth")) {
       window.location.href = "/auth/login";
     }
-    throw new Error("Unauthorized");
   }
 
   if (!response.ok) {
@@ -32,10 +42,8 @@ async function apiClient<T>(
   const contentType = response.headers.get("content-type") || "";
 
   if (contentType.includes("application/json")) {
-    return response.json();
+    return await response.json();
   }
-
-  return null;
 }
 
 export default apiClient;

@@ -1,5 +1,5 @@
-import apiClient from "@/Utils/Api/ApiClient";
 import NavButton from "@/components/Utils/NavButton/NavButton";
+import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -8,14 +8,12 @@ import {
   Fieldset,
   Input,
   InputGroup,
-  LinkBox,
   Separator,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { LuUser } from "react-icons/lu";
-import { NavLink } from "react-router";
 
 interface LoginForm {
   userName: string;
@@ -49,6 +47,8 @@ function LoginPage() {
 
         <form onSubmit={onSubmit}>
           <Fieldset.Content gapY={6}>
+            {/* <RenderInputs config={config} /> */}
+
             <Field.Root invalid={!!errors.userName}>
               <InputGroup endElement={<LuUser size={"18"} />}>
                 <Input
