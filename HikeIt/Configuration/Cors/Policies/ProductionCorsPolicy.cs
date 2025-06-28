@@ -10,11 +10,11 @@ public class ProductionCorsPolicy(CorsConfig.Production config) : ICorsPolicy {
                 config.Name,
                 policy => {
                     policy
-                    .WithOrigins(config.Origins)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-
+                        .WithOrigins(config.Origins)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .WithExposedHeaders("Location");
                 }
             );
         });

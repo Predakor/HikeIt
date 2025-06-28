@@ -1,19 +1,13 @@
-import apiClient from "@/Utils/Api/ApiClient";
 import AddTripCard from "@/components/Trips/Card/AddTripCard";
 import NoTrips from "@/components/Trips/NoTrips";
 import RenderTripCards from "@/components/Trips/RenderTripCards";
 import FetchWrapper from "@/components/Wrappers/Fetching";
-import type { TripDto } from "@/types/ApiTypes/TripDtos";
+import { useTrips } from "@/hooks/useTrips";
 import { Box, Grid, Heading, Stack } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 
 function TripsPage() {
-  const request = useQuery<TripDto[]>({
-    queryKey: ["trip"],
-    queryFn: () => apiClient<TripDto[]>(`trips/`),
-    staleTime: 1000 * 60 * 30,
-  });
+  const request = useTrips();
 
   return (
     <Stack gap={10}>

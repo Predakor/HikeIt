@@ -13,7 +13,8 @@ public class DevCorsPolicy(CorsConfig.Development config) : ICorsPolicy {
                     .WithOrigins("http://localhost:54840")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowCredentials()
+                    .WithExposedHeaders("Location");
                 }
             );
         });

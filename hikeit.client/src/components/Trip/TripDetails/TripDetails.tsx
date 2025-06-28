@@ -4,6 +4,7 @@ import { tripDetailsTabs } from "../Data/tabOrder";
 import { TripDetailsMenu } from "./TripDetailsMenu/TripDetailsTabs";
 import apiClient from "@/Utils/Api/ApiClient";
 import { useNavigate } from "react-router";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 
 function TripDetails({ data }: { data: TripDtoFull }) {
   const tabOrder = tripDetailsTabs.filter((d) => {
@@ -16,6 +17,7 @@ function TripDetails({ data }: { data: TripDtoFull }) {
     const res = await apiClient("trips/" + data.id, { method: "DELETE" });
     if (res === null) {
       navigation(-1);
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
     }
   };
 

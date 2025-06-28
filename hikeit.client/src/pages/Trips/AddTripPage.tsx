@@ -1,21 +1,24 @@
 import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
 import DropFile from "@/components/AddTripForm/AddFile/DropFile";
 import Divider from "@/components/Divider/Divider";
+import QueryResult from "@/components/RequestResult/QueryREsult";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import { regionsList } from "@/data/regionsList";
-import usePost from "@/hooks/usePost";
+import { useTripCreate } from "@/hooks/useTrips";
 import {
   Alert,
   Box,
   Button,
   Center,
   Heading,
+  LinkBox,
   ProgressCircle,
   Stack,
 } from "@chakra-ui/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router";
 
 interface CreateTripForm {
   name: string;
@@ -37,7 +40,7 @@ const addTripFormConfig: InputsConfig = [
 function AddTripPage() {
   const fileRef = useRef<File | null>(null);
 
-  const [post, result] = usePost();
+  const createTrip = useTripCreate();
 
   const { handleSubmit, control, register, setValue } =
     useForm<CreateTripForm>();
@@ -55,9 +58,8 @@ function AddTripPage() {
     formData.append("RegionId", data.regionId.toString());
     formData.append("Base.TripDay", data.tripDay);
     formData.append("file", file);
-    console.log(data);
 
-    await post("trips/form", formData);
+    createTrip.mutate(formData);
   });
 
   const fileChangeHandler = (newFile: File) => {
@@ -76,7 +78,7 @@ function AddTripPage() {
     mapFromFile();
   };
 
-  if (result.pending) {
+  if (createTrip.isPending) {
     return (
       <ProgressCircle.Root value={null} size="sm">
         <ProgressCircle.Circle>
@@ -88,32 +90,14 @@ function AddTripPage() {
   }
 
   return (
-    <Stack alignItems={"center"} w={"100%"} gap={10}>
-      <Center>
-        <Heading size={"5xl"}>Add Your Trip</Heading>
-      </Center>
+    <Stack alignItems={{ base: "", lg: "center" }} gapY={8}>
+      <Heading size={"5xl"}>Add Your Trip</Heading>
 
-      {result.result && (
-        <Alert.Root
-          status={result.result === typeof Error ? "error" : "neutral"}
-        >
-          <Alert.Indicator />
-          <Alert.Content
-            onClick={() => {
-              console.log(result.result);
-              result.result;
-            }}
-          >
-            <Alert.Title>{result.result.toString()}</Alert.Title>
-            <Alert.Description>Trip Created succesfully</Alert.Description>
-          </Alert.Content>
-        </Alert.Root>
-      )}
-
-      <Stack as={"form"} onSubmit={submitHandler} gap={"2em"}>
+      <Stack as={"form"} onSubmit={submitHandler} gapY={8}>
+        <QueryResult mutation={createTrip} />
         <Stack
-          alignItems={"start"}
           direction={{ base: "column", md: "row" }}
+          align={{ base: "stretch", lg: "center" }}
           gap={{ md: "5em" }}
           flex={1}
         >
@@ -121,29 +105,29 @@ function AddTripPage() {
             <Heading fontSize={"2xl"} py={"1em"}>
               Manually
             </Heading>
-            <Stack>
-              <RenderInputs
-                config={addTripFormConfig}
-                control={control}
-                register={register}
-                displayOptions={{ label: "ontop", size: "lg" }}
-              />
-            </Stack>
+            <RenderInputs
+              config={addTripFormConfig}
+              control={control}
+              register={register}
+              displayOptions={{ label: "ontop", size: "lg" }}
+            />
           </Box>
-
           <Divider />
-
           <Box>
             <Heading fontSize={"2xl"} py={"1em"}>
               From a gpx file
             </Heading>
-            <DropFile
-              allowedFiles={[".gpx"]}
-              onFileChange={fileChangeHandler}
-            />
+            <Stack>
+              <DropFile
+                allowedFiles={[".gpx"]}
+                onFileChange={fileChangeHandler}
+              />
+            </Stack>
           </Box>
         </Stack>
-        <Button type="submit">Upload</Button>
+        <Button size={"xl"} type="submit">
+          Upload
+        </Button>
       </Stack>
     </Stack>
   );

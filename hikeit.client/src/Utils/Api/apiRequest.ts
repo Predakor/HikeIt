@@ -18,9 +18,14 @@ const post = async <T>(
   body: any,
   responseResolver?: ResponseResolver<T>
 ): Promise<T> => {
+  const isFormData = body instanceof FormData;
+
   const request = await apiRequest(path, {
     method: "POST",
-    body: JSON.stringify(body),
+    body: isFormData ? body : JSON.stringify(body),
+    headers: isFormData
+      ? undefined // Let the browser set multipart/form-data with boundary
+      : { "Content-Type": "application/json" },
   });
 
   return responseResolver

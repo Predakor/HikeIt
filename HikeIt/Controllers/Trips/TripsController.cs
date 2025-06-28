@@ -100,7 +100,8 @@ public class TripsController : ControllerBase {
 
         var tripId = tripResult.Value!;
 
-        return Created(tripId.ToString(), null);
+        return Created($"/trips/{tripId}", null);
+
     }
 
     [HttpPut]
