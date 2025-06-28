@@ -1,4 +1,4 @@
-import { Box, Field, FileUpload, Icon } from "@chakra-ui/react";
+import { Box, Field, FileUpload, Icon, VisuallyHidden } from "@chakra-ui/react";
 import type { FileChangeDetails } from "node_modules/@chakra-ui/react/dist/types/components/file-upload/namespace";
 import { LuUpload } from "react-icons/lu";
 
@@ -14,12 +14,13 @@ function DropFile({ onFileChange, allowedFiles }: AddFileProps) {
   };
 
   return (
-    <Field.Root>
-      <Field.Label>Gpx file</Field.Label>
+    <>
+      <VisuallyHidden>
+        <Field.Label>Gpx file</Field.Label>
+      </VisuallyHidden>
       <FileUpload.Root
         accept={allowedFiles}
         onFileChange={handleFileChange}
-        maxW="xl"
         alignItems="stretch"
       >
         <FileUpload.HiddenInput />
@@ -36,7 +37,7 @@ function DropFile({ onFileChange, allowedFiles }: AddFileProps) {
         </FileUpload.Dropzone>
         <FileUpload.List />
       </FileUpload.Root>
-    </Field.Root>
+    </>
   );
 }
 export default DropFile;

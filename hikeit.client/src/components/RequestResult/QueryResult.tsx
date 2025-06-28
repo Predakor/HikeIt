@@ -14,9 +14,19 @@ interface Props {
 }
 
 function QueryResult({ mutation }: Props) {
-  const { isSuccess, isError, data, error } = mutation;
+  const { isSuccess, isError, isPending, data, error } = mutation;
 
   const alertTitle = isSuccess ? "Created succesfully" : "Failed to create";
+
+  if (isPending) {
+    <Alert.Root status={"neutral"}>
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Title>Generating your trip</Alert.Title>
+        <Alert.Description>"Hold still"</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>;
+  }
 
   return (
     (isSuccess || isError) && (

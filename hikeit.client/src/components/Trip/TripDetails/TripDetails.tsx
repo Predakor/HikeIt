@@ -1,25 +1,15 @@
+import { useTripRemove } from "@/hooks/useTrips";
 import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
 import { Button, Flex, Heading, Stack, VStack } from "@chakra-ui/react";
 import { tripDetailsTabs } from "../Data/tabOrder";
 import { TripDetailsMenu } from "./TripDetailsMenu/TripDetailsTabs";
-import apiClient from "@/Utils/Api/ApiClient";
-import { useNavigate } from "react-router";
-import { useQueries, useQueryClient } from "@tanstack/react-query";
 
 function TripDetails({ data }: { data: TripDtoFull }) {
   const tabOrder = tripDetailsTabs.filter((d) => {
     return !(d.type !== "group" && d.key === "base");
   });
 
-  const navigation = useNavigate();
-
-  const deleteHandler = async () => {
-    const res = await apiClient("trips/" + data.id, { method: "DELETE" });
-    if (res === null) {
-      navigation(-1);
-      queryClient.invalidateQueries({ queryKey: ["trips"] });
-    }
-  };
+  const deleteTrip = useTripRemove();
 
   return (
     <VStack alignItems={"start"} gap={"2em"}>
@@ -28,7 +18,11 @@ function TripDetails({ data }: { data: TripDtoFull }) {
         <Heading color={"fg.muted"} size={{ base: "xl", lg: "2xl" }}>
           {data.base.tripDay}
         </Heading>
-        <Button onClick={deleteHandler} colorPalette={"red"} variant={"solid"}>
+        <Button
+          onClick={() => deleteTrip.mutate(data.id)}
+          colorPalette={"red"}
+          variant={"solid"}
+        >
           Delete
         </Button>
       </Flex>

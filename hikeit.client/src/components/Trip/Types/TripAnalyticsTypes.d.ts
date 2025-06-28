@@ -1,4 +1,4 @@
-import type { ReachedPeak } from "@/components/AddTripForm/AddTrip/tripTypes";
+import type { ReachedPeak } from "@/components/AddTripForm/AddFile/tripTypes";
 
 export interface RouteAnalytic {
   totalDistanceKm: number;

@@ -1,5 +1,5 @@
 import { dateOnlyToString } from "@/Utils/Formatters/dateFormats";
-import type { ReachedPeak } from "@/components/AddTripForm/AddTrip/tripTypes";
+import type { ReachedPeak } from "@/components/AddTripForm/AddFile/tripTypes";
 import RowStat from "@/components/Stats/RowStat";
 import { BarSegment, useChart } from "@chakra-ui/charts";
 import {

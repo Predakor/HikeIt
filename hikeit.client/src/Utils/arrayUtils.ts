@@ -1,4 +1,4 @@
-import type { GpxArray } from "@/types/types";
+import type { GpxArray } from "@/types/ApiTypes/TripDtos";
 
 export function downsampleToMaxSize<T>(
   gpxArray: T[],
