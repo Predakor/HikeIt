@@ -2,13 +2,12 @@
 using Application.Services.Auth;
 using Application.Services.Files;
 using Application.Services.Trips;
-using Application.TripAnalytics.Interfaces;
-using Domain.Common;
+using Application.Trips;
 using Domain.Common.Result;
 using Domain.TripAnalytics.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Application.Dto.TripDto;
+using static Application.Dto.TripDto.Request;
 
 namespace Api.Controllers.Trips;
 
@@ -24,7 +23,6 @@ public class TripsController : ControllerBase {
     public TripsController(
         ITripService service,
         IGpxFileService fileService,
-        ITripAnalyticService tripAnalyticService,
         IAuthService authService,
         ITripAnalyticUnitOfWork unitOfWork
     ) {
@@ -38,7 +36,7 @@ public class TripsController : ControllerBase {
     public async Task<IActionResult> GetAll() {
         return await _authService
             .Me()
-            .BindAsync(user => _tripService.GetAll(user.Id))
+            .BindAsync(user => _tripService.GetAllAsync(user.Id))
             .ToActionResultAsync();
     }
 
@@ -46,51 +44,36 @@ public class TripsController : ControllerBase {
     public async Task<IActionResult> GetById(Guid id) {
         return await _authService
             .Me()
-            .MapAsync(user => _tripService.GetById(id, user.Id))
+            .MapAsync(user => _tripService.GetByIdAsync(id, user.Id))
             .ToActionResultAsync();
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Request.Create newTrip) {
+    public async Task<IActionResult> Create([FromBody] Create newTrip) {
+        var ctx = CreateTripContext.Create().WithRequest(newTrip);
         return await _authService
             .Me()
-            .BindAsync((user) => _tripService.Add(newTrip, user.Id))
+            .BindAsync((user) => _tripService.CreateSimpleAsync(ctx))
             .ToActionResultAsync();
     }
 
     [HttpPost("form")]
-    public async Task<IActionResult> CreateWithFile(
-        [FromForm] Request.Create newTrip,
-        IFormFile file
-    ) {
-        var user = (await _authService.Me()).Value;
-        if (user == null) {
-            return Unauthorized();
-        }
-
-        Guid tripId = Guid.NewGuid();
-
-        var savedFile = await _fileService.CreateAsync(file, user.Id, tripId);
-        if (savedFile.HasErrors(out Error error)) {
-            return BadRequest(error);
-        }
-
-        var gpxData = await _fileService.ExtractGpxData(file);
-        if (gpxData == null || gpxData.Points.Count == 0) {
-            return BadRequest("file was wrong");
-        }
-
-        return await _tripService
-            .Add(newTrip, gpxData, user, tripId)
-            .MapAsync(tripId => $"/trips/{tripId}")
-            .ToActionResultAsync(ResultType.created);
+    public async Task<IActionResult> CreateWithFile([FromForm] Create newTrip, IFormFile file) {
+        var ctx = CreateTripContext.Create().WithRequest(newTrip).WithFile(file);
+        return await _authService
+            .Me()
+            .MapAsync(ctx.WithUser)
+            .BindAsync(_ => _fileService.Validate(file))
+            .BindAsync(_ => _tripService.CreateAsync(ctx))
+            .MapAsync(trip => $"/trips/{trip.Id}")
+            .ToActionResultAsync();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id) {
         return await _authService
             .Me()
-            .MapAsync(user => _tripService.Delete(id, user.Id))
+            .MapAsync(user => _tripService.DeleteAsync(id, user.Id))
             .BindAsync(_ => _unitOfWork.SaveChangesAsync())
             .ToActionResultAsync(ResultType.noContent);
     }
