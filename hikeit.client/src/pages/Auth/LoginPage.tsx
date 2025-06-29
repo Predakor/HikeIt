@@ -1,5 +1,4 @@
 import NavButton from "@/components/Utils/NavButton/NavButton";
-import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -92,9 +91,6 @@ function LoginPage() {
 
         <Stack gapY={4}>
           <Text color={"fg.muted"}>Dont have a account? </Text>
-
-          {/* //it should be a link */}
-
           <NavButton to={"/auth/register"} label={"Register instead"} />
         </Stack>
       </Fieldset.Root>

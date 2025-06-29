@@ -22,5 +22,5 @@ export const tripDetailsTabs: TabConfig<TripDtoFull> = [
     items: tripAnalyticTabs,
   },
   { key: "region", label: "Region", Component: TripGraph },
-  { key: "pictures", label: "pictures", Component: TripGraph },
+  // { key: "pictures", label: "pictures", Component: TripGraph },
 ] as const;

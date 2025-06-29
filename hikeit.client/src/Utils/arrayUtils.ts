@@ -1,4 +1,4 @@
-import type { GpxArray } from "@/types/ApiTypes/TripDtos";
+import type { GpxArrayWithGains } from "@/types/ApiTypes/TripDtos";
 
 export function downsampleToMaxSize<T>(
   gpxArray: T[],
@@ -9,7 +9,7 @@ export function downsampleToMaxSize<T>(
   return gpxArray.filter((_, index) => index % factor === 0);
 }
 
-export function calculateStats(gpxArray: GpxArray) {
+export function calculateStats(gpxArray: GpxArrayWithGains) {
   let totalClimb = 0;
   let totalDescend = 0;
   let totalLength = 0;

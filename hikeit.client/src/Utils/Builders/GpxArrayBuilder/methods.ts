@@ -1,5 +1,5 @@
 import { haversineDistance } from "@/Utils/haversineDistance";
-import type { Gains, GpxArray } from "@/types/types";
+import type { Gain, GpxArray } from "@/types/ApiTypes/TripDtos";
 
 export async function mapFromFileToGpxArray(file: File) {
   const text = await file.text();
@@ -30,7 +30,7 @@ export function calculatePointToPointGains(array: GpxArray) {
 
     const slope = (eleDelta / horizontalDist) * 100;
 
-    const gains: Gains = {
+    const gains: Gain = {
       plannarDist: horizontalDist,
       eleDelta: eleDelta,
       slope: slope,

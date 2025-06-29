@@ -22,15 +22,19 @@ function TripsPage() {
         gap={8}
       >
         <FetchWrapper request={request} NoDataComponent={NoTrips}>
-          {(tripsData) => (
-            <>
-              <RenderTripCards trips={tripsData} />
+          {(tripsData) => {
+            console.log(tripsData);
 
-              <Link to={"add"}>
-                <AddTripCard />
-              </Link>
-            </>
-          )}
+            return (
+              <>
+                <RenderTripCards trips={tripsData} />
+
+                <Link to={"add"}>
+                  <AddTripCard />
+                </Link>
+              </>
+            );
+          }}
         </FetchWrapper>
       </Grid>
     </Stack>

@@ -7,7 +7,7 @@ import { useParams } from "react-router";
 
 const staleTime = 1000 * 60 * 30; //1000ms * 60* 30 //30 minuts;
 
-function TripDetailsPage() {
+export default function TripDetailsPage() {
   const { tripId } = useParams();
 
   const request = useQuery<TripDtoFull>({
@@ -25,4 +25,3 @@ function TripDetailsPage() {
     />
   );
 }
-export default TripDetailsPage;

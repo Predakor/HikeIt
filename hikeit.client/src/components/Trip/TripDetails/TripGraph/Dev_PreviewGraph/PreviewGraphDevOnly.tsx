@@ -1,16 +1,16 @@
-import { useChart, Chart } from "@chakra-ui/charts";
+import { Chart, useChart } from "@chakra-ui/charts";
 import { Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import {
-  LineChart,
   CartesianGrid,
+  Line,
+  LineChart,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  Line,
 } from "recharts";
+import type { ChartData, GainDto } from "../_graph_types";
 import { DevConfig } from "./DevPreview.tsx";
-import type { ChartData } from "../_graph_types";
 import { GenerateChartDataWithPreview } from "./GenerateChartDataWithPreview.ts";
 interface Props {
   data: ChartData;
@@ -19,7 +19,7 @@ interface Props {
 function PreviewGraphDevOnly({ data }: Props) {
   const { gains, start } = data;
 
-  const [preview, setPreview] = useState();
+  const [preview, setPreview] = useState<GainDto[]>();
 
   const chartPoints = GenerateChartDataWithPreview(gains, start, preview);
   const chart = useChart({

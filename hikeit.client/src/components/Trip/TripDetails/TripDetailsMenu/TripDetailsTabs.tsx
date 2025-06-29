@@ -14,7 +14,7 @@ export function TripDetailsMenu({ data, config }: Props) {
   console.log(data);
 
   return (
-    <Tabs.Root lazyMount unmountOnExit defaultValue={"base"}>
+    <Tabs.Root lazyMount={true} defaultValue={"base"}>
       <Tabs.List
         display={"flex"}
         gapX={{ base: 12, lg: 4 }}

@@ -40,7 +40,7 @@ function FetchWrapper<T>({
     return <Component data={data} />;
   }
 
-  return <>{children(data)}</>;
+  return <>{children!(data)}</>;
 }
 
 export default FetchWrapper;

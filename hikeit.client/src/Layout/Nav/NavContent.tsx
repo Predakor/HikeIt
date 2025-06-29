@@ -1,10 +1,10 @@
 import User from "@/components/User/User";
-import { routes } from "@/data/routes";
+import { navRoutes } from "@/data/routes/routes";
 import { For, Spacer } from "@chakra-ui/react";
 import { NavItem } from "./NavItem";
 
 export default function NavContent() {
-  const visibleRoutes = routes.filter((route) => !route.hidden);
+  const visibleRoutes = navRoutes.filter((route) => !route.hidden);
 
   return (
     <>

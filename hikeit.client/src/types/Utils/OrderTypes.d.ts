@@ -46,6 +46,7 @@ export type OrderEntry<TFor extends object> =
 export interface OrderEntryItem<TKey, TFor> {
   type?: "item";
   key: TKey;
+  label?: string;
   Icon?: IconType;
   data?: TFor;
 }
@@ -54,7 +55,7 @@ export interface OrderEntryGroup<TKey, TFor> {
   type: "group";
   label: string;
   items: OrderConfig<TFor>;
-  base?: TKey;
+  base: TKey;
   Wrapper?: FunctionComponent<{ children: ReactNode }>;
   RenderWith?: FunctionComponent<any>;
   dataGetter?: (data: TFor) => string;

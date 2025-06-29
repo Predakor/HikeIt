@@ -1,13 +1,11 @@
 import { dateOnlyToString } from "@/Utils/Formatters/dateFormats";
-import type { ReachedPeak } from "@/components/AddTripForm/AddFile/tripTypes";
+import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 import RowStat from "@/components/Stats/RowStat";
 import { BarSegment, useChart } from "@chakra-ui/charts";
 import {
   Badge,
   Box,
   Card,
-  Flex,
-  Group,
   Icon,
   Show,
   SimpleGrid,
@@ -22,7 +20,7 @@ import type {
 } from "../../Types/TripAnalyticsTypes";
 import { HighestPeak } from "./HighestPeak";
 import ReachedPeaksList from "./ReachedPeaksList";
-import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
+import type { ReachedPeak } from "@/components/AddFile/AddFile/tripTypes";
 
 export interface ReachedPeakWithBadges extends ReachedPeak {
   isHighest: boolean;
