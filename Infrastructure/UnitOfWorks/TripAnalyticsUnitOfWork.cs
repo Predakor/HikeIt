@@ -6,6 +6,7 @@ using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Interfaces;
 using Domain.TripAnalytics.Repositories;
 using Domain.Trips;
+using Domain.Trips.Entities.GpxFiles;
 using Infrastructure.Data;
 
 namespace Infrastructure.UnitOfWorks;
@@ -19,6 +20,7 @@ public class TripAnalyticsUnitOfWork : ITripAnalyticUnitOfWork {
     public IReachedPeakRepository ReachedPeaks { get; init; }
     public ITripRepository TripRepository { get; init; }
     public IUserRepository UserRepository { get; init; }
+    public IGpxFileRepository GpxFileRepository { get; init; }
 
     public TripAnalyticsUnitOfWork(
         TripDbContext dbContext,
@@ -27,7 +29,8 @@ public class TripAnalyticsUnitOfWork : ITripAnalyticUnitOfWork {
         IPeakAnalyticRepository peakAnalytics,
         IReachedPeakRepository peaksAnalytics,
         ITripAnalyticRepository tripAnalytics,
-        IElevationProfileRepository elevations
+        IElevationProfileRepository elevations,
+        IGpxFileRepository gpxFileRepository
     ) {
         _dbContext = dbContext;
         Elevations = elevations;
@@ -36,6 +39,7 @@ public class TripAnalyticsUnitOfWork : ITripAnalyticUnitOfWork {
         PeakAnalytics = peakAnalytics;
         TripRepository = tripRepository;
         UserRepository = userRepository;
+        GpxFileRepository = gpxFileRepository;
     }
 
     public async Task<Result<bool>> SaveChangesAsync() {

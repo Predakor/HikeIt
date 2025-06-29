@@ -63,8 +63,9 @@ public class Trip : IEntity<Guid> {
         PeakId = peak.Id;
     }
 
-    public void AddGpxFile(Guid gpxFileId) {
-        ArgumentNullException.ThrowIfNull(gpxFileId);
-        GpxFileId = gpxFileId;
+    public Trip AddGpxFile(GpxFile gpxFile) {
+        ArgumentNullException.ThrowIfNull(GpxFile);
+        GpxFileId = gpxFile.Id;
+        return this;
     }
 }

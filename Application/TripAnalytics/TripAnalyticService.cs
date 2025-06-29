@@ -16,7 +16,6 @@ using Domain.TripAnalytics.Factories;
 using Domain.TripAnalytics.Interfaces;
 using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
-using Domain.Trips;
 using Domain.Trips.Config;
 using Domain.Trips.ValueObjects;
 using static Application.Dto.TripAnalyticsDto;
@@ -34,29 +33,29 @@ public class TripAnalyticService(
 
     public async Task<Result<TripAnalytic>> GenerateAnalytic(
         AnalyticData data,
-        Trip trip,
+        Guid tripId,
         User user
     ) {
         var (points, gains) = data;
         var builder = new TripAnalyticBuilder();
 
-        builder.WithId(trip.Id);
+        builder.WithId(tripId);
 
         //generate Route and Time analytics
         GenerateRouteAnalytics(data)
-            .Bind(d => {
+            .Map(d => {
                 builder.WithRouteAnalytic(d);
-                return Result<RouteAnalytic>.Success(d);
+                return (d);
             })
             .Bind(routeAnalytics => GenerateTimeAnalytics(routeAnalytics, points))
             .Map(timeAnalytics => builder.WithTimeAnalytic(timeAnalytics));
 
         //Reached Peaks
-        await CreatePeakAnalytics(data, trip, user)
+        await CreatePeakAnalytics(data, tripId, user)
             .MapAsync(peakAnalytics => builder.WithPeaksAnalytic(peakAnalytics));
 
         //Elevation Profile
-        await CreateElevationProfile(data, trip)
+        await CreateElevationProfile(data, tripId)
             .MapAsync(elevationProfile => builder.WithElevationProfile(elevationProfile));
 
         var entity = builder.Build();
@@ -98,26 +97,26 @@ public class TripAnalyticService(
 
     public async Task<Result<PeaksAnalytic>> CreatePeakAnalytics(
         AnalyticData data,
-        Trip trip,
+        Guid tripId,
         User user
     ) {
         return await FindLocalMaximasCommand
             .Create(data)
             .Execute()
             .BindAsync(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 200f))
-            .BindAsync(foundPeaks => _reachedPeakService.ToReachedPeaks(foundPeaks, trip, user))
+            .BindAsync(foundPeaks => _reachedPeakService.ToReachedPeaks(foundPeaks, tripId, user.Id))
             .BindAsync(_unitOfWork.ReachedPeaks.AddRangeAsync)
             .BindAsync(reachedPeaks =>
-                CreatePeakAnalyticsCommand.Create(trip.Id, new(reachedPeaks, null)).Execute()
+                CreatePeakAnalyticsCommand.Create(tripId, new(reachedPeaks, null)).Execute()
             )
             .BindAsync(_unitOfWork.PeakAnalytics.AddAsync);
     }
 
-    public async Task<Result<ElevationProfile>> CreateElevationProfile(AnalyticData data, Trip trip) {
+    public async Task<Result<ElevationProfile>> CreateElevationProfile(AnalyticData data, Guid tripId) {
         return await CreateElevationProfileDataCommand
             .Create(data, GpxDataConfigs.ElevationProfile)
             .Execute()
-            .Bind(eleData => CreateElevationProfileCommand.Create(eleData, trip.Id).Execute())
+            .Bind(eleData => CreateElevationProfileCommand.Create(eleData, tripId).Execute())
             .BindAsync(eleProfile => _unitOfWork.Elevations.AddAsync(eleProfile));
     }
 

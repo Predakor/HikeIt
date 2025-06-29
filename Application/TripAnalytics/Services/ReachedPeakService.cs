@@ -19,4 +19,12 @@ public class ReachedPeakService : IReachedPeakService {
 
         return peaks.Select(p => ReachedPeak.Create(p, trip, user)).ToList();
     }
+
+    public Result<IList<ReachedPeak>> ToReachedPeaks(IEnumerable<Peak> peaks, Guid tripId, Guid userId) {
+        if (!peaks.Any()) {
+            return Errors.EmptyCollection("Peaks");
+        }
+
+        return peaks.Select(p => ReachedPeak.Create(p.Id, tripId, userId)).ToList();
+    }
 }

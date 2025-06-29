@@ -43,6 +43,10 @@ public abstract class CrudRepository<T, TKey> : Repository<T, TKey>, ICrudReposi
     public async Task<bool> AddAsync(T entity) {
         return await DbSet.AddAsync(entity) != null;
     }
+    public T Add(T entity) {
+        DbSet.Add(entity);
+        return entity;
+    }
 
     public Task<bool> RemoveAsync(TKey id) {
         throw new NotImplementedException();

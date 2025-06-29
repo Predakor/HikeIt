@@ -9,7 +9,7 @@ public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
 
     public async Task<bool> AddAsync(GpxFile entity) {
         await DbSet.AddAsync(entity);
-        return await SaveChangesAsync();
+        return true;
     }
 
     public async Task<bool> RemoveAsync(Guid id) {

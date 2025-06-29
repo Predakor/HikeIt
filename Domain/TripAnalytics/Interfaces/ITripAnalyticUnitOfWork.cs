@@ -4,6 +4,7 @@ using Domain.Entiites.Users;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Repositories;
 using Domain.Trips;
+using Domain.Trips.Entities.GpxFiles;
 
 namespace Domain.TripAnalytics.Interfaces;
 public interface ITripAnalyticUnitOfWork {
@@ -13,6 +14,8 @@ public interface ITripAnalyticUnitOfWork {
     public IElevationProfileRepository Elevations { get; }
     public IReachedPeakRepository ReachedPeaks { get; }
     public IPeakAnalyticRepository PeakAnalytics { get; }
+    public IGpxFileRepository GpxFileRepository { get; }
+
 
     Task<Result<bool>> SaveChangesAsync();
 }

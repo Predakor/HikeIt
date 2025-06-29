@@ -4,8 +4,10 @@ using Application.TripAnalytics.Interfaces;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Entiites.Users;
+using Domain.TripAnalytics;
 using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;
+using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
 using static Application.Dto.TripDto;
@@ -16,7 +18,7 @@ public class TripService : ITripService {
     readonly ITripRepository _tripRepository;
     readonly IGpxFileService _gpxFileService;
     readonly ITripAnalyticUnitOfWork _unitOfWork;
-    readonly ITripAnalyticService _tripAnalyticService;
+    readonly ITripAnalyticService _analyticsService;
 
     public TripService(
         ITripRepository trips,
@@ -27,7 +29,7 @@ public class TripService : ITripService {
         _tripRepository = trips;
         _unitOfWork = unitOfWork;
         _gpxFileService = gpxFileService;
-        _tripAnalyticService = tripAnalyticService;
+        _analyticsService = tripAnalyticService;
     }
 
     public async Task<Result<List<Request.ResponseBasic>>> GetAll(Guid userId) {
@@ -64,34 +66,6 @@ public class TripService : ITripService {
         );
     }
 
-    public async Task<Result<Trip>> Create(Request.Create request, IFormFile file, User user) {
-        Guid tripId = Guid.NewGuid();
-
-        var (name, tripDay) = request.Base;
-        var trip = Trip.Create(tripId, name, tripDay, user.Id);
-
-        if (request.RegionId != null) {
-            trip.ChangeRegion(request.RegionId);
-        }
-
-        var gpxData = await _gpxFileService
-            .ExtractGpxData(file)
-            .BindAsync(gpxData => ProccesGpxDataCommand.Create(gpxData).Execute())
-            .BindAsync(proccesedData =>
-                _tripAnalyticService.GenerateAnalytic(proccesedData, trip, user)
-            )
-            .BindAsync(analytics => trip.AddAnalytics(analytics)
-            .MapAsync(trip => {
-                _unitOfWork.TripRepository.Add(trip);
-                _unitOfWork.FileRe
-                })
-            .
-
-            );
-
-        trip.AddGpxFile(tripId);
-    }
-
     public async Task<Result<Guid>> Add(Request.Create dto, Guid userId) {
         Guid tripId = Guid.NewGuid();
 
@@ -125,7 +99,7 @@ public class TripService : ITripService {
             .Create(data)
             .Execute()
             .BindAsync(proccesedData =>
-                _tripAnalyticService.GenerateAnalytic(proccesedData, trip, user)
+                _analyticsService.GenerateAnalytic(proccesedData, trip, user)
             )
             .MatchAsync(
                 async analytics => {
@@ -180,5 +154,42 @@ public class TripService : ITripService {
         }
         ;
         return true;
+    }
+
+    public async Task<Result<Trip>> Create(Request.Create request, IFormFile file, User user) {
+        Guid tripId = Guid.NewGuid();
+
+        var (name, tripDay) = request.Base;
+        var trip = Trip.Create(tripId, name, tripDay, user.Id);
+
+        if (request.RegionId != null) {
+            trip.ChangeRegion(request.RegionId);
+        }
+
+        return await ProccesFile(file)
+            .BindAsync(data => GenerateAnalytics(data, tripId, user))
+            .BindAsync(trip.AddAnalytics)
+            .BindAsync((trip) => GenerateGpxFile(file, user.Id, tripId))
+            .MapAsync(trip.AddGpxFile)
+            .MapAsync(succes => _unitOfWork.SaveChangesAsync())
+            .MapAsync(_ => trip);
+    }
+
+    async Task<Result<AnalyticData>> ProccesFile(IFormFile file) {
+        return await _gpxFileService
+            .ExtractGpxData(file)
+            .BindAsync(gpxData => ProccesGpxDataCommand.Create(gpxData).Execute());
+    }
+
+    async Task<Result<TripAnalytic>> GenerateAnalytics(AnalyticData data, Guid tripId, User user) {
+        return await _analyticsService
+            .GenerateAnalytic(data, tripId, user)
+            .MapAsync(_unitOfWork.TripAnalytics.Add);
+    }
+
+    async Task<Result<GpxFile>> GenerateGpxFile(IFormFile file, Guid userId, Guid tripId) {
+        return await _gpxFileService
+            .CreateAsync(file, userId, tripId)
+            .MapAsync(_unitOfWork.GpxFileRepository.Add);
     }
 }

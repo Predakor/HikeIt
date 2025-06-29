@@ -16,6 +16,7 @@ public interface IReadRepository<TEntity, TKey> : IRepository<TEntity, TKey>
 public interface IWriteRepository<TEntity, TKey> : IRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey> {
     Task<bool> AddAsync(TEntity entity);
+    TEntity Add(TEntity entity);
     Task<bool> RemoveAsync(TKey id);
     Task<bool> SaveChangesAsync();
 }
