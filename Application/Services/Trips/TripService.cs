@@ -7,6 +7,7 @@ using Domain.Entiites.Users;
 using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;
 using Domain.Trips.ValueObjects;
+using Microsoft.AspNetCore.Http;
 using static Application.Dto.TripDto;
 
 namespace Application.Services.Trips;
@@ -22,6 +23,7 @@ public class TripService : ITripService {
         IGpxFileService gpxFileService,
         ITripAnalyticUnitOfWork unitOfWork,
         ITripAnalyticService tripAnalyticService
+
     ) {
         _tripRepository = trips;
         _unitOfWork = unitOfWork;
@@ -29,57 +31,77 @@ public class TripService : ITripService {
         _tripAnalyticService = tripAnalyticService;
     }
 
-    //TODO!!!
-    //Take id from logged user
-    private static Guid GetLoggedUserId() {
-        return Guid.Parse("7a4f8c5b-19b7-4a6a-89c0-f9a2e98a9380"); // Janusz
+    public async Task<Result<List<Request.ResponseBasic>>> GetAll(Guid userId) {
+        return await _tripRepository
+            .GetAll(userId)
+            .MapAsync(trips =>
+                trips
+                    .Select(p => new Request.ResponseBasic(
+                        p.Id,
+                        p.RegionId,
+                        new(p.Name, p.TripDay)
+                    ))
+                    .ToList()
+            );
     }
 
-    public async Task<List<Request.ResponseBasic>> GetAll() {
-        var trips = await _tripRepository.GetAllAsync();
-        if (!trips.Any()) {
-            return null;
-        }
-        var mappedTrips = trips
-            .Select(p => new Request.ResponseBasic(p.Id, p.RegionId, new(p.Name, p.TripDay)))
-            .ToList();
+    public async Task<Partial2?> GetById(Guid id, Guid userId) {
+        var trip = await _unitOfWork.TripRepository.Get(id, userId);
 
-        return mappedTrips;
-    }
-
-    public async Task<Partial2?> GetById(Guid id) {
-        var trip = await _unitOfWork.TripRepository.GetByIdAsync(id);
-        if (trip == null) {
+        if (trip.Value == null) {
             return null;
         }
 
-        Partial2 response = new(
-            trip.Id,
-            trip.Analytics,
-            trip.GpxFile,
-            trip.Region,
-            new(trip.Name, trip.TripDay)
+        return trip.Match<Partial2>(
+            data =>
+                new(
+                    data.Id,
+                    data.Analytics,
+                    data.GpxFile,
+                    data.Region,
+                    new(data.Name, data.TripDay)
+                ),
+            error => null
         );
-
-        return response;
     }
 
-    public async Task<Result<Guid>> Add(Request.Create dto) {
-        var trip = Trip.Create(dto.Base.Name, dto.Base.TripDay, GetLoggedUserId(), dto.RegionId);
+    public async Task<Result<Trip>> Create(Request.Create request, IFormFile file, User user) {
 
-        await _tripRepository.AddAsync(trip);
+        var gpxData = await _gpxFileService.GetGpxDataFromFile(file);
+
+
+    }
+
+
+    public async Task<Result<Guid>> Add(Request.Create dto, Guid userId) {
+        Guid tripId = Guid.NewGuid();
+
+        var trip = Trip.Create(tripId, dto.Base.Name, dto.Base.TripDay, userId);
+
+        if (dto.RegionId != null) {
+            trip.ChangeRegion(dto.RegionId);
+        }
+
+
+        _tripRepository.Add(trip);
         return Result<Guid>.Success(trip.Id);
     }
 
-    public async Task<Result<Guid>> Add(Request.Create newTrip, AnalyticData data, Guid fileId, User user) {
-        var trip = Trip.Create(
-            newTrip.Base.Name,
-            newTrip.Base.TripDay,
-            user.Id,
-            newTrip.RegionId
-        );
-        trip.AddGpxFile(fileId);
+    public async Task<Result<Guid>> Add(
+        Request.Create newTrip,
+        AnalyticData data,
+        User user,
+        Guid tripId
+    ) {
+        var (name, tripDay) = newTrip.Base;
 
+        var trip = Trip.Create(tripId, name, tripDay, user.Id);
+
+        if (newTrip.RegionId != null) {
+            trip.ChangeRegion(newTrip.RegionId);
+        }
+
+        trip.AddGpxFile(tripId);
 
         await ProccesGpxDataCommand
             .Create(data)
@@ -95,7 +117,7 @@ public class TripService : ITripService {
                 error => throw new Exception(error.Message)
             );
 
-        await _unitOfWork.TripRepository.AddAsync(trip);
+        _unitOfWork.TripRepository.Add(trip);
         var saveChanges = await _unitOfWork.SaveChangesAsync();
 
         return saveChanges != null
@@ -103,21 +125,28 @@ public class TripService : ITripService {
             : (Result<Guid>)Errors.DbError("couldn't save");
     }
 
-    public async Task<bool> Delete(Guid id) {
-        var trip = await _tripRepository.GetByIdAsync(id);
+    public async Task<bool> Delete(Guid id, Guid userId) {
+        var trip = await _tripRepository.Get(id, userId);
         if (trip == null) {
             return false;
         }
 
-        await _tripRepository.RemoveAsync(id);
-        return true;
+        return trip.Match(
+            found => {
+                _tripRepository.Remove(found);
+                return true;
+            },
+            notFound => false
+        );
     }
 
-    public async Task<bool> Update(Request.Update updateDto) {
-        var trip = await _tripRepository.GetByIdAsync(updateDto.Id);
-        if (trip == null) {
+    public async Task<bool> Update(Request.Update updateDto, Guid userId) {
+        var request = await _tripRepository.Get(updateDto.Id, userId);
+
+        if (request.Value == null) {
             return false;
         }
+        var trip = request.Value;
 
         if (updateDto.RegionId.HasValue) {
             trip.ChangeRegion(updateDto.RegionId.Value);
@@ -131,24 +160,9 @@ public class TripService : ITripService {
         if (updateDto.GpxFileId != null) {
             trip.AddGpxFile(updateDto.GpxFileId.Value);
         }
-
-        await _tripRepository.SaveChangesAsync();
+        ;
         return true;
     }
 
-    public async Task<bool> UpdateGpxFile(Guid id, Guid gpxFileId) {
-        var trip = await _tripRepository.GetByIdAsync(id);
-        if (trip == null) {
-            return false;
-        }
 
-        var gpxStream = await _gpxFileService.GetByIdAsync(gpxFileId);
-        if (gpxStream == null) {
-            return false;
-        }
-
-        trip.AddGpxFile(gpxFileId);
-
-        return await _tripRepository.SaveChangesAsync();
-    }
 }

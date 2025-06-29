@@ -1,8 +1,11 @@
-﻿using Application.Services.Auth;
+﻿using Api.Extentions;
+using Application.Services.Auth;
 using Application.Services.Files;
 using Application.Services.Trips;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
+using Domain.Common.Result;
+using Domain.TripAnalytics.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Application.Dto.TripDto;
@@ -16,57 +19,43 @@ public class TripsController : ControllerBase {
     readonly IAuthService _authService;
     readonly ITripService _tripService;
     readonly IGpxFileService _fileService;
-    readonly ITripAnalyticService _tripAnalyticService;
+    readonly ITripAnalyticUnitOfWork _unitOfWork;
 
     public TripsController(
         ITripService service,
         IGpxFileService fileService,
         ITripAnalyticService tripAnalyticService,
-        IAuthService authService
+        IAuthService authService,
+        ITripAnalyticUnitOfWork unitOfWork
     ) {
         _tripService = service;
         _fileService = fileService;
-        _tripAnalyticService = tripAnalyticService;
         _authService = authService;
+        _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
-    public async Task<ActionResult<Request.ResponseBasic>> GetAll() {
-        var trips = await _tripService.GetAll();
-        return Ok(trips);
+    public async Task<IActionResult> GetAll() {
+        return await _authService
+            .Me()
+            .BindAsync(user => _tripService.GetAll(user.Id))
+            .ToActionResultAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Partial>> GetById(Guid id) {
-        var trip = await _tripService.GetById(id);
-        if (trip is null)
-            return NotFound();
-        return Ok(trip);
-    }
-
-    [HttpGet("{id}/analytics")]
-    public async Task<ActionResult<Partial>> GetAnalytics(Guid id) {
-        var trip = await _tripService.GetById(id);
-        if (trip?.TrackAnalytic?.Id == null) {
-            return NotFound("trip");
-        }
-
-        var analytics = await _tripAnalyticService.GetCompleteAnalytic(trip.TrackAnalytic.Id);
-
-        if (analytics.HasErrors(out Error err)) {
-            if (err is Error.NotFound) {
-                return NotFound("analytics");
-            }
-            return BadRequest(err);
-        }
-
-        return Ok(new Partial(trip.Id, analytics.Value!, trip.GpxFile, trip.Region, trip.Base));
+    public async Task<IActionResult> GetById(Guid id) {
+        return await _authService
+            .Me()
+            .MapAsync(user => _tripService.GetById(id, user.Id))
+            .ToActionResultAsync();
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Request.Create newTrip) {
-        await _tripService.Add(newTrip);
-        return Created(string.Empty, null);
+        return await _authService
+            .Me()
+            .BindAsync((user) => _tripService.Add(newTrip, user.Id))
+            .ToActionResultAsync();
     }
 
     [HttpPost("form")]
@@ -79,7 +68,9 @@ public class TripsController : ControllerBase {
             return Unauthorized();
         }
 
-        var savedFile = await _fileService.CreateAsync(file, user.Id);
+        Guid tripId = Guid.NewGuid();
+
+        var savedFile = await _fileService.CreateAsync(file, user.Id, tripId);
         if (savedFile.HasErrors(out Error error)) {
             return BadRequest(error);
         }
@@ -87,57 +78,20 @@ public class TripsController : ControllerBase {
         var gpxData = await _fileService.GetGpxDataFromFile(file);
         if (gpxData == null || gpxData.Points.Count == 0) {
             return BadRequest("file was wrong");
-
         }
 
-        var tripResult = await _tripService.Add(newTrip, gpxData, savedFile.Value.Id, user);
-        if (tripResult.HasErrors(out error)) {
-            Console.WriteLine("error in file tripsresult");
-            Console.WriteLine("error in file tripsresult");
-            Console.WriteLine("error in file tripsresult");
-            return BadRequest(error);
-        }
-
-        var tripId = tripResult.Value!;
-
-        return Created($"/trips/{tripId}", null);
-
-    }
-
-    [HttpPut]
-    public async Task<IActionResult> Update([FromBody] Request.Update updateDto) {
-        await _tripService.Update(updateDto);
-        return NoContent();
-    }
-
-    [HttpPut("{id}/attach")]
-    public async Task<IActionResult> Attach(Guid id, IFormFile file) {
-        var user = (await _authService.Me()).Value;
-        if (user == null) {
-            return Unauthorized();
-        }
-
-
-
-        var trip = await _tripService.GetById(id);
-        if (trip == null) {
-            return NotFound("invalid trip id");
-        }
-
-        var savedFile = await _fileService.CreateAsync(file, user.Id);
-        if (savedFile.HasErrors(out Error error)) {
-            return BadRequest(error);
-        }
-
-        var fileId = savedFile.Value.Id!;
-
-        await _tripService.UpdateGpxFile(trip.Id, fileId);
-        return NoContent();
+        return await _tripService
+            .Add(newTrip, gpxData, user, tripId)
+            .MapAsync(tripId => $"/trips/{tripId}")
+            .ToActionResultAsync(ResultType.created);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id) {
-        await _tripService.Delete(id);
-        return NoContent();
+        return await _authService
+            .Me()
+            .MapAsync(user => _tripService.Delete(id, user.Id))
+            .BindAsync(_ => _unitOfWork.SaveChangesAsync())
+            .ToActionResultAsync(ResultType.noContent);
     }
 }

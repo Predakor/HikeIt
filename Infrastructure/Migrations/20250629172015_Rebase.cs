@@ -9,7 +9,7 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Rebase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -177,25 +177,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GpxFiles",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GpxFiles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GpxFiles_AspNetUsers_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Peaks",
                 columns: table => new
                 {
@@ -238,11 +219,6 @@ namespace Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Trips_GpxFiles_GpxFileId",
-                        column: x => x.GpxFileId,
-                        principalTable: "GpxFiles",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Trips_Peaks_PeakId",
                         column: x => x.PeakId,
                         principalTable: "Peaks",
@@ -252,6 +228,27 @@ namespace Infrastructure.Migrations
                         column: x => x.RegionId,
                         principalTable: "Regions",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GpxFiles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OriginalName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GpxFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GpxFiles_Trips_Id",
+                        column: x => x.Id,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -339,7 +336,8 @@ namespace Infrastructure.Migrations
                         name: "FK_ElevationProfiles_TripAnalytics_Id",
                         column: x => x.Id,
                         principalTable: "TripAnalytics",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -459,11 +457,6 @@ namespace Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GpxFiles_OwnerId",
-                table: "GpxFiles",
-                column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Peaks_RegionID",
                 table: "Peaks",
                 column: "RegionID");
@@ -483,13 +476,6 @@ namespace Infrastructure.Migrations
                 name: "IX_ReachedPeaks_UserId",
                 table: "ReachedPeaks",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Trips_GpxFileId",
-                table: "Trips",
-                column: "GpxFileId",
-                unique: true,
-                filter: "[GpxFileId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trips_PeakId",
@@ -529,6 +515,9 @@ namespace Infrastructure.Migrations
                 name: "ElevationProfiles");
 
             migrationBuilder.DropTable(
+                name: "GpxFiles");
+
+            migrationBuilder.DropTable(
                 name: "PeaksAnalytic");
 
             migrationBuilder.DropTable(
@@ -544,13 +533,10 @@ namespace Infrastructure.Migrations
                 name: "Trips");
 
             migrationBuilder.DropTable(
-                name: "GpxFiles");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Peaks");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Regions");

@@ -13,7 +13,7 @@ public abstract class ResultRepository<T, TKey>
     protected ResultRepository(TripDbContext context)
         : base(context) { }
 
-    public async Task<Result<IEnumerable<T>>> GetAllAsync() {
+    public virtual async Task<Result<IEnumerable<T>>> GetAllAsync() {
         var query = DbSet;
         if (!query.Any()) {
             return Result<IEnumerable<T>>.Failure(Errors.EmptyCollection(DbSet.ToQueryString()));
@@ -22,7 +22,7 @@ public abstract class ResultRepository<T, TKey>
         throw new NotImplementedException();
     }
 
-    public Task<Result<T?>> GetByIdAsync(TKey id) {
+    public virtual Task<Result<T?>> GetByIdAsync(TKey id) {
         throw new NotImplementedException();
     }
 }
@@ -34,14 +34,14 @@ public class CrudResultRepository<T, TKey>
     protected CrudResultRepository(TripDbContext context)
         : base(context) { }
 
-    public async Task<Result<T>> AddAsync(T entity) {
+    public virtual async Task<Result<T>> AddAsync(T entity) {
         var query = await DbSet.AddAsync(entity);
         return query != null
             ? Result<T>.Success(entity)
             : Result<T>.Failure(Errors.DbError("db error"));
     }
 
-    public async Task<Result<bool>> RemoveAsync(TKey id) {
+    public virtual async Task<Result<bool>> RemoveAsync(TKey id) {
         return await GetByIdAsync(id)
             .MatchAsync(
                 found => Result<bool>.Success(DbSet.Remove(found) != null),

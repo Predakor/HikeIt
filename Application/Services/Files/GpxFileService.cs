@@ -12,7 +12,7 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
     readonly IGpxFileRepository _repository = repository;
     readonly IGpxParser _parser = parser;
 
-    public async Task<Result<GpxFile>> CreateAsync(IFormFile file, Guid userId) {
+    public async Task<Result<GpxFile>> CreateAsync(IFormFile file, Guid userId, Guid tripId) {
         var (isValid, errors) = FileValidation.Validate(file);
         if (!isValid) {
             string errorstring = errors.Select(e => e.ToString()).ToString();
@@ -29,10 +29,11 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
 
         FileCreationInfo info = result.Value!;
         GpxFile entity = new() {
-            Id = Guid.NewGuid(),
-            Name = info.Name,
+            Id = tripId,
             Path = info.Path,
-            OwnerId = userId,
+            Name = info.Name,
+            OriginalName = file.Name,
+            CreatedAt = DateTime.UtcNow,
         };
 
         await _repository.AddAsync(entity);

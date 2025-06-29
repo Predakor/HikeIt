@@ -1,8 +1,10 @@
-﻿using Application.Dto;
+﻿using Api.Extentions;
+using Application.Dto;
+using Application.Services.Auth;
 using Application.Services.Files;
 using Application.TripAnalytics.Interfaces;
 using Domain.Common;
-using Domain.TripAnalytics;
+using Domain.Common.Result;
 using Domain.Trips.Builders.GpxDataBuilder;
 using Domain.Trips.Config;
 using Domain.Trips.ValueObjects;
@@ -10,37 +12,32 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.Trips;
 
-[Route("api/trips/[controller]")]
+[Route("api/trips/")]
 [ApiController]
 public class AnalyticsController : ControllerBase {
     readonly ITripAnalyticService _service;
     readonly IGpxFileService _fileService;
+    readonly IAuthService _authService;
 
     public AnalyticsController(
         ITripAnalyticService tripAnalyticService,
-        IGpxFileService fileService
+        IGpxFileService fileService,
+        IAuthService authService
     ) {
         _service = tripAnalyticService;
         _fileService = fileService;
+        _authService = authService;
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<TripAnalytic>> GetById(Guid id) {
-        var query = await _service.GetCompleteAnalytic(id);
-
-        if (query == null) {
-            return NotFound("no analytics found");
-        }
-
-        if (query.HasErrors(out var error)) {
-            return BadRequest(error);
-        }
-        return Ok(query);
+    [HttpGet("{id}/analytics")]
+    public async Task<IActionResult> GetAnalytics(Guid id) {
+        return await _authService
+            .Me()
+            .BindAsync((u) => _service.GetCompleteAnalytic(id))
+            .ToActionResultAsync();
     }
 
-    //point to point gains/deltas
-
-    [HttpGet("elevations/{id}")]
+    [HttpGet("{id}/analytics/elevation")]
     public async Task<ActionResult<ElevationProfileDto>> GetElevationProfile(Guid id) {
         var query = await _service.GetElevationProfile(id);
 
@@ -62,12 +59,12 @@ public class AnalyticsController : ControllerBase {
         return Ok(new ElevationProfileDto(query.Start, gains));
     }
 
-    [HttpPost("elevations/{fileId}/preview")]
+    [HttpPost("{id}/analytics/elevations/preview")]
     public async Task<ActionResult<ElevationProfileDto?>> DevAnalyticPreview(
-        Guid fileId,
+        Guid id,
         [FromBody] ConfigBase.Nullable config
     ) {
-        var file = await _fileService.GetGpxDataByFileIdAsync(fileId);
+        var file = await _fileService.GetGpxDataByFileIdAsync(id);
 
         if (file == null) {
             return NotFound("File not found");
@@ -86,7 +83,6 @@ public class AnalyticsController : ControllerBase {
         }
 
         var data = file.Value!;
-
 
         ElevationDataWithConfig eleData = new(new(data), config);
         var eleDataFromConfig = GpxDataFactory.CreateFromConfig(eleData);

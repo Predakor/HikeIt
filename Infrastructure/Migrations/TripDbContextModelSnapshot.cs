@@ -508,23 +508,24 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Trips.Entities.GpxFiles.GpxFile", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("OriginalName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
 
                     b.ToTable("GpxFiles");
                 });
@@ -555,10 +556,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GpxFileId")
-                        .IsUnique()
-                        .HasFilter("[GpxFileId] IS NOT NULL");
 
                     b.HasIndex("PeakId");
 
@@ -895,20 +892,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Trips.Entities.GpxFiles.GpxFile", b =>
                 {
-                    b.HasOne("Domain.Entiites.Users.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
-
-                    b.Navigation("Owner");
+                    b.HasOne("Domain.Trips.Trip", null)
+                        .WithOne("GpxFile")
+                        .HasForeignKey("Domain.Trips.Entities.GpxFiles.GpxFile", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Trips.Trip", b =>
                 {
-                    b.HasOne("Domain.Trips.Entities.GpxFiles.GpxFile", "GpxFile")
-                        .WithOne()
-                        .HasForeignKey("Domain.Trips.Trip", "GpxFileId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Domain.Entiites.Peaks.Peak", "Target")
                         .WithMany()
                         .HasForeignKey("PeakId");
@@ -924,8 +916,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("GpxFile");
 
                     b.Navigation("Region");
 
@@ -995,6 +985,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Trips.Trip", b =>
                 {
                     b.Navigation("Analytics");
+
+                    b.Navigation("GpxFile");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,7 +4,7 @@ using Domain.Entiites.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace Api.Controllers.Users;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,10 +17,18 @@ public class UsersController : ControllerBase {
         _userManager = userManager;
     }
 
+    [HttpGet("me")]
+    public async Task<IActionResult> GetMe() => await _userService.GetMe().ToActionResultAsync();
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserProfile(Guid id) =>
         await _userService.GetUserAsync(id).ToActionResultAsync();
 
-    [HttpGet("me")]
-    public async Task<IActionResult> GetMe() => await _userService.GetMe().ToActionResultAsync();
+
+    [HttpGet("{id}/analytics")]
+    public async Task<IActionResult> GetProfileAnalytics(Guid id) {
+        await Task.CompletedTask;
+        return Ok();
+    }
+
 }

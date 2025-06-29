@@ -1,7 +1,4 @@
-﻿using Application.Services.Files;
-using Application.Services.Trips;
-using Domain.Common;
-using Domain.Trips.Entities.GpxFiles;
+﻿using Domain.Trips.Entities.GpxFiles;
 
 namespace Api.Endpoints;
 
@@ -14,9 +11,6 @@ public static class FilesEndpoints {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         group.MapGet("", GetAll);
         group.MapGet("/{id}", GetById);
-
-        group.MapPost("", AddFile).DisableAntiforgery();
-        group.MapPost("/{id}", AddFileFor).DisableAntiforgery();
 
         group.MapDelete("/{id}", DeleteById);
 
@@ -34,34 +28,7 @@ public static class FilesEndpoints {
         return Results.Ok(res);
     }
 
-    static async Task<IResult> AddFile(IFormFile file, IGpxFileService service, Guid userID) {
-        var result = await service.CreateAsync(file, userID);
-        if (result.HasErrors(out Error? error)) {
-            return Results.BadRequest(error);
-        }
-        return Results.Ok(result.ToString());
-    }
-
-    static async Task<IResult> AddFileFor(
-        Guid id,
-        IFormFile file,
-        ITripService tripService,
-        IGpxFileService service,
-        Guid userId
-    ) {
-        var result = await service.CreateAsync(file, userId);
-        if (result.HasErrors(out Error? error)) {
-            return Results.BadRequest(error);
-        }
-
-
-        var GpxEntity = result.Value!;
-        await tripService.UpdateGpxFile(id, GpxEntity.Id);
-
-        return Results.Ok(GpxEntity.Id);
-    }
-
-    static async Task DeleteById(int id) {
+    static Task DeleteById(int id) {
         throw new NotImplementedException();
     }
 }

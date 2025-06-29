@@ -29,18 +29,16 @@ public class Trip : IEntity<Guid> {
     #endregion
 
     public static Trip Create(
+        Guid tripId,
         string name,
         DateOnly tripDay,
-        Guid userId,
-        int? regionId = null,
-        Guid? tripId = null
+        Guid userId
     ) {
         var trip = new Trip {
-            Id = tripId ?? Guid.NewGuid(),
+            Id = tripId,
             Name = name,
-            TripDay = tripDay,
             UserId = userId,
-            RegionId = regionId ?? 0,
+            TripDay = tripDay,
         };
 
         return trip;
@@ -53,6 +51,11 @@ public class Trip : IEntity<Guid> {
 
     public void ChangeRegion(int regionID) {
         RegionId = regionID;
+    }
+
+    public void AddPeak(Peak peak) {
+        ArgumentNullException.ThrowIfNull(peak);
+        PeakId = peak.Id;
     }
 
     public void AddGpxFile(Guid gpxFileId) {
