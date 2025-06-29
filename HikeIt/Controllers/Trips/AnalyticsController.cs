@@ -33,7 +33,7 @@ public class AnalyticsController : ControllerBase {
     public async Task<IActionResult> GetAnalytics(Guid id) {
         return await _authService
             .Me()
-            .BindAsync((u) => _service.GetCompleteAnalytic(id))
+            .BindAsync(_ => _service.GetCompleteAnalytic(id))
             .ToActionResultAsync();
     }
 

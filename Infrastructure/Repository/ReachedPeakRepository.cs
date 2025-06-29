@@ -10,10 +10,14 @@ public class ReachedPeakRepository : Repository<ReachedPeak, Guid>, IReachedPeak
     public ReachedPeakRepository(TripDbContext context)
         : base(context) { }
 
-
     public async Task<bool> AddAsync(ReachedPeak entity) {
         var querry = await DbSet.AddAsync(entity);
         return querry != null;
+    }
+
+    public ReachedPeak Add(ReachedPeak entity) {
+        DbSet.Add(entity);
+        return entity;
     }
 
     public async Task<Result<IList<ReachedPeak>>> AddRangeAsync(IEnumerable<ReachedPeak> peaks) {

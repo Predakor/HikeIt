@@ -70,7 +70,7 @@ public class TripService : ITripService {
 
     async Task<Result<CreateTripContext>> CreateAnalytics(CreateTripContext ctx) {
         return await _analyticsService
-            .GenerateAnalytic(ctx.AnalyticData, ctx.Id, ctx.User)
+            .GenerateAnalytic(ctx)
             .MapAsync(_unitOfWork.TripAnalytics.Add)
             .BindAsync(ctx.Trip.AddAnalytics)
             .MapAsync(_ => ctx);

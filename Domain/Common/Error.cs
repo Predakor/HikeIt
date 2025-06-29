@@ -14,30 +14,42 @@ public static class Errors {
     public static Error RuleViolation(IRule rule) => new Error.RuleViolation(rule);
 
     public static Error File(string message = "") => new Error.File(message);
+
     public static Error NotAuthorized() => new Error.NotAuthorized();
 }
 
-public abstract record Error(string Code, string Message) {
-    public sealed record NotFound(string Target)
-        : Error("not_found", $"Entity '{Target}' was not found.");
+public enum ErrorCode {
+    not_found,
+    bad_request,
+    db_error,
+    empty,
+    unknown,
+    file,
+    rule_violation,
+    not_authorized,
+}
 
-    public sealed record BadRequest(string Reason) : Error("bad_request", Reason);
+public abstract record Error(ErrorCode Code, string Message) {
+    public sealed record NotFound(string Target)
+        : Error(ErrorCode.not_found, $"Entity '{Target}' was not found.");
+
+    public sealed record BadRequest(string Reason) : Error(ErrorCode.bad_request, Reason);
 
     public sealed record DbError(string Detail = "A database error occurred.")
-        : Error("db_error", Detail);
+        : Error(ErrorCode.db_error, Detail);
 
     public sealed record EmptyCollection(string Context = "Collection")
-        : Error("empty", $"{Context} is empty.");
+        : Error(ErrorCode.empty, $"{Context} is empty.");
 
-    public sealed record Unknown(string? Detail)
-        : Error("unknown", Detail ?? "Something went wrong.");
+    public sealed record Unknown(string? Detail = null)
+        : Error(ErrorCode.unknown, Detail ?? "Something went wrong.");
 
-    public sealed record File(string? Detail)
-        : Error("file", Detail ?? "something went wrong while proccesing your file.");
+    public sealed record File(string? Detail = null)
+        : Error(ErrorCode.file, Detail ?? "Something went wrong while processing your file.");
 
     public sealed record RuleViolation(IRule Rule)
-        : Error("rule_violation", $"{Rule}: {Rule.Message}" ?? "Rule Violation error.");
+        : Error(ErrorCode.rule_violation, $"{Rule}: {Rule.Message}" ?? "Rule Violation error.");
 
     public sealed record NotAuthorized()
-        : Error("not_authorized", $"you're not authorized to do this please log in");
+        : Error(ErrorCode.not_authorized, "You're not authorized to do this. Please log in.");
 }

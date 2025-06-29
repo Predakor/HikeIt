@@ -5,25 +5,8 @@ using Infrastructure.Repository.Generic;
 namespace Infrastructure.Repository;
 
 public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
-    public GpxFileRepository(TripDbContext context) : base(context) { }
-
-    public async Task<bool> AddAsync(GpxFile entity) {
-        await DbSet.AddAsync(entity);
-        return true;
-    }
-
-    public async Task<bool> RemoveAsync(Guid id) {
-        var target = await DbSet.FindAsync(id);
-        if (target == null) {
-            return false;
-        }
-        DbSet.Remove(target);
-        return await SaveChangesAsync();
-    }
-
-    public Task<bool> UpdateAsync(Guid id, GpxFile updatedEntity) {
-        throw new NotImplementedException();
-    }
+    public GpxFileRepository(TripDbContext context)
+        : base(context) { }
 
     public async Task<GpxFile?> GetGpxFile(Guid id) {
         var result = await DbSet.FindAsync(id);
@@ -42,5 +25,24 @@ public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
 
         return File.OpenRead(result.Path);
     }
+
+    public async Task<bool> AddAsync(GpxFile entity) {
+        await DbSet.AddAsync(entity);
+        return true;
+    }
+    public GpxFile Add(GpxFile entity) {
+        DbSet.Add(entity);
+        return entity;
+    }
+
+    public async Task<bool> RemoveAsync(Guid id) {
+        var target = await DbSet.FindAsync(id);
+        if (target == null) {
+            return false;
+        }
+        DbSet.Remove(target);
+        return await SaveChangesAsync();
+    }
+
 
 }

@@ -38,11 +38,11 @@ public static class ResultExtentios {
     }
 
     static IActionResult MapError(Error error) {
-        return error switch {
-            Error.NotAuthorized => new UnauthorizedResult(),
-            Error.NotFound => new NotFoundObjectResult(error.Message),
-            Error.DbError => new BadRequestObjectResult(error),
-            _ => new BadRequestObjectResult(error),
+        return error.Code switch {
+            ErrorCode.not_authorized => new UnauthorizedResult(),
+            ErrorCode.not_found => new NotFoundObjectResult(error.Message),
+            ErrorCode.db_error => new BadRequestObjectResult(error.Message),
+            _ => new BadRequestObjectResult(error.Message),
         };
     }
 }
