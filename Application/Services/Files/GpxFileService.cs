@@ -13,39 +13,27 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
     readonly IGpxParser _parser = parser;
 
     public async Task<Result<GpxFile>> CreateAsync(IFormFile file, Guid userId, Guid tripId) {
-        var (isValid, errors) = FileValidation.Validate(file);
-        if (!isValid) {
-            string errorstring = errors.Select(e => e.ToString()).ToString();
-            var err = Errors.Unknown(errorstring);
-            return err;
-        }
-
-        var result = await _fileStorage.Save(file, userId.ToString());
-
-        if (result.HasErrors(out var error)) {
-            Console.WriteLine(error.Message);
-            return Errors.File(error.Message);
-        }
-
-        FileCreationInfo info = result.Value!;
-        GpxFile entity = new() {
-            Id = tripId,
-            Path = info.Path,
-            Name = info.Name,
-            OriginalName = file.Name,
-            CreatedAt = DateTime.UtcNow,
-        };
-
-        await _repository.AddAsync(entity);
-        var succes = await _repository.SaveChangesAsync();
-        return entity;
+        return await _fileStorage
+            .Save(file, userId.ToString())
+            .MapAsync(info => new GpxFile() {
+                Id = tripId,
+                Path = info.Path,
+                Name = info.Name,
+                OriginalName = file.Name,
+                CreatedAt = DateTime.UtcNow,
+            });
     }
 
-    public async Task<AnalyticData> GetGpxDataFromFile(IFormFile file) {
-        return await _parser.ParseAsync(file.OpenReadStream());
+    public async Task<Result<AnalyticData>> ExtractGpxData(IFormFile file) {
+        try {
+            return await _parser.ParseAsync(file.OpenReadStream());
+        }
+        catch (Exception ex) {
+            return Errors.Unknown(ex.Message);
+        }
     }
 
-    public async Task<Result<AnalyticData>> GetGpxDataByFileIdAsync(Guid id) {
+    public async Task<Result<AnalyticData>> ExtractGpxData(Guid id) {
         var result = await _repository.GetGpxFileStream(id);
         if (result == null) {
             return Errors.NotFound("No file with id found");
@@ -59,24 +47,14 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
         return data;
     }
 
-    public Task<bool> DeleteAsync(int id) {
-        throw new NotImplementedException();
-    }
-
-    public Task<GpxFileDto> GetByIdAsync(int id) {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> UpdateAsync(string path, IFormFile file) {
-        throw new NotImplementedException();
-    }
-
-    public Task<GpxFileDto> GetByIdAsync(Guid id) {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> DeleteAsync(Guid id) {
-        throw new NotImplementedException();
+    public Result<IFormFile> Validate(IFormFile file) {
+        var (isValid, errors) = FileValidation.Validate(file);
+        if (!isValid) {
+            string errorstring = errors.Select(e => e.ToString()).ToString();
+            var err = Errors.Unknown(errorstring);
+            return err;
+        }
+        return (Result<IFormFile>)file;
     }
 }
 

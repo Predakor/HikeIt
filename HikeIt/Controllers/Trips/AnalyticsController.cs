@@ -64,7 +64,7 @@ public class AnalyticsController : ControllerBase {
         Guid id,
         [FromBody] ConfigBase.Nullable config
     ) {
-        var file = await _fileService.GetGpxDataByFileIdAsync(id);
+        var file = await _fileService.ExtractGpxData(id);
 
         if (file == null) {
             return NotFound("File not found");

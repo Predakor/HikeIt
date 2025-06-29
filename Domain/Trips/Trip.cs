@@ -1,4 +1,6 @@
-﻿using Domain.Entiites.Peaks;
+﻿using Domain.Common;
+using Domain.Common.Result;
+using Domain.Entiites.Peaks;
 using Domain.Entiites.Regions;
 using Domain.Entiites.Users;
 using Domain.Interfaces;
@@ -44,9 +46,12 @@ public class Trip : IEntity<Guid> {
         return trip;
     }
 
-    public void AddAnalytics(TripAnalytic analytic) {
-        ArgumentNullException.ThrowIfNull(analytic);
+    public Result<Trip> AddAnalytics(TripAnalytic analytic) {
+        if (analytic == null) {
+            return Errors.NotFound("passed null analytics");
+        }
         Analytics = analytic;
+        return this;
     }
 
     public void ChangeRegion(int regionID) {

@@ -75,7 +75,7 @@ public class TripsController : ControllerBase {
             return BadRequest(error);
         }
 
-        var gpxData = await _fileService.GetGpxDataFromFile(file);
+        var gpxData = await _fileService.ExtractGpxData(file);
         if (gpxData == null || gpxData.Points.Count == 0) {
             return BadRequest("file was wrong");
         }
