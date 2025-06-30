@@ -1,6 +1,6 @@
+import type { ReachedPeakWithBadges } from "@/components/AddFile/AddFile/tripTypes";
 import RowStat from "@/components/Stats/RowStat";
 import { Stack } from "@chakra-ui/react";
-import { type ReachedPeakWithBadges } from "./PeaksAnalytics";
 
 export function HighestPeak({ highest }: { highest: ReachedPeakWithBadges }) {
   return (

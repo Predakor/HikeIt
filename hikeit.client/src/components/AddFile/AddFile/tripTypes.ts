@@ -11,3 +11,6 @@ export interface ReachedPeak {
   reachedAt?: string;
   firstTime: boolean;
 }
+export interface ReachedPeakWithBadges extends ReachedPeak {
+  isHighest: boolean;
+}

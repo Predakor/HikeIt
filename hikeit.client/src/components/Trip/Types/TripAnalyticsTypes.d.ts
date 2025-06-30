@@ -28,12 +28,12 @@ export interface TimeAnalytic {
   averageDescentKph: number;
 }
 
-export interface PeaksAnalytic {
-  summary: PeakSummary;
+export interface PeaksAnalyticData {
+  summary: PeakSummaryData;
   reached: ReachedPeak[];
 }
 
-export interface PeakSummary {
+export interface PeakSummaryData {
   total: number;
   unique: number;
   highest: ReachedPeak;

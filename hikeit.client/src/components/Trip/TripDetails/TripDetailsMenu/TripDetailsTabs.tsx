@@ -1,9 +1,9 @@
 import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 import { ToTitleCase } from "@/Utils/ObjectToArray";
+import RenderTabEntry from "@/components/Utils/RenderTabs/RenderTabEntry";
 import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
 import type { EntryItem, TabConfig } from "@/types/Utils/OrderTypes";
 import { For, Stack, Tabs } from "@chakra-ui/react";
-import RenderTabEntry from "@/components/Utils/RenderTabs/RenderTabEntry";
 
 interface Props {
   data: TripDtoFull;
@@ -11,10 +11,12 @@ interface Props {
 }
 
 export function TripDetailsMenu({ data, config }: Props) {
-  console.log(data);
-
   return (
-    <Tabs.Root lazyMount={true} defaultValue={"base"}>
+    <Tabs.Root
+      lazyMount={true}
+      unmountOnExit={true}
+      defaultValue={"routeAnalytics"}
+    >
       <Tabs.List
         display={"flex"}
         gapX={{ base: 12, lg: 4 }}

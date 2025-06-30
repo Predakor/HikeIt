@@ -1,13 +1,13 @@
 import { Flex, For, Heading, Show, Stack, Text } from "@chakra-ui/react";
-import {
-  PeakBadge,
-  PeakIcon,
-  type ReachedPeakWithBadges,
-} from "./PeaksAnalytics";
+import { PeakBadge } from "../Common/PeakBadge";
+import { PeakIcon } from "../Common/PeakIcon";
+import type { ReachedPeakWithBadges } from "@/components/AddFile/AddFile/tripTypes";
 
-type Props = ReachedPeakWithBadges;
+interface Props {
+  peaks: ReachedPeakWithBadges[];
+}
 
-export default function ReachedPeaksList({ peaks }: { peaks: Props[] }) {
+export default function ReachedPeaksList({ peaks }: Props) {
   return (
     <For each={peaks}>
       {(peak) => (

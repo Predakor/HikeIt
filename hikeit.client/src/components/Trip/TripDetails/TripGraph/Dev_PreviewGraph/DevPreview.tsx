@@ -5,8 +5,10 @@ import { Button, Field, Input, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import type { ChartData } from "../_graph_types";
 import { copyToClipboard } from "@/Utils/CopyToClipboard";
+import useChartPreview from "./useChartPreview";
+import { useParams } from "react-router";
 
-type ElevationProfileConfig = {
+export type ElevationProfileConfig = {
   MaxElevationSpike: number;
   EmaSmoothingAlpha: number;
   MedianFilterWindowSize: number;
@@ -35,33 +37,16 @@ interface Props {
 }
 
 export function DevConfig({ onSubmit }: Props) {
+  const { tripId } = useParams();
   const { control, register, handleSubmit, getValues } =
     useForm<ElevationProfileConfig>();
 
-  const uploadHandler = handleSubmit(async (data) => {
-    const id = data.fileId;
+  const send = useChartPreview(tripId, onSubmit);
 
-    const request = await apiClient<ChartData>(
-      `trips/Analytics/elevations/${id}/preview`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          MaxElevationSpike: data.MaxElevationSpike || null,
-          EmaSmoothingAlpha: data.EmaSmoothingAlpha || null,
-          MedianFilterWindowSize: data.MedianFilterWindowSize || null,
-          RoundingDecimalsCount: data.RoundingDecimalsCount || null,
-          DownsamplingFactor: data.DownsamplingFactor || null,
-        }),
-      }
-    );
-
-    if (request) {
-      onSubmit(request);
-    }
-  });
+  const copyConfig = () => copyToClipboard(getValues());
 
   return (
-    <form onSubmit={uploadHandler}>
+    <form onSubmit={handleSubmit(send)}>
       <Stack flexGrow={1}>
         <RenderInputs
           config={elevationDevConfig}
@@ -69,12 +54,13 @@ export function DevConfig({ onSubmit }: Props) {
           control={control}
         />
 
-        <Button type={"submit"}>Preview</Button>
-        <Field.Root>
-          <Field.Label>FileID</Field.Label>
-          <Input {...register("fileId")} />
-        </Field.Root>
-        <Button onClick={() => copyToClipboard(getValues())}>Copyy</Button>
+        <Button colorPalette={"blue"} type={"submit"}>
+          Preview
+        </Button>
+
+        <Button onClick={copyConfig} colorPalette={"green"}>
+          Copy Config
+        </Button>
       </Stack>
     </form>
   );
