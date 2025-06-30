@@ -7,15 +7,14 @@ interface Props {
 }
 
 export default function RegisterUserForm({ submitHandler }: Props) {
-  const [{ handleSubmit, register, control }, config] = useRegister();
+  const [formHook, config] = useRegister();
 
   return (
-    <form onSubmit={handleSubmit((data) => submitHandler(data))}>
+    <form onSubmit={formHook.handleSubmit((data) => submitHandler(data))}>
       <Fieldset.Content>
         <RenderInputs
           config={config}
-          register={register}
-          control={control}
+          formHook={formHook}
           displayOptions={{ label: "inline", size: "xl" }}
         />
 

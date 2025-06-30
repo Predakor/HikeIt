@@ -1,13 +1,15 @@
 import { PasswordInput } from "@/components/ui/password-input";
 import { Input } from "@chakra-ui/react";
-import type { FieldValues } from "react-hook-form";
+import type { FieldError, FieldValues } from "react-hook-form";
 import { Range } from "../Range";
-import type { InputConfigEntry, RenderInputBaseProps } from "../inputTypes";
-import InputLabel from "./InputLabel";
 import Select from "../Select";
+import type { InputConfigEntry, RenderInputBaseProps } from "../inputTypes";
+import InputError from "./InputError";
+import InputLabel from "./InputLabel";
 
 interface Props<T extends FieldValues> extends RenderInputBaseProps<T> {
   entry: InputConfigEntry;
+  error?: FieldError;
 }
 
 export default function MapEntry<TFor extends FieldValues>({
@@ -15,6 +17,7 @@ export default function MapEntry<TFor extends FieldValues>({
   control,
   register,
   displayOptions: options,
+  error,
 }: Props<TFor>) {
   const { key, label, type, required } = entry;
 
@@ -66,6 +69,7 @@ export default function MapEntry<TFor extends FieldValues>({
           required,
         })}
       />
+      <InputError error={error} />
     </>
   );
 }

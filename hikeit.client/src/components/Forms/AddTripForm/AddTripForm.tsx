@@ -22,6 +22,7 @@ const addTripFormConfig: InputsConfig = [
     label: "Region",
     type: "select",
     collection: { items: regionsList, type: "static" },
+    required: true,
   },
 ];
 
@@ -36,7 +37,6 @@ function AddTripForm({ initData, file }: Props) {
   const formHook = useForm<CreateTripForm>({
     defaultValues: initData,
   });
-  console.log(initData);
 
   const submitHandler = formHook.handleSubmit(async (data) => {
     const formData = new FormData();
@@ -59,8 +59,7 @@ function AddTripForm({ initData, file }: Props) {
 
         <RenderInputs
           config={addTripFormConfig}
-          control={formHook.control}
-          register={formHook.register}
+          formHook={formHook}
           displayOptions={{ label: "ontop", size: "lg" }}
         />
 

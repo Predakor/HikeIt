@@ -37,12 +37,16 @@ public static class ResultExtentios {
         };
     }
 
+    record ResponseError(string Message, string Description);
+    static ResponseError ToResponseError(this Error error) {
+        return new ResponseError(error.Message, error.Code.ToString());
+    }
     static IActionResult MapError(Error error) {
         return error.Code switch {
             ErrorCode.not_authorized => new UnauthorizedResult(),
-            ErrorCode.not_found => new NotFoundObjectResult(error.Message),
-            ErrorCode.db_error => new BadRequestObjectResult(error.Message),
-            _ => new BadRequestObjectResult(error.Message),
+            ErrorCode.not_found => new NotFoundObjectResult(error.ToResponseError()),
+            ErrorCode.db_error => new BadRequestObjectResult(error.ToResponseError()),
+            _ => new BadRequestObjectResult(error.ToResponseError()),
         };
     }
 }

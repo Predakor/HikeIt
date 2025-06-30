@@ -17,11 +17,6 @@ export interface RegisterForm {
   userName: string;
 }
 
-export interface LoginForm {
-  login: string;
-  password: string;
-}
-
 type AuthResponse<T> = T | { errors: AuthError[] };
 
 export function useAuth() {

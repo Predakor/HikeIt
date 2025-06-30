@@ -59,7 +59,9 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
 
 internal static class FileValidation {
     class MaxFileSizeRule(IFormFile file, double maxSize) : IRule {
+        public string Name => "File size";
         public string Message => $"File is too large. Max size: {maxSize:F1} MB.";
+
 
         public Result<bool> Check() {
             if (file.Length > maxSize) {
@@ -71,8 +73,10 @@ internal static class FileValidation {
     }
 
     class FileShouldBeOfType(IFormFile file, string allowedExtension) : IRule {
+        public string Name => "Invalid extention";
         public string Message =>
             $"\"Invalid extention\", $\"Only {{allowedExtension}} files are allowed.\"";
+
 
         public Result<bool> Check() {
             if (!file.FileName.EndsWith(allowedExtension, StringComparison.OrdinalIgnoreCase)) {

@@ -28,6 +28,8 @@ function QueryResult({ mutation }: Props) {
     </Alert.Root>;
   }
 
+  console.log(data);
+
   return (
     (isSuccess || isError) && (
       <Alert.Root status={isError ? "error" : "success"}>

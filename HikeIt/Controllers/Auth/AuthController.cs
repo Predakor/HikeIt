@@ -1,8 +1,12 @@
-﻿using Application.Dto;
+﻿using Api.Extentions;
+using Application.Dto;
 using Application.Services.Auth;
+using Domain.Common;
+using Domain.Common.Result;
 using Domain.Entiites.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Api.Controllers.Auth;
 
@@ -23,43 +27,6 @@ public class AuthController : ControllerBase {
         _authService = authService;
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] UserDto.Register dto) {
-        var user = new User {
-            UserName = dto.UserName,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email,
-        };
-
-        var result = await _userManager.CreateAsync(user, dto.Password);
-
-        return result.Succeeded ? Ok(result) : BadRequest(result.Errors);
-
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(UserDto.Login dto) {
-        var result = await _signInManager.PasswordSignInAsync(
-            dto.UserName,
-            dto.Password,
-            isPersistent: true,
-            lockoutOnFailure: false
-        );
-
-        if (!result.Succeeded) {
-            return Unauthorized("Invalid credentials.");
-        }
-
-        return Ok();
-    }
-
-    [HttpPost("logout")]
-    public async Task<IActionResult> Logout() {
-        await _signInManager.SignOutAsync();
-        return Ok();
-    }
-
     [HttpGet("me")]
     public async Task<IActionResult> Me() {
         var query = await _authService.Me();
@@ -68,5 +35,91 @@ public class AuthController : ControllerBase {
             user => Ok(UserDtoFactory.CreateBasic(user)),
             error => Unauthorized()
         );
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(UserDto.Login dto) {
+        return await _authService
+            .GetByLoginOrEmail(dto.UserName)
+            .BindAsync(user => TryLogin(user, dto.Password))
+            .ToActionResultAsync();
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout() {
+        await _signInManager.SignOutAsync();
+        return Ok();
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] UserDto.Register dto) {
+        return await ValidateEmail(dto.Email)
+            .BindAsync(user => CreateUser(dto))
+            .ToActionResultAsync(ResultType.created);
+    }
+
+    async Task<Result<bool>> TryLogin(User user, string password) {
+        var loginAttempt = await _signInManager.PasswordSignInAsync(
+            user,
+            password,
+            isPersistent: true,
+            lockoutOnFailure: false
+        );
+
+        return loginAttempt.Succeeded ? true : Errors.InvalidCredentials();
+    }
+
+    async Task<Result<Guid>> CreateUser(UserDto.Register dto) {
+        var userId = Guid.NewGuid();
+
+        var user = new User {
+            Id = userId,
+            UserName = dto.UserName,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Email = dto.Email,
+        };
+
+        var result = await _userManager.CreateAsync(user, dto.Password);
+        if (result.Errors.Any()) {
+            return Errors.BadRequest(result.Errors.First().Description);
+        }
+
+        return userId;
+    }
+
+    async Task<Result<bool>> ValidateEmail(string email) {
+        return await EmailValidation
+            .IsValid(email)
+            .BindAsync(_ => EmailValidation.IsUnique(email, _userManager));
+    }
+}
+
+internal static class EmailValidation {
+    public static Result<bool> IsValid(string email) => new IsValidEmail(email).Check();
+
+    public static async Task<Result<bool>> IsUnique(string email, UserManager<User> manager) {
+        return await new IsUniqueEmail(email, manager).CheckAsync();
+    }
+
+    public class IsValidEmail(string email) : IRule {
+        public string Name => "Invalid Email";
+        public string Message => $"{email} is not a valid email";
+
+        public Result<bool> Check() {
+            var emailAttr = new EmailAddressAttribute();
+            return emailAttr.IsValid(email) ? true : Errors.RuleViolation(this);
+        }
+    }
+
+    public class IsUniqueEmail(string email, UserManager<User> manager) : IRuleAsync {
+        public string Name => "UniqueEmail";
+        public string Message => "email must be unique";
+
+        public async Task<Result<bool>> CheckAsync() {
+            var user = await manager.FindByEmailAsync(email);
+
+            return user == null ? true : Errors.RuleViolation(this);
+        }
     }
 }

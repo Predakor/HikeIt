@@ -11,11 +11,14 @@ public static class Errors {
 
     public static Error EmptyCollection(string message) => new Error.EmptyCollection(message);
 
-    public static Error RuleViolation(IRule rule) => new Error.RuleViolation(rule);
+    public static Error RuleViolation(IRuleBase rule) => new Error.RuleViolation(rule);
 
     public static Error File(string message = "") => new Error.File(message);
 
     public static Error NotAuthorized() => new Error.NotAuthorized();
+
+    public static Error InvalidCredentials() => new Error.InvalidCredentials();
+    public static Error NotUnique(string ItemName) => new Error.NotUnique(ItemName);
 }
 
 public enum ErrorCode {
@@ -27,11 +30,13 @@ public enum ErrorCode {
     file,
     rule_violation,
     not_authorized,
+    invalid_credentials,
+    not_unique,
 }
 
 public abstract record Error(ErrorCode Code, string Message) {
     public sealed record NotFound(string Target)
-        : Error(ErrorCode.not_found, $"Entity '{Target}' was not found.");
+        : Error(ErrorCode.not_found, $"{Target} was not found.");
 
     public sealed record BadRequest(string Reason) : Error(ErrorCode.bad_request, Reason);
 
@@ -47,9 +52,14 @@ public abstract record Error(ErrorCode Code, string Message) {
     public sealed record File(string? Detail = null)
         : Error(ErrorCode.file, Detail ?? "Something went wrong while processing your file.");
 
-    public sealed record RuleViolation(IRule Rule)
+    public sealed record RuleViolation(IRuleBase Rule)
         : Error(ErrorCode.rule_violation, $"{Rule}: {Rule.Message}" ?? "Rule Violation error.");
 
     public sealed record NotAuthorized()
         : Error(ErrorCode.not_authorized, "You're not authorized to do this. Please log in.");
+
+    public sealed record InvalidCredentials()
+        : Error(ErrorCode.invalid_credentials, "Invalid login or password");
+    public sealed record NotUnique(string ItemName)
+        : Error(ErrorCode.not_unique, $"{ItemName} already exists");
 }

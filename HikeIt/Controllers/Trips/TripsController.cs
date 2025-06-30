@@ -66,7 +66,7 @@ public class TripsController : ControllerBase {
             .BindAsync(_ => _fileService.Validate(file))
             .BindAsync(_ => _tripService.CreateAsync(ctx))
             .MapAsync(trip => $"/trips/{trip.Id}")
-            .ToActionResultAsync();
+            .ToActionResultAsync(ResultType.created);
     }
 
     [HttpDelete("{id}")]

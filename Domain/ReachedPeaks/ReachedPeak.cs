@@ -68,6 +68,7 @@ public class ReachedPeak : IEntity<Guid> {
     }
 
     class TimeMustBeSmallerThanToday(DateTime time) : IRule {
+        public string Name => "Invalid Time";
         public string Message => "Time is set to a future date please enter correct date";
 
         public Result<bool> Check() {

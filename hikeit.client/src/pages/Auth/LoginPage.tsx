@@ -1,36 +1,45 @@
 import NavButton from "@/components/Utils/NavButton/NavButton";
-import { PasswordInput } from "@/components/ui/password-input";
-import { useAuth } from "@/hooks/useAuth";
+import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
+import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
+import type { LoginForm } from "@/hooks/Auth/useLogin";
+import useLogin from "@/hooks/Auth/useLogin";
 import {
+  Alert,
   Button,
-  Field,
   Fieldset,
-  Input,
-  InputGroup,
   Separator,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { LuUser } from "react-icons/lu";
 
-interface LoginForm {
-  userName: string;
-  password: string;
-}
+const LoginFormCongif: InputsConfig = [
+  {
+    key: "userName",
+    type: "text",
+    label: "",
+    min: 3,
+    max: 64,
+    pattern: /^[a-zA-Z][a-zA-Z0-9_]{2,15}$/,
+    required: true,
+  },
+  {
+    key: "password",
+    type: "password",
+    label: "",
+    min: 6,
+    max: 64,
+    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).*$/,
+    required: true,
+  },
+];
 
 function LoginPage() {
-  const { login } = useAuth();
+  const login = useLogin();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginForm>();
+  const formHook = useForm<LoginForm>();
 
-  const onSubmit = handleSubmit(({ userName, password }) =>
-    login(userName, password)
-  );
+  const onSubmit = formHook.handleSubmit((data) => login.mutate(data));
 
   return (
     <Stack flexGrow={1} alignItems={"center"} paddingTop={8}>
@@ -46,37 +55,24 @@ function LoginPage() {
 
         <form onSubmit={onSubmit}>
           <Fieldset.Content gapY={6}>
-            {/* <RenderInputs config={config} /> */}
-
-            <Field.Root invalid={!!errors.userName}>
-              <InputGroup endElement={<LuUser size={"18"} />}>
-                <Input
-                  {...register("userName", {
-                    required: true,
-                    minLength: 3,
-                    maxLength: 64,
-                  })}
-                  placeholder={"Username"}
-                  size={"xl"}
-                />
-              </InputGroup>
-              <Field.ErrorText>{errors.userName?.type}</Field.ErrorText>
-            </Field.Root>
-
-            <Field.Root invalid={!!errors.password}>
-              <PasswordInput
-                {...register("password", {
-                  required: true,
-                  minLength: 6,
-                  maxLength: 64,
-                  pattern:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).*$/,
-                })}
-                placeholder={"Password"}
-                size={"xl"}
-              />
-              <Field.ErrorText>{errors.password?.type}</Field.ErrorText>
-            </Field.Root>
+            {login.isError && (
+              <Alert.Root status={login.status}>
+                <Stack>
+                  <Alert.Title>Error occured</Alert.Title>
+                  <Alert.Content>
+                    <Alert.Description>{login.error.message}</Alert.Description>
+                  </Alert.Content>
+                </Stack>
+              </Alert.Root>
+            )}
+            <RenderInputs
+              config={LoginFormCongif}
+              formHook={formHook}
+              displayOptions={{
+                size: "xl",
+                label: "inline",
+              }}
+            />
 
             <Button
               size={{ base: "xl", lg: "2xl" }}

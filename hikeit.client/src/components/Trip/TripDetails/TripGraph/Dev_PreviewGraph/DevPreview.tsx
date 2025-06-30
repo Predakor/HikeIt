@@ -1,12 +1,11 @@
-import apiClient from "@/Utils/Api/ApiClient";
+import { copyToClipboard } from "@/Utils/CopyToClipboard";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import { Button, Field, Input, Stack } from "@chakra-ui/react";
+import { Button, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import type { ChartData } from "../_graph_types";
-import { copyToClipboard } from "@/Utils/CopyToClipboard";
-import useChartPreview from "./useChartPreview";
 import { useParams } from "react-router";
+import type { ChartData } from "../_graph_types";
+import useChartPreview from "./useChartPreview";
 
 export type ElevationProfileConfig = {
   MaxElevationSpike: number;
@@ -38,21 +37,16 @@ interface Props {
 
 export function DevConfig({ onSubmit }: Props) {
   const { tripId } = useParams();
-  const { control, register, handleSubmit, getValues } =
-    useForm<ElevationProfileConfig>();
+  const formHook = useForm<ElevationProfileConfig>();
 
   const send = useChartPreview(tripId, onSubmit);
 
-  const copyConfig = () => copyToClipboard(getValues());
+  const copyConfig = () => copyToClipboard(formHook.getValues());
 
   return (
-    <form onSubmit={handleSubmit(send)}>
+    <form onSubmit={formHook.handleSubmit(send)}>
       <Stack flexGrow={1}>
-        <RenderInputs
-          config={elevationDevConfig}
-          register={register}
-          control={control}
-        />
+        <RenderInputs config={elevationDevConfig} formHook={formHook} />
 
         <Button colorPalette={"blue"} type={"submit"}>
           Preview
