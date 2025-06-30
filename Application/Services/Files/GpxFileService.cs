@@ -51,10 +51,9 @@ public class GpxFileService(IFileStorage storage, IGpxFileRepository repository,
         var (isValid, errors) = FileValidation.Validate(file);
         if (!isValid) {
             string errorstring = errors.Select(e => e.ToString()).ToString();
-            var err = Errors.Unknown(errorstring);
-            return err;
+            return Errors.Unknown(errorstring);
         }
-        return (Result<IFormFile>)file;
+        return Result<IFormFile>.Success(file);
     }
 }
 

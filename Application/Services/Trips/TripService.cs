@@ -38,15 +38,13 @@ public class TripService : ITripService {
     }
 
     public async Task<Result<Guid>> CreateSimpleAsync(CreateTripContext context) {
-        return await TripServiceHelpers
-            .CreateTrip(context)
+        return await CreateTrip(context)
             .BindAsync(SaveTripChanges)
             .MapAsync(createdTrip => createdTrip.Id);
     }
 
     public async Task<Result<Trip>> CreateAsync(CreateTripContext ctx) {
-        return await TripServiceHelpers
-            .CreateTrip(ctx)
+        return await CreateTrip(ctx)
             .BindAsync(ProccesGpxFile)
             .BindAsync(CreateAnalytics)
             .BindAsync(CreateGpxFile)
@@ -83,10 +81,8 @@ public class TripService : ITripService {
             .MapAsync(ctx.Trip.AddGpxFile)
             .MapAsync(_ => ctx);
     }
-}
 
-internal static class TripServiceHelpers {
-    public static Result<CreateTripContext> CreateTrip(CreateTripContext ctx) {
+    Result<CreateTripContext> CreateTrip(CreateTripContext ctx) {
         var (name, tripDay) = ctx.Request.Base;
         var trip = Trip.Create(ctx.Id, name, tripDay, ctx.User.Id);
 
@@ -94,10 +90,13 @@ internal static class TripServiceHelpers {
             trip.ChangeRegion(ctx.Request.RegionId);
         }
 
+        _unitOfWork.TripRepository.Add(trip);
         ctx.WithTrip(trip);
         return ctx;
     }
+}
 
+internal static class TripServiceHelpers {
     public static List<Request.ResponseBasic> CollectionToDtos(IEnumerable<Trip> trips) {
         return trips
             .Select(p => new Request.ResponseBasic(p.Id, p.RegionId, new(p.Name, p.TripDay)))
