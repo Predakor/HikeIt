@@ -1,4 +1,4 @@
-import { menuIcons } from "@/components/Trip/Data/StatsMeta/statsInfo";
+import { IconLogo } from "@/Icons/Icons";
 import {
   Flex,
   Group,
@@ -8,7 +8,6 @@ import {
   Span,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import type { IconType } from "react-icons";
 import { NavLink } from "react-router";
 import MobileNav from "../Nav/MobileNav";
 import NavContent from "../Nav/NavContent";
@@ -38,8 +37,6 @@ export default function Header() {
 }
 
 export function PageLogo() {
-  const IconSource = menuIcons["reachedPeaks"] as IconType;
-
   return (
     <Group className="group" fontSize="4xl" gapX={2}>
       <Icon
@@ -50,7 +47,7 @@ export function PageLogo() {
         color="fg.muted"
         size="inherit"
       >
-        <IconSource />
+        <IconLogo />
       </Icon>
       <Heading color="fg" fontSize={"inherit"}>
         Hike
