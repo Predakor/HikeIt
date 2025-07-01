@@ -1,7 +1,7 @@
 import { Flex, For, Heading, Show, Stack, Text } from "@chakra-ui/react";
 import { PeakBadge } from "../Common/PeakBadge";
-import { PeakIcon } from "../Common/PeakIcon";
 import type { ReachedPeakWithBadges } from "@/components/AddFile/AddFile/tripTypes";
+import PeakIcon from "@/Icons/Customs/PeakIcon";
 
 interface Props {
   peaks: ReachedPeakWithBadges[];
@@ -27,7 +27,7 @@ function ReachedPeakListItem({ peak }: { peak: ReachedPeakWithBadges }) {
   return (
     <>
       <Flex alignItems={"center"} gapX={4}>
-        <PeakIcon />
+        <PeakIcon hideBelow={"lg"} fontSize={{ base: 32, md: 40, xl: 52 }} />
         <Stack>
           <Heading fontSize={"2xl"}>{name}</Heading>
           <Text color={"fg.muted"}>{height}m</Text>

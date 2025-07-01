@@ -1,4 +1,4 @@
-import { dateOnlyToString } from "@/Utils/Formatters/dateFormats";
+import { toUkDate } from "@/Utils/Formatters/dateFormatter";
 import type { PeaksAnalyticData } from "../../Types/TripAnalyticsTypes";
 import type { ReachedPeakWithBadges } from "@/components/AddFile/AddFile/tripTypes";
 
@@ -16,14 +16,14 @@ function usePeakAnalytics(data: PeaksAnalyticData) {
     .map((p) => ({
       ...p,
       firstTime: Math.random() * 10 > 7,
-      reachedAt: dateOnlyToString(new Date().toISOString().split("T")[0]),
+      reachedAt: toUkDate(new Date().toISOString().split("T")[0]),
       isHighest: Math.random() * 10 > 7,
     }));
 
   highest = {
     ...highest,
     isHighest: true,
-    reachedAt: dateOnlyToString(new Date().toISOString().split("T")[0]),
+    reachedAt: toUkDate(new Date().toISOString().split("T")[0]),
   };
 
   return { highest, peaks };

@@ -12,3 +12,13 @@ export const TripDetailsPage = lazy(
 export const BadgesPage = lazy(() => import("@/pages/BadgesPage"));
 export const LandingPage = lazy(() => import("@/pages/LandingPage"));
 export const RegionsPage = lazy(() => import("@/pages/RegionsPage"));
+
+export const UserProfilePage = lazy(
+  () => import("@pages/User/UserProfilePage")
+);
+export const UserSettingsPage = lazy(
+  () => import("@pages/User/UserSettingsPage")
+);
+export const UserSummaryPage = lazy(
+  () => import("@pages/User/UserSummaryPage")
+);

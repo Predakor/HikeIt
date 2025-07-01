@@ -1,5 +1,5 @@
 import User from "@/components/User/User";
-import { navRoutes } from "@/data/routes/routes";
+import { navRoutes } from "@/data/routes/navRoutes";
 import { For, Spacer } from "@chakra-ui/react";
 import { NavItem } from "./NavItem";
 

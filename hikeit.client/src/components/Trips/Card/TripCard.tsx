@@ -1,4 +1,4 @@
-import { dateOnlyToString } from "@/Utils/Formatters/dateFormats";
+import { toUkDate } from "@/Utils/Formatters/dateFormatter";
 import useRegion from "@/hooks/useRegion";
 import type { TripDto } from "@/types/ApiTypes/TripDtos";
 import { Badge, Card, CardTitle, Flex, Span, Stack } from "@chakra-ui/react";
@@ -17,7 +17,7 @@ interface Props {
 
 function TripCard({ data }: Props) {
   const trip = data.base;
-  const formatedDate = dateOnlyToString(trip.tripDay as string);
+  const formatedDate = toUkDate(trip.tripDay as string);
   const { data: region } = useRegion(data.regionId);
 
   const baseInfo = [

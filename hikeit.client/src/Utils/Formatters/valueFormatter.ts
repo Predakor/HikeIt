@@ -1,9 +1,9 @@
-import { dateOnlyToString } from "./dateFormats";
+import { toUkDate } from "./dateFormatter";
 
 export function GenericFormatter<T extends string | number>(value: T) {
   switch (typeof value) {
     case "string":
-      return isValidDateString(value) ? dateOnlyToString(value) : value;
+      return isValidDateString(value) ? toUkDate(value) : value;
 
     case "number":
       return value.toFixed(0);

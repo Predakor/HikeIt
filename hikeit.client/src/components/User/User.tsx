@@ -1,5 +1,14 @@
+import { userRoutes } from "@/data/routes/userRoutes";
 import useUser from "@/hooks/useUser";
-import { Avatar, Button, Icon, LinkBox, Menu, Stack } from "@chakra-ui/react";
+import {
+  Avatar,
+  Button,
+  Heading,
+  Icon,
+  LinkBox,
+  Menu,
+  Stack,
+} from "@chakra-ui/react";
 import { FaAngleDown } from "react-icons/fa";
 import { NavLink } from "react-router";
 
@@ -18,19 +27,27 @@ export default function User() {
     return;
   }
 
+  const basePath = `/${userRoutes.path}/`;
+
   return (
     <Stack alignItems={"center"} direction={"row"}>
       <Avatar.Root>
         <Avatar.Fallback></Avatar.Fallback>
         <Avatar.Image src={user.avatar}></Avatar.Image>
       </Avatar.Root>
-      <LinkBox fontWeight={"semibold"} fontSize={"2xl"} asChild>
-        <NavLink to={"/profile"}>{user.userName}</NavLink>
-      </LinkBox>
 
       <Menu.Root>
         <Menu.Trigger asChild _hover={{ cursor: "pointer", scale: 1.1 }}>
-          <Button unstyled size={"sm"} variant={"ghost"}>
+          <Button
+            unstyled
+            display={"flex"}
+            alignItems={"end"}
+            size={"sm"}
+            variant={"ghost"}
+          >
+            <Heading fontWeight={"semibold"} fontSize={"2xl"}>
+              {user.userName}
+            </Heading>
             <Icon size={"lg"}>
               <FaAngleDown />
             </Icon>
@@ -38,13 +55,11 @@ export default function User() {
         </Menu.Trigger>
         <Menu.Positioner>
           <Menu.Content>
-            <Menu.Item value="rename">
-              <NavLink to={"/profile"}>Profile</NavLink>
-            </Menu.Item>
-
-            <Menu.Item value="settings">
-              <NavLink to={"/settings"}>Settings</NavLink>
-            </Menu.Item>
+            {userRoutes.pages.map(({ path, label }) => (
+              <Menu.Item value={label}>
+                <NavLink to={basePath + path}>{label}</NavLink>
+              </Menu.Item>
+            ))}
 
             <Menu.Item color={"fg.error"} value="logout" asChild>
               <Button cursor={"pointer"} unstyled onClick={logout}>

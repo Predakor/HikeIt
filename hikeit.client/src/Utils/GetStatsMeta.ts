@@ -1,8 +1,6 @@
-import {
-  icons,
-  routeAnalyticStatsInfo,
-  timeAnalyticsStatsInfo,
-} from "@/components/Trip/Data/statsInfo";
+import { icons } from "@/components/Trip/Data/StatsMeta/statsInfo";
+import { timeAnalyticsStatsInfo } from "@/components/Trip/Data/StatsMeta/timeAnalyticsStatsInfo";
+import { routeAnalyticStatsInfo } from "@/components/Trip/Data/StatsMeta/routeAnalyticStatsInfo";
 import type { StatAddons } from "@/types/Utils/StatTypes";
 
 const statsMeta = {

@@ -1,4 +1,4 @@
-import { menuIcons } from "@/components/Trip/Data/statsInfo";
+import { menuIcons } from "@/components/Trip/Data/StatsMeta/statsInfo";
 import {
   Flex,
   Group,

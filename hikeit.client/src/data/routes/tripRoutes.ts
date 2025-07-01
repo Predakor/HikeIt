@@ -1,4 +1,4 @@
-import { TripsPage, AddTripPage, TripDetailsPage } from "@/pages";
+import { TripsPage, AddTripPage, TripDetailsPage } from "@/pages/__index";
 import type { RouteGroup } from "./routeTypes";
 
 export const tripRoutes: RouteGroup = {

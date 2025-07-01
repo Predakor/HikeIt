@@ -1,37 +1,12 @@
-import { BadgesPage, LandingPage, RegionsPage, TripsPage } from "@/pages";
-import type { RouteItem, RouteEntry } from "./routeTypes";
+import type { RouteEntry } from "./routeTypes";
 import { authRoutes } from "./authRoutes";
 import { tripRoutes } from "./tripRoutes";
+import { navRoutes } from "./navRoutes";
+import { userRoutes } from "./userRoutes";
 
-export const navRoutes: RouteItem[] = [
-  {
-    type: "item",
-    path: "/",
-    label: "Home",
-    hidden: true,
-    Page: LandingPage,
-    // Icon: HomeIcon, // example icon placeholder
-  },
-  {
-    type: "item",
-    path: "trips/",
-    label: "Trips",
-    Page: TripsPage,
-    // Icon: FaRoute,
-  },
-  {
-    type: "item",
-    path: "/regions",
-    label: "Regions",
-    Page: RegionsPage,
-    // Icon: MapIcon,
-  },
-  {
-    type: "item",
-    path: "/badges",
-    label: "Badges",
-    Page: BadgesPage,
-    // Icon: BadgeIcon,
-  },
+export const routes: RouteEntry[] = [
+  ...navRoutes,
+  authRoutes,
+  tripRoutes,
+  userRoutes,
 ];
-export const routes: RouteEntry[] = [...navRoutes, authRoutes, tripRoutes];
