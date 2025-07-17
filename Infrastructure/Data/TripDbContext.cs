@@ -32,7 +32,6 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
 
         modelBuilder.Entity<Peak>(entity => {
             entity.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);
-            entity.HasData(DataSeed.Peaks);
         });
 
         ConfigureTripsAggregate.Configure(modelBuilder);

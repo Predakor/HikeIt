@@ -23,14 +23,12 @@ public class TripAnalyticRepository : CrudRepository<TripAnalytic, Guid>, ITripA
             return Errors.NotFound("analytics");
         }
 
-        if (analytics.PeaksAnalytic == null) {
-            return Errors.NotFound("peak analytics");
+        if (analytics.PeaksAnalytic != null) {
+            var reachedPeaks = Context
+                .ReachedPeaks.Where(peak => peak.TripId == id)
+                .Include(p => p.Peak);
+            analytics.PeaksAnalytic.ReachedPeaks = reachedPeaks.ToList();
         }
-
-        var reachedPeaks = Context
-            .ReachedPeaks.Where(peak => peak.TripId == id)
-            .Include(p => p.Peak);
-        analytics.PeaksAnalytic.ReachedPeaks = reachedPeaks.ToList();
 
         return analytics;
     }

@@ -9,7 +9,7 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Rebase : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -388,33 +388,6 @@ namespace Infrastructure.Migrations
                     { 23, "Góry Izerskie" },
                     { 24, "Rudawy Janowickie" },
                     { 25, "Sudety Wałbrzyskie" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Peaks",
-                columns: new[] { "Id", "Height", "Location", "Name", "RegionID" },
-                values: new object[,]
-                {
-                    { 1, 1603, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.736 15.739)"), "Śnieżka", 22 },
-                    { 2, 1346, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.179 20.088)"), "Rysy", 1 },
-                    { 3, 2050, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.303 19.926)"), "Giewont", 1 },
-                    { 4, 1367, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.784 19.102)"), "Czupel", 3 },
-                    { 5, 1725, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.21 20.04)"), "Lodowy Szczyt", 1 },
-                    { 6, 1894, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.606 19.546)"), "Babia Góra", 4 },
-                    { 7, 1153, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.624 19.523)"), "Pilsko", 4 },
-                    { 8, 982, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.467 20.535)"), "Radziejowa", 9 },
-                    { 9, 1050, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.828 16.7)"), "Ślęża", 22 },
-                    { 10, 948, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.464 20.966)"), "Jaworzyna Krynicka", 9 },
-                    { 11, 1335, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.616 19.269)"), "Wielka Racza", 5 },
-                    { 12, 1257, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.645 19.866)"), "Luboń Wielki", 6 },
-                    { 13, 1152, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.635 19.335)"), "Kiczera", 3 },
-                    { 14, 1050, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.79 20.792)"), "Łysica", 12 },
-                    { 15, 944, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.716 16.27)"), "Chełmiec", 21 },
-                    { 16, 746, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (51.116 15.776)"), "Trójgarb", 24 },
-                    { 17, 860, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.796 19.847)"), "Lubomir", 7 },
-                    { 18, 1150, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.643 20.281)"), "Mogielica", 7 },
-                    { 19, 970, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (50.9 15.73)"), "Jelenia Góra", 22 },
-                    { 20, 1685, (NetTopologySuite.Geometries.Point)new NetTopologySuite.IO.WKTReader().Read("SRID=4326;POINT (49.218 20.02)"), "Orla Perć", 1 }
                 });
 
             migrationBuilder.CreateIndex(
