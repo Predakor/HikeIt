@@ -1,4 +1,5 @@
 ﻿using Api.Extentions;
+using Application.Dto;
 using Application.Services.Auth;
 using Application.Services.Files;
 using Application.Services.Trips;
@@ -19,32 +20,37 @@ public class TripsController : ControllerBase {
     readonly ITripService _tripService;
     readonly IGpxFileService _fileService;
     readonly ITripAnalyticUnitOfWork _unitOfWork;
+    readonly ITripQueryService _queryService;
 
     public TripsController(
         ITripService service,
         IGpxFileService fileService,
         IAuthService authService,
-        ITripAnalyticUnitOfWork unitOfWork
+        ITripAnalyticUnitOfWork unitOfWork,
+        ITripQueryService queryService
     ) {
         _tripService = service;
         _fileService = fileService;
         _authService = authService;
         _unitOfWork = unitOfWork;
+        _queryService = queryService;
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(List<TripDto.Summary>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll() {
         return await _authService
             .Me()
-            .BindAsync(user => _tripService.GetAllAsync(user.Id))
+            .BindAsync(user => _queryService.GetAllAsync(user.Id))
             .ToActionResultAsync();
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(TripDto.WithBasicAnalytics), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById(Guid id) {
         return await _authService
             .Me()
-            .MapAsync(user => _tripService.GetByIdAsync(id, user.Id))
+            .MapAsync(user => _queryService.GetByIdAsync(id, user.Id))
             .ToActionResultAsync();
     }
 
@@ -53,7 +59,8 @@ public class TripsController : ControllerBase {
         var ctx = CreateTripContext.Create().WithRequest(newTrip);
         return await _authService
             .Me()
-            .BindAsync((user) => _tripService.CreateSimpleAsync(ctx))
+            .MapAsync(ctx.WithUser)
+            .BindAsync(_tripService.CreateSimpleAsync)
             .ToActionResultAsync();
     }
 

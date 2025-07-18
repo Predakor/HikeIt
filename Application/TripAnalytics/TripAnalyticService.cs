@@ -1,5 +1,4 @@
-﻿using Application.Dto;
-using Application.Services.Peaks;
+﻿using Application.Services.Peaks;
 using Application.TripAnalytics.Interfaces;
 using Application.TripAnalytics.Services;
 using Application.Trips;
@@ -19,7 +18,6 @@ using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
 using Domain.Trips.Config;
 using Domain.Trips.ValueObjects;
-using static Application.Dto.TripAnalyticsDto;
 
 namespace Application.TripAnalytics;
 
@@ -31,11 +29,6 @@ public class TripAnalyticService(
     readonly IPeakService _peakService = peakService;
     readonly ITripAnalyticUnitOfWork _unitOfWork = unitOfWork;
     readonly IReachedPeakService _reachedPeakService = reachedPeakService;
-
-    public async Task<Result<TripAnalytic>> GetAnalytic(Guid id) {
-        var queryResult = await _unitOfWork.TripAnalytics.GetByIdAsync(id);
-        return queryResult != null ? queryResult : Errors.NotFound("Analytics with id:" + id);
-    }
 
     public async Task<Result<TripAnalytic>> GenerateAnalytic(CreateTripContext ctx) {
         var (points, gains) = ctx.AnalyticData;
@@ -101,10 +94,7 @@ public class TripAnalyticService(
         return await FindLocalMaximasCommand
             .Create(data)
             .Execute()
-            .BindAsync(localMaximas => {
-                Console.WriteLine(localMaximas);
-                return _peakService.GetPeaksWithinRadius(localMaximas, 2000f);
-            })
+            .BindAsync(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 2000f))
             .BindAsync(foundPeaks =>
                 _reachedPeakService.ToReachedPeaks(foundPeaks, tripId, user.Id)
             )
@@ -126,11 +116,7 @@ public class TripAnalyticService(
             .BindAsync(_unitOfWork.Elevations.AddAsync);
     }
 
-    public async Task<Result<Full>> GetCompleteAnalytic(Guid id) {
-        return await _unitOfWork
-            .TripAnalytics.GetCompleteAnalytic(id)
-            .MapAsync(AnalyticsServiceHelpers.MapToDto);
-    }
+
 
     public async Task<ElevationProfile> GetElevationProfile(Guid id) {
         return (await _unitOfWork.Elevations.GetById(id)).Match(
@@ -140,13 +126,3 @@ public class TripAnalyticService(
     }
 }
 
-internal static class AnalyticsServiceHelpers {
-    public static Full MapToDto(TripAnalytic data) {
-        var elevationDto = data.ElevationProfile?.ToDto();
-        var peakAnalyticDto = data.PeaksAnalytic?.ToDto();
-        var timeAnalyticDto = data.TimeAnalytics ?? null;
-        var routeAnalyticsDto = data.RouteAnalytics ?? null;
-
-        return new Full(routeAnalyticsDto, timeAnalyticDto, peakAnalyticDto, elevationDto, data.Id);
-    }
-}

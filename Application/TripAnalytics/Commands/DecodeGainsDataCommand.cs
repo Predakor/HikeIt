@@ -1,4 +1,4 @@
-﻿using Application.Dto;
+﻿using Application.Dto.Analytics;
 using Domain.Common;
 using Domain.Common.Interfaces;
 using Domain.Common.Result;

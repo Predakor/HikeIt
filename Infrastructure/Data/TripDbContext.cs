@@ -4,6 +4,7 @@ using Domain.Entiites.Users;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Entities.ElevationProfile;
+using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
 using Infrastructure.Data.EntitiesConfigurations;
@@ -25,6 +26,7 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
     public DbSet<ReachedPeak> ReachedPeaks { get; set; }
     public DbSet<TripAnalytic> TripAnalytics { get; set; }
     public DbSet<ElevationProfile> ElevationProfiles { get; set; }
+    public DbSet<PeaksAnalytic> PeaksAnalytics { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);

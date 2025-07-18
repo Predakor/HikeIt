@@ -1,6 +1,6 @@
 import { useTripRemove } from "@/hooks/useTrips";
 import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
-import { Button, Flex, Stack, VStack } from "@chakra-ui/react";
+import { Button, Flex, Heading, Stack, VStack } from "@chakra-ui/react";
 import { tripDetailsTabs } from "../Data/tabOrder";
 import { TripDetailsMenu } from "./TripDetailsMenu/TripDetailsTabs";
 
@@ -8,6 +8,8 @@ function TripDetails({ data }: { data: TripDtoFull }) {
   const tabOrder = tripDetailsTabs.filter((d) => {
     return !(d.type !== "group" && d.key === "base");
   });
+
+  console.log(data);
 
   const deleteTrip = useTripRemove();
 

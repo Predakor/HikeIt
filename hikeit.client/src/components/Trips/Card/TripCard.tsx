@@ -16,9 +16,8 @@ interface Props {
 }
 
 function TripCard({ data }: Props) {
-  const trip = data.base;
-  const formatedDate = toUkDate(trip.tripDay as string);
-  const { data: region } = useRegion(data.regionId);
+  const { id, name, tripDay, region } = data;
+  const formatedDate = toUkDate(tripDay);
 
   const baseInfo = [
     { label: "Region", value: region?.name },
@@ -31,11 +30,11 @@ function TripCard({ data }: Props) {
   ].filter(() => Math.random() > 0.5) as BadgeMeta[];
 
   return (
-    <Link to={`${data.id}`}>
+    <Link to={`${id}`}>
       <Card.Root {...cardCommonStyles}>
         <Card.Header>
           <Flex justifyItems={"center"}>
-            <CardTitle fontSize={"3xl"}>{data.base.name}</CardTitle>
+            <CardTitle fontSize={"3xl"}>{name}</CardTitle>
           </Flex>
         </Card.Header>
         <Card.Body>

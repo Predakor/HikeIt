@@ -2,7 +2,7 @@
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 
-namespace Application.Dto;
+namespace Application.Dto.Analytics;
 
 public record ReachedPeakDto(string Name, int Height, DateTime? ReachedAt = null);
 

@@ -6,9 +6,9 @@ using Infrastructure.Storage;
 using Infrastructure.UnitOfWorks;
 using System.Reflection;
 
-namespace Api;
+namespace Api.DI;
 
-public static class DependencyInjection {
+public static partial class DIextentions {
     public static WebApplicationBuilder InjectServices(this WebApplicationBuilder builder) {
         var assemblies = new[] { "Application", "Infrastructure", "Domain", "Api" }
             .Select(Assembly.Load)
@@ -21,7 +21,8 @@ public static class DependencyInjection {
             .InjectStorages()
             .InjectServices(assemblies)
             .InjectParsers()
-            .InjectUnitOfWorks();
+            .InjectUnitOfWorks()
+            .InjectQueries(assemblies);
 
         return builder;
     }
@@ -76,6 +77,21 @@ public static class DependencyInjection {
 
     static IServiceCollection InjectUnitOfWorks(this IServiceCollection services) {
         services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
+        return services;
+    }
+
+    static IServiceCollection InjectQueries(
+    this IServiceCollection services,
+    Assembly[] targetAssemblies
+) {
+        services.Scan(scan =>
+            scan.FromAssemblies(targetAssemblies)
+                .AddClasses(classes =>
+                    classes.Where(t => t.Name.EndsWith("QueryService") && t.IsClass && !t.IsAbstract)
+                )
+                .AsImplementedInterfaces()
+                .WithScopedLifetime()
+        );
         return services;
     }
 }

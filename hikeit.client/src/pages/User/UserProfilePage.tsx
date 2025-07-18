@@ -50,7 +50,7 @@ function UserProfilePage() {
   const user = __mockupUser__;
 
   return (
-    <Stack padding={{ base: "", lg: "4" }}>
+    <Stack>
       <Card.Root>
         <Card.Body>
           <Stack
@@ -83,10 +83,10 @@ interface CardProps {
 
 function AccountActions() {
   return (
-    <ButtonGroup>
+    <Stack direction={{ base: "column", lg: "row" }}>
       <DangerButton variant={"outline"}>{"Deactivate my account"}</DangerButton>
       <DangerButton>{"Remove my account"}</DangerButton>
-    </ButtonGroup>
+    </Stack>
   );
 }
 
@@ -100,7 +100,6 @@ function UserDataCard({ title, children, Footer }: CardProps) {
         <Separator />
         {children}
       </Card.Body>
-      {Footer && <Card.Footer>{Footer}</Card.Footer>}
     </Card.Root>
   );
 }

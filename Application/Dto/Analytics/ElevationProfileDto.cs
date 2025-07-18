@@ -2,7 +2,7 @@
 using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.Trips.ValueObjects;
 
-namespace Application.Dto;
+namespace Application.Dto.Analytics;
 
 public record GainDto(float Dist, float Ele, float Time);
 

@@ -1,8 +1,9 @@
 ﻿using Api.Extentions;
-using Application.Dto;
+using Application.Dto.Analytics;
 using Application.Services.Auth;
 using Application.Services.Files;
 using Application.TripAnalytics.Interfaces;
+using Application.TripAnalytics.Quries;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Trips.Builders.GpxDataBuilder;
@@ -15,16 +16,19 @@ namespace Api.Controllers.Trips;
 [Route("api/trips/{id}/")]
 [ApiController]
 public class AnalyticsController : ControllerBase {
+    readonly ITripAnalyticsQueryService _queryService;
     readonly ITripAnalyticService _service;
     readonly IGpxFileService _fileService;
     readonly IAuthService _authService;
 
     public AnalyticsController(
         ITripAnalyticService tripAnalyticService,
+        ITripAnalyticsQueryService queryService,
         IGpxFileService fileService,
         IAuthService authService
     ) {
         _service = tripAnalyticService;
+        _queryService = queryService;
         _fileService = fileService;
         _authService = authService;
     }
@@ -33,7 +37,7 @@ public class AnalyticsController : ControllerBase {
     public async Task<IActionResult> GetAnalytics(Guid id) {
         return await _authService
             .Me()
-            .BindAsync(_ => _service.GetCompleteAnalytic(id))
+            .BindAsync(_ => _queryService.GetCompleteAnalytics(id))
             .ToActionResultAsync();
     }
 

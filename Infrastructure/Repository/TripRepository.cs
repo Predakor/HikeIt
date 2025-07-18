@@ -19,7 +19,6 @@ public class TripRepository : ResultRepository<Trip, Guid>, ITripRepository {
     public async Task<Result<Trip>> Get(Guid tripId, Guid userId) {
         var trip = await DbSet
             .Include(x => x.Region)
-            .Include(x => x.GpxFile)
             .Include(x => x.Analytics)
             .Where(x => x.UserId == userId)
             .FirstOrDefaultAsync(x => x.Id == tripId);
@@ -34,7 +33,6 @@ public class TripRepository : ResultRepository<Trip, Guid>, ITripRepository {
     public async Task<Result<IEnumerable<Trip>>> GetAll(Guid userId) {
         return await DbSet
             .Include(x => x.Region)
-            .Include(x => x.GpxFile)
             .Include(x => x.Analytics)
             .Where(x => x.UserId == userId)
             .ToListAsync();

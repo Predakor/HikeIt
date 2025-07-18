@@ -3,15 +3,14 @@ import type {
   TimeAnalytic,
 } from "@/components/Trip/Types/TripAnalyticsTypes";
 
-export interface BaseTrip {
-  name: string;
-  tripDay: string;
-}
-
 export interface TripDto {
   id: string;
-  base: BaseTrip;
-  regionId?: number;
+  name: string;
+  tripDay: string;
+  region: {
+    id: number;
+    name: string;
+  };
 }
 
 interface TripAnalytic {

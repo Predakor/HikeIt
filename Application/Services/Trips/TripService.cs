@@ -5,7 +5,6 @@ using Application.Trips;
 using Domain.Common.Result;
 using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;
-using static Application.Dto.TripDto;
 
 namespace Application.Services.Trips;
 
@@ -25,16 +24,6 @@ public class TripService : ITripService {
         _unitOfWork = unitOfWork;
         _gpxFileService = gpxFileService;
         _analyticsService = tripAnalyticService;
-    }
-
-    public async Task<Result<Partial2>> GetByIdAsync(Guid id, Guid userId) {
-        return await _unitOfWork
-            .TripRepository.Get(id, userId)
-            .MapAsync(TripServiceHelpers.TripToDto);
-    }
-
-    public async Task<Result<List<Request.ResponseBasic>>> GetAllAsync(Guid userId) {
-        return await _tripRepository.GetAll(userId).MapAsync(TripServiceHelpers.CollectionToDtos);
     }
 
     public async Task<Result<Guid>> CreateSimpleAsync(CreateTripContext context) {
@@ -93,23 +82,5 @@ public class TripService : ITripService {
         _unitOfWork.TripRepository.Add(trip);
         ctx.WithTrip(trip);
         return ctx;
-    }
-}
-
-internal static class TripServiceHelpers {
-    public static List<Request.ResponseBasic> CollectionToDtos(IEnumerable<Trip> trips) {
-        return trips
-            .Select(p => new Request.ResponseBasic(p.Id, p.RegionId, new(p.Name, p.TripDay)))
-            .ToList();
-    }
-
-    public static Partial2 TripToDto(Trip trip) {
-        return new(
-            trip.Id,
-            trip.Analytics,
-            trip.GpxFile,
-            trip.Region,
-            new(trip.Name, trip.TripDay)
-        );
     }
 }
