@@ -37,7 +37,7 @@ internal static class CsvExtentions {
             .Select(r => new Peak() {
                 Name = r.Name,
                 Height = r.Height,
-                Location = new Point(r.Lat, r.Lon) { SRID = srid },
+                Location = new Point(r.Lon, r.Lat) { SRID = srid },
                 RegionID = MatchToRegionId(r.Range),
             })
             .ToList();

@@ -1,61 +1,38 @@
 name,height,range,lat,lon
-Czupel,933,Beskid Mały,49.784,19.102
-Magura,1185,Beskid Niski,49.543,21.36
-Królowa Beskidów,1285,Beskid Sądecki,49.455,20.515
-Radziejowa,1266,Beskid Sądecki,49.467,20.535
-Radziejowa Mała,1266,Beskid Sądecki,49.468,20.533
-Jaworzyna Krynicka,1114,Beskid Sądecki,49.464,20.966
-Mogielica,1170,Beskid Wyspowy,49.643,20.281
-Luboń Wielki,1022,Beskid Wyspowy,49.645,19.866
-Skrzyczne,1257,Beskid Śląski,49.721,19.107
-Barania Góra,1220,Beskid Śląski,49.722,19.1
-Kiczera,1152,Beskid Śląski,49.635,19.335
-Malinowska Skała,1152,Beskid Śląski,49.713,19.091
-Kościelec,1019,Beskid Śląski,49.724,19.23
-Czantoria Wielka,995,Beskid Śląski,49.6,18.652
-Babia Góra,1725,Beskid Żywiecki,49.606,19.546
-Pilsko,1557,Beskid Żywiecki,49.623,19.519
-Smrek,1276,Beskid Żywiecki,49.614,19.569
-Groń Jana Pawła II,1257,Beskid Żywiecki,49.628,19.527
-Wielka Racza,1236,Beskid Żywiecki,49.616,19.269
-Mędralowa,1169,Beskid Żywiecki,49.598,19.51
-Kiczory,990,Beskid Żywiecki,49.606,19.522
-Turbacz,1310,Gorce,49.675,20.096
-Kłodzka Góra,765,Góry Bardzkie,50.415,16.619
-Jagodna,977,Góry Bystrzyckie,50.408,16.476
-Kopa,1357,Góry Izerskie,50.865,15.431
-Orlica,1084,Góry Orlickie,50.348,16.523
-Ślęża,718,Góry Sowie,50.828,16.7
-Łysica,614,Góry Świętokrzyskie,50.79,20.792
-Śnieżka,1603,Karkonosze,50.736,15.739
-Śmielec,1424,Karkonosze,50.752,15.701
-Okraj,880,Karkonosze,50.781,15.754
-Śnieżnik,1425,Masyw Śnieżnika,50.25,16.97
-Kopa Śnieżnika,1425,Masyw Śnieżnika,50.259,16.966
-Śnieżnik Mały,1326,Masyw Śnieżnika,50.264,16.957
-Czarna Góra,1205,Masyw Śnieżnika,50.266,16.96
-Chełmiec,851,Masyw Śnieżnika,50.716,16.27
-Trzy Korony,982,Pieniny,49.438,20.48
-Trójgarb,778,Rudawy Janowickie,51.116,15.776
-Rysy,2501,Tatry,49.17944,20.08806
-Tomkowa Igła,2420,Tatry,49.187,20.017
-Mięguszowiecki Szczyt Czarny,2410,Tatry,49.184,20.023
-Mięguszowiecki Szczyt Pośredni,2393,Tatry,49.184,20.019
-Cubryna,2376,Tatry,49.185,20.005
-Veľká Svišťovka,2373,Tatry,49.186,20.01
-Hincova Veža,2372,Tatry,49.182,20.023
-Hińczowa Turniczka,2370,Tatry,49.187,20.013
-Świnica,2301,Tatry,49.227,19.923
-Kozi Wierch,2291,Tatry,49.23,20.02
-Zamarła Turnia,2179,Tatry,49.216,20.075
-Starorobociański Wierch,2176,Tatry,49.224,19.861
-Klin,2176,Tatry,49.178,20.075
-Kościelec,2155,Tatry,49.229,20.005
-Małołączniak,2096,Tatry,49.204,20.043
-Smreczynski Wierch,2078,Tatry,49.243,19.99
-Mnich,2068,Tatry,49.227,20.029
-Wołowiec,2064,Tatry,49.239,19.79
-Kopa Kondracka,2005,Tatry,49.21,19.953
-Kasprowy Wierch,1987,Tatry,49.233,20.012
-Orla Perć,1685,Tatry,49.218,20.02
-Wielka Fatra,1458,Tatry,49.209,19.2
+Rysy,2501,Tatry,49.179,20.088
+Niżnie Rysy,2430,Tatry,49.182,20.088
+Mięguszowiecki Szczyt Pośredni,2393,Tatry,49.175,20.002
+Świnica,2302,Tatry,49.217,19.001
+Kozi Wierch,2291,Tatry,49.200,19.005
+Kościelec,2155,Tatry,49.221,19.983
+Giewont,1894,Tatry,49.303,19.919
+Kasprowy Wierch,1987,Tatry,49.232,19.968
+Kopa Kondracka,2005,Tatry,49.248,19.971
+Sławkowski Szczyt,2452,Tatry,49.141,20.112
+Babia Góra,1725,Beskid Żywiecki,49.410,-19.529
+Śnieżka,1603,Karkonosze,50.744,15.744
+Śnieżnik,1426,Masyw Śnieżnika,50.207,16.804
+Tarnica,1346,Bieszczady,49.074,22.733
+Turbacz,1310,Gorce,49.883,20.200
+Radziejowa,1262,Beskid Sądecki,49.449,20.605
+Skrzyczne,1257,Beskid Śląski,49.684,19.030
+Mogielica,1171,Beskid Wyspowy,49.654,20.278
+Wysoka Kopa,1126,Góry Izerskie,50.847,15.432
+Rudawiec,1112,Góry Bialskie,50.246,16.973
+Orlica,1084,Góry Orlickie,50.351,16.345
+Wysoka,1050,Pieniny,49.380,20.555
+Wielka Sowa,1015,Góry Sowie,50.676,16.484
+Lackowa,997,Beskid Niski,49.433,21.105
+Kowadło,989,Góry Złote,50.258,17.009
+Jagodna,977,Góry Bystrzyckie,50.255,16.579
+Skalnik,945,Rudawy Janowickie,50.803,15.894
+Waligóra,936,Góry Kamienne,50.678,16.274
+Czupel,933,Beskid Mały,49.788,19.173
+Szczeliniec Wielki,919,Góry Stołowe,50.484,16.336
+Lubomir,904,Beskid Makowski,49.762,20.069
+Biskupia Kopa,889,Góry Opawskie,50.253,17.422
+Chełmiec,851,Sudety Wałbrzyskie,50.774,16.210
+Kłodzka Góra,765,Góry Bardzkie,50.453,16.758
+Skopiec,724,Góry Kaczawskie,50.935,15.886
+Ślęża,718,Masyw Ślęży,50.861,16.710
+Łysica,614,Góry Świętokrzyskie,50.883,20.900

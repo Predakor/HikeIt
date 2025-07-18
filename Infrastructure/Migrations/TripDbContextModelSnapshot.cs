@@ -193,6 +193,21 @@ namespace Infrastructure.Migrations
                         {
                             Id = 25,
                             Name = "Sudety Wałbrzyskie"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Name = "Góry Kaczawskie"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Name = "Góry Kamienne"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Name = "Masyw Ślęży"
                         });
                 });
 

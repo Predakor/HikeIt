@@ -9,7 +9,7 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -387,7 +387,10 @@ namespace Infrastructure.Migrations
                     { 22, "Karkonosze" },
                     { 23, "Góry Izerskie" },
                     { 24, "Rudawy Janowickie" },
-                    { 25, "Sudety Wałbrzyskie" }
+                    { 25, "Sudety Wałbrzyskie" },
+                    { 26, "Góry Kaczawskie" },
+                    { 27, "Góry Kamienne" },
+                    { 28, "Masyw Ślęży" }
                 });
 
             migrationBuilder.CreateIndex(

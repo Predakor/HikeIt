@@ -13,8 +13,8 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250717191142_Init")]
-    partial class Init
+    [Migration("20250718112320_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -196,6 +196,21 @@ namespace Infrastructure.Migrations
                         {
                             Id = 25,
                             Name = "Sudety Wałbrzyskie"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Name = "Góry Kaczawskie"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Name = "Góry Kamienne"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Name = "Masyw Ślęży"
                         });
                 });
 

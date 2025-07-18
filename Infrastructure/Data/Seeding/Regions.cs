@@ -30,6 +30,11 @@ internal static partial class DataSeed {
         new() { Id = 23, Name = "Góry Izerskie" },
         new() { Id = 24, Name = "Rudawy Janowickie" },
         new() { Id = 25, Name = "Sudety Wałbrzyskie" },
+        new() { Id = 26, Name = "Góry Kaczawskie" },
+        new() { Id = 27, Name = "Góry Kamienne" },
+        new() { Id = 28, Name = "Masyw Ślęży" },
+
+
     ];
 
 }

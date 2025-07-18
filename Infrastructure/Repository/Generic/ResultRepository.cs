@@ -1,5 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
+using Domain.Common.Rules;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -22,8 +23,20 @@ public abstract class ResultRepository<T, TKey>
         throw new NotImplementedException();
     }
 
-    public virtual Task<Result<T?>> GetByIdAsync(TKey id) {
-        throw new NotImplementedException();
+    public virtual async Task<Result<T>> GetByIdAsync(TKey id) {
+        var nullOrDefault = new NotNullOrDefault<TKey>(id, "id").Check();
+        if (nullOrDefault.HasErrors(out var err)) {
+            return Result<T>.Failure(err);
+        }
+
+        var res = await DbSet.FindAsync(id);
+
+        if (res is null) {
+            return Errors.NotFound(id?.ToString() ?? "");
+        }
+
+        return res;
+
     }
 }
 
