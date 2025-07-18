@@ -13,11 +13,18 @@ public class PeakMapper : IEntityDtoMapper<Peak, PeakDto> {
         return new PeakDto.Simple(entity.Height, entity.Name, 1);
     }
 
-    public PeakDto.Complete MapToCompleteDto(Peak entity) {
-        RegionDto.Complete regionDto = (RegionDto.Complete)new RegionMapper().MapToDto(entity.Region);
+    public static PeakDto.Complete MapToCompleteDto(Peak entity) {
+        RegionDto.Complete regionDto = (RegionDto.Complete)RegionMapper.MapToDto(entity.Region);
 
         return new PeakDto.Complete(entity.Height, entity.Name, regionDto);
     }
 
-
+    public static PeakDto.WithLocation ToWithLocation(Peak peak) {
+        return new PeakDto.WithLocation(
+            peak.Height,
+            peak.Name ?? "",
+            peak.Location.Y,
+            peak.Location.X
+        );
+    }
 }

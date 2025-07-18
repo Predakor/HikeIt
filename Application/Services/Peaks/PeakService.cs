@@ -14,14 +14,14 @@ public class PeakService(IPeakRepository repo, PeakMapper peakMapper) : IPeakSer
 
     public async Task<IEnumerable<PeakDto.Complete>> GetAllPeaksAsync() {
         var peaks = await _repo.GetAllAsync();
-        return peaks.Select(_peakMapper.MapToCompleteDto);
+        return peaks.Select(PeakMapper.MapToCompleteDto);
     }
 
     public async Task<PeakDto.Complete?> GetPeakByIdAsync(int id) {
         var peak = await _repo.GetByIdAsync(id);
         if (peak == null)
             return null;
-        return _peakMapper.MapToCompleteDto(peak);
+        return PeakMapper.MapToCompleteDto(peak);
     }
 
     public async Task<Result<List<PeakDto.Reached>>> GetMatchingPeaks(IEnumerable<GpxPoint> points) {
@@ -48,7 +48,7 @@ public class PeakService(IPeakRepository repo, PeakMapper peakMapper) : IPeakSer
 internal static class PeakExtentions {
     public static Point ToGpxPoint(this GpxPoint point) {
         var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-        var gpxLocation = geometryFactory.CreatePoint(new Coordinate(point.Lat, point.Lon));
+        var gpxLocation = geometryFactory.CreatePoint(new Coordinate(point.Lon, point.Lat));
         return gpxLocation;
     }
 

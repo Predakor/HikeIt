@@ -1,19 +1,18 @@
 ﻿using Application.Dto;
-using Application.Mappers.Interfaces;
 using Domain.Entiites.Regions;
 
 namespace Application.Mappers.Implementations;
 
-public class RegionMapper : IEntityDtoMapper<Region, RegionDto> {
-    public RegionDto MapToDto(Region entity) {
+public class RegionMapper {
+    public static RegionDto MapToDto(Region entity) {
         return new RegionDto.Complete(entity.Id, entity.Name);
     }
-    public RegionDto.Complete MapToCompleteDto(Region entity) {
+    public static RegionDto.Complete MapToCompleteDto(Region entity) {
         return new RegionDto.Complete(entity.Id, entity.Name);
 
     }
 
-    public Region MapToEntity(RegionDto dto) {
+    public static Region MapToEntity(RegionDto dto) {
         return dto switch {
             RegionDto.Basic regionDto => new() { Name = regionDto.Name },
             RegionDto.Complete regionDto => new() { Id = regionDto.Id, Name = regionDto.Name, },

@@ -101,7 +101,10 @@ public class TripAnalyticService(
         return await FindLocalMaximasCommand
             .Create(data)
             .Execute()
-            .BindAsync(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 200f))
+            .BindAsync(localMaximas => {
+                Console.WriteLine(localMaximas);
+                return _peakService.GetPeaksWithinRadius(localMaximas, 2000f);
+            })
             .BindAsync(foundPeaks =>
                 _reachedPeakService.ToReachedPeaks(foundPeaks, tripId, user.Id)
             )

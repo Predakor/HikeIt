@@ -15,12 +15,11 @@ public abstract class ResultRepository<T, TKey>
         : base(context) { }
 
     public virtual async Task<Result<IEnumerable<T>>> GetAllAsync() {
-        var query = DbSet;
-        if (!query.Any()) {
-            return Result<IEnumerable<T>>.Failure(Errors.EmptyCollection(DbSet.ToQueryString()));
+        var query = await DbSet.ToListAsync();
+        if (query.Count == 0) {
+            return Errors.EmptyCollection(DbSet.ToQueryString());
         }
-
-        throw new NotImplementedException();
+        return query;
     }
 
     public virtual async Task<Result<T>> GetByIdAsync(TKey id) {
@@ -36,7 +35,6 @@ public abstract class ResultRepository<T, TKey>
         }
 
         return res;
-
     }
 }
 

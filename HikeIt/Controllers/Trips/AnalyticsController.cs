@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.Trips;
 
-[Route("api/trips/")]
+[Route("api/trips/{id}/")]
 [ApiController]
 public class AnalyticsController : ControllerBase {
     readonly ITripAnalyticService _service;
@@ -29,7 +29,7 @@ public class AnalyticsController : ControllerBase {
         _authService = authService;
     }
 
-    [HttpGet("{id}/analytics")]
+    [HttpGet("analytics")]
     public async Task<IActionResult> GetAnalytics(Guid id) {
         return await _authService
             .Me()
@@ -37,7 +37,7 @@ public class AnalyticsController : ControllerBase {
             .ToActionResultAsync();
     }
 
-    [HttpGet("{id}/analytics/elevation")]
+    [HttpGet("analytics/elevation")]
     public async Task<ActionResult<ElevationProfileDto>> GetElevationProfile(Guid id) {
         var query = await _service.GetElevationProfile(id);
 
@@ -59,7 +59,7 @@ public class AnalyticsController : ControllerBase {
         return Ok(new ElevationProfileDto(query.Start, gains));
     }
 
-    [HttpPost("{id}/analytics/elevations/preview")]
+    [HttpPost("analytics/elevations/preview")]
     public async Task<ActionResult<ElevationProfileDto?>> DevAnalyticPreview(
         Guid id,
         [FromBody] ConfigBase.Nullable config
