@@ -10,9 +10,11 @@ namespace Infrastructure.TripAnalytics.Queries;
 
 public class TripQueryService : ITripQueryService {
     readonly TripDbContext _context;
+    readonly DbSet<Trip> _trips;
 
     public TripQueryService(TripDbContext context) {
         _context = context;
+        _trips = context.Trips;
     }
 
     public Task<Result<TripDto.WithBasicAnalytics>> GetWithBasicAnalytics(Guid id, Guid userId) {
@@ -20,8 +22,9 @@ public class TripQueryService : ITripQueryService {
     }
 
     public async Task<Result<List<TripDto.Summary>>> GetAllAsync(Guid userId) {
-        var trips = await _context
-            .Trips.Where(t => t.UserId == userId)
+        var trips = await _trips
+            .AsNoTracking()
+            .Where(t => t.UserId == userId)
             .Include(t => t.Region)
             .ToListAsync();
 
@@ -32,8 +35,9 @@ public class TripQueryService : ITripQueryService {
     }
 
     public async Task<Result<TripDto.Partial>> GetByIdAsync(Guid id, Guid userId) {
-        var query = await _context
-            .Trips.Where(t => t.UserId == userId)
+        var query = await _trips
+            .AsNoTracking()
+            .Where(t => t.UserId == userId)
             .FirstOrDefaultAsync(t => t.Id == id);
 
         if (query == null) {

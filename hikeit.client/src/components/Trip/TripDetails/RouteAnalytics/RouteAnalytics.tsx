@@ -1,7 +1,15 @@
+import { ObjectToArray } from "@/Utils/ObjectToArray";
+import RowStat from "@/components/Stats/RowStat";
 import type { TripAnalytic } from "@/types/ApiTypes/TripDtos";
+import { SimpleGrid } from "@chakra-ui/react/grid";
 
 export default function RouteAnalytics({ data }: { data: TripAnalytic }) {
-  console.log(data);
-
-  return "WIP";
+  const entries = ObjectToArray(data);
+  return (
+    <SimpleGrid columns={{ base: 1, lg: 3 }} gapY={8}>
+      {entries.map(([name, value]) => (
+        <RowStat value={value} label={name} />
+      ))}
+    </SimpleGrid>
+  );
 }

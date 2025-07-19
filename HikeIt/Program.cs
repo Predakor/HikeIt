@@ -7,6 +7,16 @@ using Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder
+    .Configuration.SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", true)
+    .AddEnvironmentVariables();
+
+
+if (builder.Environment.IsDevelopment()) {
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -31,7 +41,6 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseCors(corsConfig.Name);
-
 
 app.UseHttpsRedirection();
 
