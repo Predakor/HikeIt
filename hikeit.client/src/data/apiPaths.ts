@@ -3,4 +3,4 @@ const config = {
   apiPrefix: import.meta.env.VITE_API_PREFIX,
 };
 
-export const apiPath = `${config.originPath + config.apiPrefix}/`;
+export const apiPath = `${config.originPath}/${config.apiPrefix}/`;

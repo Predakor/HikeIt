@@ -2,6 +2,8 @@ import { apiPath } from "@/data/apiPaths";
 
 export type ResponseResolver<T> = (reponse: Response) => Promise<T>;
 
+console.log(apiPath);
+
 async function apiClient<T>(
   path: string,
   options: RequestInit = {},
