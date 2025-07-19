@@ -13,6 +13,7 @@ builder
     .AddEnvironmentVariables();
 
 
+
 if (builder.Environment.IsDevelopment()) {
     builder.Configuration.AddUserSecrets<Program>();
 }
@@ -20,7 +21,9 @@ if (builder.Environment.IsDevelopment()) {
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddDatabase(builder.Configuration.GetConnectionString("TripDbCS"));
+var dbString = builder.Configuration.GetConnectionString("TripDbCS");
+
+builder.Services.AddDatabase(dbString, builder.Environment.IsProduction());
 
 builder.InjectSwagger();
 builder.InjectIdentity();
