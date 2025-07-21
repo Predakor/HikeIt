@@ -26,18 +26,6 @@ jobs:
       run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-    - name: Install EF Core CLI tools
-      run: dotnet tool install --global dotnet-ef
-    - name: Add dotnet tools to PATH
-      run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-    - name: Run EF Core Migrations
-      shell: bash
-      env:
-        ASPNETCORE_ENVIRONMENT: Production
-        ConnectionStrings__DefaultConnection: ${{ secrets.SUPABASE_CONNECTION_STRING }}
-      run: |
-        echo "Running migrations with connection string: ${ConnectionStrings__DefaultConnection:0:30}..."
-        dotnet ef database update --project ./Infrastructure --connection "$ConnectionStrings__DefaultConnection"
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
