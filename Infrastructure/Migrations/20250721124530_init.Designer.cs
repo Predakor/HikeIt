@@ -13,7 +13,7 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250718112320_init")]
+    [Migration("20250721124530_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -348,7 +348,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PeaksAnalytic");
+                    b.ToTable("PeaksAnalytics");
                 });
 
             modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
@@ -644,7 +644,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("PeaksAnalyticId");
 
-                            b1.ToTable("PeaksAnalytic");
+                            b1.ToTable("PeaksAnalytics");
 
                             b1.WithOwner()
                                 .HasForeignKey("PeaksAnalyticId");

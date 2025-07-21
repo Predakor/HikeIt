@@ -341,7 +341,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PeaksAnalytic",
+                name: "PeaksAnalytics",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -349,9 +349,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PeaksAnalytic", x => x.Id);
+                    table.PrimaryKey("PK_PeaksAnalytics", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PeaksAnalytic_TripAnalytics_Id",
+                        name: "FK_PeaksAnalytics_TripAnalytics_Id",
                         column: x => x.Id,
                         principalTable: "TripAnalytics",
                         principalColumn: "Id",
@@ -494,7 +494,7 @@ namespace Infrastructure.Migrations
                 name: "GpxFiles");
 
             migrationBuilder.DropTable(
-                name: "PeaksAnalytic");
+                name: "PeaksAnalytics");
 
             migrationBuilder.DropTable(
                 name: "ReachedPeaks");
