@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Api.DI;
 
-public static partial class DIextentions {
+internal static partial class DIextentions {
     public static WebApplicationBuilder InjectIdentity(this WebApplicationBuilder builder) {
         builder
             .Services.AddIdentity<User, IdentityRole<Guid>>(options => {

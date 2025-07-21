@@ -10,12 +10,17 @@ public static class ServiceCollectionExtensions {
         string connectionString,
         bool isProduction
     ) {
+        Console.WriteLine(connectionString);
+
         services.AddDbContext<TripDbContext>(options => {
             if (isProduction) {
                 options.UseNpgsql(connectionString, x => x.UseNetTopologySuite());
             }
             else {
-                options.UseSqlServer(connectionString, x => x.UseNetTopologySuite());
+                options.UseSqlServer(
+                    "Server=localhost\\sqlexpress;Database=hikeit;Trusted_Connection=True;TrustServerCertificate=True;",
+                    x => x.UseNetTopologySuite()
+                );
             }
         });
 

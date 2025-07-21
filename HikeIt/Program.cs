@@ -1,35 +1,31 @@
 using Api.Configuration.Cors.Factories;
 using Api.Configuration.Cors.Models;
 using Api.DI;
-using Api.Endpoints;
 using Infrastructure;
 using Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder
-    .Configuration.SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", true)
-    .AddEnvironmentVariables();
-
-
-
-if (builder.Environment.IsDevelopment()) {
-    builder.Configuration.AddUserSecrets<Program>();
-}
+builder.InjectAppConfig();
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-var dbString = builder.Configuration.GetConnectionString("TripDbCS");
+var dbString =
+    builder.Configuration.GetConnectionString("TripDbCS")
+    ?? throw new Exception("DbConnectionString is empty or null");
 
 builder.Services.AddDatabase(dbString, builder.Environment.IsProduction());
+
+
 
 builder.InjectSwagger();
 builder.InjectIdentity();
 builder.InjectServices();
 
 var corsConfig = ConfigureCors(builder);
+
+
 
 var app = builder.Build();
 
@@ -50,16 +46,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-MapEndpoints(app);
+app.MapEndpoints();
 app.MapControllers();
 
 app.Run();
-
-static void MapEndpoints(WebApplication app) {
-    app.MapPeaksEndpoints();
-    app.MapRegionsEndpoints();
-    app.MapFilesEndpoints().RequireAuthorization();
-}
 
 static CorsConfig ConfigureCors(WebApplicationBuilder builder) {
     var corsConfig = CorsConfigFactory.Create(builder.Environment, builder.Configuration);

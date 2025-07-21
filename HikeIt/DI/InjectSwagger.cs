@@ -3,7 +3,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Api.DI;
 
-public static partial class DIextentions {
+internal static partial class DIextentions {
     public static WebApplicationBuilder InjectSwagger(this WebApplicationBuilder builder) {
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

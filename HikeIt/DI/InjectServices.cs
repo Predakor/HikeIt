@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Api.DI;
 
-public static partial class DIextentions {
+internal static partial class DIextentions {
     public static WebApplicationBuilder InjectServices(this WebApplicationBuilder builder) {
         var assemblies = new[] { "Application", "Infrastructure", "Domain", "Api" }
             .Select(Assembly.Load)
