@@ -29,7 +29,7 @@ jobs:
     - name: Run EF Core Migrations
       env:
         ConnectionStrings__DefaultConnection: ${{ secrets.SUPABASE_CONNECTION_STRING }}
-      run: dotnet ef database update --project ./Infra --connection "$ConnectionStrings__DefaultConnection"
+      run: dotnet ef database update --project ./Infrastructure --connection "$ConnectionStrings__DefaultConnection"
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
