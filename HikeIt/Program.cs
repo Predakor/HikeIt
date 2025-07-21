@@ -8,16 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.InjectAppConfig();
 
-// Add services to the container.
-builder.Services.AddControllers();
-
 var dbString =
     builder.Configuration.GetConnectionString("TripDbCS")
     ?? throw new Exception("DbConnectionString is empty or null");
 
-builder.Services.AddDatabase(dbString, builder.Environment.IsProduction());
-
-
+builder.Services.AddDatabase(dbString);
+builder.Services.AddControllers();
 
 builder.InjectSwagger();
 builder.InjectIdentity();
@@ -25,11 +21,11 @@ builder.InjectServices();
 
 var corsConfig = ConfigureCors(builder);
 
-
-
 var app = builder.Build();
 
 await MigrationHelper.MigrateDatabaseAsync(app.Services);
+
+Console.WriteLine($"Current Directory in api: {Directory.GetCurrentDirectory()}");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
