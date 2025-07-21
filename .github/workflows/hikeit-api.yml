@@ -34,7 +34,9 @@ jobs:
       shell: bash
       env:
         ConnectionStrings__DefaultConnection: ${{ secrets.SUPABASE_CONNECTION_STRING }}
-      run: dotnet ef database update --project ./Infrastructure --connection "$ConnectionStrings__DefaultConnection"
+      run: |
+        echo "Running migrations with connection string: ${ConnectionStrings__DefaultConnection:0:30}..."
+        dotnet ef database update --project ./Infrastructure --connection "$ConnectionStrings__DefaultConnection
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
