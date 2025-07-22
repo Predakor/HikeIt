@@ -12,7 +12,7 @@ var dbString =
     builder.Configuration.GetConnectionString("TripDbCS")
     ?? throw new Exception("DbConnectionString is empty or null");
 
-builder.Services.AddDatabase(dbString);
+builder.Services.AddDatabase(dbString, builder.Environment.IsDevelopment());
 builder.Services.AddControllers();
 
 builder.InjectSwagger();
