@@ -1,5 +1,3 @@
-using Api.Configuration.Cors.Factories;
-using Api.Configuration.Cors.Models;
 using Api.DI;
 using Infrastructure.Data;
 using Infrastructure.DI;
@@ -19,8 +17,6 @@ builder.InjectSwagger();
 builder.InjectIdentity();
 builder.InjectServices();
 
-var corsConfig = ConfigureCors(builder);
-
 var app = builder.Build();
 
 await MigrationHelper.MigrateDatabaseAsync(app.Services);
@@ -33,9 +29,16 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI(c => {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "HikeIT Api v1");
     });
-    app.UseCors(corsConfig.Name);
-}
 
+    app.UseCors(policy => {
+        policy
+            .WithOrigins("http://localhost:54840")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithExposedHeaders("Location");
+    });
+}
 
 app.UseHttpsRedirection();
 
@@ -46,9 +49,3 @@ app.MapEndpoints();
 app.MapControllers();
 
 app.Run();
-
-static CorsConfig ConfigureCors(WebApplicationBuilder builder) {
-    var corsConfig = CorsConfigFactory.Create(builder.Environment, builder.Configuration);
-    CorsPolicyFactory.Create(corsConfig).ApplyCorsPolicy(builder.Services);
-    return corsConfig;
-}
