@@ -2,7 +2,7 @@
   "routes": [
     {
       "route": "/api/*",
-      "rewrite": "https://yourapi.azurewebsites.net/api/"
+      "rewrite": "https://hikeit-api-gjhhbtfsgrffguf9.westeurope-01.azurewebsites.net/api"
     }
   ],
 
