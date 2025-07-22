@@ -33,9 +33,9 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI(c => {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "HikeIT Api v1");
     });
+    app.UseCors(corsConfig.Name);
 }
 
-app.UseCors(corsConfig.Name);
 
 app.UseHttpsRedirection();
 

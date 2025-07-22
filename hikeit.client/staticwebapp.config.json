@@ -1,11 +1,4 @@
 {
-  "routes": [
-    {
-      "route": "/api/*",
-      "rewrite": "https://hikeit-api-gjhhbtfsgrffguf9.westeurope-01.azurewebsites.net/api"
-    }
-  ],
-
   "navigationFallback": {
     "rewrite": "index.html",
     "exclude": ["/api/*", "/assets/*", "/*.css", "/*.js", "/*.png", "/*.svg"]
