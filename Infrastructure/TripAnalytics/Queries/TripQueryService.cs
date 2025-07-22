@@ -29,7 +29,7 @@ public class TripQueryService : ITripQueryService {
             .ToListAsync();
 
         if (trips.Count == 0)
-            return Errors.NotFound("user has no trips");
+            return Errors.EmptyCollection("user has no trips");
 
         return trips.Select(q => q.ToSummaryDto()).ToList();
     }

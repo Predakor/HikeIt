@@ -10,7 +10,6 @@ public class AuthService : IAuthService {
     readonly UserManager<User> _userManager;
     readonly IHttpContextAccessor _httpContextAccessor;
 
-
     public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager) {
         _httpContextAccessor = httpContextAccessor;
         _userManager = userManager;
@@ -31,6 +30,23 @@ public class AuthService : IAuthService {
 
     }
 
+    //added for naming clarity
+    public async Task<Result<User>> WithLoggedUser() {
+        var cookieUser = _httpContextAccessor.HttpContext?.User;
+        if (cookieUser is null) {
+            return Errors.NotAuthorized();
+        }
+
+        var user = await _userManager.GetUserAsync(cookieUser);
+        if (user is null) {
+            return Errors.NotAuthorized();
+        }
+
+        return user;
+    }
+
+
+
     public async Task<Result<User>> GetByLoginOrEmail(string loginOrEmail) {
         bool isEmail = loginOrEmail.Contains('@');
 
@@ -48,5 +64,6 @@ public class AuthService : IAuthService {
 
         return user;
     }
+
 
 }
