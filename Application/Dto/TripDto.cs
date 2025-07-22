@@ -1,5 +1,5 @@
 ﻿using Application.Dto.Analytics;
-using Domain.Entiites.Regions;
+using Domain.Mountains.Regions;
 using Domain.TripAnalytics;
 using Domain.Trips.Entities.GpxFiles;
 

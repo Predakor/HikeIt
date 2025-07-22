@@ -2,8 +2,8 @@
 
 namespace Infrastructure.Data.EntitiesConfigurations;
 
-internal static class ConfigureTripsAggregate {
-    public static ModelBuilder Configure(ModelBuilder modelBuilder) {
+internal static class TripsAggregateConfiguration {
+    public static ModelBuilder Apply(ModelBuilder modelBuilder) {
         modelBuilder
             .ApplyConfiguration(new GpxFileConfiguration())
             .ApplyConfiguration(new TripConfiguration())

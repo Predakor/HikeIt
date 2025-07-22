@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250721202950_init")]
+    [Migration("20250722182257_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -26,194 +26,6 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Domain.Entiites.Peaks.Peak", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Height")
-                        .HasColumnType("integer");
-
-                    b.Property<Point>("Location")
-                        .IsRequired()
-                        .HasColumnType("geometry");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("RegionID")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RegionID");
-
-                    b.ToTable("Peaks");
-                });
-
-            modelBuilder.Entity("Domain.Entiites.Regions.Region", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Regions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Tatry"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Pieniny"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Beskid Śląski"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Beskid Żywiecki"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Beskid Mały"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Beskid Makowski"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Beskid Wyspowy"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "Gorce"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Beskid Sądecki"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Beskid Niski"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Name = "Bieszczady"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Name = "Góry Świętokrzyskie"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Name = "Góry Sowie"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Name = "Góry Stołowe"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Name = "Góry Bystrzyckie"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Name = "Góry Orlickie"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            Name = "Góry Bialskie"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            Name = "Góry Złote"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            Name = "Góry Opawskie"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            Name = "Góry Bardzkie"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Name = "Masyw Śnieżnika"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            Name = "Karkonosze"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Name = "Góry Izerskie"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Name = "Rudawy Janowickie"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            Name = "Sudety Wałbrzyskie"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            Name = "Góry Kaczawskie"
-                        },
-                        new
-                        {
-                            Id = 27,
-                            Name = "Góry Kamienne"
-                        },
-                        new
-                        {
-                            Id = 28,
-                            Name = "Masyw Ślęży"
-                        });
-                });
 
             modelBuilder.Entity("Domain.Entiites.Users.User", b =>
                 {
@@ -292,6 +104,53 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Mountains.Peaks.Peak", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Height")
+                        .HasColumnType("integer");
+
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geography (Point, 4326)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RegionID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegionID");
+
+                    b.ToTable("Peaks");
+                });
+
+            modelBuilder.Entity("Domain.Mountains.Regions.Region", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("Domain.ReachedPeaks.ReachedPeak", b =>
@@ -552,9 +411,9 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entiites.Peaks.Peak", b =>
+            modelBuilder.Entity("Domain.Mountains.Peaks.Peak", b =>
                 {
-                    b.HasOne("Domain.Entiites.Regions.Region", "Region")
+                    b.HasOne("Domain.Mountains.Regions.Region", "Region")
                         .WithMany()
                         .HasForeignKey("RegionID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -565,7 +424,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.ReachedPeaks.ReachedPeak", b =>
                 {
-                    b.HasOne("Domain.Entiites.Peaks.Peak", "Peak")
+                    b.HasOne("Domain.Mountains.Peaks.Peak", "Peak")
                         .WithMany()
                         .HasForeignKey("PeakId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -756,11 +615,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Trips.Trip", b =>
                 {
-                    b.HasOne("Domain.Entiites.Peaks.Peak", "Target")
+                    b.HasOne("Domain.Mountains.Peaks.Peak", "Target")
                         .WithMany()
                         .HasForeignKey("PeakId");
 
-                    b.HasOne("Domain.Entiites.Regions.Region", "Region")
+                    b.HasOne("Domain.Mountains.Regions.Region", "Region")
                         .WithMany()
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.NoAction)

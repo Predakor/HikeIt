@@ -1,14 +1,13 @@
-﻿using Domain.Entiites.Peaks;
-using Domain.Entiites.Regions;
-using Domain.Entiites.Users;
+﻿using Domain.Entiites.Users;
+using Domain.Mountains.Peaks;
+using Domain.Mountains.Regions;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
-using Infrastructure.Data.EntitiesConfigurations;
-using Infrastructure.Data.Seeding;
+using Infrastructure.DI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -31,14 +30,7 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Region>().HasData(DataSeed.Regions);
-
-        modelBuilder.Entity<Peak>(entity => {
-            entity.Property(e => e.Location).HasColumnType("geography (Point, 4326)");
-            entity.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);
-        });
-
-        ConfigureTripsAggregate.Configure(modelBuilder);
+        modelBuilder.ApplyAggregatesConfigurations();
         modelBuilder.AllEntitiesToUtcTimes();
     }
 }

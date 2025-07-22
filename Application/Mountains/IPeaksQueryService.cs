@@ -1,9 +1,9 @@
 ﻿using Application.Dto;
 using Domain.Common.Result;
-using Domain.Entiites.Peaks;
+using Domain.Mountains.Peaks;
 using Domain.Trips.ValueObjects;
 
-namespace Application.Peaks;
+namespace Application.Mountains;
 
 public interface IPeaksQueryService {
     Task<Result<PeakDto.Complete>> GetByIdAsync(int id);

@@ -1,7 +1,6 @@
 ﻿using Api.Extentions;
-using Application.Services.Regions;
+using Application.Mountains;
 using Domain.Common.Result;
-using Domain.Entiites.Regions;
 
 namespace Api.Endpoints;
 
@@ -16,22 +15,18 @@ public static class RegionsEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAllFromRegion(
-        IRegionRepository repository,
-        IRegionService service,
-        int id
-    ) {
-        return await repository
-            .GetByIdAsync(id)
-            .BindAsync(service.GetAllFromRegion)
+    static async Task<IResult> GetAllFromRegion(IRegionQueryService queries, int id) {
+        return await queries
+            .GetById(id)
+            .BindAsync(queries.AllPeaksFromRegion)
             .ToApiResultAsync();
     }
 
-    static async Task<IResult> GetAll(IRegionService service) {
+    static async Task<IResult> GetAll(IRegionQueryService service) {
         return await service.GetAllAsync().ToApiResultAsync();
     }
 
-    static async Task<IResult> GetById(IRegionService service, int id) {
-        return await service.GetAsync(id).ToApiResultAsync();
+    static async Task<IResult> GetById(IRegionQueryService service, int id) {
+        return await service.GetById(id).ToApiResultAsync();
     }
 }

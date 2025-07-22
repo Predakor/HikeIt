@@ -5,8 +5,6 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -187,8 +185,8 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Height = table.Column<int>(type: "integer", nullable: false),
-                    Location = table.Column<Point>(type: "geometry", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
+                    Location = table.Column<Point>(type: "geography (Point, 4326)", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     RegionID = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -360,41 +358,6 @@ namespace Infrastructure.Migrations
                         principalTable: "TripAnalytics",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Regions",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Tatry" },
-                    { 2, "Pieniny" },
-                    { 3, "Beskid Śląski" },
-                    { 4, "Beskid Żywiecki" },
-                    { 5, "Beskid Mały" },
-                    { 6, "Beskid Makowski" },
-                    { 7, "Beskid Wyspowy" },
-                    { 8, "Gorce" },
-                    { 9, "Beskid Sądecki" },
-                    { 10, "Beskid Niski" },
-                    { 11, "Bieszczady" },
-                    { 12, "Góry Świętokrzyskie" },
-                    { 13, "Góry Sowie" },
-                    { 14, "Góry Stołowe" },
-                    { 15, "Góry Bystrzyckie" },
-                    { 16, "Góry Orlickie" },
-                    { 17, "Góry Bialskie" },
-                    { 18, "Góry Złote" },
-                    { 19, "Góry Opawskie" },
-                    { 20, "Góry Bardzkie" },
-                    { 21, "Masyw Śnieżnika" },
-                    { 22, "Karkonosze" },
-                    { 23, "Góry Izerskie" },
-                    { 24, "Rudawy Janowickie" },
-                    { 25, "Sudety Wałbrzyskie" },
-                    { 26, "Góry Kaczawskie" },
-                    { 27, "Góry Kamienne" },
-                    { 28, "Masyw Ślęży" }
                 });
 
             migrationBuilder.CreateIndex(

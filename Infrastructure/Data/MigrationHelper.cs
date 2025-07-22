@@ -16,9 +16,7 @@ public static class MigrationHelper {
         try {
             var context = scopedServices.GetRequiredService<TripDbContext>();
             await context.Database.MigrateAsync();
-
-            var seeder = new Seeder();
-            seeder.InsertMountainPeaks(context, csvPath);
+            await new DataSeeder(context).TrySeeding();
         }
         catch (Exception ex) {
             Console.WriteLine($"Migration error: {ex}");

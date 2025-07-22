@@ -1,4 +1,4 @@
-﻿using Application.Peaks;
+﻿using Application.Mountains;
 using Application.TripAnalytics.Interfaces;
 using Application.TripAnalytics.Services;
 using Application.Trips;

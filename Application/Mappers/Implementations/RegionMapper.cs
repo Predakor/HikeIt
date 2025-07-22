@@ -1,5 +1,5 @@
 ﻿using Application.Dto;
-using Domain.Entiites.Regions;
+using Domain.Mountains.Regions;
 
 namespace Application.Mappers.Implementations;
 

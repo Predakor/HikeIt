@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Data.Seeding;
 
-using Domain.Entiites.Regions;
+using Domain.Mountains.Regions;
 
 internal static partial class DataSeed {
     public static readonly Region[] Regions =
@@ -33,8 +33,5 @@ internal static partial class DataSeed {
         new() { Id = 26, Name = "Góry Kaczawskie" },
         new() { Id = 27, Name = "Góry Kamienne" },
         new() { Id = 28, Name = "Masyw Ślęży" },
-
-
     ];
-
 }

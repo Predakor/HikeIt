@@ -1,6 +1,6 @@
 ﻿using Application.Dto;
 using Application.Mappers.Interfaces;
-using Domain.Entiites.Peaks;
+using Domain.Mountains.Peaks;
 
 namespace Application.Mappers.Implementations;
 

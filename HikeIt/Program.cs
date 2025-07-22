@@ -1,8 +1,8 @@
 using Api.Configuration.Cors.Factories;
 using Api.Configuration.Cors.Models;
 using Api.DI;
-using Infrastructure;
 using Infrastructure.Data;
+using Infrastructure.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 

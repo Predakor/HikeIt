@@ -1,9 +1,9 @@
 ﻿using Application.Dto;
 using Application.Mappers.Implementations;
-using Application.Peaks;
+using Application.Mountains;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Entiites.Peaks;
+using Domain.Mountains.Peaks;
 using Domain.Trips.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Peaks.Extentions;

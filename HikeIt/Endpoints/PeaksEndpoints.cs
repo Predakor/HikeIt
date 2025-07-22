@@ -1,5 +1,5 @@
 ﻿using Api.Extentions;
-using Application.Peaks;
+using Application.Mountains;
 
 namespace Api.Endpoints;
 
