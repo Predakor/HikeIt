@@ -18,6 +18,11 @@ internal static partial class DIextentions {
         builder.Services.ConfigureApplicationCookie(options => {
             options.LoginPath = "/auth/login";
             options.Cookie.Name = "HikeItAuth";
+
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.SameSite = SameSiteMode.None;
+            options.Cookie.HttpOnly = true;
+
             options.ExpireTimeSpan = TimeSpan.FromDays(1);
 
             options.Events.OnRedirectToLogin = ctx => {
