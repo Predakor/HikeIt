@@ -10,7 +10,7 @@ public class ElevationProfile : IEntity<Guid> {
     public required byte[] GainsData { get; init; }
 
     public static ElevationProfile Create(Guid id, GpxPoint start, ICollection<GpxGain> gains) {
-        var bytes = ScaledGainSerializer.Serialize(gains.ToArray());
+        var bytes = ScaledGainSerializer.Serialize([.. gains]);
 
         return new() {
             Id = id,

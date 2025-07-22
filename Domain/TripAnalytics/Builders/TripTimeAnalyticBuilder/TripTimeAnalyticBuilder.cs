@@ -22,7 +22,7 @@ public static class TimeAnalyticsDirector {
     static readonly TimeAnalyticConfig defaultConfig = new() {
         AscentTreshold = 0.1d,
         DescentTreshold = -0.2d,
-        IdleSpeedTreshold = 0.2d,
+        IdleSpeedTreshold = 0.02d,
     };
 
     public static TimeAnalytic Create(TimeAnalyticData data, TimeAnalyticConfig? config = null) {
@@ -32,6 +32,7 @@ public static class TimeAnalyticsDirector {
             .WithTimeFrame(data.TimeFrame.Start, data.TimeFrame.End)
             .WithAscentTime()
             .WithDescentTime()
+            .WithActivityTime()
             .WithClimbSpeeds(data.Analytics)
             .Build();
     }
@@ -62,8 +63,8 @@ internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig
     #endregion
 
     public TripTimeAnalyticBuilder WithTimeFrame(DateTime start, DateTime end) {
-        StartTime = start;
-        EndTime = end;
+        StartTime = start.ToUniversalTime();
+        EndTime = end.ToUniversalTime();
         Duration = EndTime - StartTime;
         return this;
     }

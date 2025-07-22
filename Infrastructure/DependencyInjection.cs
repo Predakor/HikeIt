@@ -12,7 +12,10 @@ public static class ServiceCollectionExtensions {
         Console.WriteLine("Db connection string in production: " + connectionString);
 
         services.AddDbContext<TripDbContext>(options => {
-            options.UseNpgsql(connectionString, x => x.UseNetTopologySuite());
+            options
+                .UseNpgsql(connectionString, x => x.UseNetTopologySuite())
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
         });
 
         return services;

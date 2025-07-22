@@ -28,17 +28,22 @@ public class ReachedPeak : IEntity<Guid> {
         Guid UserId,
         DateTime? reachTime = null
     ) {
-        return new ReachedPeak {
+        var reachedPeak = new ReachedPeak {
             Id = Guid.NewGuid(),
             TripId = TripId,
             UserId = UserId,
             PeakId = PeakId,
-            TimeReached = reachTime,
         };
+
+        if (reachTime.HasValue) {
+            reachedPeak.AddReachTime(reachTime.Value);
+        }
+
+        return reachedPeak;
     }
 
     public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null) {
-        return new ReachedPeak {
+        var reachedPeak = new ReachedPeak() {
             Id = Guid.NewGuid(),
             PeakId = peak.Id,
             TripId = trip.Id,
@@ -46,11 +51,16 @@ public class ReachedPeak : IEntity<Guid> {
             Peak = peak,
             Trip = trip,
             User = user,
-            TimeReached = reachTime,
         };
+
+        if (reachTime.HasValue) {
+            reachedPeak.AddReachTime(reachTime.Value);
+        }
+
+        return reachedPeak;
     }
 
-    public Result<ReachedPeak> MarAsFirstTime(bool isFirstTime) {
+    public Result<ReachedPeak> MarkAsFirstTime(bool isFirstTime) {
         FirstTime = isFirstTime;
         return this;
     }
@@ -60,7 +70,7 @@ public class ReachedPeak : IEntity<Guid> {
         return rule.Check()
             .Match<Result<ReachedPeak>>(
                 ok => {
-                    TimeReached = time;
+                    TimeReached = time.ToUniversalTime();
                     return this;
                 },
                 error => error
@@ -72,7 +82,7 @@ public class ReachedPeak : IEntity<Guid> {
         public string Message => "Time is set to a future date please enter correct date";
 
         public Result<bool> Check() {
-            if (time <= DateTime.Now) {
+            if (time <= DateTime.UtcNow) {
                 return true;
             }
             return Errors.RuleViolation(this);

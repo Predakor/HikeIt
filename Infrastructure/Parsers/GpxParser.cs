@@ -5,7 +5,6 @@ using System.Xml.Linq;
 
 namespace Infrastructure.Parsers;
 
-
 public class GpxParser : IGpxParser {
     public async Task<AnalyticData> ParseAsync(Stream stream) {
         using var reader = new StreamReader(stream);
@@ -19,7 +18,7 @@ public class GpxParser : IGpxParser {
                 double.Parse(pt.Attribute("lat")?.Value ?? "0", CultureInfo.InvariantCulture),
                 double.Parse(pt.Attribute("lon")?.Value ?? "0", CultureInfo.InvariantCulture),
                 double.Parse(pt.Element(ns + "ele")?.Value ?? "0", CultureInfo.InvariantCulture),
-                DateTime.TryParse(pt.Element(ns + "time")?.Value, out var t) ? t : null
+                ParseUtc(pt.Element(ns + "time")?.Value)
             ))
             .ToList();
 
@@ -28,6 +27,17 @@ public class GpxParser : IGpxParser {
         }
 
         return new(result);
+    }
+
+    static DateTime? ParseUtc(string? input) {
+        return DateTime.TryParse(
+            input,
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+            out var parsed
+        )
+            ? parsed
+            : null;
     }
 
 }

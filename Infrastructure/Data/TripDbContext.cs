@@ -30,6 +30,7 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Region>().HasData(DataSeed.Regions);
 
         modelBuilder.Entity<Peak>(entity => {
@@ -37,5 +38,6 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
         });
 
         ConfigureTripsAggregate.Configure(modelBuilder);
+        modelBuilder.AllEntitiesToUtcTimes();
     }
 }

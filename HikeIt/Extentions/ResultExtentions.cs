@@ -68,6 +68,7 @@ internal static class ResultExtentions {
             ErrorCode.not_authorized => factory.Unauthorized(),
             ErrorCode.not_found => factory.NotFound(payload),
             ErrorCode.db_error => factory.BadRequest(payload),
+            ErrorCode.empty_collection => factory.Ok(Array.Empty<object>()),
             _ => factory.BadRequest(payload),
         };
     }

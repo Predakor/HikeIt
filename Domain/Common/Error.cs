@@ -32,6 +32,7 @@ public enum ErrorCode {
     not_authorized,
     invalid_credentials,
     not_unique,
+    empty_collection
 }
 
 public abstract record Error(ErrorCode Code, string Message) {
@@ -44,7 +45,7 @@ public abstract record Error(ErrorCode Code, string Message) {
         : Error(ErrorCode.db_error, Detail);
 
     public sealed record EmptyCollection(string Context = "Collection")
-        : Error(ErrorCode.empty, $"{Context} is empty.");
+        : Error(ErrorCode.empty_collection, $"{Context} is empty.");
 
     public sealed record Unknown(string? Detail = null)
         : Error(ErrorCode.unknown, Detail ?? "Something went wrong.");
