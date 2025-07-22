@@ -1,9 +1,9 @@
-﻿using Application.Services.Peaks;
+﻿using Api.Extentions;
+using Application.Peaks;
 
 namespace Api.Endpoints;
 
 public static class PeaksEndpoints {
-
     public static RouteGroupBuilder MapPeaksEndpoints(this WebApplication app) {
         var group = app.MapGroup("api/peaks");
 
@@ -13,24 +13,11 @@ public static class PeaksEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAll(IPeakService service) {
-        var peaks = await service.GetAllPeaksAsync();
-        var peakList = peaks.ToList();
-
-        if (peakList.Count == 0) {
-            return Results.NotFound();
-        }
-
-        return Results.Ok(peakList);
+    static async Task<IResult> GetAll(IPeaksQueryService service) {
+        return await service.GetAllAsync().ToApiResultAsync();
     }
 
-    static async Task<IResult> GetById(int id, IPeakService service) {
-        var peakDto = await service.GetPeakByIdAsync(id);
-        if (peakDto == null) {
-            return Results.NotFound();
-        }
-
-        return Results.Ok(peakDto);
+    static async Task<IResult> GetById(int id, IPeaksQueryService service) {
+        return await service.GetByIdAsync(id).ToApiResultAsync();
     }
-
 }

@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Commons\" />
+    <Folder Include="Services\Peaks\" />
     <Folder Include="TripAnalytics\RouteAnalytic\" />
     <Folder Include="TripAnalytics\TimeAnalytic\" />
   </ItemGroup>

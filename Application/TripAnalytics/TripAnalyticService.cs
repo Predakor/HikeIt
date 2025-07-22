@@ -1,4 +1,4 @@
-﻿using Application.Services.Peaks;
+﻿using Application.Peaks;
 using Application.TripAnalytics.Interfaces;
 using Application.TripAnalytics.Services;
 using Application.Trips;
@@ -21,13 +21,15 @@ using Domain.Trips.ValueObjects;
 namespace Application.TripAnalytics;
 
 public class TripAnalyticService(
-    IPeakService peakService,
+    IPeaksQueryService peakRepository,
     ITripAnalyticUnitOfWork unitOfWork,
     IReachedPeakService reachedPeakService
 ) : ITripAnalyticService {
-    readonly IPeakService _peakService = peakService;
+    readonly IPeaksQueryService _peakRepository = peakRepository;
     readonly ITripAnalyticUnitOfWork _unitOfWork = unitOfWork;
     readonly IReachedPeakService _reachedPeakService = reachedPeakService;
+
+    static readonly float PeakProximityTreshold = 1000f;
 
     public async Task<Result<TripAnalytic>> GenerateAnalytic(CreateTripContext ctx) {
         var (points, gains) = ctx.AnalyticData;
@@ -69,7 +71,7 @@ public class TripAnalyticService(
     Result<TimeAnalytic> GenerateTimeAnalytics(RouteAnalytic analytics, List<GpxPoint> points) {
         var timeAnalytics = TimeAnalyticFactory.CreateAnalytics(new(analytics, points));
         if (timeAnalytics == null) {
-            return Errors.Unknown("Unsuficient data for time anlaytics");
+            return Errors.Unknown("insuficient data for time anlaytics");
         }
 
         return timeAnalytics;
@@ -79,7 +81,9 @@ public class TripAnalyticService(
         var potentialPeaks = FindLocalMaximasCommand.Create(ctx.AnalyticData).Execute();
 
         return await potentialPeaks
-            .BindAsync(localMaximas => _peakService.GetPeaksWithinRadius(localMaximas, 2000f))
+            .BindAsync(localMaximas =>
+                _peakRepository.GetPeaksWithinRadius(localMaximas, PeakProximityTreshold)
+            )
             .BindAsync(foundPeaks =>
                 _reachedPeakService.ToReachedPeaks(foundPeaks, ctx.Trip.Id, ctx.User.Id)
             )

@@ -13,8 +13,14 @@ public class ReachedPeakService : IReachedPeakService {
     }
 
     public Result<IList<ReachedPeak>> ToReachedPeaks(IEnumerable<Peak> peaks, Guid tripId, Guid userId) {
+
         if (!peaks.Any()) {
             return Errors.EmptyCollection("Peaks");
+        }
+        Console.WriteLine(peaks.Count());
+
+        foreach (var peak in peaks) {
+            Console.WriteLine(peak.Name);
         }
 
         return peaks.Select(p => ReachedPeak.Create(p.Id, tripId, userId)).ToList();

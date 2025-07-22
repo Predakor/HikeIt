@@ -34,6 +34,7 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
         modelBuilder.Entity<Region>().HasData(DataSeed.Regions);
 
         modelBuilder.Entity<Peak>(entity => {
+            entity.Property(e => e.Location).HasColumnType("geography (Point, 4326)");
             entity.HasOne(p => p.Region).WithMany().HasForeignKey(p => p.RegionID);
         });
 
