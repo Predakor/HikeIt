@@ -8,7 +8,7 @@ using Domain.Mountains.Regions;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Mountains;
+namespace Infrastructure.Aggregates.Mountains;
 
 public class RegionQueryService : IRegionQueryService {
     readonly TripDbContext _context;

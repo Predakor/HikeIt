@@ -4,7 +4,7 @@ using Domain.Users.ValueObjects;
 
 namespace Domain.Users.Entities;
 
-public class Stats : IEntity<Guid> {
+public class UserStats : IEntity<Guid> {
     public Guid Id { get; init; }
 
     //Totals
@@ -46,6 +46,14 @@ public class Stats : IEntity<Guid> {
         UpdateMetas(update.Metas);
     }
 
+    void UpdateTotals(StatsUpdates.Totals update, UpdateMode mode) {
+        TotalDistanceM = TotalDistanceM.SafeUpdate(update.DistanceMeters, mode);
+        TotalAscentMeters = TotalAscentMeters.SafeUpdate(update.AscentMeters, mode);
+        TotalDescentMeters = TotalDescentMeters.SafeUpdate(update.DescentMeters, mode);
+        TotalPeaks = TotalPeaks.SafeUpdate(update.Peaks, mode);
+        TotalDuration = TotalDuration.SafeUpdate(update.Duration, mode);
+    }
+
     public void UpdateMetas(StatsUpdates.Metas update) {
         if (FirstHikeDate == null || update.HikeDate < FirstHikeDate) {
             FirstHikeDate = update.HikeDate;
@@ -60,17 +68,8 @@ public class Stats : IEntity<Guid> {
         }
     }
 
-    void UpdateTotals(StatsUpdates.Totals update, UpdateMode mode) {
-        TotalDistanceM = TotalDistanceM.SafeUpdate(update.DistanceMeters, mode);
-        TotalAscentMeters = TotalAscentMeters.SafeUpdate(update.AscentMeters, mode);
-        TotalDescentMeters = TotalDescentMeters.SafeUpdate(update.DescentMeters, mode);
-        TotalPeaks = TotalPeaks.SafeUpdate(update.Peaks, mode);
-        TotalDuration = TotalDuration.SafeUpdate(update.Duration, mode);
-    }
-
     void UpdateLocations(StatsUpdates.Locations update) {
         UniquePeaks = UniquePeaks.SafeUpdate(update.UniquePeaks);
         RegionsVisited = RegionsVisited.SafeUpdate(update.NewRegions);
     }
 }
-

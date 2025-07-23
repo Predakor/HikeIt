@@ -2,7 +2,7 @@
 using Infrastructure.Data;
 using Infrastructure.Repository.Generic;
 
-namespace Infrastructure.Repository;
+namespace Infrastructure.Aggregates.Users;
 
 public class UserRepository : Repository<User, Guid>, IUserRepository {
     public UserRepository(TripDbContext context)

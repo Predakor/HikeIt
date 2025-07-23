@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Mountains.Configuration;
+namespace Infrastructure.Aggregates.Mountains.Configuration;
 
 internal class PeakConfiguration : IEntityTypeConfiguration<Peak> {
     public void Configure(EntityTypeBuilder<Peak> builder) {

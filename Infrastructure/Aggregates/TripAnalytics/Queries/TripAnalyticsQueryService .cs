@@ -7,12 +7,12 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using static Application.Dto.Analytics.TripAnalyticsDto;
 
-namespace Infrastructure.TripAnalytics.Queries;
+namespace Infrastructure.Aggregates.TripAnalytics.Queries;
 
 public class TripAnalyticsQueryService(TripDbContext context) : ITripAnalyticsQueryService {
     readonly TripDbContext _context = context;
 
-    public async Task<Result<TripAnalyticsDto.Full>> GetCompleteAnalytics(Guid id) {
+    public async Task<Result<Full>> GetCompleteAnalytics(Guid id) {
         var analytics = await _context
             .TripAnalytics.AsNoTracking()
             .Include(a => a.PeaksAnalytic)
@@ -34,13 +34,13 @@ public class TripAnalyticsQueryService(TripDbContext context) : ITripAnalyticsQu
         return MapToDto(analytics);
     }
 
-    public async Task<Result<TripAnalyticsDto.Basic>> GetBasicAnalytics(Guid tripId) {
+    public async Task<Result<Basic>> GetBasicAnalytics(Guid tripId) {
         var basePath = $"/api/trips/{tripId}/analytics";
 
         var dto = await _context
             .TripAnalytics.AsNoTracking()
             .Where(t => t.Id == tripId)
-            .Select(t => new TripAnalyticsDto.Basic(
+            .Select(t => new Basic(
                 t.RouteAnalytics,
                 t.TimeAnalytics,
                 t.PeaksAnalytic != null ? new Uri($"{basePath}/peaks", UriKind.Relative) : null,
