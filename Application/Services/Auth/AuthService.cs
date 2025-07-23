@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
+using Domain.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 

@@ -1,7 +1,7 @@
 ﻿using Domain.Common.Result;
-using Domain.Entiites.Users;
 using Domain.Mountains.Peaks;
 using Domain.Trips;
+using Domain.Users;
 
 namespace Domain.ReachedPeaks;
 

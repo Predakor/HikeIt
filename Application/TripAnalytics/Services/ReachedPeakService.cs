@@ -1,9 +1,9 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
 using Domain.Mountains.Peaks;
 using Domain.ReachedPeaks;
 using Domain.Trips;
+using Domain.Users;
 
 namespace Application.TripAnalytics.Services;
 

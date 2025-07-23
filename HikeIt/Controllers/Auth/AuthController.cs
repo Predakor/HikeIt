@@ -3,7 +3,7 @@ using Application.Dto;
 using Application.Services.Auth;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
+using Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;

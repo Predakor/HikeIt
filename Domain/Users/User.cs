@@ -1,6 +1,6 @@
 ﻿using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
-namespace Domain.Entiites.Users;
+namespace Domain.Users;
 
 public class User : IdentityUser<Guid>, IEntity<Guid> {
     public required string FirstName { get; set; }

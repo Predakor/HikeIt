@@ -1,5 +1,4 @@
-﻿using Domain.Entiites.Users;
-using Domain.Mountains.Peaks;
+﻿using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
@@ -7,6 +6,7 @@ using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Users;
 using Infrastructure.DI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
