@@ -6,7 +6,7 @@ using Domain.Trips;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.TripAnalytics.Queries;
+namespace Infrastructure.Aggregates.TripAnalytics.Queries;
 
 public class TripQueryService : ITripQueryService {
     readonly TripDbContext _context;

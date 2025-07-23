@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Infrastructure.Mountains.Configuration;
+using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Mountains.Configuration;
+namespace Infrastructure.Aggregates.Mountains.Configuration;
 
 internal static class MountainAggregateConfiguration {
     public static ModelBuilder Apply(ModelBuilder builder) {

@@ -6,7 +6,7 @@ using Domain.Trips.Config;
 using Domain.Trips.ValueObjects;
 using Infrastructure.Data;
 
-namespace Infrastructure.TripAnalytics.Queries;
+namespace Infrastructure.Aggregates.TripAnalytics.Queries;
 
 public class ElevationProfileQueryService : IElevationProfileQueryService {
     readonly TripDbContext _tripDbContext;
