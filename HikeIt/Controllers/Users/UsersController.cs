@@ -2,7 +2,7 @@
 using Application.Services.Auth;
 using Application.Services.Users;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
+using Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

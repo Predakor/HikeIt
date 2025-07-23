@@ -2,7 +2,7 @@
 using Application.Services.Auth;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
+using Domain.Users;
 
 namespace Application.Services.Users;
 

@@ -1,9 +1,9 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
 using Domain.Interfaces;
 using Domain.Mountains.Peaks;
 using Domain.Trips;
+using Domain.Users;
 
 namespace Domain.ReachedPeaks;
 

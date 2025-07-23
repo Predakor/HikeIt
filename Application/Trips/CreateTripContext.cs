@@ -1,6 +1,6 @@
-﻿using Domain.Entiites.Users;
-using Domain.Trips;
+﻿using Domain.Trips;
 using Domain.Trips.ValueObjects;
+using Domain.Users;
 using Microsoft.AspNetCore.Http;
 using static Application.Dto.TripDto;
 

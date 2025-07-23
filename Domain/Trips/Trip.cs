@@ -1,12 +1,12 @@
 ﻿using Domain.Common;
 using Domain.Common.AggregateRoot;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
 using Domain.Interfaces;
 using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
 using Domain.TripAnalytics;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Users;
 
 namespace Domain.Trips;
 public record TripAnalyticsAddedDomainEvent(Guid AnalyticsID, Guid UserId) : IDomainEvent;

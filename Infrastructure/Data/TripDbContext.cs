@@ -9,6 +9,7 @@ using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Users;
 using Infrastructure.DI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

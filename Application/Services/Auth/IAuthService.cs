@@ -1,5 +1,5 @@
 ﻿using Domain.Common.Result;
-using Domain.Entiites.Users;
+using Domain.Users;
 
 namespace Application.Services.Auth;
 public interface IAuthService {
