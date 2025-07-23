@@ -1,7 +1,6 @@
 ﻿using Infrastructure.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace Infrastructure.Data;
 
@@ -10,13 +9,10 @@ public static class MigrationHelper {
         using var scope = services.CreateScope();
         var scopedServices = scope.ServiceProvider;
 
-        var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-        var csvPath = Path.Combine(basePath, "peaks.csv");
-
         try {
             var context = scopedServices.GetRequiredService<TripDbContext>();
             await context.Database.MigrateAsync();
-            await new DataSeeder(context).TrySeeding();
+            await DataSeeder.TrySeeding(context, services);
         }
         catch (Exception ex) {
             Console.WriteLine($"Migration error: {ex}");

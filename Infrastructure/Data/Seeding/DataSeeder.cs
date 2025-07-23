@@ -1,24 +1,45 @@
-﻿using Infrastructure.Data.Loaders;
+﻿using Domain.Entiites.Users;
+using Infrastructure.Data.Loaders;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Data.Seeding;
 
-internal class DataSeeder(TripDbContext dbContext) {
-    public async Task TrySeeding() {
+internal static class DataSeeder {
+    static async Task Seed(TripDbContext dbContext, IServiceScope scope) {
+        bool hasNoRegionsInDb = !await dbContext.Regions.AnyAsync();
+        if (hasNoRegionsInDb) {
+            Console.WriteLine("Seeding regions");
+            await new InsertRegionsAsync(DataSeed.Regions).Seed(dbContext);
+        }
+
+        var hasNoPeaksInDb = !await dbContext.Peaks.AnyAsync();
+        if (hasNoPeaksInDb) {
+            Console.WriteLine("Seeding Peaks");
+
+            var resourcePath = Path.Combine(AppContext.BaseDirectory, "peaks.csv");
+            Console.WriteLine("Path for seeding source: " + resourcePath);
+
+            await new InsertMountainPeaks(PeakCsvLoader.LoadFrom(resourcePath)).Seed(dbContext);
+        }
+
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+        var demoUser = User.DemoUser;
+        var hasNoDemoUser = (await userManager.FindByNameAsync(demoUser.UserName!)) == null;
+        if (hasNoDemoUser) {
+            Console.WriteLine("Seeding default users");
+            await new InsertBaseUser(userManager, demoUser).Seed(dbContext);
+        }
+    }
+
+    public static async Task TrySeeding(TripDbContext dbContext, IServiceProvider services) {
         try {
-            if (!await dbContext.Regions.AnyAsync()) {
-                Console.WriteLine("Seeding regions");
-                new InsertRegionsAsync(DataSeed.Regions).Seed(dbContext);
-            }
+            using var scope = services.CreateScope();
 
-            if (!await dbContext.Peaks.AnyAsync()) {
-                Console.WriteLine("Seeding Peaks");
+            await Seed(dbContext, scope);
 
-                var resourcePath = Path.Combine(AppContext.BaseDirectory, "peaks.csv");
-                Console.WriteLine("Path for seeding source: " + resourcePath);
-
-                new InsertMountainPeaks(PeakCsvLoader.LoadFrom(resourcePath)).Seed(dbContext);
-            }
             await dbContext.SaveChangesAsync();
         }
         catch (Exception exc) {
