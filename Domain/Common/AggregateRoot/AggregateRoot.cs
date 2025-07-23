@@ -2,7 +2,13 @@
 
 namespace Domain.Common.AggregateRoot;
 
-internal class AggregateRoot<TId> : IEntity<TId> {
+public interface IAggregateRoot {
+    IReadOnlyCollection<IDomainEvent> Events { get; }
+    void ClearDomainEvents();
+}
+
+
+public class AggregateRoot<TId> : IEntity<TId>, IAggregateRoot {
     public required TId Id { get; init; }
 
     readonly List<IDomainEvent> _events = [];
