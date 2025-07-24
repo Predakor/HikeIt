@@ -7,9 +7,13 @@ using Domain.Mountains.Regions;
 using Domain.TripAnalytics;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Users;
+using Domain.Users.Extentions;
+using Domain.Users.ValueObjects;
 
 namespace Domain.Trips;
-public record TripAnalyticsAddedDomainEvent(Guid AnalyticsID, Guid UserId) : IDomainEvent;
+
+public record TripAnalyticsAddedDomainEvent(Guid UserId, StatsUpdates.All Summary) : IDomainEvent;
+
 public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public required string Name { get; set; }
     public required DateOnly TripDay { get; set; }
@@ -30,12 +34,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public GpxFile? GpxFile { get; set; }
     #endregion
 
-    public static Trip Create(
-        Guid tripId,
-        string name,
-        DateOnly tripDay,
-        Guid userId
-    ) {
+    public static Trip Create(Guid tripId, string name, DateOnly tripDay, Guid userId) {
         var trip = new Trip {
             Id = tripId,
             Name = name,
@@ -51,7 +50,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
             return Errors.NotFound("passed null analytics");
         }
         Analytics = analytic;
-        TestAddDomainEvent(new TripAnalyticsAddedDomainEvent(Id, UserId));
+        AddDomainEvent(new TripAnalyticsAddedDomainEvent(UserId, analytic.ToStatUpdate(TripDay)));
         return this;
     }
 

@@ -31,7 +31,7 @@ public class UserStats : IEntity<Guid> {
     public void AddStats(StatsUpdates.All update) {
         TotalTrips++;
         UpdateTotals(update.Totals, UpdateMode.Increase);
-        UpdateLocations(update.Locations);
+        UpdateLocations(update.Locations, UpdateMode.Increase);
         UpdateMetas(update.Metas);
     }
 
@@ -42,7 +42,7 @@ public class UserStats : IEntity<Guid> {
 
         TotalTrips--;
         UpdateTotals(update.Totals, UpdateMode.Decrease);
-        UpdateLocations(update.Locations);
+        UpdateLocations(update.Locations, UpdateMode.Decrease);
         UpdateMetas(update.Metas);
     }
 
@@ -68,8 +68,8 @@ public class UserStats : IEntity<Guid> {
         }
     }
 
-    void UpdateLocations(StatsUpdates.Locations update) {
-        UniquePeaks = UniquePeaks.SafeUpdate(update.UniquePeaks);
-        RegionsVisited = RegionsVisited.SafeUpdate(update.NewRegions);
+    void UpdateLocations(StatsUpdates.Locations update, UpdateMode mode) {
+        UniquePeaks = UniquePeaks.SafeUpdate(update.UniquePeaks, mode);
+        RegionsVisited = RegionsVisited.SafeUpdate(update.NewRegions, mode);
     }
 }
