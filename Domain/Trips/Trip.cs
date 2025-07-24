@@ -6,13 +6,11 @@ using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
 using Domain.TripAnalytics;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Trips.Events;
 using Domain.Users;
 using Domain.Users.Extentions;
-using Domain.Users.ValueObjects;
 
 namespace Domain.Trips;
-
-public record TripAnalyticsAddedDomainEvent(Guid UserId, StatsUpdates.All Summary) : IDomainEvent;
 
 public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public required string Name { get; set; }
@@ -50,7 +48,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
             return Errors.NotFound("passed null analytics");
         }
         Analytics = analytic;
-        AddDomainEvent(new TripAnalyticsAddedDomainEvent(UserId, analytic.ToStatUpdate(TripDay)));
+        AddDomainEvent(new TripAnalyticsCreatedEvent(this, analytic.ToStatUpdate(TripDay)));
         Console.WriteLine("adding Domain event, total count:" + Events.Count);
         return this;
     }
@@ -67,6 +65,12 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public Trip AddGpxFile(GpxFile gpxFile) {
         ArgumentNullException.ThrowIfNull(gpxFile);
         GpxFileId = gpxFile.Id;
+        return this;
+    }
+
+    public Trip OnDelete() {
+        Console.WriteLine("Deleting");
+        AddDomainEvent(new TripRemovedEvent(this));
         return this;
     }
 }

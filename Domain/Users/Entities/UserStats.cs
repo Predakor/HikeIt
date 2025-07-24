@@ -69,5 +69,26 @@ public class UserStats : IEntity<Guid> {
             UpdateMode.Set => delta,
             _ => TotalTrips,
         };
+
+        //safeguard if some stats woulnd't zero out
+        if (TotalTrips == 0) {
+            Clear();
+        }
+    }
+
+    void Clear() {
+        TotalTrips = 0;
+        TotalDistanceMeters = 0;
+        TotalAscentMeters = 0;
+        TotalDescentMeters = 0;
+        TotalPeaks = 0;
+        TotalDuration = TimeSpan.Zero;
+
+        UniquePeaks = 0;
+        RegionsVisited = 0;
+
+        FirstHikeDate = null;
+        LastHikeDate = null;
+        LongestTripMeters = 0;
     }
 }

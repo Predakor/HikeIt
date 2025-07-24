@@ -40,23 +40,25 @@ public class TripDbContext(
         bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default
     ) {
+        var events = GatherEvents();
         var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        await PublishDomainEventsAsync();
+        await PublishEvents(events);
         return result;
     }
 
-    async Task PublishDomainEventsAsync() {
-        var domainEvents = ChangeTracker
+    List<IDomainEvent> GatherEvents() {
+        return ChangeTracker
             .Entries<IAggregateRoot>()
             .Select(e => e.Entity)
             .SelectMany(aggregate => {
                 IReadOnlyCollection<IDomainEvent> events = [.. aggregate.Events];
-                var id = (aggregate as AggregateRoot<Guid>)?.Id;
                 aggregate.ClearDomainEvents();
                 return events;
             })
             .ToList();
+    }
 
+    async Task PublishEvents(List<IDomainEvent> domainEvents) {
         bool hasEvents = domainEvents.Count > 0;
         if (hasEvents) {
             Console.WriteLine(domainEvents.Count + " Events found dispatching");
