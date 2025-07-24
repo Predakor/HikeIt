@@ -15,7 +15,8 @@ internal class TripCreatedEventHandler : IDomainEventHandler<TripAnalyticsAddedD
         TripAnalyticsAddedDomainEvent domainEvent,
         CancellationToken cancellationToken = default
     ) {
+        Console.WriteLine("Invoking Update stats because Trip was added");
+
         await _userRepository.UpdateStats(domainEvent.UserId, domainEvent.Summary);
-        return;
     }
 }

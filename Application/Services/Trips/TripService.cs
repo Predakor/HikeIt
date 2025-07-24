@@ -75,12 +75,10 @@ public class TripService : ITripService {
         var (name, tripDay) = ctx.Request.Base;
         var trip = Trip.Create(ctx.Id, name, tripDay, ctx.User.Id);
 
-        if (ctx.Request.RegionId != null) {
+        if (ctx?.Request.RegionId != null) {
             trip.ChangeRegion(ctx.Request.RegionId);
         }
 
-        _unitOfWork.TripRepository.Add(trip);
-        ctx.WithTrip(trip);
-        return ctx;
+        return _unitOfWork.TripRepository.Add(trip).Map(ctx.WithTrip);
     }
 }

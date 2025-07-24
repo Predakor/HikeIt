@@ -50,13 +50,17 @@ public class TripDbContext(
             .Entries<IAggregateRoot>()
             .Select(e => e.Entity)
             .SelectMany(aggregate => {
-                IReadOnlyCollection<IDomainEvent> domainEvents = aggregate.Events;
-
+                IReadOnlyCollection<IDomainEvent> events = [.. aggregate.Events];
+                var id = (aggregate as AggregateRoot<Guid>)?.Id;
                 aggregate.ClearDomainEvents();
-                return domainEvents;
+                return events;
             })
             .ToList();
 
-        await domainEventDispatcher.DispatchAsync(domainEvents);
+        bool hasEvents = domainEvents.Count > 0;
+        if (hasEvents) {
+            Console.WriteLine(domainEvents.Count + " Events found dispatching");
+            await domainEventDispatcher.DispatchAsync(domainEvents);
+        }
     }
 }

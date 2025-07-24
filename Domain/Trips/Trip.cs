@@ -51,6 +51,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         }
         Analytics = analytic;
         AddDomainEvent(new TripAnalyticsAddedDomainEvent(UserId, analytic.ToStatUpdate(TripDay)));
+        Console.WriteLine("adding Domain event, total count:" + Events.Count);
         return this;
     }
 
