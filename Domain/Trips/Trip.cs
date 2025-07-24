@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Common.AggregateRoot;
 using Domain.Common.Result;
 using Domain.Entiites.Users;
 using Domain.Interfaces;
@@ -8,9 +9,8 @@ using Domain.TripAnalytics;
 using Domain.Trips.Entities.GpxFiles;
 
 namespace Domain.Trips;
-
-public class Trip : IEntity<Guid> {
-    public Guid Id { get; init; }
+public record TripAnalyticsAddedDomainEvent(Guid AnalyticsID, Guid UserId) : IDomainEvent;
+public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public required string Name { get; set; }
     public required DateOnly TripDay { get; set; }
 
@@ -51,6 +51,7 @@ public class Trip : IEntity<Guid> {
             return Errors.NotFound("passed null analytics");
         }
         Analytics = analytic;
+        TestAddDomainEvent(new TripAnalyticsAddedDomainEvent(Id, UserId));
         return this;
     }
 
