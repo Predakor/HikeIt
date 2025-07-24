@@ -34,10 +34,10 @@ public class GpxDataBuilderTest {
 
     [Theory]
     [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
-    public void TripAnalyticsBuilder_FlattenMicroJumps_Should_FlattenSmallJitters(
+    public void TripAnalyticsBuilder_EmaSmoothing_Should_SmoothOutMicroJumps(
         AnalyticData data
     ) {
-        const float jitterThreshold = 0.5f; // use same threshold as in method
+        const float jitterThreshold = 0.4f; // use same threshold as in method
 
         var smoothedPoints = new GpxDataBuilder(data.Points)
             .ApplyEmaSmoothing(jitterThreshold)

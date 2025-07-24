@@ -1,7 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace Infrastructure.Data;
+
+class NullDomainEventDispatcher : IDomainEventDispatcher {
+    public Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default) {
+        return Task.CompletedTask;
+    }
+}
 
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<TripDbContext> {
     public TripDbContext CreateDbContext(string[] args) {
@@ -27,6 +34,6 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<TripDbCont
         var optionsBuilder = new DbContextOptionsBuilder<TripDbContext>();
         optionsBuilder.UseNpgsql(connectionString, x => x.UseNetTopologySuite());
 
-        return new TripDbContext(optionsBuilder.Options);
+        return new TripDbContext(optionsBuilder.Options, new NullDomainEventDispatcher());
     }
 }
