@@ -2,7 +2,7 @@
 using Domain.Common.Result;
 using Domain.Users;
 
-namespace Application.Services.Users;
+namespace Application.Users;
 
 public interface IUserService {
     Task<Result<UserDto.Complete>> GetMe();

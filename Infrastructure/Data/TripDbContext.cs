@@ -1,5 +1,4 @@
 ﻿using Domain.Common.AggregateRoot;
-using Domain.Entiites.Users;
 using Domain.Interfaces;
 using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;

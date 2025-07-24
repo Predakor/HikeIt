@@ -1,4 +1,4 @@
-﻿using Domain.Entiites.Users;
+﻿using Domain.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Data.Seeding;

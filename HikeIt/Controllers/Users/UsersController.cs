@@ -1,6 +1,6 @@
 ﻿using Api.Extentions;
 using Application.Services.Auth;
-using Application.Services.Users;
+using Application.Users;
 using Domain.Common.Result;
 using Domain.Users;
 using Microsoft.AspNetCore.Identity;

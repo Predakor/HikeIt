@@ -1,5 +1,4 @@
-﻿using Infrastructure.Mountains.Configuration;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Aggregates.Mountains.Configuration;
 

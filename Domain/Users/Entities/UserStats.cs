@@ -28,25 +28,14 @@ public class UserStats : IEntity<Guid> {
     public DateOnly? LastHikeDate { get; private set; }
     public double LongestTripMeters { get; private set; }
 
-    public void AddStats(StatsUpdates.All update) {
-        TotalTrips++;
-        UpdateTotals(update.Totals, UpdateMode.Increase);
-        UpdateLocations(update.Locations, UpdateMode.Increase);
+    public void UpdateStats(StatsUpdates.All update, UpdateMode mode) {
+        UpdateTripCount(mode);
+        UpdateTotals(update.Totals, mode);
+        UpdateLocations(update.Locations, mode);
         UpdateMetas(update.Metas);
     }
 
-    public void RemoveStats(StatsUpdates.All update) {
-        if (TotalTrips <= 0) {
-            return;
-        }
-
-        TotalTrips--;
-        UpdateTotals(update.Totals, UpdateMode.Decrease);
-        UpdateLocations(update.Locations, UpdateMode.Decrease);
-        UpdateMetas(update.Metas);
-    }
-
-    void UpdateTotals(StatsUpdates.Totals update, UpdateMode mode) {
+    public void UpdateTotals(StatsUpdates.Totals update, UpdateMode mode) {
         TotalDistanceM = TotalDistanceM.SafeUpdate(update.DistanceMeters, mode);
         TotalAscentMeters = TotalAscentMeters.SafeUpdate(update.AscentMeters, mode);
         TotalDescentMeters = TotalDescentMeters.SafeUpdate(update.DescentMeters, mode);
@@ -68,8 +57,17 @@ public class UserStats : IEntity<Guid> {
         }
     }
 
-    void UpdateLocations(StatsUpdates.Locations update, UpdateMode mode) {
+    public void UpdateLocations(StatsUpdates.Locations update, UpdateMode mode) {
         UniquePeaks = UniquePeaks.SafeUpdate(update.UniquePeaks, mode);
         RegionsVisited = RegionsVisited.SafeUpdate(update.NewRegions, mode);
+    }
+
+    public void UpdateTripCount(UpdateMode mode, uint delta = 1) {
+        TotalTrips = mode switch {
+            UpdateMode.Increase => TotalTrips + delta,
+            UpdateMode.Decrease => Math.Max(TotalTrips - delta, 0),
+            UpdateMode.Set => delta,
+            _ => TotalTrips,
+        };
     }
 }

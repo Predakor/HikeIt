@@ -1,6 +1,6 @@
 ﻿namespace Domain.Users.Extentions;
 
-internal enum UpdateMode {
+public enum UpdateMode {
     Increase,
     Decrease,
     Set,

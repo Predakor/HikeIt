@@ -4,7 +4,7 @@ using Domain.Common;
 using Domain.Common.Result;
 using Domain.Users;
 
-namespace Application.Services.Users;
+namespace Application.Users;
 
 public class UserService(IUserRepository repository, IAuthService authService) : IUserService {
     readonly IUserRepository _repository = repository;
