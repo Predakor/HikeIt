@@ -90,9 +90,9 @@ internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig
     }
 
     public TripTimeAnalyticBuilder WithClimbSpeeds(RouteAnalytic analytic) {
-        AverageSpeedKph = ActiveTime.ToKph(analytic.TotalDistanceKm);
-        AverageAscentKph = AscentTime.ToKph(analytic.TotalAscent);
-        AverageDescentKph = DescentTime.ToKph(analytic.TotalDescent);
+        AverageSpeedKph = ActiveTime.ToKph(analytic.TotalDistanceMeters);
+        AverageAscentKph = AscentTime.ToKph(analytic.TotalAscentMeters);
+        AverageDescentKph = DescentTime.ToKph(analytic.TotalDescentMeters);
 
         return this;
     }

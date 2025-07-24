@@ -20,12 +20,12 @@ public static class AnalyticExtentions {
 
         //To be fixed
         //TotalDistanceKm is actually distance in meters
-        var tripDistanceMeters = routeAnalytics.TotalDistanceKm.ToSafeUint();
+        var tripDistanceMeters = routeAnalytics.TotalDistanceMeters.ToSafeUint();
 
         var totalsUpdate = new StatsUpdates.Totals(
             tripDistanceMeters,
-            routeAnalytics.TotalAscent.ToSafeUint(),
-            routeAnalytics.TotalDescent.ToSafeUint(),
+            routeAnalytics.TotalAscentMeters.ToSafeUint(),
+            routeAnalytics.TotalDescentMeters.ToSafeUint(),
             newPeaks,
             timeAnalytics?.Duration ?? TimeSpan.Zero
         );
