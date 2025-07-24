@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    partial class TripDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250724154421_UnitNameInColNames")]
+    partial class UnitNameInColNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -210,8 +213,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly?>("LastHikeDate")
                         .HasColumnType("date");
 
-                    b.Property<long>("LongestTripMeters")
-                        .HasColumnType("bigint");
+                    b.Property<double>("LongestTripMeters")
+                        .HasColumnType("double precision");
 
                     b.Property<long>("RegionsVisited")
                         .HasColumnType("bigint");
@@ -222,7 +225,7 @@ namespace Infrastructure.Migrations
                     b.Property<long>("TotalDescentMeters")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("TotalDistanceMeters")
+                    b.Property<long>("TotalDistanceM")
                         .HasColumnType("bigint");
 
                     b.Property<TimeSpan>("TotalDuration")

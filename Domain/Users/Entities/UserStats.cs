@@ -9,7 +9,7 @@ public class UserStats : IEntity<Guid> {
 
     //Totals
     public uint TotalTrips { get; private set; }
-    public uint TotalDistanceM { get; private set; }
+    public uint TotalDistanceMeters { get; private set; }
     public uint TotalAscentMeters { get; private set; }
     public uint TotalDescentMeters { get; private set; }
     public uint TotalPeaks { get; private set; }
@@ -26,7 +26,7 @@ public class UserStats : IEntity<Guid> {
     //Metas
     public DateOnly? FirstHikeDate { get; private set; }
     public DateOnly? LastHikeDate { get; private set; }
-    public double LongestTripMeters { get; private set; }
+    public uint LongestTripMeters { get; private set; }
 
     public void UpdateStats(StatsUpdates.All update, UpdateMode mode) {
         UpdateTripCount(mode);
@@ -36,7 +36,7 @@ public class UserStats : IEntity<Guid> {
     }
 
     public void UpdateTotals(StatsUpdates.Totals update, UpdateMode mode) {
-        TotalDistanceM = TotalDistanceM.SafeUpdate(update.DistanceMeters, mode);
+        TotalDistanceMeters = TotalDistanceMeters.SafeUpdate(update.DistanceMeters, mode);
         TotalAscentMeters = TotalAscentMeters.SafeUpdate(update.AscentMeters, mode);
         TotalDescentMeters = TotalDescentMeters.SafeUpdate(update.DescentMeters, mode);
         TotalPeaks = TotalPeaks.SafeUpdate(update.Peaks, mode);

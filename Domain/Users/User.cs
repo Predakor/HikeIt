@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces;
 using Domain.Users.Entities;
 using Microsoft.AspNetCore.Identity;
+
 namespace Domain.Users;
 
 public class User : IdentityUser<Guid>, IEntity<Guid> {
@@ -9,7 +10,7 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
     public DateOnly BirthDay { get; set; }
     public string? Avatar { get; set; }
 
-    public UserStats Stats { get; set; }
+    public UserStats Stats { get; set; } = new();
 
     public static readonly User DemoUser = new() {
         Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),

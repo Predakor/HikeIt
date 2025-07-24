@@ -1,9 +1,8 @@
 ﻿using Api.Extentions;
 using Application.Services.Auth;
 using Application.Users;
+using Application.Users.Stats;
 using Domain.Common.Result;
-using Domain.Users;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.Users;
@@ -13,16 +12,16 @@ namespace Api.Controllers.Users;
 public class UsersController : ControllerBase {
     readonly IUserService _userService;
     readonly IAuthService _authService;
-    readonly UserManager<User> _userManager;
+    readonly IUserQueryService _userQueries;
 
     public UsersController(
         IUserService service,
-        UserManager<User> userManager,
-        IAuthService authService
+        IAuthService authService,
+        IUserQueryService userQueries
     ) {
         _userService = service;
-        _userManager = userManager;
         _authService = authService;
+        _userQueries = userQueries;
     }
 
     [HttpGet("me")]
@@ -35,14 +34,16 @@ public class UsersController : ControllerBase {
     [HttpGet("profile")]
     public async Task<IActionResult> GetUserProfile() {
         return await _authService
-            .Me()
+            .WithLoggedUser()
             .BindAsync(user => _userService.GetUserAsync(user.Id))
             .ToActionResultAsync();
     }
 
-    [HttpGet("{id}/analytics")]
-    public async Task<IActionResult> GetProfileAnalytics(Guid id) {
-        await Task.CompletedTask;
-        return Ok();
+    [HttpGet("analytics")]
+    public async Task<IActionResult> GetProfileAnalytics() {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(user => _userQueries.GetStats(user.Id))
+            .ToActionResultAsync();
     }
 }

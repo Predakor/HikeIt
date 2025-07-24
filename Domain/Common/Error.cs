@@ -7,6 +7,9 @@ public static class Errors {
 
     public static Error NotFound(string message) => new Error.NotFound(message);
 
+    public static Error NotFound<T>(string resourceName, string filterName, T filterValue) =>
+        new Error.NotFound($"{resourceName} with {filterName}: {filterValue}");
+
     public static Error BadRequest(string message) => new Error.BadRequest(message);
 
     public static Error EmptyCollection(string message) => new Error.EmptyCollection(message);
@@ -18,6 +21,7 @@ public static class Errors {
     public static Error NotAuthorized() => new Error.NotAuthorized();
 
     public static Error InvalidCredentials() => new Error.InvalidCredentials();
+
     public static Error NotUnique(string ItemName) => new Error.NotUnique(ItemName);
 }
 
@@ -32,7 +36,7 @@ public enum ErrorCode {
     not_authorized,
     invalid_credentials,
     not_unique,
-    empty_collection
+    empty_collection,
 }
 
 public abstract record Error(ErrorCode Code, string Message) {
@@ -61,6 +65,7 @@ public abstract record Error(ErrorCode Code, string Message) {
 
     public sealed record InvalidCredentials()
         : Error(ErrorCode.invalid_credentials, "Invalid login or password");
+
     public sealed record NotUnique(string ItemName)
         : Error(ErrorCode.not_unique, $"{ItemName} already exists");
 }
