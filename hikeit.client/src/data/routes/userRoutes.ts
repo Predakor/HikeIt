@@ -1,7 +1,7 @@
 import {
   UserProfilePage,
   UserSettingsPage,
-  UserSummaryPage,
+  UserStatsPage,
 } from "@/pages/__index";
 import type { RouteGroup } from "./routeTypes";
 
@@ -24,9 +24,9 @@ export const userRoutes: RouteGroup = {
     },
     {
       type: "item",
-      path: "summary",
-      label: "Summary",
-      Page: UserSummaryPage,
+      path: "stats",
+      label: "Stats",
+      Page: UserStatsPage,
     },
   ],
 };

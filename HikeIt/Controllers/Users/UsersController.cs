@@ -39,8 +39,8 @@ public class UsersController : ControllerBase {
             .ToActionResultAsync();
     }
 
-    [HttpGet("analytics")]
-    public async Task<IActionResult> GetProfileAnalytics() {
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetProfileStats() {
         return await _authService
             .WithLoggedUser()
             .BindAsync(user => _userQueries.GetStats(user.Id))

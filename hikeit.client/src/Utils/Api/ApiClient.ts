@@ -11,7 +11,7 @@ async function apiClient<T>(
 ): Promise<T> {
   const finalOptions: RequestInit = {
     headers: {
-      "Content-Type": "application/json",  
+      "Content-Type": "application/json",
       ...(options.headers || {}),
     },
     credentials: "include",
