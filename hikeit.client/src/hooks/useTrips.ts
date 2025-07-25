@@ -34,6 +34,7 @@ export function useTripRemove() {
     },
     onSuccess: () => {
       navigation(-1);
+      queryClient.invalidateQueries({ queryKey: ["user-stats"] });
       return queryClient.invalidateQueries({ queryKey: [basePath] });
     },
   });
@@ -60,6 +61,7 @@ export function useTripCreate() {
       if (location) {
         res.location = location;
       }
+      queryClient.invalidateQueries({ queryKey: ["user-stats"] });
     }
     return res;
   };

@@ -5,7 +5,6 @@ import { regionsList } from "@/data/regionsList";
 import { useTripCreate } from "@/hooks/useTrips";
 import { Button, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-
 export interface CreateTripForm {
   name: string;
   tripDay: string;
