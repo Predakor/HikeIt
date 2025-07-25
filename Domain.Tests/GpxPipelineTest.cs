@@ -12,8 +12,8 @@ public class GpxPipelineTests {
     public void Build_ShouldCalculateMaxAndMinElevation(AnalyticData data) {
         var analytics = CreateBuilder(data).WithHighestPoint().WithLowestPoint().Build();
 
-        Assert.Equal(data.Points.Max(p => p.Ele), analytics.HighestElevation);
-        Assert.Equal(data.Points.Min(p => p.Ele), analytics.LowestElevation);
+        Assert.Equal(data.Points.Max(p => p.Ele), analytics.HighestElevationMeters);
+        Assert.Equal(data.Points.Min(p => p.Ele), analytics.LowestElevationMeters);
     }
 
     [Theory]
@@ -22,8 +22,8 @@ public class GpxPipelineTests {
         var analytics = CreateBuilder(data).WithTotalAscent().WithTotalDescent().Build();
 
         // Just assert ascent >= 0 and descent <= 0 (descent is negative sum)
-        Assert.True(analytics.TotalAscent >= 0);
-        Assert.True(analytics.TotalDescent <= 0);
+        Assert.True(analytics.TotalAscentMeters >= 0);
+        Assert.True(analytics.TotalDescentMeters <= 0);
     }
 
     [Theory]
@@ -31,8 +31,8 @@ public class GpxPipelineTests {
     public void Builder_WithLowest_AndHighestPoints_Should_ContainThem(AnalyticData data) {
         var analytics = CreateBuilder(data).WithHighestPoint().WithLowestPoint().Build();
 
-        Assert.NotEqual(default, analytics.HighestElevation);
-        Assert.NotEqual(default, analytics.LowestElevation);
+        Assert.NotEqual(default, analytics.HighestElevationMeters);
+        Assert.NotEqual(default, analytics.LowestElevationMeters);
     }
 
     [Theory]
@@ -44,9 +44,9 @@ public class GpxPipelineTests {
             .WithAverageDescentSlope()
             .Build();
 
-        Assert.NotEqual(default, analytics.AverageSlope);
-        Assert.NotEqual(default, analytics.AverageAscentSlope);
-        Assert.NotEqual(default, analytics.AverageDescentSlope);
+        Assert.NotEqual(default, analytics.AverageSlopePercent);
+        Assert.NotEqual(default, analytics.AverageAscentSlopePercent);
+        Assert.NotEqual(default, analytics.AverageDescentSlopePercent);
     }
 
     [Fact]

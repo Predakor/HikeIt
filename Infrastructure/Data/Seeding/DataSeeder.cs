@@ -1,4 +1,4 @@
-﻿using Domain.Entiites.Users;
+﻿using Domain.Users;
 using Infrastructure.Data.Loaders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

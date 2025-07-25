@@ -1,11 +1,11 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Interfaces;
 using Domain.TripAnalytics.Repositories;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Users;
 using Infrastructure.Data;
 
 namespace Infrastructure.UnitOfWorks;

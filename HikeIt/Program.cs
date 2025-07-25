@@ -1,4 +1,5 @@
 using Api.DI;
+using Application;
 using Infrastructure;
 using Infrastructure.Data;
 
@@ -8,9 +9,11 @@ var isDevelopment = builder.Environment.IsDevelopment();
 
 builder.InjectAppConfig();
 
-builder.Services.AddInfrastructure(builder.Configuration, isDevelopment);
+builder
+    .Services.AddInfrastructure(builder.Configuration, isDevelopment)
+    .AddAplication()
+    .AddControllers();
 
-builder.Services.AddControllers();
 
 builder.InjectSwagger();
 builder.InjectIdentity();

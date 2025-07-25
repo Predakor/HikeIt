@@ -41,7 +41,10 @@ public class TripService : ITripService {
     }
 
     public async Task<Result<bool>> DeleteAsync(Guid id, Guid userId) {
-        return await _tripRepository.Get(id, userId).BindAsync(_tripRepository.Remove);
+        return await _tripRepository
+            .Get(id, userId)
+            .MapAsync(t => t.OnDelete())
+            .BindAsync(_tripRepository.Remove);
     }
 
     async Task<Result<Trip>> SaveTripChanges(CreateTripContext ctx) {
@@ -75,12 +78,10 @@ public class TripService : ITripService {
         var (name, tripDay) = ctx.Request.Base;
         var trip = Trip.Create(ctx.Id, name, tripDay, ctx.User.Id);
 
-        if (ctx.Request.RegionId != null) {
+        if (ctx?.Request.RegionId != null) {
             trip.ChangeRegion(ctx.Request.RegionId);
         }
 
-        _unitOfWork.TripRepository.Add(trip);
-        ctx.WithTrip(trip);
-        return ctx;
+        return _unitOfWork.TripRepository.Add(trip).Map(ctx.WithTrip);
     }
 }

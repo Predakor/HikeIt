@@ -1,5 +1,4 @@
 ﻿using Domain.Common.AggregateRoot;
-using Domain.Entiites.Users;
 using Domain.Interfaces;
 using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
@@ -9,6 +8,7 @@ using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Users;
 using Infrastructure.DI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -40,23 +40,29 @@ public class TripDbContext(
         bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default
     ) {
+        var events = GatherEvents();
         var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        await PublishDomainEventsAsync();
+        await PublishEvents(events);
         return result;
     }
 
-    async Task PublishDomainEventsAsync() {
-        var domainEvents = ChangeTracker
+    List<IDomainEvent> GatherEvents() {
+        return ChangeTracker
             .Entries<IAggregateRoot>()
             .Select(e => e.Entity)
             .SelectMany(aggregate => {
-                IReadOnlyCollection<IDomainEvent> domainEvents = aggregate.Events;
-
+                IReadOnlyCollection<IDomainEvent> events = [.. aggregate.Events];
                 aggregate.ClearDomainEvents();
-                return domainEvents;
+                return events;
             })
             .ToList();
+    }
 
-        await domainEventDispatcher.DispatchAsync(domainEvents);
+    async Task PublishEvents(List<IDomainEvent> domainEvents) {
+        bool hasEvents = domainEvents.Count > 0;
+        if (hasEvents) {
+            Console.WriteLine(domainEvents.Count + " Events found dispatching");
+            await domainEventDispatcher.DispatchAsync(domainEvents);
+        }
     }
 }

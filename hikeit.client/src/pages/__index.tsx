@@ -19,6 +19,4 @@ export const UserProfilePage = lazy(
 export const UserSettingsPage = lazy(
   () => import("@pages/User/UserSettingsPage")
 );
-export const UserSummaryPage = lazy(
-  () => import("@pages/User/UserSummaryPage")
-);
+export const UserStatsPage = lazy(() => import("@/pages/User/UserStatsPage"));

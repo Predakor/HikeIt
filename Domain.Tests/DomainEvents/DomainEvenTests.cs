@@ -67,8 +67,8 @@ class DummyAggregate : AggregateRoot<Guid>, IEntity<Guid> {
     }
 
     // Only for testing, exposes protected AddDomainEvent
-    public void TestAddDomainEvent(IDomainEvent domainEvent) => base.TestAddDomainEvent(domainEvent);
-    public void TestRemoveDomainEvent(IDomainEvent domainEvent) => base.TestRemoveDomainEvent(domainEvent);
+    public void TestAddDomainEvent(IDomainEvent domainEvent) => base.AddDomainEvent(domainEvent);
+    public void TestRemoveDomainEvent(IDomainEvent domainEvent) => base.RemoveDomainEvent(domainEvent);
 }
 
 class DummyPostPublishedHandler : IDomainEventHandler<DummyDomainEvent> {

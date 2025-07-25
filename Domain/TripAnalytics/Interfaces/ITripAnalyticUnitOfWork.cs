@@ -1,9 +1,9 @@
 ﻿using Domain.Common.Result;
-using Domain.Entiites.Users;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Repositories;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Users;
 
 namespace Domain.TripAnalytics.Interfaces;
 public interface ITripAnalyticUnitOfWork {

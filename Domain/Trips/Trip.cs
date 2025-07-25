@@ -1,15 +1,17 @@
 ﻿using Domain.Common;
 using Domain.Common.AggregateRoot;
 using Domain.Common.Result;
-using Domain.Entiites.Users;
 using Domain.Interfaces;
 using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
 using Domain.TripAnalytics;
 using Domain.Trips.Entities.GpxFiles;
+using Domain.Trips.Events;
+using Domain.Users;
+using Domain.Users.Extentions;
 
 namespace Domain.Trips;
-public record TripAnalyticsAddedDomainEvent(Guid AnalyticsID, Guid UserId) : IDomainEvent;
+
 public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public required string Name { get; set; }
     public required DateOnly TripDay { get; set; }
@@ -30,12 +32,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public GpxFile? GpxFile { get; set; }
     #endregion
 
-    public static Trip Create(
-        Guid tripId,
-        string name,
-        DateOnly tripDay,
-        Guid userId
-    ) {
+    public static Trip Create(Guid tripId, string name, DateOnly tripDay, Guid userId) {
         var trip = new Trip {
             Id = tripId,
             Name = name,
@@ -51,7 +48,8 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
             return Errors.NotFound("passed null analytics");
         }
         Analytics = analytic;
-        TestAddDomainEvent(new TripAnalyticsAddedDomainEvent(Id, UserId));
+        AddDomainEvent(new TripAnalyticsCreatedEvent(this, analytic.ToStatUpdate(TripDay)));
+        Console.WriteLine("adding Domain event, total count:" + Events.Count);
         return this;
     }
 
@@ -67,6 +65,12 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public Trip AddGpxFile(GpxFile gpxFile) {
         ArgumentNullException.ThrowIfNull(gpxFile);
         GpxFileId = gpxFile.Id;
+        return this;
+    }
+
+    public Trip OnDelete() {
+        Console.WriteLine("Deleting");
+        AddDomainEvent(new TripRemovedEvent(this));
         return this;
     }
 }

@@ -104,16 +104,16 @@ public class RouteAnalyticsBuilder(List<GpxPoint> points, List<GpxGain> gains) {
 
     public RouteAnalytic Build() {
         return new RouteAnalytic() {
-            TotalDistanceKm = _totalDistance,
-            TotalAscent = _totalAscent,
-            TotalDescent = _totalDescent,
+            TotalDistanceMeters = _totalDistance,
+            TotalAscentMeters = _totalAscent,
+            TotalDescentMeters = _totalDescent,
 
-            HighestElevation = _maxElevation,
-            LowestElevation = _minElevation,
+            HighestElevationMeters = _maxElevation,
+            LowestElevationMeters = _minElevation,
 
-            AverageSlope = _averageSlope,
-            AverageAscentSlope = _averageAscentSlope,
-            AverageDescentSlope = _averageDescentSlope,
+            AverageSlopePercent = _averageSlope,
+            AverageAscentSlopePercent = _averageAscentSlope,
+            AverageDescentSlopePercent = _averageDescentSlope,
         };
     }
 }

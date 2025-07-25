@@ -1,4 +1,5 @@
-﻿using Application.Mappers.Implementations;
+﻿using Application.Interfaces;
+using Application.Mappers.Implementations;
 using Application.Services.Files;
 using Domain.TripAnalytics.Interfaces;
 using Infrastructure.Parsers;
@@ -22,7 +23,7 @@ internal static partial class DIextentions {
             .InjectServices(assemblies)
             .InjectParsers()
             .InjectUnitOfWorks()
-            .InjectQueries(assemblies);
+            .AddQueryServices(assemblies);
 
         return builder;
     }
@@ -80,18 +81,18 @@ internal static partial class DIextentions {
         return services;
     }
 
-    static IServiceCollection InjectQueries(
-    this IServiceCollection services,
-    Assembly[] targetAssemblies
-) {
-        services.Scan(scan =>
+    static IServiceCollection AddQueryServices(
+        this IServiceCollection services,
+        Assembly[] targetAssemblies
+    ) {
+        return services.Scan(scan =>
             scan.FromAssemblies(targetAssemblies)
-                .AddClasses(classes =>
-                    classes.Where(t => t.Name.EndsWith("QueryService") && t.IsClass && !t.IsAbstract)
+                .AddClasses(
+                    classes => classes.AssignableTo(typeof(IQueryService)),
+                    publicOnly: false
                 )
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
-        return services;
     }
 }

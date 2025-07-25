@@ -14,6 +14,7 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : ID
         CancellationToken cancellationToken = default
     ) {
         foreach (IDomainEvent domainEvent in domainEvents) {
+            Console.WriteLine(" Invoking event:" + domainEvent.ToString());
             using IServiceScope scope = serviceProvider.CreateScope();
 
             Type domainEventType = domainEvent.GetType();
