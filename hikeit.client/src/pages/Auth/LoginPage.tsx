@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import type { UseMutationResult } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 const LoginFormCongif: InputsConfig = [
@@ -36,10 +37,14 @@ const LoginFormCongif: InputsConfig = [
 
 function LoginPage() {
   const login = useLogin();
-
   const formHook = useForm<LoginForm>();
 
   const onSubmit = formHook.handleSubmit((data) => login.mutate(data));
+  const loginAsDemoUser = () =>
+    login.mutate({
+      userName: "defaultuser",
+      password: "Default123!",
+    });
 
   return (
     <Stack flexGrow={1} alignItems={"center"} paddingTop={8}>
@@ -55,16 +60,7 @@ function LoginPage() {
 
         <form onSubmit={onSubmit}>
           <Fieldset.Content gapY={6}>
-            {login.isError && (
-              <Alert.Root status={login.status}>
-                <Stack>
-                  <Alert.Title>Error occured</Alert.Title>
-                  <Alert.Content>
-                    <Alert.Description>{login.error.message}</Alert.Description>
-                  </Alert.Content>
-                </Stack>
-              </Alert.Root>
-            )}
+            <FormState result={login as any} />
             <RenderInputs
               config={LoginFormCongif}
               formHook={formHook}
@@ -75,11 +71,19 @@ function LoginPage() {
             />
 
             <Button
-              size={{ base: "xl", lg: "2xl" }}
+              size={{ base: "lg", lg: "xl" }}
               colorPalette={"blue"}
               type={"submit"}
             >
               Log in
+            </Button>
+            <Button
+              size={{ base: "lg", lg: "xl" }}
+              colorPalette={"green"}
+              type={"button"}
+              onClick={loginAsDemoUser}
+            >
+              Use Demo Account
             </Button>
             <Separator size={"sm"} flex="1" />
           </Fieldset.Content>
@@ -91,6 +95,23 @@ function LoginPage() {
         </Stack>
       </Fieldset.Root>
     </Stack>
+  );
+}
+
+function FormState({ result }: { result: UseMutationResult }) {
+  if (!result.isError) {
+    return;
+  }
+
+  return (
+    <Alert.Root status={result.status}>
+      <Stack>
+        <Alert.Title>Error occured</Alert.Title>
+        <Alert.Content>
+          <Alert.Description>{result.error.message}</Alert.Description>
+        </Alert.Content>
+      </Stack>
+    </Alert.Root>
   );
 }
 
