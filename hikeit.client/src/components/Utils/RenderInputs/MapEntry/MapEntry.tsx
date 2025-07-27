@@ -4,10 +4,9 @@ import type { FieldError, FieldValues } from "react-hook-form";
 import { Range } from "../Range";
 import Select from "../Select";
 import type { InputConfigEntry, RenderInputBaseProps } from "../inputTypes";
-import InputError from "./InputError";
-import InputLabel from "./InputLabel";
+import FieldWrapper from "./FieldWrapper/FieldWrapper";
 
-interface Props<T extends FieldValues> extends RenderInputBaseProps<T> {
+interface FieldWrapper<T extends FieldValues> extends RenderInputBaseProps<T> {
   entry: InputConfigEntry;
   error?: FieldError;
 }
@@ -18,10 +17,17 @@ export default function MapEntry<TFor extends FieldValues>({
   register,
   displayOptions: options,
   error,
-}: Props<TFor>) {
+}: FieldWrapper<TFor>) {
   const { key, label, type, required } = entry;
 
   const inlineLabel = options?.label === "inline" ? label : "";
+
+  const wrapperShared = {
+    label: entry.label,
+    error: error,
+    displayOptions: options,
+  };
+
   const shared = {
     label,
     type,
@@ -29,47 +35,73 @@ export default function MapEntry<TFor extends FieldValues>({
     size: options?.size,
   };
 
-  if (type === "range") {
-    return <Range entry={entry} control={control} register={undefined} />;
-  }
+  console.log(type);
 
-  if (type === "select") {
-    return <Select entry={entry} control={control} register={undefined} />;
-  }
+  switch (type) {
+    case "range":
+      return <Range entry={entry} control={control} register={undefined} />;
 
-  if (type === "checkbox") {
-    return "not impleneted checkbox type";
-  }
+    case "select":
+      return <Select entry={entry} control={control} register={undefined} />;
 
-  if (type === "password") {
-    return (
-      <>
-        <InputLabel label={label} option={options?.label} />
-        <PasswordInput
+    case "checkbox":
+      return "not impleneted checkbox type";
+
+    default:
+      <FieldWrapper {...wrapperShared}>
+        <Input
           {...shared}
           {...register(key, {
             minLength: entry.min,
             max: entry.max,
-            pattern: entry.pattern,
             required,
           })}
         />
-      </>
-    );
-  }
+      </FieldWrapper>;
+      return;
 
-  return (
-    <>
-      <InputLabel label={label} option={options?.label} />
-      <Input
-        {...shared}
-        {...register(key, {
-          minLength: entry.min,
-          maxLength: entry.max,
-          required,
-        })}
-      />
-      <InputError error={error} />
-    </>
-  );
+    case "date":
+      return (
+        <FieldWrapper {...wrapperShared}>
+          <Input
+            {...shared}
+            {...register(key, {
+              minLength: entry.min,
+              max: entry.max,
+              required,
+            })}
+          />
+        </FieldWrapper>
+      );
+
+    case "password":
+      return (
+        <FieldWrapper {...wrapperShared}>
+          <PasswordInput
+            {...shared}
+            {...register(key, {
+              minLength: entry.min,
+              max: entry.max,
+              pattern: entry.pattern,
+              required,
+            })}
+          />
+        </FieldWrapper>
+      );
+
+    case "text":
+      return (
+        <FieldWrapper {...wrapperShared}>
+          <Input
+            {...shared}
+            {...register(key, {
+              minLength: entry.min,
+              max: entry.max,
+              pattern: entry.pattern,
+              required,
+            })}
+          />
+        </FieldWrapper>
+      );
+  }
 }
