@@ -1,10 +1,10 @@
 import type { FullMap } from "@/types/Utils/MappingTypes";
 import type { CollectionType } from "@components/RegionSelect/useCollection";
-
+import type { AllowedInputTypes } from "@utils/Schemas/index";
 interface InputConfigEntryBase {
   key: string;
   label: string;
-  type: React.HTMLInputTypeAttribute;
+  type: AllowedInputTypes;
   min: number;
   max: number;
   required?: boolean;
@@ -17,8 +17,13 @@ export type InputConfigEntry =
   | DateInputConfigEntry
   | CheckboxInputConfigEntry
   | TextInputConfigEntry
-  | SelectInputConfigEntry;
+  | SelectInputConfigEntry
+  | EmailInputConfigEntry;
 
+interface EmailInputConfigEntry extends InputConfigEntryBase {
+  type: "email";
+  pattern: RegExp;
+}
 interface RangeInputConfigEntry extends InputConfigEntryBase {
   type: "range";
   min: number;
@@ -28,12 +33,14 @@ interface RangeInputConfigEntry extends InputConfigEntryBase {
 
 interface PasswordInputConfigEntry extends InputConfigEntryBase {
   type: "password";
-  pattern: ?Regex;
+  pattern?: ?Regex;
+  validate: (value: string) => bool | string;
 }
 
 interface TextInputConfigEntry extends InputConfigEntryBase {
   type: "text";
   pattern?: RegExp;
+  validate?: (value: string) => bool | string;
 
   placeholder?: string;
 }

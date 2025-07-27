@@ -32,17 +32,7 @@ export default function RegisterPage() {
           </Fieldset.Legend>
         </Stack>
 
-        {requestErrors && requestErrors.length && (
-          <Alert.Root colorPalette={"red"}>
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Title>{requestErrors[0].code}</Alert.Title>
-              <Alert.Description>
-                {requestErrors[0].description}
-              </Alert.Description>
-            </Alert.Content>
-          </Alert.Root>
-        )}
+        <FormState errors={requestErrors} />
 
         <Stack gapY={4}>
           <Text color={"fg.muted"}>Already have an account? </Text>
@@ -51,5 +41,22 @@ export default function RegisterPage() {
         </Stack>
       </Fieldset.Root>
     </Stack>
+  );
+}
+
+function FormState({ errors }: { errors: AuthError[] | null }) {
+  if (!errors || !errors.length) {
+    return;
+  }
+
+  const [error] = errors;
+  return (
+    <Alert.Root colorPalette={"red"}>
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Title>{error.code}</Alert.Title>
+        <Alert.Description>{error.description}</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
   );
 }

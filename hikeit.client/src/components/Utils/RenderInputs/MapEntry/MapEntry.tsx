@@ -18,24 +18,26 @@ export default function MapEntry<TFor extends FieldValues>({
   displayOptions: options,
   error,
 }: FieldWrapper<TFor>) {
-  const { key, label, type, required } = entry;
+  const { key, label, type } = entry;
 
   const inlineLabel = options?.label === "inline" ? label : "";
 
-  const wrapperShared = {
+  const wrapperConfig = {
     label: entry.label,
     error: error,
     displayOptions: options,
   };
 
-  const shared = {
+  const inputConfig = {
     label,
     type,
     placeholder: inlineLabel,
     size: options?.size,
   };
 
-  console.log(type);
+  const validationConfig = register(key, {
+    ...entry,
+  });
 
   switch (type) {
     case "range":
@@ -47,60 +49,17 @@ export default function MapEntry<TFor extends FieldValues>({
     case "checkbox":
       return "not impleneted checkbox type";
 
-    default:
-      <FieldWrapper {...wrapperShared}>
-        <Input
-          {...shared}
-          {...register(key, {
-            minLength: entry.min,
-            max: entry.max,
-            required,
-          })}
-        />
-      </FieldWrapper>;
-      return;
-
-    case "date":
-      return (
-        <FieldWrapper {...wrapperShared}>
-          <Input
-            {...shared}
-            {...register(key, {
-              minLength: entry.min,
-              max: entry.max,
-              required,
-            })}
-          />
-        </FieldWrapper>
-      );
-
     case "password":
       return (
-        <FieldWrapper {...wrapperShared}>
-          <PasswordInput
-            {...shared}
-            {...register(key, {
-              minLength: entry.min,
-              max: entry.max,
-              pattern: entry.pattern,
-              required,
-            })}
-          />
+        <FieldWrapper {...wrapperConfig}>
+          <PasswordInput {...inputConfig} {...validationConfig} />
         </FieldWrapper>
       );
 
-    case "text":
+    default:
       return (
-        <FieldWrapper {...wrapperShared}>
-          <Input
-            {...shared}
-            {...register(key, {
-              minLength: entry.min,
-              max: entry.max,
-              pattern: entry.pattern,
-              required,
-            })}
-          />
+        <FieldWrapper {...wrapperConfig}>
+          <Input {...inputConfig} {...validationConfig} />
         </FieldWrapper>
       );
   }

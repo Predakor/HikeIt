@@ -1,8 +1,8 @@
+import schemas from "@/Utils/Schemas";
 import NavButton from "@/components/Utils/NavButton/NavButton";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import type { LoginForm } from "@/hooks/Auth/useLogin";
-import useLogin from "@/hooks/Auth/useLogin";
+import useLoginForm from "@/hooks/Auth/useLoginForm";
 import {
   Alert,
   Button,
@@ -12,39 +12,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 import type { UseMutationResult } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
 
-const LoginFormCongif: InputsConfig = [
-  {
-    key: "userName",
-    type: "text",
-    label: "",
-    min: 3,
-    max: 64,
-    pattern: /^[a-zA-Z][a-zA-Z0-9_]{2,15}$/,
-    required: true,
-  },
-  {
-    key: "password",
-    type: "password",
-    label: "",
-    min: 6,
-    max: 64,
-    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).*$/,
-    required: true,
-  },
-];
+const loginFormConfig: InputsConfig = [
+  schemas.login,
+  schemas.password,
+] as InputsConfig;
 
 function LoginPage() {
-  const login = useLogin();
-  const formHook = useForm<LoginForm>();
-
-  const onSubmit = formHook.handleSubmit((data) => login.mutate(data));
-  const loginAsDemoUser = () =>
-    login.mutate({
-      userName: "defaultuser",
-      password: "Default123!",
-    });
+  const { formHook, login, loginAsDemoUser, onSubmit } = useLoginForm();
 
   return (
     <Stack flexGrow={1} alignItems={"center"} paddingTop={8}>
@@ -62,7 +37,7 @@ function LoginPage() {
           <Fieldset.Content gapY={6}>
             <FormState result={login as any} />
             <RenderInputs
-              config={LoginFormCongif}
+              config={loginFormConfig}
               formHook={formHook}
               displayOptions={{
                 size: "xl",
