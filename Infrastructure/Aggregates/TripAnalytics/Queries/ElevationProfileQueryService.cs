@@ -1,5 +1,5 @@
 ﻿using Application.Dto.Analytics;
-using Application.TripAnalytics.Quries;
+using Application.TripAnalytics.ElevationProfiles;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Trips.Config;

@@ -4,8 +4,15 @@ using Domain.Trips.ValueObjects;
 namespace Domain.TripAnalytics.Commands;
 
 public static class AnalyticDataExtentions {
-    public static List<GpxPoint> FindLocalMaximas(this AnalyticData data) {
-        var (points, gains) = data;
+    public static List<GpxPoint> ToLocalMaxima(this IEnumerable<GpxPoint> gpxPoints) {
+        return FindLocalMaxima([.. gpxPoints]);
+    }
+
+    public static List<GpxPoint> ToLocalMaxima(this AnalyticData data) {
+        return FindLocalMaxima(data.Points, data.Gains);
+    }
+
+    static List<GpxPoint> FindLocalMaxima(List<GpxPoint> points, List<GpxGain>? gains = null) {
         gains ??= points.ToGains();
 
         var localPeaks = new List<GpxPoint>();

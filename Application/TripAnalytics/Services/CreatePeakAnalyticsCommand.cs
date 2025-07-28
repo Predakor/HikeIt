@@ -6,23 +6,14 @@ using Domain.TripAnalytics.Entities.PeaksAnalytics;
 
 namespace Application.TripAnalytics.Services;
 
-public record PeakAnalyticsData(
-    IEnumerable<ReachedPeak> Peaks,
-    IEnumerable<ReachedPeak>? NewPeaks = null
-);
-
-public class CreatePeakAnalyticsCommand(Guid id, PeakAnalyticsData data) : ICommand<PeaksAnalytic> {
+public class CreatePeakAnalyticsCommand(Guid id, IEnumerable<ReachedPeak> peaks)
+    : ICommand<PeaksAnalytic> {
     public Result<PeaksAnalytic> Execute() {
-        var (peaks, _) = data;
-
         if (!peaks.Any()) {
             return Errors.EmptyCollection("Reached Peaks");
         }
 
-        var analytics = PeaksAnalytic.Create(
-            id,
-            [.. peaks]
-        );
+        var analytics = PeaksAnalytic.Create(id, [.. peaks]);
 
         if (analytics == null) {
             return Errors.Unknown("Failed To create Peak Analytics");
@@ -31,7 +22,7 @@ public class CreatePeakAnalyticsCommand(Guid id, PeakAnalyticsData data) : IComm
         return analytics;
     }
 
-    public static ICommand<PeaksAnalytic> Create(Guid id, PeakAnalyticsData data) {
-        return new CreatePeakAnalyticsCommand(id, data);
+    public static ICommand<PeaksAnalytic> Create(Guid id, IEnumerable<ReachedPeak> peaks) {
+        return new CreatePeakAnalyticsCommand(id, peaks);
     }
 }

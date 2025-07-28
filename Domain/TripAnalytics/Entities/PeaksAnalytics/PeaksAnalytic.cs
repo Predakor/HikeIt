@@ -22,7 +22,7 @@ public class PeaksAnalytic : IEntity<Guid> {
         return new() {
             Id = id,
             Total = peaks.GetCount(),
-            Unique = peaks.DistinctBy(p => p.Peak.Id).GetCount(),
+            Unique = peaks.DistinctBy(p => p.PeakId).GetCount(),
             New = peaks.Where(p => p.FirstTime).GetCount(),
         };
     }

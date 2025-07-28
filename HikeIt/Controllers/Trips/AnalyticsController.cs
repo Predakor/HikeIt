@@ -2,6 +2,7 @@
 using Application.Dto.Analytics;
 using Application.Services.Auth;
 using Application.Services.Files;
+using Application.TripAnalytics.ElevationProfiles;
 using Application.TripAnalytics.Quries;
 using Domain.Common;
 using Domain.Common.Result;
