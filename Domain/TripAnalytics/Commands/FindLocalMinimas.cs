@@ -1,3 +1,3 @@
 ﻿namespace Domain.TripAnalytics.Commands;
-public class FindLocalMinimaxCommand {
+public class FindLocalMinimas {
 }

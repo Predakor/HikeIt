@@ -179,6 +179,34 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserStats",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TotalTrips = table.Column<long>(type: "bigint", nullable: false),
+                    TotalDistanceMeters = table.Column<long>(type: "bigint", nullable: false),
+                    TotalAscentMeters = table.Column<long>(type: "bigint", nullable: false),
+                    TotalDescentMeters = table.Column<long>(type: "bigint", nullable: false),
+                    TotalPeaks = table.Column<long>(type: "bigint", nullable: false),
+                    TotalDuration = table.Column<TimeSpan>(type: "interval", nullable: false),
+                    UniquePeaks = table.Column<long>(type: "bigint", nullable: false),
+                    RegionsVisited = table.Column<long>(type: "bigint", nullable: false),
+                    FirstHikeDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    LastHikeDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    LongestTripMeters = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserStats", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserStats_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Peaks",
                 columns: table => new
                 {
@@ -290,14 +318,14 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RouteAnalytics_TotalDistanceKm = table.Column<double>(type: "double precision", nullable: true),
-                    RouteAnalytics_TotalAscent = table.Column<double>(type: "double precision", nullable: true),
-                    RouteAnalytics_TotalDescent = table.Column<double>(type: "double precision", nullable: true),
-                    RouteAnalytics_HighestElevation = table.Column<double>(type: "double precision", nullable: true),
-                    RouteAnalytics_LowestElevation = table.Column<double>(type: "double precision", nullable: true),
-                    RouteAnalytics_AverageSlope = table.Column<float>(type: "real", nullable: true),
-                    RouteAnalytics_AverageAscentSlope = table.Column<float>(type: "real", nullable: true),
-                    RouteAnalytics_AverageDescentSlope = table.Column<float>(type: "real", nullable: true),
+                    RouteAnalytics_TotalDistanceMeters = table.Column<double>(type: "double precision", nullable: true),
+                    RouteAnalytics_TotalAscentMeters = table.Column<double>(type: "double precision", nullable: true),
+                    RouteAnalytics_TotalDescentMeters = table.Column<double>(type: "double precision", nullable: true),
+                    RouteAnalytics_HighestElevationMeters = table.Column<double>(type: "double precision", nullable: true),
+                    RouteAnalytics_LowestElevationMeters = table.Column<double>(type: "double precision", nullable: true),
+                    RouteAnalytics_AverageSlopePercent = table.Column<float>(type: "real", nullable: true),
+                    RouteAnalytics_AverageAscentSlopePercent = table.Column<float>(type: "real", nullable: true),
+                    RouteAnalytics_AverageDescentSlopePercent = table.Column<float>(type: "real", nullable: true),
                     TimeAnalytics_Duration = table.Column<TimeSpan>(type: "interval", nullable: true),
                     TimeAnalytics_StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     TimeAnalytics_EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -463,6 +491,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ReachedPeaks");
+
+            migrationBuilder.DropTable(
+                name: "UserStats");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

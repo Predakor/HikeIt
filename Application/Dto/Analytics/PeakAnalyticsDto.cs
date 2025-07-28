@@ -6,7 +6,7 @@ namespace Application.Dto.Analytics;
 
 public record ReachedPeakDto(string Name, int Height, DateTime? ReachedAt = null);
 
-public record PeakAnalyticsDto(List<ReachedPeakDto> Reached, PeakSummary? Summary = null);
+public record PeakAnalyticsDto(List<ReachedPeakDto> Reached);
 
 public static class ReachedPeaksExtentios {
     public static ReachedPeakDto ToDto(this ReachedPeak reachedPeak) {

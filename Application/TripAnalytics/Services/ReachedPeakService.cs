@@ -12,17 +12,13 @@ public class ReachedPeakService : IReachedPeakService {
         return ReachedPeak.Create(peak, trip, user);
     }
 
-    public Result<IList<ReachedPeak>> ToReachedPeaks(IEnumerable<Peak> peaks, Guid tripId, Guid userId) {
-
+    public Result<IList<ReachedPeak>> ToReachedPeaks(IEnumerable<Peak> peaks, Trip trip, User user) {
         if (!peaks.Any()) {
             return Errors.EmptyCollection("Peaks");
         }
-        Console.WriteLine(peaks.Count());
 
-        foreach (var peak in peaks) {
-            Console.WriteLine(peak.Name);
-        }
+        Console.WriteLine($"Matched {peaks.Count()} Peaks");
 
-        return peaks.Select(p => ReachedPeak.Create(p.Id, tripId, userId)).ToList();
+        return peaks.Select(p => ReachedPeak.Create(p, trip, user)).ToList();
     }
 }

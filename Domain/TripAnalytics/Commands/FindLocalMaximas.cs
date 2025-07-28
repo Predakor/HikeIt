@@ -1,12 +1,10 @@
 ﻿using Domain.Common;
-using Domain.Common.Interfaces;
-using Domain.Common.Result;
 using Domain.Trips.ValueObjects;
 
 namespace Domain.TripAnalytics.Commands;
 
-public class FindLocalMaximasCommand(AnalyticData data) : ICommand<List<GpxPoint>> {
-    public Result<List<GpxPoint>> Execute() {
+public static class AnalyticDataExtentions {
+    public static List<GpxPoint> FindLocalMaximas(this AnalyticData data) {
         var (points, gains) = data;
         gains ??= points.ToGains();
 
@@ -35,9 +33,5 @@ public class FindLocalMaximasCommand(AnalyticData data) : ICommand<List<GpxPoint
         }
 
         return localPeaks;
-    }
-
-    public static ICommand<List<GpxPoint>> Create(AnalyticData data) {
-        return new FindLocalMaximasCommand(data);
     }
 }

@@ -123,6 +123,15 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<long>("New")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Total")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Unique")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.ToTable("PeaksAnalytics");
@@ -531,24 +540,6 @@ namespace Infrastructure.Migrations
                         .WithOne("PeaksAnalytic")
                         .HasForeignKey("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", "Id")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.OwnsOne("Domain.TripAnalytics.Entities.PeaksAnalytics.PeakSummary", "Summary", b1 =>
-                        {
-                            b1.Property<Guid>("PeaksAnalyticId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("TotalPeaks")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("PeaksAnalyticId");
-
-                            b1.ToTable("PeaksAnalytics");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PeaksAnalyticId");
-                        });
-
-                    b.Navigation("Summary");
                 });
 
             modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>

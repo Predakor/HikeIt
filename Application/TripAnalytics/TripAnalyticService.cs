@@ -77,16 +77,17 @@ public class TripAnalyticService(
         return timeAnalytics;
     }
 
-    async Task<Result<PeaksAnalytic>> CreatePeakAnalytics(CreateTripContext ctx) {
-        var potentialPeaks = FindLocalMaximasCommand.Create(ctx.AnalyticData).Execute();
-
-        return await potentialPeaks
-            .BindAsync(localMaximas =>
-                _peakRepository.GetPeaksWithinRadius(localMaximas, PeakProximityTreshold)
-            )
+    async Task<Result<IList<ReachedPeak>>> GetReachedPeaks(CreateTripContext ctx) {
+        var localMaximas = ctx.AnalyticData.FindLocalMaximas();
+        return await _peakRepository
+            .GetPeaksWithinRadius(localMaximas, PeakProximityTreshold)
             .BindAsync(foundPeaks =>
-                _reachedPeakService.ToReachedPeaks(foundPeaks, ctx.Trip.Id, ctx.User.Id)
-            )
+                _reachedPeakService.ToReachedPeaks(foundPeaks, ctx.Trip, ctx.User)
+            );
+    }
+
+    async Task<Result<PeaksAnalytic>> CreatePeakAnalytics(CreateTripContext ctx) {
+        return await GetReachedPeaks(ctx)
             .BindAsync(_unitOfWork.ReachedPeaks.AddRangeAsync)
             .BindAsync(reachedPeaks =>
                 CreatePeakAnalyticsCommand.Create(ctx.Trip.Id, new(reachedPeaks, null)).Execute()

@@ -18,9 +18,9 @@ public class ReachedPeak : IEntity<Guid> {
     public required int PeakId { get; init; }
 
     // Navigation
-    public Trip? Trip { get; set; }
-    public User? User { get; set; }
-    public Peak? Peak { get; set; }
+    public Trip Trip { get; set; }
+    public User User { get; set; }
+    public Peak Peak { get; set; }
 
     public static ReachedPeak Create(
         int PeakId,
@@ -47,10 +47,7 @@ public class ReachedPeak : IEntity<Guid> {
             Id = Guid.NewGuid(),
             PeakId = peak.Id,
             TripId = trip.Id,
-            UserId = user.Id,
-            Peak = peak,
-            Trip = trip,
-            User = user,
+            UserId = user.Id
         };
 
         if (reachTime.HasValue) {

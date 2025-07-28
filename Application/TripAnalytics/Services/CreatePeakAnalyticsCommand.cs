@@ -13,7 +13,7 @@ public record PeakAnalyticsData(
 
 public class CreatePeakAnalyticsCommand(Guid id, PeakAnalyticsData data) : ICommand<PeaksAnalytic> {
     public Result<PeaksAnalytic> Execute() {
-        var (peaks, newPeaks) = data;
+        var (peaks, _) = data;
 
         if (!peaks.Any()) {
             return Errors.EmptyCollection("Reached Peaks");

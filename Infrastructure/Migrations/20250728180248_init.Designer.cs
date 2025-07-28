@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250724154421_UnitNameInColNames")]
-    partial class UnitNameInColNames
+    [Migration("20250728180248_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -213,8 +213,8 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly?>("LastHikeDate")
                         .HasColumnType("date");
 
-                    b.Property<double>("LongestTripMeters")
-                        .HasColumnType("double precision");
+                    b.Property<long>("LongestTripMeters")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("RegionsVisited")
                         .HasColumnType("bigint");
@@ -225,7 +225,7 @@ namespace Infrastructure.Migrations
                     b.Property<long>("TotalDescentMeters")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("TotalDistanceM")
+                    b.Property<long>("TotalDistanceMeters")
                         .HasColumnType("bigint");
 
                     b.Property<TimeSpan>("TotalDuration")

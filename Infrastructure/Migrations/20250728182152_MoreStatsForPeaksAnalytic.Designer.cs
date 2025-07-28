@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250722222108_init")]
-    partial class init
+    [Migration("20250728182152_MoreStatsForPeaksAnalytic")]
+    partial class MoreStatsForPeaksAnalytic
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,85 +26,6 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Domain.Entiites.Users.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("BirthDay")
-                        .HasColumnType("date");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers", (string)null);
-                });
 
             modelBuilder.Entity("Domain.Mountains.Peaks.Peak", b =>
                 {
@@ -205,6 +126,15 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<long>("New")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Total")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Unique")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.ToTable("PeaksAnalytics");
@@ -279,6 +209,128 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Trips");
+                });
+
+            modelBuilder.Entity("Domain.Users.Entities.UserStats", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("FirstHikeDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("LastHikeDate")
+                        .HasColumnType("date");
+
+                    b.Property<long>("LongestTripMeters")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RegionsVisited")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TotalAscentMeters")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TotalDescentMeters")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TotalDistanceMeters")
+                        .HasColumnType("bigint");
+
+                    b.Property<TimeSpan>("TotalDuration")
+                        .HasColumnType("interval");
+
+                    b.Property<long>("TotalPeaks")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TotalTrips")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UniquePeaks")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserStats");
+                });
+
+            modelBuilder.Entity("Domain.Users.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("BirthDay")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -436,7 +488,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entiites.Users.User", "User")
+                    b.HasOne("Domain.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -491,24 +543,6 @@ namespace Infrastructure.Migrations
                         .WithOne("PeaksAnalytic")
                         .HasForeignKey("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", "Id")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.OwnsOne("Domain.TripAnalytics.Entities.PeaksAnalytics.PeakSummary", "Summary", b1 =>
-                        {
-                            b1.Property<Guid>("PeaksAnalyticId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("TotalPeaks")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("PeaksAnalyticId");
-
-                            b1.ToTable("PeaksAnalytics");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PeaksAnalyticId");
-                        });
-
-                    b.Navigation("Summary");
                 });
 
             modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
@@ -524,28 +558,28 @@ namespace Infrastructure.Migrations
                             b1.Property<Guid>("TripAnalyticId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<float>("AverageAscentSlope")
+                            b1.Property<float>("AverageAscentSlopePercent")
                                 .HasColumnType("real");
 
-                            b1.Property<float>("AverageDescentSlope")
+                            b1.Property<float>("AverageDescentSlopePercent")
                                 .HasColumnType("real");
 
-                            b1.Property<float>("AverageSlope")
+                            b1.Property<float>("AverageSlopePercent")
                                 .HasColumnType("real");
 
-                            b1.Property<double>("HighestElevation")
+                            b1.Property<double>("HighestElevationMeters")
                                 .HasColumnType("double precision");
 
-                            b1.Property<double>("LowestElevation")
+                            b1.Property<double>("LowestElevationMeters")
                                 .HasColumnType("double precision");
 
-                            b1.Property<double>("TotalAscent")
+                            b1.Property<double>("TotalAscentMeters")
                                 .HasColumnType("double precision");
 
-                            b1.Property<double>("TotalDescent")
+                            b1.Property<double>("TotalDescentMeters")
                                 .HasColumnType("double precision");
 
-                            b1.Property<double>("TotalDistanceKm")
+                            b1.Property<double>("TotalDistanceMeters")
                                 .HasColumnType("double precision");
 
                             b1.HasKey("TripAnalyticId");
@@ -625,7 +659,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entiites.Users.User", "User")
+                    b.HasOne("Domain.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -636,6 +670,15 @@ namespace Infrastructure.Migrations
                     b.Navigation("Target");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Users.Entities.UserStats", b =>
+                {
+                    b.HasOne("Domain.Users.User", null)
+                        .WithOne("Stats")
+                        .HasForeignKey("Domain.Users.Entities.UserStats", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -649,7 +692,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Entiites.Users.User", null)
+                    b.HasOne("Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -658,7 +701,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Entiites.Users.User", null)
+                    b.HasOne("Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -673,7 +716,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entiites.Users.User", null)
+                    b.HasOne("Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -682,7 +725,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Entiites.Users.User", null)
+                    b.HasOne("Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -701,6 +744,12 @@ namespace Infrastructure.Migrations
                     b.Navigation("Analytics");
 
                     b.Navigation("GpxFile");
+                });
+
+            modelBuilder.Entity("Domain.Users.User", b =>
+                {
+                    b.Navigation("Stats")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
