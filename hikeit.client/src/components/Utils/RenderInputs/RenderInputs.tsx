@@ -19,15 +19,17 @@ function RenderInputs<T extends FieldValues>(props: Props<T>) {
     formState: { errors },
   } = formHook;
 
-  const mappedConfig = config.map((entry) => ({
-    ...entry,
-    label: entry.label ? entry.label : KeyToLabelFormatter(entry.key),
+  const mappedConfig = config.map((e) => ({
+    ...e,
+    label: e.label ? e.label : KeyToLabelFormatter(e.key),
   })) as InputsConfig;
 
   return mappedConfig.map((entry) => (
     <Field.Root key={entry.key} minWidth={40} invalid={!!errors[entry.key]}>
       <MapEntry
+        {...entry}
         entry={entry}
+        key={entry.key}
         control={control}
         register={register}
         displayOptions={options}

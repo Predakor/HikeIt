@@ -2,7 +2,7 @@ import ControlledSelect from "@/components/RegionSelect/ControlledSelect";
 import useCollection from "@/components/RegionSelect/useCollection";
 import { Input } from "@chakra-ui/react";
 import { Controller, type FieldValues } from "react-hook-form";
-import InputLabel from "./MapEntry/InputLabel";
+import InputLabel from "./MapEntry/FieldWrapper/InputLabel";
 import type {
   RenderInputBaseProps,
   SelectInputConfigEntry,

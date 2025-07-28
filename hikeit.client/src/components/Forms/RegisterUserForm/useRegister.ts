@@ -1,24 +1,11 @@
+import schemas from "@/Utils/Schemas";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import type { RegisterForm } from "@/hooks/useAuth";
 import { useForm } from "react-hook-form";
 
 const registerFormConfgig: InputsConfig = [
-  {
-    key: "userName",
-    label: "",
-    type: "text",
-    min: 3,
-    max: 64,
-    required: true,
-  },
-  {
-    key: "email",
-    label: "",
-    type: "text",
-    min: 3,
-    max: 64,
-    required: true,
-  },
+  schemas.login,
+  schemas.email,
   {
     key: "firstName",
     label: "",
@@ -35,15 +22,7 @@ const registerFormConfgig: InputsConfig = [
     max: 64,
     required: true,
   },
-  {
-    key: "password",
-    label: "",
-    type: "password",
-    min: 6,
-    max: 64,
-    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).*$/,
-    required: true,
-  },
+  schemas.password,
 ];
 
 export default function useRegister() {

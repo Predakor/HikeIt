@@ -23,8 +23,6 @@ function TripsPage() {
       >
         <FetchWrapper request={request} NoDataComponent={NoTrips}>
           {(tripsData) => {
-            console.log(tripsData);
-
             return (
               <>
                 <RenderTripCards trips={tripsData} />
