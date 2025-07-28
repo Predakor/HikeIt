@@ -5,14 +5,14 @@ namespace Domain.TripAnalytics.Commands;
 
 public static class AnalyticDataExtentions {
     public static List<GpxPoint> ToLocalMaxima(this IEnumerable<GpxPoint> gpxPoints) {
-        return FindLocalMaxima([.. gpxPoints]);
+        return FindLocalMaxima([.. gpxPoints]).MergeNearbyPeaks();
     }
 
     public static List<GpxPoint> ToLocalMaxima(this AnalyticData data) {
-        return FindLocalMaxima(data.Points, data.Gains);
+        return FindLocalMaxima(data.Points, data.Gains).MergeNearbyPeaks();
     }
 
-    static List<GpxPoint> FindLocalMaxima(List<GpxPoint> points, List<GpxGain>? gains = null) {
+    internal static List<GpxPoint> FindLocalMaxima(List<GpxPoint> points, List<GpxGain>? gains = null) {
         gains ??= points.ToGains();
 
         var localPeaks = new List<GpxPoint>();
@@ -40,5 +40,47 @@ public static class AnalyticDataExtentions {
         }
 
         return localPeaks;
+    }
+
+    internal static List<GpxPoint> MergeNearbyPeaks(this List<GpxPoint> peaks, int minDistance = 10) {
+        int itemCount = peaks.Count;
+        if (itemCount < 2) {
+            return peaks;
+        }
+
+        var mergedPoints = new List<GpxPoint>();
+
+        var windowStart = 0;
+
+        for (int i = 1; i < itemCount - 1; i++) {
+            var current = peaks[i];
+            var prev = peaks[i - 1];
+
+            double eleDelta = Math.Abs(current.Ele - prev.Ele);
+
+            if (eleDelta <= minDistance) {
+                continue;
+            }
+
+            var windowSize = i - windowStart;
+            var windowCenter = windowStart + (windowSize / 2);
+
+            mergedPoints.Add(peaks[windowCenter]);
+
+            windowStart = i + 1;
+        }
+
+        //handle last window not closing
+        if (windowStart < itemCount) {
+            int windowSize = itemCount - 1 - windowStart;
+            int centerIndex = windowStart + (windowSize / 2);
+            mergedPoints.Add(peaks[centerIndex]);
+        }
+
+        if (mergedPoints.Count == 0) {
+            return peaks;
+        }
+
+        return mergedPoints;
     }
 }
