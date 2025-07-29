@@ -16,6 +16,7 @@ namespace Infrastructure.Peaks.Queries;
 
 public class PeaksQueryService : IPeaksQueryService {
     readonly TripDbContext _tripDbContext;
+    const float ProximityPeakSerach = 10000f;
     IQueryable<Peak> Peaks => _tripDbContext.Peaks.AsNoTracking();
 
     public PeaksQueryService(TripDbContext tripDbContext) {
@@ -106,7 +107,7 @@ public class PeaksQueryService : IPeaksQueryService {
 
         var nearbyPeaks = await Peaks
             .Where(p =>
-                p.Location.IsWithinDistance(potentialPeaks[0].Location.ToGpxPoint(), 10000f)
+                p.Location.IsWithinDistance(potentialPeaks[0].Location.ToGpxPoint(), ProximityPeakSerach)
             )
             .Distinct()
             .ToListAsync();

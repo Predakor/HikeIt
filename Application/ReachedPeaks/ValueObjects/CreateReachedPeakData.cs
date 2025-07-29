@@ -15,8 +15,8 @@ public class CreateReachedPeakData {
         }
     }
 
-    public static CreateReachedPeakData FromGpxPoint(GpxPoint point) {
-        return new(point);
+    public static CreateReachedPeakData FromGpxPoint(GpxPointWithDistance point) {
+        return new(point.BasePoint) { ReachedAtDistanceMeters = (uint)point.DistanceFromStart };
     }
 
     public int PeakId;

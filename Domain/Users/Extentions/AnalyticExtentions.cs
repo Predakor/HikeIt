@@ -36,19 +36,23 @@ public static class AnalyticExtentions {
 }
 
 static class Helpers {
+
+    const uint Max = uint.MaxValue;
+    const uint Min = uint.MinValue;
+
     public static uint ToSafeUint(this double? value) {
-        return (uint)Math.Max(value ?? 0, 0);
+        return (uint)Math.Clamp(value ?? 0, Min, Max);
     }
 
     public static uint ToSafeUint(this double value) {
-        return (uint)Math.Max(value, 0);
+        return (uint)Math.Clamp(value, Min, Max);
     }
 
     public static uint ToSafeUint(this int? value) {
-        return (uint)Math.Max(value ?? 0, 0);
+        return (uint)Math.Clamp(value ?? 0, Min, Max);
     }
 
     public static uint ToSafeUint(this int value) {
-        return (uint)Math.Max(value, 0);
+        return (uint)Math.Clamp(value, Min, Max);
     }
 }

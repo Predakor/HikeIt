@@ -10,7 +10,7 @@ public record PeakAnalyticsDto(uint Total, uint Unique, uint New, List<ReachedPe
 
 public static class ReachedPeaksExtentios {
     public static ReachedPeakDto ToDto(this ReachedPeak reachedPeak) {
-        return new(reachedPeak.Peak.Name, reachedPeak.Peak.Height, reachedPeak.TimeReached);
+        return new(reachedPeak.Peak.Name, reachedPeak.Peak.Height, reachedPeak.ReachedAtTime);
     }
 
     public static PeakAnalyticsDto ToDto(this PeaksAnalytic analytics, IEnumerable<ReachedPeak> peaks) {

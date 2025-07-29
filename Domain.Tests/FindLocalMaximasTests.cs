@@ -54,7 +54,7 @@ public class FindLocalMaximasTests {
     }
 
     static List<GpxPoint> GetValue(List<GpxPoint> points) {
-        return AnalyticDataExtentions.FindLocalMaxima(points, points.ToGains());
+        return new AnalyticData(points, points.ToGains()).ToLocalMaxima();
     }
 
     static List<GpxPoint> GeneratePointsFromElevation(params double[] elevations) {

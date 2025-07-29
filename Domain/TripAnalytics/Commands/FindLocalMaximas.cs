@@ -5,51 +5,28 @@ namespace Domain.TripAnalytics.Commands;
 
 public static class AnalyticDataExtentions {
     public static List<GpxPoint> ToLocalMaxima(this AnalyticData data) {
-        return FindLocalMaxima(data.Points, data.Gains);
+        return LocalMaximaIndicesWithDistance(data.Points, data.Gains)
+            .Select(result => data.Points[result.index])
+            .ToList();
     }
 
-    public static List<GpxPoint> WithProximityMerge(this List<GpxPoint> points) {
+    public static List<GpxPointWithDistance> ToLocalMaximaWithDistance(this AnalyticData data) {
+        return LocalMaximaIndicesWithDistance(data.Points, data.Gains)
+            .Select(result => new GpxPointWithDistance(
+                data.Points[result.index],
+                (float)result.distanceFromStart
+            ))
+            .ToList();
+    }
+
+    public static List<T> WithProximityMerge<T>(this List<T> points)
+        where T : IGeoPoint {
         return points.MergeNearbyPeakByDistance().MergeNearbyPeaksByElevation();
     }
 
-    internal static List<GpxPoint> FindLocalMaxima(
-        List<GpxPoint> points,
-        List<GpxGain>? gains = null
-    ) {
-        gains ??= points.ToGains();
-
-        var localPeaks = new List<GpxPoint>();
-        bool isAscendingFlag = true;
-
-        for (int i = 1; i < gains.Count; i++) {
-            var current = gains[i];
-
-            bool isDescending = current.ElevationDelta < 0;
-
-            //flip flag after we start ascending again
-            if (!isDescending) {
-                isAscendingFlag = true;
-            }
-
-            if (isDescending) {
-                //dont collect every descending point
-                if (!isAscendingFlag) {
-                    continue;
-                }
-
-                isAscendingFlag = false;
-                localPeaks.Add(points[i]);
-            }
-        }
-
-        return localPeaks;
-    }
-
-    internal static List<GpxPoint> MergeNearbyPeaksByElevation(
-        this List<GpxPoint> peaks,
-        int minDistance = 50
-    ) {
-        bool minElevationTreshold(GpxPoint curr, GpxPoint prev) {
+    internal static List<T> MergeNearbyPeaksByElevation<T>(this List<T> peaks, int minDistance = 50)
+        where T : IGeoPoint {
+        bool minElevationTreshold(T curr, T prev) {
             var eleDelta = Math.Abs(curr.Ele - prev.Ele);
             return eleDelta > minDistance;
         }
@@ -57,11 +34,9 @@ public static class AnalyticDataExtentions {
         return peaks.MergePeaksBy(minElevationTreshold);
     }
 
-    internal static List<GpxPoint> MergeNearbyPeakByDistance(
-        this List<GpxPoint> peaks,
-        int minDistance = 200
-    ) {
-        bool minDistanceDelta(GpxPoint curr, GpxPoint prev) {
+    internal static List<T> MergeNearbyPeakByDistance<T>(this List<T> peaks, int minDistance = 200)
+        where T : IGeoPoint {
+        bool minDistanceDelta(T curr, T prev) {
             var distDelta = Math.Abs(DistanceHelpers.Distance3D(curr, prev));
             return distDelta > minDistance;
         }
@@ -69,16 +44,40 @@ public static class AnalyticDataExtentions {
         return peaks.MergePeaksBy(minDistanceDelta);
     }
 
-    static List<GpxPoint> MergePeaksBy(
-        this List<GpxPoint> peaks,
-        Func<GpxPoint, GpxPoint, bool> predicate
+    internal static IEnumerable<(int index, double distanceFromStart)> LocalMaximaIndicesWithDistance(
+        List<GpxPoint> points,
+        List<GpxGain>? gains = null
     ) {
+        gains ??= points.ToGains();
+
+        bool isAscendingFlag = true;
+        double distanceFromStart = 0;
+
+        for (int i = 1; i < gains.Count; i++) {
+            var current = gains[i];
+            distanceFromStart += current.DistanceDelta;
+
+            bool isDescending = current.ElevationDelta < 0;
+
+            if (!isDescending) {
+                isAscendingFlag = true;
+            }
+
+            if (isDescending && isAscendingFlag) {
+                isAscendingFlag = false;
+                yield return (i, distanceFromStart);
+            }
+        }
+    }
+
+    internal static List<T> MergePeaksBy<T>(this List<T> peaks, Func<T, T, bool> predicate)
+        where T : IGeoPoint {
         int itemCount = peaks.Count;
         if (itemCount < 2) {
             return peaks;
         }
 
-        var mergedPoints = new List<GpxPoint>();
+        var mergedPoints = new List<T>();
 
         var windowStart = 0;
 

@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.ReachedPeaks;
 
-internal class ReachedPeaksQueryService : IReachedPeaksQureryService {
+public class ReachedPeaksQueryService : IReachedPeaksQureryService {
     readonly TripDbContext _tripDbContext;
 
     public ReachedPeaksQueryService(TripDbContext tripDbContext) {
