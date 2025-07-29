@@ -22,32 +22,23 @@ public class ReachedPeak : IEntity<Guid> {
     public User User { get; set; }
     public Peak Peak { get; set; }
 
+    public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null) {
+        return Create(peak.Id, trip.Id, user.Id, reachTime);
+    }
+
     public static ReachedPeak Create(
         int PeakId,
         Guid TripId,
         Guid UserId,
-        DateTime? reachTime = null
+        DateTime? reachTime = null,
+        bool firstTime = false
     ) {
         var reachedPeak = new ReachedPeak {
             Id = Guid.NewGuid(),
             TripId = TripId,
             UserId = UserId,
             PeakId = PeakId,
-        };
-
-        if (reachTime.HasValue) {
-            reachedPeak.AddReachTime(reachTime.Value);
-        }
-
-        return reachedPeak;
-    }
-
-    public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null) {
-        var reachedPeak = new ReachedPeak() {
-            Id = Guid.NewGuid(),
-            PeakId = peak.Id,
-            TripId = trip.Id,
-            UserId = user.Id
+            FirstTime = firstTime
         };
 
         if (reachTime.HasValue) {

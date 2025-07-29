@@ -1,6 +1,5 @@
 ﻿using Domain.Interfaces;
 using Domain.ReachedPeaks;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.TripAnalytics.Entities.PeaksAnalytics;
 
@@ -10,9 +9,6 @@ public class PeaksAnalytic : IEntity<Guid> {
     public uint Total { get; private set; }
     public uint Unique { get; private set; }
     public uint New { get; private set; }
-
-    [NotMapped]
-    public ICollection<ReachedPeak> ReachedPeaks { get; set; } = [];
 
     public static PeaksAnalytic Create(Guid id, IEnumerable<ReachedPeak> peaks) {
         if (!peaks.Any()) {

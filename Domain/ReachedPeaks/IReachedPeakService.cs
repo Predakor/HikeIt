@@ -14,5 +14,4 @@ public interface IReachedPeakService {
     );
 
     Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user);
-    Result<List<ReachedPeak>> ToReachedPeaks(IEnumerable<Peak> peaks, Guid tripId, Guid userId);
 }

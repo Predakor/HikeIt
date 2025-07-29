@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
+using Application.ReachedPeaks.ValueObjects;
 using Domain.Common.Result;
 using Domain.Mountains.Peaks;
 using Domain.Trips.ValueObjects;
@@ -11,4 +12,8 @@ public interface IPeaksQueryService : IQueryService {
     Task<Result<IEnumerable<PeakDto.Complete>>> GetAllAsync();
     Task<Result<Peak>> GetPeakWithinRadius(GpxPoint point, float radius);
     Task<Result<List<Peak>>> GetPeaksWithinRadius(IEnumerable<GpxPoint> points, float radius);
+    Task<Result<List<CreateReachedPeakData>>> GetPeaksWithinRadius(
+        IEnumerable<CreateReachedPeakData> points,
+        float radius
+    );
 }

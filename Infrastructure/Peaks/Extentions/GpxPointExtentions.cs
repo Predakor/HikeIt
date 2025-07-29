@@ -5,10 +5,11 @@ using NetTopologySuite.Geometries;
 namespace Infrastructure.Peaks.Extentions;
 
 internal static class GpxPointExtentions {
+    static readonly GeometryFactory geometryFactory =
+        NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+
     public static Point ToGpxPoint(this GpxPoint point) {
-        var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-        var gpxLocation = geometryFactory.CreatePoint(new Coordinate(point.Lon, point.Lat));
-        return gpxLocation;
+        return geometryFactory.CreatePoint(new Coordinate(point.Lon, point.Lat));
     }
 
     public static IReadOnlyList<Point> ToGpxPoints(this IEnumerable<GpxPoint> points) {

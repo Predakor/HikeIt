@@ -4,10 +4,12 @@ using Domain.Trips.ValueObjects;
 namespace Domain.TripAnalytics.Commands;
 
 public static class AnalyticDataExtentions {
-    public static List<GpxPoint> ToLocalMaximaWithMerges(this AnalyticData data) {
-        return FindLocalMaxima(data.Points, data.Gains)
-            .MergeNearbyPeakByDistance()
-            .MergeNearbyPeaksByElevation();
+    public static List<GpxPoint> ToLocalMaxima(this AnalyticData data) {
+        return FindLocalMaxima(data.Points, data.Gains);
+    }
+
+    public static List<GpxPoint> WithProximityMerge(this List<GpxPoint> points) {
+        return points.MergeNearbyPeakByDistance().MergeNearbyPeaksByElevation();
     }
 
     internal static List<GpxPoint> FindLocalMaxima(

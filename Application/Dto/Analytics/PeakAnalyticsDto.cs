@@ -6,22 +6,18 @@ namespace Application.Dto.Analytics;
 
 public record ReachedPeakDto(string Name, int Height, DateTime? ReachedAt = null);
 
-public record PeakAnalyticsDto(List<ReachedPeakDto> Reached);
+public record PeakAnalyticsDto(uint Total, uint Unique, uint New, List<ReachedPeakDto> Reached);
 
 public static class ReachedPeaksExtentios {
     public static ReachedPeakDto ToDto(this ReachedPeak reachedPeak) {
         return new(reachedPeak.Peak.Name, reachedPeak.Peak.Height, reachedPeak.TimeReached);
     }
 
-    public static PeakAnalyticsDto? ToDto(this PeaksAnalytic analytics) {
-        if (analytics == null) {
-            return null;
-        }
-
-        var reachedPeaks = analytics.ReachedPeaks.NotNullOrEmpty()
-            ? analytics.ReachedPeaks?.Select(reachedPeak => reachedPeak.ToDto()).ToList()
+    public static PeakAnalyticsDto ToDto(this PeaksAnalytic analytics, IEnumerable<ReachedPeak> peaks) {
+        var reachedPeaks = peaks.NotNullOrEmpty()
+            ? peaks.Select(reachedPeak => reachedPeak.ToDto()).ToList()
             : [];
 
-        return new(reachedPeaks);
+        return new(analytics.Total, analytics.Unique, analytics.New, reachedPeaks);
     }
 }

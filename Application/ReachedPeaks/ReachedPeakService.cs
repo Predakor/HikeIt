@@ -1,6 +1,9 @@
 ﻿using Application.Mountains;
+using Application.ReachedPeaks.ValueObjects;
 using Domain.Common;
+using Domain.Common.GeographyHelpers;
 using Domain.Common.Result;
+using Domain.Common.Utils;
 using Domain.Mountains.Peaks;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Commands;
@@ -11,11 +14,15 @@ using Domain.Users;
 namespace Application.ReachedPeaks;
 
 public class ReachedPeakService : IReachedPeakService {
-    static readonly float PeakProximityTreshold = 600f;
+    static readonly float PeakProximityTreshold = GeoConverter.MetersToDegreesLatitude(300f);
     readonly IPeaksQueryService _peaksQueries;
 
     public ReachedPeakService(IPeaksQueryService peaksQueryService) {
         _peaksQueries = peaksQueryService;
+    }
+
+    public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user) {
+        return ReachedPeak.Create(peak, trip, user);
     }
 
     public async Task<Result<List<ReachedPeak>>> GetPeaks(
@@ -23,28 +30,37 @@ public class ReachedPeakService : IReachedPeakService {
         Guid tripId,
         Guid userId
     ) {
-        var peaksCandidates = data.ToLocalMaximaWithMerges();
-
-        return await _peaksQueries
-            .GetPeaksWithinRadius(peaksCandidates, PeakProximityTreshold)
+        return await ExtractPotentialPeaks(data)
+            .BindAsync(FindMatchingPeaks)
             .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, tripId, userId));
     }
 
-    public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user) {
-        return ReachedPeak.Create(peak, trip, user);
+    static Result<List<CreateReachedPeakData>> ExtractPotentialPeaks(AnalyticData data) {
+        return data.ToLocalMaxima()
+            .WithProximityMerge()
+            .Select(CreateReachedPeakData.FromGpxPoint)
+            .ToList();
     }
 
-    public Result<List<ReachedPeak>> ToReachedPeaks(
-        IEnumerable<Peak> peaks,
+    Task<Result<List<CreateReachedPeakData>>> FindMatchingPeaks(
+        List<CreateReachedPeakData> peaksCandidates
+    ) {
+        return _peaksQueries.GetPeaksWithinRadius(peaksCandidates, PeakProximityTreshold);
+    }
+
+    static Result<List<ReachedPeak>> ToReachedPeaks(
+        IEnumerable<CreateReachedPeakData> peaks,
         Guid tripId,
         Guid userId
     ) {
-        if (!peaks.Any()) {
+        if (!peaks.NotNullOrEmpty()) {
             return Errors.EmptyCollection("Peaks");
         }
 
         Console.WriteLine($"Matched {peaks.Count()} Peaks");
 
-        return peaks.Select(p => ReachedPeak.Create(p.Id, tripId, userId)).ToList();
+        return peaks
+            .Select(p => ReachedPeak.Create(p.PeakId, tripId, userId, p.TimeReached, p.FirstTime))
+            .ToList();
     }
 }

@@ -49,6 +49,14 @@ public class AnalyticsController : ControllerBase {
             .ToActionResultAsync();
     }
 
+    [HttpGet("analytics/peaks")]
+    public async Task<IActionResult> GetPeakAnalytics(Guid id) {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(_ => _queryService.GetPeakAnalytics(id))
+            .ToActionResultAsync();
+    }
+
     [HttpPost("analytics/elevations/preview")]
     public async Task<ActionResult<ElevationProfileDto?>> DevAnalyticPreview(
         Guid id,
