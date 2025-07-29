@@ -23,8 +23,10 @@ public class ReachedPeakService : IReachedPeakService {
         Guid tripId,
         Guid userId
     ) {
+        var peaksCandidates = data.ToLocalMaximaWithMerges();
+
         return await _peaksQueries
-            .GetPeaksWithinRadius(data.ToLocalMaxima(), PeakProximityTreshold)
+            .GetPeaksWithinRadius(peaksCandidates, PeakProximityTreshold)
             .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, tripId, userId));
     }
 

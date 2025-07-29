@@ -4,15 +4,16 @@ using Domain.Trips.ValueObjects;
 namespace Domain.TripAnalytics.Commands;
 
 public static class AnalyticDataExtentions {
-    public static List<GpxPoint> ToLocalMaxima(this IEnumerable<GpxPoint> gpxPoints) {
-        return FindLocalMaxima([.. gpxPoints]).MergeNearbyPeaks();
+    public static List<GpxPoint> ToLocalMaximaWithMerges(this AnalyticData data) {
+        return FindLocalMaxima(data.Points, data.Gains)
+            .MergeNearbyPeakByDistance()
+            .MergeNearbyPeaksByElevation();
     }
 
-    public static List<GpxPoint> ToLocalMaxima(this AnalyticData data) {
-        return FindLocalMaxima(data.Points, data.Gains).MergeNearbyPeaks();
-    }
-
-    internal static List<GpxPoint> FindLocalMaxima(List<GpxPoint> points, List<GpxGain>? gains = null) {
+    internal static List<GpxPoint> FindLocalMaxima(
+        List<GpxPoint> points,
+        List<GpxGain>? gains = null
+    ) {
         gains ??= points.ToGains();
 
         var localPeaks = new List<GpxPoint>();
@@ -42,7 +43,34 @@ public static class AnalyticDataExtentions {
         return localPeaks;
     }
 
-    internal static List<GpxPoint> MergeNearbyPeaks(this List<GpxPoint> peaks, int minDistance = 10) {
+    internal static List<GpxPoint> MergeNearbyPeaksByElevation(
+        this List<GpxPoint> peaks,
+        int minDistance = 50
+    ) {
+        bool minElevationTreshold(GpxPoint curr, GpxPoint prev) {
+            var eleDelta = Math.Abs(curr.Ele - prev.Ele);
+            return eleDelta > minDistance;
+        }
+
+        return peaks.MergePeaksBy(minElevationTreshold);
+    }
+
+    internal static List<GpxPoint> MergeNearbyPeakByDistance(
+        this List<GpxPoint> peaks,
+        int minDistance = 200
+    ) {
+        bool minDistanceDelta(GpxPoint curr, GpxPoint prev) {
+            var distDelta = Math.Abs(DistanceHelpers.Distance3D(curr, prev));
+            return distDelta > minDistance;
+        }
+
+        return peaks.MergePeaksBy(minDistanceDelta);
+    }
+
+    static List<GpxPoint> MergePeaksBy(
+        this List<GpxPoint> peaks,
+        Func<GpxPoint, GpxPoint, bool> predicate
+    ) {
         int itemCount = peaks.Count;
         if (itemCount < 2) {
             return peaks;
@@ -52,13 +80,11 @@ public static class AnalyticDataExtentions {
 
         var windowStart = 0;
 
-        for (int i = 1; i < itemCount - 1; i++) {
+        for (int i = 1; i < itemCount; i++) {
             var current = peaks[i];
             var prev = peaks[i - 1];
 
-            double eleDelta = Math.Abs(current.Ele - prev.Ele);
-
-            if (eleDelta <= minDistance) {
+            if (!predicate(current, prev)) {
                 continue;
             }
 
