@@ -10,6 +10,7 @@ using Infrastructure.Data;
 using Infrastructure.Peaks.Extentions;
 using Infrastructure.Peaks.Factories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Immutable;
 
 namespace Infrastructure.Peaks.Queries;
@@ -45,7 +46,7 @@ public class PeaksQueryService : IPeaksQueryService {
 
     public async Task<Result<Peak>> GetPeakWithinRadius(GpxPoint point, float radius) {
         var matchedPeaks = await Peaks.FirstOrDefaultAsync(p =>
-            p.Location.IsWithinDistance(point.ToGpxPoint(), radius)
+            p.Location.IsWithinDistance(point.ToTopologyPoint(), radius)
         );
 
         if (matchedPeaks is null) {
@@ -57,8 +58,8 @@ public class PeaksQueryService : IPeaksQueryService {
 
     async Task<Result<Peak>> GetNearestPeakWithin(GpxPoint point, float radius) {
         var query = await Peaks
-            .Where(p => p.Location.IsWithinDistance(point.ToGpxPoint(), radius))
-            .OrderBy(p => p.Location.Distance(point.ToGpxPoint()))
+            .Where(p => p.Location.IsWithinDistance(point.ToTopologyPoint(), radius))
+            .OrderBy(p => p.Location.Distance(point.ToTopologyPoint()))
             .FirstOrDefaultAsync();
 
         if (query is null) {
@@ -107,24 +108,32 @@ public class PeaksQueryService : IPeaksQueryService {
 
         var nearbyPeaks = await Peaks
             .Where(p =>
-                p.Location.IsWithinDistance(potentialPeaks[0].Location.ToGpxPoint(), ProximityPeakSerach)
+                p.Location.IsWithinDistance(
+                    potentialPeaks[0].Location.ToTopologyPoint(),
+                    ProximityPeakSerach
+                )
             )
             .Distinct()
             .ToListAsync();
 
-        Console.WriteLine("radius: " + radius);
-        Console.WriteLine("peaks nearby: " + nearbyPeaks.Count);
+        if (nearbyPeaks.IsNullOrEmpty()) {
+            return Errors.NotFound("No peak was found within " + radius + " radius");
+        }
+
+        Console.WriteLine("Detected nearby: " + nearbyPeaks.Count);
+        Console.WriteLine("Searching from those with Treshold: " + radius);
 
         foreach (var potentialPeak in potentialPeaks) {
             Peak? nearestPeak = Helpers.GetNearestPeakWithin(radius, nearbyPeaks, potentialPeak);
 
             if (nearestPeak is not null) {
+                var p = nearestPeak.Location.ToGeoPoint();
                 potentialPeak.PeakId = nearestPeak.Id;
                 matchedPeaks.Add(potentialPeak);
             }
         }
 
-        if (matchedPeaks.Count == 0) {
+        if (matchedPeaks.IsNullOrEmpty()) {
             return Errors.NotFound("No peak was found within " + radius + " radius");
         }
 
@@ -163,9 +172,12 @@ static class Helpers {
             .FirstOrDefault();
     }
 
-    static double CalculateDistance(CreateReachedPeakData potentialPeak, Peak p) {
-        var distance = p.Location.Distance(potentialPeak.Location.ToGpxPoint());
-        Console.WriteLine("Distance: " + distance);
+    static double CalculateDistance(CreateReachedPeakData potentialPeak, Peak realPeak) {
+        var distance = DistanceHelpers.Distance2D(
+            realPeak.Location.ToGeoPoint(),
+            potentialPeak.Location
+        );
+        Console.WriteLine($"Distance: {distance}");
         return distance;
     }
 }

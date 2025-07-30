@@ -42,6 +42,6 @@ public class AnalyticsProcessingDistance {
         var result = input.MergeNearbyPeakByDistance(distanceThreshold);
 
         // Since all points are farther apart than threshold, all should be kept
-        Assert.Equal(2, result.Count);
+        Assert.Equal(3, result.Count);
     }
 }

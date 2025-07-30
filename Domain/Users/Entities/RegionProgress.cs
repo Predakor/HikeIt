@@ -1,0 +1,51 @@
+﻿using Domain.Common;
+using Domain.Interfaces;
+
+namespace Domain.Users.Entities;
+
+public class RegionProgress : IEntity<Guid> {
+    public Guid Id { get; init; }
+    public Guid UserId { get; init; }
+    public int RegionId { get; init; }
+
+    public short ReachedPeaks { get; private set; }
+    public short TotalPeaks { get; private set; }
+
+    public Dictionary<int, short> PeakVisits { get; private set; } = [];
+
+    public static RegionProgress Create(Guid userId, int RegionId) {
+        return new() {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            RegionId = RegionId,
+        };
+    }
+
+    public RegionProgress AddPeakVisits(IEnumerable<int> peaksIds) {
+        foreach (var peakId in peaksIds) {
+            if (PeakVisits.ContainsKey(peakId)) {
+                PeakVisits[peakId] += 1;
+                continue;
+            }
+            PeakVisits.Add(peakId, 1);
+        }
+        return this;
+    }
+
+    public RegionProgress RemovePeakVisits(IEnumerable<int> peaksIds) {
+        foreach (var peakId in peaksIds) {
+            if (!PeakVisits.ContainsKey(peakId)) {
+                continue;
+            }
+
+            var visits = PeakVisits[peakId];
+            if (visits == 1) {
+                PeakVisits.Remove(peakId);
+                continue;
+            }
+
+            PeakVisits[peakId] = (visits - 1).ToUshort();
+        }
+        return this;
+    }
+}

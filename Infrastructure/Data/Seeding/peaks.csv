@@ -9,9 +9,10 @@ Giewont,1894,Tatry,49.303,19.919
 Kasprowy Wierch,1987,Tatry,49.232,19.968
 Kopa Kondracka,2005,Tatry,49.248,19.971
 Sławkowski Szczyt,2452,Tatry,49.141,20.112
-Babia Góra,1725,Beskid Żywiecki,49.410,-19.529
-Śnieżka,1603,Karkonosze,50.744,15.744
+Babia Góra,1725,Beskid Żywiecki,49.410,19.529
+Śnieżka,1603,Karkonosze,50.736,15.739
 Śnieżnik,1426,Masyw Śnieżnika,50.207,16.804
+Mały Śnieżnik,1426,Masyw Śnieżnika,50.200, 16.820
 Tarnica,1346,Bieszczady,49.074,22.733
 Turbacz,1310,Gorce,49.883,20.200
 Radziejowa,1262,Beskid Sądecki,49.449,20.605
@@ -21,7 +22,7 @@ Wysoka Kopa,1126,Góry Izerskie,50.847,15.432
 Rudawiec,1112,Góry Bialskie,50.246,16.973
 Orlica,1084,Góry Orlickie,50.351,16.345
 Wysoka,1050,Pieniny,49.380,20.555
-Wielka Sowa,1015,Góry Sowie,50.676,16.484
+Wielka Sowa,1015,Góry Sowie,50.680,16.485
 Lackowa,997,Beskid Niski,49.433,21.105
 Kowadło,989,Góry Złote,50.258,17.009
 Jagodna,977,Góry Bystrzyckie,50.255,16.579
@@ -36,3 +37,5 @@ Kłodzka Góra,765,Góry Bardzkie,50.453,16.758
 Skopiec,724,Góry Kaczawskie,50.935,15.886
 Ślęża,718,Masyw Ślęży,50.861,16.710
 Łysica,614,Góry Świętokrzyskie,50.883,20.900
+Śnieżne Kotły,1490,Karkonosze,50.778,15.557
+Łabski Szczyt,1490,Karkonosze,50.781,15.545

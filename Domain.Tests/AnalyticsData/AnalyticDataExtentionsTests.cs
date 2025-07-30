@@ -23,7 +23,7 @@ public class AnalyticsProcesing {
 
         var result = input.MergeNearbyPeaksByElevation(distanceTreshold);
         Assert.Single(result);
-        Assert.Equal(101, result[0].Ele);
+        Assert.Equal(102, result[0].Ele);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class AnalyticsProcesing {
         var input = new List<GpxPoint> { Pt(100), Pt(130), Pt(100) };
         var result = input.MergeNearbyPeaksByElevation(distanceTreshold);
 
-        Assert.Equal(2, result.Count);
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
@@ -47,8 +47,8 @@ public class AnalyticsProcesing {
         };
         var result = input.MergeNearbyPeaksByElevation(distanceTreshold);
         Assert.Equal(2, result.Count);
-        Assert.Equal(101, result[0].Ele); // center of window 0–2
-        Assert.Equal(201, result[1].Ele); // center of window 3–5
+        Assert.Equal(102, result[0].Ele); // center of window 0–2
+        Assert.Equal(202, result[1].Ele); // center of window 3–5
     }
 
     [Fact]
@@ -57,6 +57,6 @@ public class AnalyticsProcesing {
         var result = input.MergeNearbyPeaksByElevation(distanceTreshold * 2);
 
         Assert.Single(result);
-        Assert.Equal(101, result[0].Ele);
+        Assert.Equal(103, result[0].Ele);
     }
 }

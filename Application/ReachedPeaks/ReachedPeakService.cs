@@ -1,7 +1,6 @@
 ﻿using Application.Mountains;
 using Application.ReachedPeaks.ValueObjects;
 using Domain.Common;
-using Domain.Common.GeographyHelpers;
 using Domain.Common.Result;
 using Domain.Common.Utils;
 using Domain.Mountains.Peaks;
@@ -14,7 +13,7 @@ using Domain.Users;
 namespace Application.ReachedPeaks;
 
 public class ReachedPeakService : IReachedPeakService {
-    static readonly float PeakProximityTreshold = GeoConverter.MetersToDegreesLatitude(300f);
+    static readonly float PeakProximityTreshold = 500f;
     readonly IPeaksQueryService _peaksQueries;
     readonly IReachedPeaksQureryService _reachedPeaksQueries;
 
@@ -82,7 +81,7 @@ public class ReachedPeakService : IReachedPeakService {
         Guid tripId,
         Guid userId
     ) {
-        if (!peaks.NotNullOrEmpty()) {
+        if (peaks.NullOrEmpty()) {
             return Errors.EmptyCollection("Peaks");
         }
 
