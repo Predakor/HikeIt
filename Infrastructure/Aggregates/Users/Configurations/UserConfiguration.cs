@@ -7,8 +7,16 @@ namespace Infrastructure.Aggregates.Users.Configurations;
 
 internal class UserConfiguration : IEntityTypeConfiguration<User> {
     public void Configure(EntityTypeBuilder<User> builder) {
-        builder.HasOne(u => u.Stats).WithOne().HasForeignKey<UserStats>(s => s.Id);
-        //add settings later
-        //and maybe badges or achievements
+        builder
+            .HasOne(u => u.Stats)
+            .WithOne()
+            .HasForeignKey<UserStats>(s => s.Id)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasMany(u => u.RegionProgresses)
+            .WithOne()
+            .HasForeignKey(u => u.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

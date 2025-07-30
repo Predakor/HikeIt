@@ -4,7 +4,7 @@ using Domain.Common.Result;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Aggregates.Users;
+namespace Infrastructure.Aggregates.Users.UsersStats;
 
 internal class UserQueryService : IUserQueryService {
     readonly TripDbContext _dbContext;

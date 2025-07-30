@@ -10,6 +10,9 @@ public static class Errors {
     public static Error NotFound<T>(string resourceName, string filterName, T filterValue) =>
         new Error.NotFound($"{resourceName} with {filterName}: {filterValue}");
 
+    public static Error NotFound<T>(string resourceName, T filterValue, string filterName = "id") =>
+        new Error.NotFound($"{resourceName} with {filterName}: {filterValue}");
+
     public static Error BadRequest(string message) => new Error.BadRequest(message);
 
     public static Error EmptyCollection(string message) => new Error.EmptyCollection(message);

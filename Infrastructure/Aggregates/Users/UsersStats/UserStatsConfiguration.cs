@@ -3,7 +3,7 @@ using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Aggregates.Users.Configurations;
+namespace Infrastructure.Aggregates.Users.UsersStats;
 
 internal class UserStatsConfiguration : IEntityTypeConfiguration<UserStats> {
     public void Configure(EntityTypeBuilder<UserStats> builder) {

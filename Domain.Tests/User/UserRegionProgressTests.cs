@@ -1,5 +1,4 @@
-﻿using Domain.Mountains.Peaks;
-using Domain.Users.Entities;
+﻿using Domain.Users.RegionProgres;
 
 namespace Domain.Tests.User;
 
@@ -10,7 +9,6 @@ public class UserRegionProgressTests {
     static RegionProgress MockProggress => RegionProgress.Create(MockupGuid, MockRegionId);
 
 
-    Peak p1 => new() { Height = 1, Location =};
     [Fact]
     public void Create_ShouldInitializeWithEmptyVisits() {
         var userId = Guid.NewGuid();

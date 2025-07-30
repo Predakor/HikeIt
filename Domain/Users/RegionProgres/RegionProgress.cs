@@ -1,7 +1,7 @@
-﻿using Domain.Common;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
+using Domain.Mountains.Regions;
 
-namespace Domain.Users.Entities;
+namespace Domain.Users.RegionProgres;
 
 public class RegionProgress : IEntity<Guid> {
     public Guid Id { get; init; }
@@ -10,6 +10,11 @@ public class RegionProgress : IEntity<Guid> {
 
     public short ReachedPeaks { get; private set; }
     public short TotalPeaks { get; private set; }
+
+    //nav properties
+    public User User { get; private set; }
+    public Region Region { get; private set; }
+
 
     public Dictionary<int, short> PeakVisits { get; private set; } = [];
 
@@ -44,7 +49,7 @@ public class RegionProgress : IEntity<Guid> {
                 continue;
             }
 
-            PeakVisits[peakId] = (visits - 1).ToUshort();
+            PeakVisits[peakId] = (short)Math.Max(visits - 1, 0);
         }
         return this;
     }

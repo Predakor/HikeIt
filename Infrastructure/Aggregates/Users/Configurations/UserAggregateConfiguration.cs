@@ -1,4 +1,6 @@
-﻿using Infrastructure.Data;
+﻿using Infrastructure.Aggregates.Users.RegionProgresses;
+using Infrastructure.Aggregates.Users.UsersStats;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Aggregates.Users.Configurations;

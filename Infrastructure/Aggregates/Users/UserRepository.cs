@@ -15,7 +15,7 @@ public enum UpdateType {
     Decrease,
 }
 
-public class UserRepository : Repository<User, Guid>, IUserRepository {
+public class UserRepository : CrudResultRepository<User, Guid>, IUserRepository {
     readonly DbSet<UserStats> _stats;
 
     public UserRepository(TripDbContext context)
@@ -26,7 +26,19 @@ public class UserRepository : Repository<User, Guid>, IUserRepository {
     public async Task<bool> Create(User newUser) {
         // Add Validation
         await DbSet.AddAsync(newUser);
-        return await SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<Result<User>> GetWithRegionProgresses(Guid userId) {
+        var query = await DbSet
+            .Include(u => u.RegionProgresses)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (query is null) {
+            return Errors.NotFound("user", userId);
+        }
+
+        return query;
     }
 
     public async Task<Result<bool>> UpdateStats(
@@ -42,13 +54,6 @@ public class UserRepository : Repository<User, Guid>, IUserRepository {
 
         stats.UpdateStats(update, updateMode);
 
-        var succes = await SaveChangesAsync();
-
-        if (!succes) {
-            Console.WriteLine("Db save failed or no entities were changed");
-            return Errors.DbError("Failed to save stats update");
-        }
-
-        return succes;
+        return await SaveChangesAsync();
     }
 }

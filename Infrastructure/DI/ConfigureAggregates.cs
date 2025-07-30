@@ -1,5 +1,5 @@
 ﻿using Infrastructure.Aggregates.Mountains.Configuration;
-using Infrastructure.Aggregates.Users;
+using Infrastructure.Aggregates.Users.Configurations;
 using Infrastructure.Data.EntitiesConfigurations;
 using Microsoft.EntityFrameworkCore;
 
