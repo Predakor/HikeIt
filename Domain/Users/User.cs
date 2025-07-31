@@ -13,7 +13,7 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
     public string? Avatar { get; set; }
 
     public UserStats Stats { get; private set; } = new();
-    public List<RegionProgress> RegionProgresses { get; private set; } = [];
+    public ICollection<RegionProgress> RegionProgresses { get; set; } = [];
 
     public User UpdateRegionProgress(UpdateRegionProgress progressUpdate) {
         var regionToUpdate = RegionProgresses.FirstOrDefault(rp =>

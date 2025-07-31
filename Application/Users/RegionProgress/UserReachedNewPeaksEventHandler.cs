@@ -62,6 +62,7 @@ internal class UserReachedNewPeaksEventHandler : IDomainEventHandler<UserReached
 
             user.UpdateRegionProgress(item);
         }
+
         return true;
     }
 }

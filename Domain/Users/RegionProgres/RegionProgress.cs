@@ -12,7 +12,7 @@ public class RegionProgress : IEntity<Guid> {
     public short ReachedPeaks { get; private set; }
 
     //nav properties
-    public User User { get; private set; }
+    public User User { get; set; } = default!;
     public Region Region { get; private set; }
 
 

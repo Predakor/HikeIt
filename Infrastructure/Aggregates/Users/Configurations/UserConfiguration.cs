@@ -15,7 +15,7 @@ internal class UserConfiguration : IEntityTypeConfiguration<User> {
 
         builder
             .HasMany(u => u.RegionProgresses)
-            .WithOne()
+            .WithOne(rp => rp.User)
             .HasForeignKey(u => u.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }

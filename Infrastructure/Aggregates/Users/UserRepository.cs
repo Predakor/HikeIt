@@ -1,5 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
+using Domain.Common.Utils;
 using Domain.Users;
 using Domain.Users.Entities;
 using Domain.Users.Extentions;
@@ -33,15 +34,22 @@ public class UserRepository : CrudResultRepository<User, Guid>, IUserRepository 
     }
 
     public async Task<Result<User>> GetWithRegionProgresses(Guid userId) {
-        var query = await DbSet
-            .Include(u => u.RegionProgresses)
-            .FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await DbSet.FindAsync(userId);
 
-        if (query is null) {
+        if (user is null) {
             return Errors.NotFound("user", userId);
         }
 
-        return query;
+        var regionProgresses = await Context
+            .Set<RegionProgress>()
+            .Where(rp => rp.UserId == userId)
+            .ToListAsync();
+
+        if (regionProgresses.NotNullOrEmpty()) {
+            user.RegionProgresses = regionProgresses;
+        }
+
+        return user;
     }
 
     public async Task<Result<bool>> UpdateStats(
