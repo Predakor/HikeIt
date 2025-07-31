@@ -4,7 +4,7 @@ using Domain.Common.Utils;
 using Domain.Users;
 using Domain.Users.Entities;
 using Domain.Users.Extentions;
-using Domain.Users.RegionProgres;
+using Domain.Users.RegionProgresses;
 using Domain.Users.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Repository.Generic;

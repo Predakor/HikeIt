@@ -1,4 +1,4 @@
-﻿using Domain.Users.RegionProgres;
+﻿using Domain.Users.RegionProgresses;
 
 namespace Domain.Tests.User;
 
@@ -6,14 +6,15 @@ public class UserRegionProgressTests {
     const int MockRegionId = 1;
 
     static readonly Guid MockupGuid = new();
-    static RegionProgress MockProggress => RegionProgress.Create(MockupGuid, MockRegionId);
+    static RegionProgress MockProggress => RegionProgress.Create(MockupGuid, MockRegionId, 2);
 
 
     [Fact]
     public void Create_ShouldInitializeWithEmptyVisits() {
         var userId = Guid.NewGuid();
 
-        var progress = RegionProgress.Create(userId, MockRegionId);
+        var progress = RegionProgress.Create(userId, MockRegionId, 2);
+
 
         Assert.Equal(userId, progress.UserId);
         Assert.Equal(MockRegionId, progress.RegionId);

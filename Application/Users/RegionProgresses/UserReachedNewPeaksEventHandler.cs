@@ -8,7 +8,7 @@ using Domain.Users.RegionProgres.Factories;
 using Domain.Users.RegionProgresses.ValueObjects;
 using System.Collections.Immutable;
 
-namespace Application.Users.RegionProgress;
+namespace Application.Users.RegionProgresses;
 
 internal class UserReachedNewPeaksEventHandler : IDomainEventHandler<UserReachedNewPeaksEvent> {
     readonly IUserRepository _userRepository;

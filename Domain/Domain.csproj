@@ -15,7 +15,7 @@
   <ItemGroup>
     <Folder Include="TripAnalytics\Builders\RouteElevationProfileBuilder\" />
     <Folder Include="Trips\ValueObjects\TripAnalytics\" />
-    <Folder Include="Users\RegionProgres\Services\" />
+    <Folder Include="Users\RegionProgresses\Services\" />
   </ItemGroup>
 
   <ItemGroup>

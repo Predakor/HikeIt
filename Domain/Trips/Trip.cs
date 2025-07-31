@@ -1,9 +1,11 @@
 ﻿using Domain.Common;
 using Domain.Common.AggregateRoot;
 using Domain.Common.Result;
+using Domain.Common.Utils;
 using Domain.Interfaces;
 using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
+using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.ValueObjects;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Events;
@@ -80,8 +82,16 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         return this;
     }
 
-    public Trip OnDelete() {
+    public Trip OnDelete(IList<ReachedPeak> tripsReached) {
         Console.WriteLine("Deleting");
+
+        if (tripsReached.NotNullOrEmpty()) {
+            var peakUpdates = tripsReached
+                .Select(rp => new PeakUpdateData(rp.PeakId, rp.Peak.RegionID))
+                .ToArray();
+            AddDomainEvent(new ReachedPeakRemovedEvent(UserId, peakUpdates));
+        }
+
         AddDomainEvent(new TripRemovedEvent(this));
         return this;
     }

@@ -1,9 +1,9 @@
-﻿using Application.Users.RegionProgress.Dtos;
+﻿using Application.Users.RegionProgresses.Dtos;
 using Application.Users.Stats;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Common.Utils;
-using Domain.Users.RegionProgres;
+using Domain.Users.RegionProgresses;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,8 +52,8 @@ static class Extentions {
     public static RegionProgressDto.Summary ToRegionSummary(this RegionProgress progress) {
         return new RegionProgressDto.Summary(
             new(progress.Region.Id, progress.Region.Name),
-            progress.ReachedPeaks,
-            progress.TotalPeaks
+            progress.TotalReachedPeaks,
+            progress.TotalPeaksInRegion
         );
     }
 }

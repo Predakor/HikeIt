@@ -1,6 +1,6 @@
 ﻿using Application.TripAnalytics.ElevationProfiles;
 using Application.TripAnalytics.Interfaces;
-using Application.TripAnalytics.PeakAnalytics.Services;
+using Application.TripAnalytics.PeakAnalytics.Commands;
 using Application.Trips;
 using Domain.Common;
 using Domain.Common.Result;

@@ -1,4 +1,5 @@
-﻿using Domain.Users.RegionProgresses.ValueObjects;
+﻿using Domain.Users.RegionProgresses;
+using Domain.Users.RegionProgresses.ValueObjects;
 
 namespace Domain.Users.RegionProgres.Factories;
 

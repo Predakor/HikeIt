@@ -1,6 +1,6 @@
 ﻿using Domain.Interfaces;
 using Domain.Users.Entities;
-using Domain.Users.RegionProgres;
+using Domain.Users.RegionProgresses;
 using Domain.Users.RegionProgresses.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 

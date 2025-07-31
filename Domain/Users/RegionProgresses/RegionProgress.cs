@@ -1,19 +1,20 @@
 ﻿using Domain.Interfaces;
 using Domain.Mountains.Regions;
 
-namespace Domain.Users.RegionProgres;
+namespace Domain.Users.RegionProgresses;
 
 public class RegionProgress : IEntity<Guid> {
     public Guid Id { get; init; }
-    public Guid UserId { get; init; }
-    public int RegionId { get; init; }
+    public Guid UserId { get; set; }
+    public int RegionId { get; set; }
 
-    public short TotalPeaks { get; init; }
-    public short ReachedPeaks { get; private set; }
+    public short TotalPeaksInRegion { get; init; }
+    public short TotalReachedPeaks { get; set; }
+    public short UniqueReachedPeaks { get; set; }
 
     //nav properties
     public User User { get; set; } = default!;
-    public Region Region { get; private set; }
+    public Region Region { get; set; }
 
 
     public Dictionary<int, short> PeakVisits { get; private set; } = [];
@@ -23,7 +24,7 @@ public class RegionProgress : IEntity<Guid> {
             Id = Guid.NewGuid(),
             UserId = userId,
             RegionId = RegionId,
-            TotalPeaks = totalPeaks
+            TotalPeaksInRegion = totalPeaks
         };
     }
 

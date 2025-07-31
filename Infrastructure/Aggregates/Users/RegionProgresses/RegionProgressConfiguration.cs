@@ -1,5 +1,6 @@
-﻿using Domain.Users.RegionProgres;
+﻿using Domain.Users.RegionProgresses;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Text.Json;
 
@@ -11,8 +12,8 @@ internal class RegionProgressConfiguration : IEntityTypeConfiguration<RegionProg
 
         builder.Property(rp => rp.UserId).IsRequired();
         builder.Property(rp => rp.RegionId).IsRequired();
-        builder.Property(rp => rp.ReachedPeaks).IsRequired();
-        builder.Property(rp => rp.TotalPeaks).IsRequired();
+        builder.Property(rp => rp.TotalReachedPeaks).IsRequired();
+        builder.Property(rp => rp.TotalPeaksInRegion).IsRequired();
 
         builder.HasOne(rp => rp.User).WithMany().HasForeignKey(rp => rp.UserId);
         builder.HasOne(rp => rp.Region).WithMany().HasForeignKey(rp => rp.RegionId);
@@ -27,6 +28,13 @@ internal class RegionProgressConfiguration : IEntityTypeConfiguration<RegionProg
                         v,
                         (JsonSerializerOptions?)null
                     )!
+            )
+            .Metadata.SetValueComparer(
+                new ValueComparer<Dictionary<int, short>>(
+                    (c1, c2) => c1.SequenceEqual(c2),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToDictionary(entry => entry.Key, entry => entry.Value)
+                )
             );
     }
 }

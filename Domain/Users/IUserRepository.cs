@@ -1,7 +1,7 @@
 ﻿using Domain.Common.Result;
 using Domain.Interfaces;
 using Domain.Users.Extentions;
-using Domain.Users.RegionProgres;
+using Domain.Users.RegionProgresses;
 using Domain.Users.ValueObjects;
 
 namespace Domain.Users;

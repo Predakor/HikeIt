@@ -4,7 +4,7 @@ using Domain.Common.Result;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 
-namespace Application.TripAnalytics.PeakAnalytics.Services;
+namespace Application.TripAnalytics.PeakAnalytics.Commands;
 
 public class CreatePeakAnalyticsCommand(Guid id, IEnumerable<ReachedPeak> peaks)
     : ICommand<PeaksAnalytic> {

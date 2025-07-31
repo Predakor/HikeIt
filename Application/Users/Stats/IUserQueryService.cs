@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces;
-using Application.Users.RegionProgress.Dtos;
+using Application.Users.RegionProgresses.Dtos;
 using Domain.Common.Result;
 
 namespace Application.Users.Stats;
