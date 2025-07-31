@@ -5,6 +5,8 @@ using Domain.Common.Result;
 using Domain.Common.Utils;
 using Domain.Mountains.Peaks;
 using Domain.ReachedPeaks;
+using Domain.ReachedPeaks.Builders;
+using Domain.ReachedPeaks.ValueObjects;
 using Domain.TripAnalytics.Commands;
 using Domain.Trips;
 using Domain.Trips.ValueObjects;
@@ -13,7 +15,7 @@ using Domain.Users;
 namespace Application.ReachedPeaks;
 
 public class ReachedPeakService : IReachedPeakService {
-    static readonly float PeakProximityTreshold = 500f;
+    const float PeakProximityTreshold = 100f;
     readonly IPeaksQueryService _peaksQueries;
     readonly IReachedPeaksQureryService _reachedPeaksQueries;
 
@@ -29,47 +31,43 @@ public class ReachedPeakService : IReachedPeakService {
         return ReachedPeak.Create(peak, trip, user);
     }
 
-    public async Task<Result<List<ReachedPeak>>> GetPeaks(
-        AnalyticData data,
-        Guid tripId,
-        Guid userId
-    ) {
+    public async Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip) {
         return await ExtractPotentialPeaks(data)
             .BindAsync(FindMatchingPeaks)
-            .BindAsync(peaks => MarkNewPeaks(userId, peaks))
-            .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, tripId, userId));
+            .BindAsync(peaks => MarkNewPeaks(trip.UserId, peaks))
+            .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, trip));
     }
 
-    static Result<List<CreateReachedPeakData>> ExtractPotentialPeaks(AnalyticData data) {
+    static Result<List<ReachedPeakDataBuilder>> ExtractPotentialPeaks(AnalyticData data) {
         return data.ToLocalMaximaWithDistance()
             .WithProximityMerge()
-            .Select(CreateReachedPeakData.FromGpxPoint)
+            .Select(ReachedPeakDataFactory.CreateFromGpxPointWithDistance)
             .ToList();
     }
 
-    Task<Result<List<CreateReachedPeakData>>> FindMatchingPeaks(
-        List<CreateReachedPeakData> peaksCandidates
+    Task<Result<List<ReachedPeakDataBuilder>>> FindMatchingPeaks(
+        List<ReachedPeakDataBuilder> peaksCandidates
     ) {
         return _peaksQueries.GetPeaksWithinRadius(peaksCandidates, PeakProximityTreshold);
     }
 
-    async Task<Result<List<CreateReachedPeakData>>> MarkNewPeaks(
+    async Task<Result<List<ReachedPeakDataBuilder>>> MarkNewPeaks(
         Guid userId,
-        List<CreateReachedPeakData> peaks
+        List<ReachedPeakDataBuilder> peaks
     ) {
-        var newPeaksIds = await _reachedPeaksQueries.ReachedByUserBefore(
+        var newPeaks = await _reachedPeaksQueries.ReachedByUserBefore(
             userId,
             peaks.Select(p => p.PeakId)
         );
 
-        if (newPeaksIds.NullOrEmpty()) {
+        if (newPeaks.NullOrEmpty()) {
             return peaks;
         }
 
-        foreach (var newPeakId in newPeaksIds) {
-            var firstMathchingPeak = peaks.FirstOrDefault(p => p.PeakId == newPeakId);
+        foreach (var newPeak in newPeaks) {
+            var firstMathchingPeak = peaks.FirstOrDefault(p => p.PeakId == newPeak.Id);
             if (firstMathchingPeak is not null) {
-                firstMathchingPeak.FirstTime = true;
+                firstMathchingPeak.SetFirstTimeReached(true);
             }
         }
 
@@ -77,9 +75,8 @@ public class ReachedPeakService : IReachedPeakService {
     }
 
     static Result<List<ReachedPeak>> ToReachedPeaks(
-        IEnumerable<CreateReachedPeakData> peaks,
-        Guid tripId,
-        Guid userId
+        IEnumerable<ReachedPeakDataBuilder> peaks,
+        Trip trip
     ) {
         if (peaks.NullOrEmpty()) {
             return Errors.EmptyCollection("Peaks");
@@ -87,8 +84,13 @@ public class ReachedPeakService : IReachedPeakService {
 
         Console.WriteLine($"Matched {peaks.Count()} Peaks");
 
+        ReachedPeakData[] newPeaksEventData = [.. peaks.Select(p => p.Build())];
+        trip.AddReachedPeaks(newPeaksEventData);
+
         return peaks
-            .Select(p => ReachedPeak.Create(p.PeakId, tripId, userId, p.TimeReached, p.FirstTime))
+            .Select(p =>
+                ReachedPeak.Create(p.PeakId, trip.Id, trip.UserId, p.TimeReached, p.FirstTime)
+            )
             .ToList();
     }
 }

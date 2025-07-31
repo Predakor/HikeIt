@@ -1,14 +1,14 @@
-﻿using Domain.Users.RegionProgres;
-using Domain.Users.RegionProgresses.ValueObjects;
+﻿using Domain.Users.RegionProgresses.ValueObjects;
 
-namespace Domain.Users.RegionProgresses.Factories;
+namespace Domain.Users.RegionProgres.Factories;
 
-internal static class RegionProgressFactory {
+public static class RegionProgressFactory {
     public static RegionProgress FromProgressUpdate(
         UpdateRegionProgress progressUpdate,
-        Guid userId
+        Guid userId,
+        short totalPeaks
     ) {
-        var newRegionProgress = RegionProgress.Create(userId, progressUpdate.RegionId);
+        var newRegionProgress = RegionProgress.Create(userId, progressUpdate.RegionId, totalPeaks);
         newRegionProgress.AddPeakVisits(progressUpdate.PeaksIds);
         return newRegionProgress;
     }

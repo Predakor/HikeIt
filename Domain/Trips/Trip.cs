@@ -4,7 +4,9 @@ using Domain.Common.Result;
 using Domain.Interfaces;
 using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
+using Domain.ReachedPeaks.ValueObjects;
 using Domain.TripAnalytics;
+using Domain.TripAnalytics.Events;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.Events;
 using Domain.Users;
@@ -47,9 +49,19 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         if (analytic == null) {
             return Errors.NotFound("passed null analytics");
         }
+
         Analytics = analytic;
         AddDomainEvent(new TripAnalyticsCreatedEvent(this, analytic.ToStatUpdate(TripDay)));
-        Console.WriteLine("adding Domain event, total count:" + Events.Count);
+        return this;
+    }
+
+    public Result<Trip> AddReachedPeaks(ReachedPeakData[] newPeaks) {
+        if (newPeaks.Length == 0) {
+            return Errors.EmptyCollection("new peaks");
+        }
+
+        AddDomainEvent(new UserReachedNewPeaksEvent(new(UserId, Id, newPeaks)));
+
         return this;
     }
 

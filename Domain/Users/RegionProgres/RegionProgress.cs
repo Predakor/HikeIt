@@ -8,8 +8,8 @@ public class RegionProgress : IEntity<Guid> {
     public Guid UserId { get; init; }
     public int RegionId { get; init; }
 
+    public short TotalPeaks { get; init; }
     public short ReachedPeaks { get; private set; }
-    public short TotalPeaks { get; private set; }
 
     //nav properties
     public User User { get; private set; }
@@ -18,11 +18,12 @@ public class RegionProgress : IEntity<Guid> {
 
     public Dictionary<int, short> PeakVisits { get; private set; } = [];
 
-    public static RegionProgress Create(Guid userId, int RegionId) {
+    public static RegionProgress Create(Guid userId, int RegionId, short totalPeaks) {
         return new() {
             Id = Guid.NewGuid(),
             UserId = userId,
             RegionId = RegionId,
+            TotalPeaks = totalPeaks
         };
     }
 

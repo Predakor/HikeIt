@@ -1,7 +1,8 @@
 ﻿using Application.Interfaces;
+using Domain.Mountains.Peaks;
 
 namespace Application.ReachedPeaks;
 
 public interface IReachedPeaksQureryService : IQueryService {
-    Task<List<int>> ReachedByUserBefore(Guid userId, IEnumerable<int> peakIds);
+    Task<List<Peak>> ReachedByUserBefore(Guid userId, IEnumerable<int> peakIds);
 }

@@ -7,11 +7,7 @@ using Domain.Users;
 namespace Domain.ReachedPeaks;
 
 public interface IReachedPeakService {
-    Task<Result<List<ReachedPeak>>> GetPeaks(
-        AnalyticData data,
-        Guid tripId,
-        Guid userId
-    );
+    Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip);
 
     Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user);
 }

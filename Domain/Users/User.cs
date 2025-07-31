@@ -1,7 +1,6 @@
 ﻿using Domain.Interfaces;
 using Domain.Users.Entities;
 using Domain.Users.RegionProgres;
-using Domain.Users.RegionProgresses.Factories;
 using Domain.Users.RegionProgresses.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,17 +15,15 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
     public UserStats Stats { get; private set; } = new();
     public List<RegionProgress> RegionProgresses { get; private set; } = [];
 
-    public User UpdateOrAddRegionProgress(UpdateRegionProgress progressUpdate) {
+    public User UpdateRegionProgress(UpdateRegionProgress progressUpdate) {
         var regionToUpdate = RegionProgresses.FirstOrDefault(rp =>
             rp.RegionId == progressUpdate.RegionId
         );
 
-        if (regionToUpdate is null) {
-            RegionProgresses.Add(RegionProgressFactory.FromProgressUpdate(progressUpdate, Id));
-            return this;
+        if (regionToUpdate is not null) {
+            regionToUpdate.AddPeakVisits(progressUpdate.PeaksIds);
         }
 
-        regionToUpdate.AddPeakVisits(progressUpdate.PeaksIds);
         return this;
     }
 

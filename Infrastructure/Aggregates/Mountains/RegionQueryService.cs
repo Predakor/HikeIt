@@ -50,6 +50,11 @@ public class RegionQueryService : IRegionQueryService {
         return regions.ToComplete();
     }
 
+    public async Task<Result<int>> GetPeakCount(int regionId) {
+        return await Regions.Where(r => r.Id == regionId).CountAsync();
+    }
+
+
     public async Task<Result<RegionDto.WithPeaks>> AllPeaksFromRegion(RegionDto.Complete region) {
         var peaksFromRegion = await Peaks.Where(p => p.RegionID == region.Id).ToListAsync();
 
@@ -59,7 +64,6 @@ public class RegionQueryService : IRegionQueryService {
 
         return region.ToRegionWithPeaks(peaksFromRegion);
     }
-
 
 }
 

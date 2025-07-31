@@ -1,6 +1,6 @@
 ﻿using Application.TripAnalytics.ElevationProfiles;
 using Application.TripAnalytics.Interfaces;
-using Application.TripAnalytics.Services;
+using Application.TripAnalytics.PeakAnalytics.Services;
 using Application.Trips;
 using Domain.Common;
 using Domain.Common.Result;
@@ -73,7 +73,7 @@ public class TripAnalyticService : ITripAnalyticService {
 
     Task<Result<IList<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx) {
         return _reachedPeakService
-            .GetPeaks(ctx.AnalyticData, ctx.Trip.Id, ctx.User.Id)
+            .CreateReachedPeaks(ctx.AnalyticData, ctx.Trip)
             .BindAsync(_unitOfWork.ReachedPeaks.AddRangeAsync);
     }
 

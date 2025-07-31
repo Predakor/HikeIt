@@ -1,27 +1,12 @@
-﻿using Domain.Trips.ValueObjects;
+﻿using Domain.ReachedPeaks.Builders;
+using Domain.Trips.ValueObjects;
 
 namespace Application.ReachedPeaks.ValueObjects;
 
-public class CreateReachedPeakData {
-    public readonly Guid Id;
-    public readonly GpxPoint Location;
-
-    CreateReachedPeakData(GpxPoint point) {
-        Id = Guid.NewGuid();
-        Location = point;
-
-        if (point.Time is not null) {
-            TimeReached = point.Time;
-        }
+public static class ReachedPeakDataFactory {
+    public static ReachedPeakDataBuilder CreateFromGpxPointWithDistance(GpxPointWithDistance point) {
+        return ReachedPeakDataBuilder
+            .Create(point.BasePoint)
+            .WithDistanceFromStart(point.DistanceFromStart);
     }
-
-    public static CreateReachedPeakData FromGpxPoint(GpxPointWithDistance point) {
-        return new(point.BasePoint) { ReachedAtDistanceMeters = (uint)point.DistanceFromStart };
-    }
-
-    public int PeakId;
-
-    public bool FirstTime;
-    public DateTime? TimeReached;
-    public uint ReachedAtDistanceMeters;
 }

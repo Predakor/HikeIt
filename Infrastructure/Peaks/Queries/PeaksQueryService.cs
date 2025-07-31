@@ -1,10 +1,10 @@
 ﻿using Application.Dto;
 using Application.Mappers.Implementations;
 using Application.Mountains;
-using Application.ReachedPeaks.ValueObjects;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Mountains.Peaks;
+using Domain.ReachedPeaks.Builders;
 using Domain.Trips.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Peaks.Extentions;
@@ -86,8 +86,8 @@ public class PeaksQueryService : IPeaksQueryService {
         return foundPeaks;
     }
 
-    public async Task<Result<List<CreateReachedPeakData>>> GetPeaksWithinRadius(
-        IEnumerable<CreateReachedPeakData> points,
+    public async Task<Result<List<ReachedPeakDataBuilder>>> GetPeaksWithinRadius(
+        IEnumerable<ReachedPeakDataBuilder> points,
         float radius
     ) {
         var potentialPeaks = points.ToImmutableArray();
@@ -95,12 +95,12 @@ public class PeaksQueryService : IPeaksQueryService {
             return Errors.NotFound("No peak was found within " + radius + " radius");
         }
 
-        List<CreateReachedPeakData> matchedPeaks = [];
+        List<ReachedPeakDataBuilder> matchedPeaks = [];
         if (potentialPeaks.Length == 1) {
             var point = potentialPeaks[0];
             return await GetNearestPeakWithin(point.Location, radius)
                 .MapAsync(peak => {
-                    point.PeakId = peak.Id;
+                    point.WithPeak(peak);
                     matchedPeaks.Add(point);
                     return matchedPeaks;
                 });
@@ -127,8 +127,7 @@ public class PeaksQueryService : IPeaksQueryService {
             Peak? nearestPeak = Helpers.GetNearestPeakWithin(radius, nearbyPeaks, potentialPeak);
 
             if (nearestPeak is not null) {
-                var p = nearestPeak.Location.ToGeoPoint();
-                potentialPeak.PeakId = nearestPeak.Id;
+                potentialPeak.WithPeak(nearestPeak);
                 matchedPeaks.Add(potentialPeak);
             }
         }
@@ -164,7 +163,7 @@ static class Helpers {
     public static Peak? GetNearestPeakWithin(
         float radius,
         List<Peak> nearbyPeaks,
-        CreateReachedPeakData potentialPeak
+        ReachedPeakDataBuilder potentialPeak
     ) {
         return nearbyPeaks
             .Where(p => CalculateDistance(potentialPeak, p) <= radius)
@@ -172,7 +171,7 @@ static class Helpers {
             .FirstOrDefault();
     }
 
-    static double CalculateDistance(CreateReachedPeakData potentialPeak, Peak realPeak) {
+    static double CalculateDistance(ReachedPeakDataBuilder potentialPeak, Peak realPeak) {
         var distance = DistanceHelpers.Distance2D(
             realPeak.Location.ToGeoPoint(),
             potentialPeak.Location

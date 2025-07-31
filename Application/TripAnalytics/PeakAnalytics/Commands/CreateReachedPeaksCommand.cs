@@ -4,7 +4,7 @@ using Domain.Common.Interfaces;
 using Domain.Common.Result;
 using Domain.ReachedPeaks;
 
-namespace Application.TripAnalytics.Commands;
+namespace Application.TripAnalytics.PeakAnalytics.Commands;
 
 record CommandData(List<PeakDto.Reached> ReachedPeaks, Guid TripId, Guid UserId);
 

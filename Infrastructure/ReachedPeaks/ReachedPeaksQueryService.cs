@@ -1,4 +1,5 @@
 ﻿using Application.ReachedPeaks;
+using Domain.Mountains.Peaks;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,15 +13,16 @@ public class ReachedPeaksQueryService : IReachedPeaksQureryService {
         _tripDbContext = tripDbContext;
     }
 
-    public async Task<List<int>> ReachedByUserBefore(Guid userId, IEnumerable<int> peakIds) {
+    public async Task<List<Peak>> ReachedByUserBefore(Guid userId, IEnumerable<int> peakIds) {
         if (peakIds.IsNullOrEmpty()) {
             return [];
         }
 
         return await _tripDbContext
             .ReachedPeaks.AsNoTracking()
+            .Include(rp => rp.Peak)
             .Where(rp => rp.UserId == userId && peakIds.Contains(rp.PeakId))
-            .Select(rp => rp.PeakId)
+            .Select(rp => rp.Peak)
             .Distinct()
             .ToListAsync();
     }
