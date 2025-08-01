@@ -46,16 +46,7 @@ internal class UserReachedNewPeaksEventHandler : IDomainEventHandler<UserReached
             );
 
             if (regionProgress is null) {
-                await _regionQueries
-                    .GetPeakCount(item.RegionId)
-                    .MapAsync(peaksInRegionCount =>
-                        RegionProgressFactory.FromProgressUpdate(
-                            item,
-                            user.Id,
-                            (short)peaksInRegionCount
-                        )
-                    )
-                    .MapAsync(_userRepository.CreateRegionProgress);
+                await CreateNewRegionProgress(user, item);
 
                 continue;
             }
@@ -64,5 +55,18 @@ internal class UserReachedNewPeaksEventHandler : IDomainEventHandler<UserReached
         }
 
         return true;
+    }
+
+    async Task CreateNewRegionProgress(User user, UpdateRegionProgress progressUpdate) {
+        await _regionQueries
+            .GetPeakCount(progressUpdate.RegionId)
+            .MapAsync(peaksInRegionCount =>
+                RegionProgressFactory.FromProgressUpdate(
+                    progressUpdate,
+                    user.Id,
+                    (short)peaksInRegionCount
+                )
+            )
+            .MapAsync(_userRepository.CreateRegionProgress);
     }
 }

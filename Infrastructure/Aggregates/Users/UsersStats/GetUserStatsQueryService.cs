@@ -52,7 +52,7 @@ static class Extentions {
     public static RegionProgressDto.Summary ToRegionSummary(this RegionProgress progress) {
         return new RegionProgressDto.Summary(
             new(progress.Region.Id, progress.Region.Name),
-            progress.TotalReachedPeaks,
+            progress.UniqueReachedPeaks,
             progress.TotalPeaksInRegion
         );
     }

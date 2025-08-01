@@ -10,12 +10,11 @@ internal class RegionProgressConfiguration : IEntityTypeConfiguration<RegionProg
     public void Configure(EntityTypeBuilder<RegionProgress> builder) {
         builder.HasKey(rp => rp.Id);
 
-        builder.Property(rp => rp.UserId).IsRequired();
         builder.Property(rp => rp.RegionId).IsRequired();
         builder.Property(rp => rp.TotalReachedPeaks).IsRequired();
         builder.Property(rp => rp.TotalPeaksInRegion).IsRequired();
 
-        builder.HasOne(rp => rp.User).WithMany().HasForeignKey(rp => rp.UserId);
+        //builder.HasOne(rp => rp.User).WithMany().HasForeignKey(rp => rp.UserId);
         builder.HasOne(rp => rp.Region).WithMany().HasForeignKey(rp => rp.RegionId);
 
         builder

@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20250729215755_AddReachDistanceToReachedPeaks")]
-    partial class AddReachDistanceToReachedPeaks
+    [Migration("20250801163313_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -254,6 +254,40 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserStats");
+                });
+
+            modelBuilder.Entity("Domain.Users.RegionProgresses.RegionProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PeakVisits")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("RegionId")
+                        .HasColumnType("integer");
+
+                    b.Property<short>("TotalPeaksInRegion")
+                        .HasColumnType("smallint");
+
+                    b.Property<short>("TotalReachedPeaks")
+                        .HasColumnType("smallint");
+
+                    b.Property<short>("UniqueReachedPeaks")
+                        .HasColumnType("smallint");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RegionProgress");
                 });
 
             modelBuilder.Entity("Domain.Users.User", b =>
@@ -683,6 +717,25 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Users.RegionProgresses.RegionProgress", b =>
+                {
+                    b.HasOne("Domain.Mountains.Regions.Region", "Region")
+                        .WithMany()
+                        .HasForeignKey("RegionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Users.User", "User")
+                        .WithMany("RegionProgresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Region");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -750,6 +803,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Users.User", b =>
                 {
+                    b.Navigation("RegionProgresses");
+
                     b.Navigation("Stats")
                         .IsRequired();
                 });

@@ -29,6 +29,12 @@ public class UserStats : IEntity<Guid> {
     public uint LongestTripMeters { get; private set; }
 
     public void UpdateStats(StatsUpdates.All update, UpdateMode mode) {
+        //safeguard if some stats woulnd't zero out
+        if (TotalTrips == 1 && mode == UpdateMode.Decrease) {
+            Clear();
+            return;
+        }
+
         UpdateTripCount(mode);
         UpdateTotals(update.Totals, mode);
         UpdateLocations(update.Locations, mode);
@@ -69,11 +75,6 @@ public class UserStats : IEntity<Guid> {
             UpdateMode.Set => delta,
             _ => TotalTrips,
         };
-
-        //safeguard if some stats woulnd't zero out
-        if (TotalTrips == 0) {
-            Clear();
-        }
     }
 
     void Clear() {

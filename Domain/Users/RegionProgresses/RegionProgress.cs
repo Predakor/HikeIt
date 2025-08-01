@@ -14,8 +14,7 @@ public class RegionProgress : IEntity<Guid> {
 
     //nav properties
     public User User { get; set; } = default!;
-    public Region Region { get; set; }
-
+    public Region Region { get; set; } = default!;
 
     public Dictionary<int, short> PeakVisits { get; private set; } = [];
 
@@ -24,16 +23,19 @@ public class RegionProgress : IEntity<Guid> {
             Id = Guid.NewGuid(),
             UserId = userId,
             RegionId = RegionId,
-            TotalPeaksInRegion = totalPeaks
+            TotalPeaksInRegion = totalPeaks,
         };
     }
 
     public RegionProgress AddPeakVisits(IEnumerable<int> peaksIds) {
         foreach (var peakId in peaksIds) {
+            TotalReachedPeaks++;
             if (PeakVisits.ContainsKey(peakId)) {
                 PeakVisits[peakId] += 1;
                 continue;
             }
+
+            UniqueReachedPeaks++;
             PeakVisits.Add(peakId, 1);
         }
         return this;
@@ -45,14 +47,23 @@ public class RegionProgress : IEntity<Guid> {
                 continue;
             }
 
+            TotalReachedPeaks = TotalReachedPeaks.Decrement();
+
             var visits = PeakVisits[peakId];
             if (visits == 1) {
                 PeakVisits.Remove(peakId);
+                UniqueReachedPeaks = UniqueReachedPeaks.Decrement();
                 continue;
             }
 
-            PeakVisits[peakId] = (short)Math.Max(visits - 1, 0);
+            PeakVisits[peakId] = visits.Decrement();
         }
         return this;
+    }
+}
+
+static class Extentions {
+    public static short Decrement(this short value, int decrement = 1) {
+        return (short)Math.Max(value - decrement, 0);
     }
 }

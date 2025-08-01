@@ -278,16 +278,11 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RegionId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("RegionProgress");
                 });
@@ -728,14 +723,10 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Users.User", "User")
-                        .WithMany()
+                        .WithMany("RegionProgresses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Domain.Users.User", null)
-                        .WithMany("RegionProgresses")
-                        .HasForeignKey("UserId1");
 
                     b.Navigation("Region");
 

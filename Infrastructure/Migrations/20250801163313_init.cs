@@ -229,6 +229,35 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RegionProgress",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RegionId = table.Column<int>(type: "integer", nullable: false),
+                    TotalPeaksInRegion = table.Column<short>(type: "smallint", nullable: false),
+                    TotalReachedPeaks = table.Column<short>(type: "smallint", nullable: false),
+                    UniqueReachedPeaks = table.Column<short>(type: "smallint", nullable: false),
+                    PeakVisits = table.Column<string>(type: "jsonb", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RegionProgress", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RegionProgress_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RegionProgress_Regions_RegionId",
+                        column: x => x.RegionId,
+                        principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Trips",
                 columns: table => new
                 {
@@ -287,7 +316,8 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstTime = table.Column<bool>(type: "boolean", nullable: false),
-                    TimeReached = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReachedAtTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReachedAtDistanceMeters = table.Column<long>(type: "bigint", nullable: true),
                     TripId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     PeakId = table.Column<int>(type: "integer", nullable: false)
@@ -375,7 +405,9 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Summary_TotalPeaks = table.Column<int>(type: "integer", nullable: true)
+                    Total = table.Column<long>(type: "bigint", nullable: false),
+                    Unique = table.Column<long>(type: "bigint", nullable: false),
+                    New = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -438,12 +470,21 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ReachedPeaks_TripId",
                 table: "ReachedPeaks",
-                column: "TripId",
-                unique: true);
+                column: "TripId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReachedPeaks_UserId",
                 table: "ReachedPeaks",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RegionProgress_RegionId",
+                table: "RegionProgress",
+                column: "RegionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RegionProgress_UserId",
+                table: "RegionProgress",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -491,6 +532,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ReachedPeaks");
+
+            migrationBuilder.DropTable(
+                name: "RegionProgress");
 
             migrationBuilder.DropTable(
                 name: "UserStats");

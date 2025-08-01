@@ -51,7 +51,7 @@ public class RegionQueryService : IRegionQueryService {
     }
 
     public async Task<Result<int>> GetPeakCount(int regionId) {
-        return await Regions.Where(r => r.Id == regionId).CountAsync();
+        return await Peaks.Where(r => r.RegionID == regionId).CountAsync();
     }
 
 
