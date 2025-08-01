@@ -12,3 +12,11 @@ export interface Region {
   id: number;
   name: string;
 }
+
+export interface RegionProgressSummary {
+  region: Region;
+  uniqueReachedPeaks: number;
+  totalPeaksInRegion: number;
+}
+
+export interface RegionProgressFull {}
