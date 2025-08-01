@@ -7,9 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entiites\" />
+    <Compile Remove="Entiites\**" />
+    <EmbeddedResource Remove="Entiites\**" />
+    <None Remove="Entiites\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="TripAnalytics\Builders\RouteElevationProfileBuilder\" />
     <Folder Include="Trips\ValueObjects\TripAnalytics\" />
+    <Folder Include="Users\RegionProgresses\Services\" />
   </ItemGroup>
 
   <ItemGroup>

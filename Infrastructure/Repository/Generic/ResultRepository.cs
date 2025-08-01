@@ -42,8 +42,10 @@ public class CrudResultRepository<T, TKey>
     : ResultRepository<T, TKey>,
         ICrudResultRepository<T, TKey>
     where T : class, IEntity<TKey> {
+
     protected CrudResultRepository(TripDbContext context)
-        : base(context) { }
+        : base(context) {
+    }
 
     public virtual async Task<Result<T>> AddAsync(T entity) {
         var query = await DbSet.AddAsync(entity);
@@ -58,6 +60,10 @@ public class CrudResultRepository<T, TKey>
                 found => Result<bool>.Success(DbSet.Remove(found) != null),
                 error => Result<bool>.Failure(Errors.Unknown())
             );
+    }
+
+    public async Task<Result<bool>> SaveChangesAsync() {
+        return await Context.SaveChangesAsync() > 0;
     }
 
     public Task<Result<T>> UpdateAsync(T entity) {

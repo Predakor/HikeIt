@@ -6,6 +6,6 @@ namespace Infrastructure.Data.EntitiesConfigurations;
 
 public class PeaksAnalyticConfiguration : IEntityTypeConfiguration<PeaksAnalytic> {
     public void Configure(EntityTypeBuilder<PeaksAnalytic> builder) {
-        builder.OwnsOne(pa => pa.Summary).WithOwner();
+
     }
 }

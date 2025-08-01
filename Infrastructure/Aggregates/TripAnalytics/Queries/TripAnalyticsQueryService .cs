@@ -9,12 +9,17 @@ using static Application.Dto.Analytics.TripAnalyticsDto;
 
 namespace Infrastructure.Aggregates.TripAnalytics.Queries;
 
-public class TripAnalyticsQueryService(TripDbContext context) : ITripAnalyticsQueryService {
-    readonly TripDbContext _context = context;
+public class TripAnalyticsQueryService : ITripAnalyticsQueryService {
+    readonly TripDbContext _context;
+
+    public TripAnalyticsQueryService(TripDbContext context) {
+        _context = context;
+    }
+
+    IQueryable<TripAnalytic> Analytics => _context.TripAnalytics.AsNoTracking();
 
     public async Task<Result<Full>> GetCompleteAnalytics(Guid id) {
-        var analytics = await _context
-            .TripAnalytics.AsNoTracking()
+        var analytics = await Analytics
             .Include(a => a.PeaksAnalytic)
             .Include(a => a.ElevationProfile)
             .FirstOrDefaultAsync(a => a.Id == id);
@@ -23,22 +28,17 @@ public class TripAnalyticsQueryService(TripDbContext context) : ITripAnalyticsQu
             return Errors.NotFound($"analytics with id: {id}");
         }
 
-        if (analytics.PeaksAnalytic != null) {
-            var reachedPeaks = _context
-                .ReachedPeaks.AsNoTracking()
-                .Where(peak => peak.TripId == id)
-                .Include(p => p.Peak);
-            analytics.PeaksAnalytic.ReachedPeaks = [.. reachedPeaks];
-        }
+        var peakAnalytics = analytics.PeaksAnalytic is not null ? await GetPeakAnalytics(id) : null;
 
-        return MapToDto(analytics);
+        if (analytics.PeaksAnalytic != null) { }
+
+        return MapToDto(analytics, peakAnalytics?.Value);
     }
 
     public async Task<Result<Basic>> GetBasicAnalytics(Guid tripId) {
         var basePath = $"/api/trips/{tripId}/analytics";
 
-        var dto = await _context
-            .TripAnalytics.AsNoTracking()
+        var dto = await Analytics
             .Where(t => t.Id == tripId)
             .Select(t => new Basic(
                 t.RouteAnalytics,
@@ -57,13 +57,27 @@ public class TripAnalyticsQueryService(TripDbContext context) : ITripAnalyticsQu
         return dto;
     }
 
-    public Task<Result<PeakAnalyticsDto>> GetPeakAnalytics(Guid id) {
-        throw new NotImplementedException();
+    public async Task<Result<PeakAnalyticsDto>> GetPeakAnalytics(Guid id) {
+        var analytics = await _context
+            .PeaksAnalytics.AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (analytics is null) {
+            return Errors.NotFound("peak analytics", "id", id);
+        }
+
+        var peaks = await _context
+            .ReachedPeaks.AsNoTracking()
+            .Where(rp => rp.TripId == id)
+            .Include(p => p.Peak)
+            .ToListAsync();
+
+        return analytics.ToDto(peaks);
     }
 
-    static Full MapToDto(TripAnalytic data) {
+    static Full MapToDto(TripAnalytic data, PeakAnalyticsDto? peakAnalyticsDto) {
         var elevationDto = data.ElevationProfile?.ToDto();
-        var peakAnalyticDto = data.PeaksAnalytic?.ToDto();
+        var peakAnalyticDto = peakAnalyticsDto ?? null;
         var timeAnalyticDto = data.TimeAnalytics ?? null;
         var routeAnalyticsDto = data.RouteAnalytics ?? null;
 

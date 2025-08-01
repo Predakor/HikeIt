@@ -18,7 +18,7 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
@@ -83,7 +83,10 @@ namespace Infrastructure.Migrations
                     b.Property<int>("PeakId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("TimeReached")
+                    b.Property<long?>("ReachedAtDistanceMeters")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("ReachedAtTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("TripId")
@@ -96,8 +99,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PeakId");
 
-                    b.HasIndex("TripId")
-                        .IsUnique();
+                    b.HasIndex("TripId");
 
                     b.HasIndex("UserId");
 
@@ -122,6 +124,15 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
+
+                    b.Property<long>("New")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Total")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Unique")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -240,6 +251,40 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserStats");
+                });
+
+            modelBuilder.Entity("Domain.Users.RegionProgresses.RegionProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PeakVisits")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("RegionId")
+                        .HasColumnType("integer");
+
+                    b.Property<short>("TotalPeaksInRegion")
+                        .HasColumnType("smallint");
+
+                    b.Property<short>("TotalReachedPeaks")
+                        .HasColumnType("smallint");
+
+                    b.Property<short>("UniqueReachedPeaks")
+                        .HasColumnType("smallint");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RegionProgress");
                 });
 
             modelBuilder.Entity("Domain.Users.User", b =>
@@ -471,8 +516,8 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Trips.Trip", "Trip")
-                        .WithOne()
-                        .HasForeignKey("Domain.ReachedPeaks.ReachedPeak", "TripId")
+                        .WithMany()
+                        .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -531,24 +576,6 @@ namespace Infrastructure.Migrations
                         .WithOne("PeaksAnalytic")
                         .HasForeignKey("Domain.TripAnalytics.Entities.PeaksAnalytics.PeaksAnalytic", "Id")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.OwnsOne("Domain.TripAnalytics.Entities.PeaksAnalytics.PeakSummary", "Summary", b1 =>
-                        {
-                            b1.Property<Guid>("PeaksAnalyticId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("TotalPeaks")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("PeaksAnalyticId");
-
-                            b1.ToTable("PeaksAnalytics");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PeaksAnalyticId");
-                        });
-
-                    b.Navigation("Summary");
                 });
 
             modelBuilder.Entity("Domain.TripAnalytics.TripAnalytic", b =>
@@ -687,6 +714,25 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Users.RegionProgresses.RegionProgress", b =>
+                {
+                    b.HasOne("Domain.Mountains.Regions.Region", "Region")
+                        .WithMany()
+                        .HasForeignKey("RegionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Users.User", "User")
+                        .WithMany("RegionProgresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Region");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -754,6 +800,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Users.User", b =>
                 {
+                    b.Navigation("RegionProgresses");
+
                     b.Navigation("Stats")
                         .IsRequired();
                 });

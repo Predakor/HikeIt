@@ -2,6 +2,7 @@
 using Application.Dto.Analytics;
 using Application.Services.Auth;
 using Application.Services.Files;
+using Application.TripAnalytics.ElevationProfiles;
 using Application.TripAnalytics.Quries;
 using Domain.Common;
 using Domain.Common.Result;
@@ -45,6 +46,14 @@ public class AnalyticsController : ControllerBase {
         return await _authService
             .WithLoggedUser()
             .BindAsync(_ => _elevationQueries.GetElevationProfile(id))
+            .ToActionResultAsync();
+    }
+
+    [HttpGet("analytics/peaks")]
+    public async Task<IActionResult> GetPeakAnalytics(Guid id) {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(_ => _queryService.GetPeakAnalytics(id))
             .ToActionResultAsync();
     }
 

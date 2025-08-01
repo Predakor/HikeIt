@@ -12,6 +12,7 @@ public interface IWriteResultRepository<TEntity, TKey> : IRepository<TEntity, TK
     Task<Result<TEntity>> AddAsync(TEntity entity);
     Task<Result<bool>> RemoveAsync(TKey id);
     Task<Result<TEntity>> UpdateAsync(TEntity entity);
+    Task<Result<bool>> SaveChangesAsync();
 }
 
 public interface ICrudResultRepository<TEntity, TKey>

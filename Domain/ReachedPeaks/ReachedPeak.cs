@@ -1,16 +1,18 @@
-﻿using Domain.Common;
-using Domain.Common.Result;
+﻿using Domain.Common.Result;
 using Domain.Interfaces;
 using Domain.Mountains.Peaks;
+using Domain.ReachedPeaks.Rules;
 using Domain.Trips;
 using Domain.Users;
+using Domain.Users.Extentions;
 
 namespace Domain.ReachedPeaks;
 
 public class ReachedPeak : IEntity<Guid> {
     public Guid Id { get; init; }
     public bool FirstTime { get; private set; }
-    public DateTime? TimeReached { get; private set; }
+    public DateTime? ReachedAtTime { get; private set; }
+    public uint? ReachedAtDistanceMeters { get; private set; }
 
     // Foreign Keys
     public required Guid TripId { get; init; }
@@ -18,39 +20,27 @@ public class ReachedPeak : IEntity<Guid> {
     public required int PeakId { get; init; }
 
     // Navigation
-    public Trip? Trip { get; set; }
-    public User? User { get; set; }
-    public Peak? Peak { get; set; }
+    public Trip Trip { get; set; }
+    public User User { get; set; }
+    public Peak Peak { get; set; }
+
+    public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null) {
+        return Create(peak.Id, trip.Id, user.Id, reachTime);
+    }
 
     public static ReachedPeak Create(
         int PeakId,
         Guid TripId,
         Guid UserId,
-        DateTime? reachTime = null
+        DateTime? reachTime = null,
+        bool firstTime = false
     ) {
         var reachedPeak = new ReachedPeak {
             Id = Guid.NewGuid(),
             TripId = TripId,
             UserId = UserId,
             PeakId = PeakId,
-        };
-
-        if (reachTime.HasValue) {
-            reachedPeak.AddReachTime(reachTime.Value);
-        }
-
-        return reachedPeak;
-    }
-
-    public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null) {
-        var reachedPeak = new ReachedPeak() {
-            Id = Guid.NewGuid(),
-            PeakId = peak.Id,
-            TripId = trip.Id,
-            UserId = user.Id,
-            Peak = peak,
-            Trip = trip,
-            User = user,
+            FirstTime = firstTime,
         };
 
         if (reachTime.HasValue) {
@@ -66,26 +56,16 @@ public class ReachedPeak : IEntity<Guid> {
     }
 
     public Result<ReachedPeak> AddReachTime(DateTime time) {
-        var rule = new TimeMustBeSmallerThanToday(time);
+        var rule = new DateNotInTheFuture(time);
         return rule.Check()
-            .Match<Result<ReachedPeak>>(
-                ok => {
-                    TimeReached = time.ToUniversalTime();
-                    return this;
-                },
-                error => error
-            );
+            .Map(_ => {
+                ReachedAtTime = time.ToUniversalTime();
+                return this;
+            });
     }
 
-    class TimeMustBeSmallerThanToday(DateTime time) : IRule {
-        public string Name => "Invalid Time";
-        public string Message => "Time is set to a future date please enter correct date";
-
-        public Result<bool> Check() {
-            if (time <= DateTime.UtcNow) {
-                return true;
-            }
-            return Errors.RuleViolation(this);
-        }
+    public Result<ReachedPeak> AddReachedDistance(int distance) {
+        ReachedAtDistanceMeters = distance.ToSafeUint();
+        return this;
     }
 }

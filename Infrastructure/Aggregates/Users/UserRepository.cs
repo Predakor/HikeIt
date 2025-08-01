@@ -3,6 +3,7 @@ using Domain.Common.Result;
 using Domain.Users;
 using Domain.Users.Entities;
 using Domain.Users.Extentions;
+using Domain.Users.RegionProgresses;
 using Domain.Users.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Repository.Generic;
@@ -15,18 +16,33 @@ public enum UpdateType {
     Decrease,
 }
 
-public class UserRepository : Repository<User, Guid>, IUserRepository {
+public class UserRepository : CrudResultRepository<User, Guid>, IUserRepository {
     readonly DbSet<UserStats> _stats;
+    readonly DbSet<RegionProgress> _regionsProgress;
 
     public UserRepository(TripDbContext context)
         : base(context) {
         _stats = context.Set<UserStats>();
+        _regionsProgress = context.Set<RegionProgress>();
     }
 
     public async Task<bool> Create(User newUser) {
         // Add Validation
         await DbSet.AddAsync(newUser);
-        return await SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<Result<User>> GetWithRegionProgresses(Guid userId) {
+        var user = await DbSet
+            .Include(u => u.RegionProgresses)
+            .Where(u => u.Id == userId)
+            .FirstOrDefaultAsync();
+
+        if (user is null) {
+            return Errors.NotFound("user", userId);
+        }
+
+        return user;
     }
 
     public async Task<Result<bool>> UpdateStats(
@@ -42,13 +58,11 @@ public class UserRepository : Repository<User, Guid>, IUserRepository {
 
         stats.UpdateStats(update, updateMode);
 
-        var succes = await SaveChangesAsync();
+        return await SaveChangesAsync();
+    }
 
-        if (!succes) {
-            Console.WriteLine("Db save failed or no entities were changed");
-            return Errors.DbError("Failed to save stats update");
-        }
-
-        return succes;
+    public async Task<Result<RegionProgress>> CreateRegionProgress(RegionProgress regionProgres) {
+        await _regionsProgress.AddAsync(regionProgres);
+        return regionProgres;
     }
 }

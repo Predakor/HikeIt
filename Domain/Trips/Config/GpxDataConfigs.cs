@@ -2,16 +2,16 @@
 
 public abstract record ConfigBase() {
     public record GpxFile(
-        float MaxElevationSpike = 10f,
+        float MaxElevationSpike = 8f,
         float EmaSmoothingAlpha = 0.88f,
-        int MedianFilterWindowSize = 7,
+        int MedianFilterWindowSize = 6,
         int RoundingDecimalsCount = 1
     ) : ConfigBase;
 
     public record ElevationProfile(
-        float MaxElevationSpike = 10f,
+        float MaxElevationSpike = 8f,
         float EmaSmoothingAlpha = 0.88f,
-        int MedianFilterWindowSize = 7,
+        int MedianFilterWindowSize = 6,
         int RoundingDecimalsCount = 1,
         int DownsamplingFactor = 10
     ) : ConfigBase;

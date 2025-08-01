@@ -7,7 +7,7 @@ public static class DistanceHelpers {
         return HaversineDistance(p1.Lat, p1.Lon, p2.Lat, p2.Lon);
     }
 
-    public static double Distance3D(GpxPoint p1, GpxPoint p2) {
+    public static double Distance3D(IGeoPoint p1, IGeoPoint p2) {
         double planar = Distance2D(p1, p2);
         double elevationDiff = p2.Ele - p1.Ele;
         return Math.Sqrt(planar * planar + elevationDiff * elevationDiff);

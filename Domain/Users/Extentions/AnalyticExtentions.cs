@@ -13,24 +13,21 @@ public static class AnalyticExtentions {
         var timeAnalytics = analytics.TimeAnalytics;
 
         var peakAnalytics = analytics.PeaksAnalytic;
-        var newPeaks = peakAnalytics?.Summary?.TotalPeaks.ToSafeUint() ?? 0;
+        var newPeaks = peakAnalytics?.Total;
 
-        //change when trip summary updates
         var newRegions = 0;
 
-        //To be fixed
-        //TotalDistanceKm is actually distance in meters
         var tripDistanceMeters = routeAnalytics.TotalDistanceMeters.ToSafeUint();
 
         var totalsUpdate = new StatsUpdates.Totals(
             tripDistanceMeters,
             routeAnalytics.TotalAscentMeters.ToSafeUint(),
             routeAnalytics.TotalDescentMeters.ToSafeUint(),
-            newPeaks,
+            newPeaks ?? 0,
             timeAnalytics?.Duration ?? TimeSpan.Zero
         );
 
-        var locationsUpdate = new StatsUpdates.Locations(newPeaks, 1);
+        var locationsUpdate = new StatsUpdates.Locations(newPeaks ?? 0, 1);
 
         var metasUpdate = new StatsUpdates.Metas(tripDay, tripDistanceMeters);
 
@@ -39,19 +36,23 @@ public static class AnalyticExtentions {
 }
 
 static class Helpers {
+
+    const uint Max = uint.MaxValue;
+    const uint Min = uint.MinValue;
+
     public static uint ToSafeUint(this double? value) {
-        return (uint)Math.Max(value ?? 0, 0);
+        return (uint)Math.Clamp(value ?? 0, Min, Max);
     }
 
     public static uint ToSafeUint(this double value) {
-        return (uint)Math.Max(value, 0);
+        return (uint)Math.Clamp(value, Min, Max);
     }
 
     public static uint ToSafeUint(this int? value) {
-        return (uint)Math.Max(value ?? 0, 0);
+        return (uint)Math.Clamp(value ?? 0, Min, Max);
     }
 
     public static uint ToSafeUint(this int value) {
-        return (uint)Math.Max(value, 0);
+        return (uint)Math.Clamp(value, Min, Max);
     }
 }

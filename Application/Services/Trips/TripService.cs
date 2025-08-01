@@ -1,4 +1,5 @@
-﻿using Application.Services.Files;
+﻿using Application.ReachedPeaks;
+using Application.Services.Files;
 using Application.TripAnalytics.Commands;
 using Application.TripAnalytics.Interfaces;
 using Application.Trips;
@@ -13,17 +14,20 @@ public class TripService : ITripService {
     readonly IGpxFileService _gpxFileService;
     readonly ITripAnalyticUnitOfWork _unitOfWork;
     readonly ITripAnalyticService _analyticsService;
+    readonly IReachedPeaksQureryService _reachedPeaksQureryService;
 
     public TripService(
         ITripRepository trips,
         IGpxFileService gpxFileService,
         ITripAnalyticUnitOfWork unitOfWork,
-        ITripAnalyticService tripAnalyticService
+        ITripAnalyticService tripAnalyticService,
+        IReachedPeaksQureryService reachedPeaksQureryService
     ) {
         _tripRepository = trips;
         _unitOfWork = unitOfWork;
         _gpxFileService = gpxFileService;
         _analyticsService = tripAnalyticService;
+        _reachedPeaksQureryService = reachedPeaksQureryService;
     }
 
     public async Task<Result<Guid>> CreateSimpleAsync(CreateTripContext context) {
@@ -40,10 +44,12 @@ public class TripService : ITripService {
             .BindAsync(SaveTripChanges);
     }
 
-    public async Task<Result<bool>> DeleteAsync(Guid id, Guid userId) {
+    public async Task<Result<bool>> DeleteAsync(Guid tripId, Guid userId) {
+        var tripsReachedOnTrip = await _reachedPeaksQureryService.ReachedOnTrip(tripId);
+
         return await _tripRepository
-            .Get(id, userId)
-            .MapAsync(t => t.OnDelete())
+            .Get(tripId, userId)
+            .MapAsync(t => t.OnDelete(tripsReachedOnTrip?.Value!))
             .BindAsync(_tripRepository.Remove);
     }
 

@@ -46,4 +46,12 @@ public class UsersController : ControllerBase {
             .BindAsync(user => _userQueries.GetStats(user.Id))
             .ToActionResultAsync();
     }
+
+    [HttpGet("regions")]
+    public async Task<IActionResult> GetRegionsSummary() {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(u => _userQueries.GetRegionsSummaries(u.Id))
+            .ToActionResultAsync();
+    }
 }

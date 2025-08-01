@@ -7,7 +7,6 @@ public interface IAggregateRoot {
     void ClearDomainEvents();
 }
 
-
 public class AggregateRoot<TId> : IEntity<TId>, IAggregateRoot {
     public required TId Id { get; init; }
 
@@ -15,7 +14,10 @@ public class AggregateRoot<TId> : IEntity<TId>, IAggregateRoot {
 
     public IReadOnlyCollection<IDomainEvent> Events => _events.AsReadOnly();
 
-    protected void AddDomainEvent(IDomainEvent domainEvent) => _events.Add(domainEvent);
+    protected void AddDomainEvent(IDomainEvent domainEvent) {
+        _events.Add(domainEvent);
+        Console.WriteLine("adding Domain event, total count:" + Events.Count);
+    }
 
     protected void RemoveDomainEvent(IDomainEvent domainEvent) => _events.Remove(domainEvent);
 

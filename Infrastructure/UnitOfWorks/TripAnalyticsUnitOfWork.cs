@@ -6,39 +6,32 @@ using Domain.TripAnalytics.Repositories;
 using Domain.Trips;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Users;
+using Infrastructure.Aggregates.Users;
 using Infrastructure.Data;
+using Infrastructure.Repository;
 
 namespace Infrastructure.UnitOfWorks;
 
 public class TripAnalyticsUnitOfWork : ITripAnalyticUnitOfWork {
     readonly TripDbContext _dbContext;
 
-    public IPeakAnalyticRepository PeakAnalytics { get; init; }
-    public IElevationProfileRepository Elevations { get; init; }
-    public ITripAnalyticRepository TripAnalytics { get; init; }
-    public IReachedPeakRepository ReachedPeaks { get; init; }
-    public ITripRepository TripRepository { get; init; }
-    public IUserRepository UserRepository { get; init; }
-    public IGpxFileRepository GpxFileRepository { get; init; }
+    public IPeakAnalyticRepository PeakAnalytics { get; }
+    public IElevationProfileRepository Elevations { get; }
+    public ITripAnalyticRepository TripAnalytics { get; }
+    public IReachedPeakRepository ReachedPeaks { get; }
+    public ITripRepository TripRepository { get; }
+    public IUserRepository UserRepository { get; }
+    public IGpxFileRepository GpxFileRepository { get; }
 
-    public TripAnalyticsUnitOfWork(
-        TripDbContext dbContext,
-        ITripRepository tripRepository,
-        IUserRepository userRepository,
-        IPeakAnalyticRepository peakAnalytics,
-        IReachedPeakRepository peaksAnalytics,
-        ITripAnalyticRepository tripAnalytics,
-        IElevationProfileRepository elevations,
-        IGpxFileRepository gpxFileRepository
-    ) {
+    public TripAnalyticsUnitOfWork(TripDbContext dbContext) {
         _dbContext = dbContext;
-        Elevations = elevations;
-        TripAnalytics = tripAnalytics;
-        ReachedPeaks = peaksAnalytics;
-        PeakAnalytics = peakAnalytics;
-        TripRepository = tripRepository;
-        UserRepository = userRepository;
-        GpxFileRepository = gpxFileRepository;
+        Elevations = new ElevationProfileRepository(_dbContext);
+        TripAnalytics = new TripAnalyticRepository(_dbContext);
+        ReachedPeaks = new ReachedPeakRepository(_dbContext);
+        PeakAnalytics = new PeakAnalyticRepository(_dbContext);
+        TripRepository = new TripRepository(_dbContext);
+        UserRepository = new UserRepository(_dbContext);
+        GpxFileRepository = new GpxFileRepository(_dbContext);
     }
 
     public async Task<Result<bool>> SaveChangesAsync() {

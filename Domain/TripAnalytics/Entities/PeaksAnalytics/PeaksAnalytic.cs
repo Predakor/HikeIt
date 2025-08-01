@@ -1,30 +1,31 @@
 ﻿using Domain.Interfaces;
 using Domain.ReachedPeaks;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.TripAnalytics.Entities.PeaksAnalytics;
 
 public class PeaksAnalytic : IEntity<Guid> {
     public Guid Id { get; init; }
 
-    //TODO actually implement
-    public PeakSummary? Summary { get; set; }
+    public uint Total { get; private set; }
+    public uint Unique { get; private set; }
+    public uint New { get; private set; }
 
-    [NotMapped]
-    public ICollection<ReachedPeak> ReachedPeaks { get; set; } = [];
+    public static PeaksAnalytic Create(Guid id, IEnumerable<ReachedPeak> peaks) {
+        if (!peaks.Any()) {
+            throw new Exception("Peaks are empty");
+        }
 
-    public static PeaksAnalytic Create(Guid id, List<ReachedPeak> peaks) {
-        return new() { Id = id, ReachedPeaks = peaks };
+        return new() {
+            Id = id,
+            Total = peaks.GetCount(),
+            Unique = peaks.DistinctBy(p => p.PeakId).GetCount(),
+            New = peaks.Where(p => p.FirstTime).GetCount(),
+        };
     }
 }
 
-//owned type will it be
-public class PeakSummary {
-
-    public required int TotalPeaks { get; set; } = 5;
-    //number of  total reached peaks
-    //highest peak
-    //number of total unique peaks
-    //number of peaks visited first time
-
+static class Extentions {
+    public static uint GetCount<T>(this IEnumerable<T> items) {
+        return (uint)Math.Clamp(items.Count(), 0, uint.MaxValue);
+    }
 }

@@ -1,0 +1,8 @@
+﻿using Application.Dto;
+
+namespace Application.Users.RegionProgresses.Dtos;
+
+public abstract record RegionProgressDto {
+    public sealed record Summary(RegionDto.Complete Region, short UniqueReachedPeaks, short TotalPeaksInRegion)
+        : RegionProgressDto;
+}
