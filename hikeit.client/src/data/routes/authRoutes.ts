@@ -1,5 +1,4 @@
-import LoginPage from "@/pages/Auth/LoginPage";
-import RegisterPage from "@/pages/Auth/RegisterPage";
+import { LoginPage, RegisterPage } from "@/pages/__index";
 import type { RouteGroup } from "./routeTypes";
 
 export const authRoutes: RouteGroup = {

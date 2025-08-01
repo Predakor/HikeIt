@@ -31,10 +31,10 @@ function TripDetails({ data }: { data: TripDtoFull }) {
         {baseInfo.isSuccess && (
           <>
             <Heading size={{ base: "2xl", lg: "4xl" }}>
-              {baseInfo.data.value.base.name}
+              {baseInfo.data.name}
             </Heading>
             <Heading color={"fg.muted"} size={{ base: "xl", lg: "2xl" }}>
-              {baseInfo.data.value.base.tripDay}
+              {baseInfo.data.tripDay}
             </Heading>
           </>
         )}

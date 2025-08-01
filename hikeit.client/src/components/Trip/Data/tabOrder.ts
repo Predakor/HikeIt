@@ -11,7 +11,6 @@ export const tripAnalyticTabs: TabConfig<TripAnalytic> = [
 ];
 
 export const tripDetailsTabs: TabConfig<TripDtoFull> = [
-  { key: "base", label: "Base" },
   {
     type: "group",
     label: "Analytics",

@@ -1,20 +1,19 @@
-import { toMinutes } from "@/Utils/Formatters/durationFormatter";
-import {
-  GenericFormatter,
-  NumberFormatter,
-} from "@/Utils/Formatters/valueFormatter";
 import {
   IconClock,
   IconHiking,
   IconMountain,
-  IconMountainSun,
   IconPause,
   IconPlay,
   IconSpeed,
   IconStop,
   IconTrendDown,
   IconTrendUp,
-} from "@/assets/Icons";
+} from "@/Icons/Icons";
+import { toMinutes } from "@/Utils/Formatters/durationFormatter";
+import {
+  GenericFormatter,
+  NumberFormatter,
+} from "@/Utils/Formatters/valueFormatter";
 import type { StatsMetaList } from "@/types/Utils/StatTypes";
 import type { TimeAnalytic } from "../../Types/TripAnalyticsTypes";
 
@@ -43,7 +42,7 @@ export const timeAnalyticsStatsInfo: StatsMetaList<TimeAnalytic> = {
     formatt: toMinutes,
   },
   ascentTime: {
-    IconSource: IconMountainSun,
+    IconSource: IconMountain,
     unit: "min",
     formatt: toMinutes,
   },

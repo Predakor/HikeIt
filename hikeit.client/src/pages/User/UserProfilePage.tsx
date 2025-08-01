@@ -1,18 +1,6 @@
-import api from "@/Utils/Api/apiRequest";
 import { ObjectToArray } from "@/Utils/ObjectToArray";
 import DangerButton from "@/components/Buttons/DangerButton";
-import Divider from "@/components/Divider/Divider";
-import {
-  Avatar,
-  ButtonGroup,
-  Card,
-  Field,
-  Input,
-  Separator,
-  Stack,
-  Stat,
-} from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { Avatar, Card, Field, Input, Separator, Stack } from "@chakra-ui/react";
 import type { ReactElement } from "react";
 
 const userBase = {
@@ -42,10 +30,10 @@ const __mockupUser__ = {
 };
 
 function UserProfilePage() {
-  const request = useQuery({
-    queryKey: ["profile"],
-    queryFn: () => api.get("users/profile"),
-  });
+  // const request = useQuery({
+  //   queryKey: ["profile"],
+  //   queryFn: () => api.get("users/profile"),
+  // });
 
   const user = __mockupUser__;
 
@@ -90,7 +78,7 @@ function AccountActions() {
   );
 }
 
-function UserDataCard({ title, children, Footer }: CardProps) {
+function UserDataCard({ title, children }: CardProps) {
   return (
     <Card.Root size={"lg"}>
       <Card.Body gapY={4}>
@@ -154,15 +142,6 @@ function MockupField2({ label, value }: Props) {
         variant={"flushed"}
       />
     </Field.Root>
-  );
-}
-
-function MockupField({ label, value }: Props) {
-  return (
-    <Stat.Root flexFlow={"row"} alignItems={"baseline"} gapX={2}>
-      <Stat.Label>{label}</Stat.Label>
-      <Stat.ValueText>{value}</Stat.ValueText>
-    </Stat.Root>
   );
 }
 

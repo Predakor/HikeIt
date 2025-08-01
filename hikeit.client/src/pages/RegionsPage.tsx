@@ -1,4 +1,3 @@
-import RegionCard from "@/components/Regions/Card/RegionCard";
 import RegionSummary from "@/components/Regions/Card/RegionSummary";
 import UnprogressedRegion from "@/components/Regions/Card/UnprogressedRegion";
 import FetchWrapper from "@/components/Wrappers/Fetching";

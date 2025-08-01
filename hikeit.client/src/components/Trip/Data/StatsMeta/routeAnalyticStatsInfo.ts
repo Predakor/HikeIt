@@ -1,7 +1,7 @@
 import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
-import { IconArrowDown, IconArrowUp, IconJourney } from "@/assets/Icons";
 import type { StatsMetaList } from "@/types/Utils/StatTypes";
 import type { RouteAnalytic } from "../../Types/TripAnalyticsTypes";
+import { IconArrowDown, IconArrowUp, IconJourney } from "@/Icons/Icons";
 
 export const routeAnalyticStatsInfo: StatsMetaList<RouteAnalytic> = {
   totalDistanceKm: {

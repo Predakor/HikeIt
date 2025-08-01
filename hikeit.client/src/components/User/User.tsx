@@ -1,14 +1,6 @@
 import { userRoutes } from "@/data/routes/userRoutes";
 import useUser from "@/hooks/useUser";
-import {
-  Avatar,
-  Button,
-  Heading,
-  Icon,
-  LinkBox,
-  Menu,
-  Stack,
-} from "@chakra-ui/react";
+import { Avatar, Button, Heading, Icon, Menu, Stack } from "@chakra-ui/react";
 import { FaAngleDown } from "react-icons/fa";
 import { NavLink } from "react-router";
 

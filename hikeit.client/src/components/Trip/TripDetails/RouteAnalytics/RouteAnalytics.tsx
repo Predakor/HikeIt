@@ -1,7 +1,7 @@
 import { ObjectToArray } from "@/Utils/ObjectToArray";
 import RowStat from "@/components/Stats/RowStat";
 import type { TripAnalytic } from "@/types/ApiTypes/TripDtos";
-import { SimpleGrid } from "@chakra-ui/react/grid";
+import { SimpleGrid } from "@chakra-ui/react";
 
 export default function RouteAnalytics({ data }: { data: TripAnalytic }) {
   const entries = ObjectToArray(data);
