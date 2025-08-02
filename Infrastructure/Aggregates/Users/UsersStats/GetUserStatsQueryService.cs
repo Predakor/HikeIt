@@ -1,8 +1,12 @@
-﻿using Application.Users.RegionProgresses.Dtos;
+﻿using Application.Dto;
+using Application.Mountains;
+using Application.Users.RegionProgresses.Dtos;
 using Application.Users.Stats;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Common.Utils;
+using Domain.Mountains.Peaks;
+using Domain.Users;
 using Domain.Users.RegionProgresses;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +15,15 @@ namespace Infrastructure.Aggregates.Users.UsersStats;
 
 internal class UserQueryService : IUserQueryService {
     readonly TripDbContext _dbContext;
-    IQueryable<Domain.Users.User> Users => _dbContext.Users.AsNoTracking();
+    readonly IRegionQueryService _regionQueries;
+    IQueryable<Peak> Peaks => _dbContext.Peaks.AsNoTracking();
+    IQueryable<User> Users => _dbContext.Users.AsNoTracking();
 
-    public UserQueryService(TripDbContext ctx) {
+    IQueryable<RegionProgress> RegionProgresses => _dbContext.Set<RegionProgress>().AsNoTracking();
+
+    public UserQueryService(TripDbContext ctx, IRegionQueryService regionQueries) {
         _dbContext = ctx;
+        _regionQueries = regionQueries;
     }
 
     public async Task<Result<UserStatsDto.All>> GetStats(Guid userId) {
@@ -31,9 +40,7 @@ internal class UserQueryService : IUserQueryService {
     }
 
     public async Task<Result<RegionProgressDto.Summary[]>> GetRegionsSummaries(Guid userId) {
-        var query = await _dbContext
-            .Set<RegionProgress>()
-            .AsNoTracking()
+        var query = await RegionProgresses
             .Include(rp => rp.Region)
             .Where(rp => rp.UserId == userId)
             .Select(rp => rp.ToRegionSummary())
@@ -46,6 +53,38 @@ internal class UserQueryService : IUserQueryService {
         return query;
     }
 
+    public async Task<Result<RegionProgressDto.Full>> GetRegionProgess(Guid userId, int RegionId) {
+        var region = (await _regionQueries.AllPeaksFromRegion(new(RegionId, ""))).Value;
+
+        var regionSummary = await RegionProgresses
+            .Include(rp => rp.Region)
+            .Where(rp => rp.UserId == userId && rp.RegionId == RegionId)
+            .FirstOrDefaultAsync();
+
+
+        if (region is null) {
+            return Errors.NotFound("region");
+        }
+
+
+
+        var peaksWithReachStatus = region.Peaks
+            .Select(p => p.ToPeakDtoWithReachStatus(p.WasReached(regionSummary)))
+            .ToArray();
+
+        var highestPeak = region.Peaks.MaxBy(p => p.Height)!;
+
+        var regionDto = new RegionDto.Complete(regionSummary.Region.Id, regionSummary.Region.Name);
+
+        return new RegionProgressDto.Full(
+            regionDto,
+            regionSummary.TotalPeaksInRegion,
+            regionSummary.TotalReachedPeaks,
+            regionSummary.UniqueReachedPeaks,
+            new(highestPeak.Height, highestPeak.Name, highestPeak.Id),
+            peaksWithReachStatus
+        );
+    }
 }
 
 static class Extentions {
@@ -55,5 +94,17 @@ static class Extentions {
             progress.UniqueReachedPeaks,
             progress.TotalPeaksInRegion
         );
+    }
+
+    public static bool WasReached(this PeakDto.Base peak, RegionProgress? regionSummary) {
+        if (regionSummary is null) {
+            return false;
+        }
+
+        return regionSummary.PeakVisits.ContainsKey(peak.Id);
+    }
+
+    public static PeakDto.WithReachStatus ToPeakDtoWithReachStatus(this PeakDto.Base peak, bool reached) {
+        return new(peak.Id, peak.Name, peak.Height, reached);
     }
 }
