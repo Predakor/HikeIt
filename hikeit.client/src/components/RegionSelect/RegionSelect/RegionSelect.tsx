@@ -1,4 +1,4 @@
-import type { Region } from "@/data/types";
+import type { Region } from "@/types/ApiTypes/types";
 import { createListCollection } from "@chakra-ui/react";
 import SelectWrapper from "../SelectWrapper";
 import { regionsList } from "@/data/regionsList";

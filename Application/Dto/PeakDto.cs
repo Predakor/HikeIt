@@ -7,6 +7,6 @@ public abstract record PeakDto {
     public sealed record WithLocation(int Height, string Name, double Lat, double Lon) : PeakDto;
     public sealed record Reached(int Id, int Height, DateTime? Time = null);
 
-    public sealed record WithReachStatus(int Id, string Name, int Height, bool WasReached);
+    public sealed record WithReachStatus(int Id, string Name, int Height, bool Reached);
 }
 

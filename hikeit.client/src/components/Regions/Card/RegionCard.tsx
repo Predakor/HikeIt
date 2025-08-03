@@ -1,6 +1,6 @@
-import type { Region } from "@/data/types";
+import type { Region } from "@/types/ApiTypes/types";
 import { Badge, Box, Card, Flex } from "@chakra-ui/react";
-import RegionProgress from "./RegionProgress";
+import RegionProgress from "../Completion/RegionCompletion";
 
 interface Props {
   region: Region;

@@ -1,3 +1,5 @@
+import type { Peak, PeakWithReachStatus } from "./Analytics";
+
 export interface Trip {
   id: number;
   height: number; // Required float
@@ -19,4 +21,11 @@ export interface RegionProgressSummary {
   totalPeaksInRegion: number;
 }
 
-export interface RegionProgressFull {}
+export interface RegionProgressFull {
+  region: Region;
+  totalPeaksInRegion: number;
+  totalReachedPeaks: number;
+  uniqueReachedPeaks: number;
+  highestPeak: Peak;
+  peaks: PeakWithReachStatus[];
+}

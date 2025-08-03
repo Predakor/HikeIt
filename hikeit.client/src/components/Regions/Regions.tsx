@@ -1,4 +1,4 @@
-import type { Region } from "@/data/types";
+import type { Region } from "@/types/ApiTypes/types";
 import MapWrapper from "../Wrappers/Mapping";
 import RegionCard from "./Card/RegionCard";
 

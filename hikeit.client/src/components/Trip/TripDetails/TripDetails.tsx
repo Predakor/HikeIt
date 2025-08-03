@@ -1,12 +1,12 @@
+import apiClient from "@/Utils/Api/ApiClient";
+import GoBackButton from "@/components/Buttons/GoBackButton";
 import { useTripRemove } from "@/hooks/useTrips";
 import type { TripDto, TripDtoFull } from "@/types/ApiTypes/TripDtos";
-import { Button, Flex, Heading, Icon, Stack, VStack } from "@chakra-ui/react";
+import { Button, Flex, Heading, Stack, VStack } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 import { tripDetailsTabs } from "../Data/tabOrder";
 import { TripDetailsMenu } from "./TripDetailsMenu/TripDetailsTabs";
-import apiClient from "@/Utils/Api/ApiClient";
-import { useQuery } from "@tanstack/react-query";
-import { MdOutlineArrowBack } from "react-icons/md";
-import { useNavigate } from "react-router";
+import PageTitle from "@/components/Titles/PageTitle";
 
 function TripDetails({ data }: { data: TripDtoFull }) {
   const tabOrder = tripDetailsTabs;
@@ -17,22 +17,15 @@ function TripDetails({ data }: { data: TripDtoFull }) {
     staleTime: 1000 * 60 * 30,
   });
 
-  const navigation = useNavigate();
   const deleteTrip = useTripRemove();
 
   return (
     <VStack alignItems={"start"} gap={8}>
       <Flex alignItems={"center"} gapX={4}>
-        <Button onClick={() => navigation(-1)} variant={"ghost"}>
-          <Icon size={"2xl"}>
-            <MdOutlineArrowBack />
-          </Icon>
-        </Button>
+        <GoBackButton />
         {baseInfo.isSuccess && (
           <>
-            <Heading size={{ base: "2xl", lg: "4xl" }}>
-              {baseInfo.data.name}
-            </Heading>
+            <PageTitle title={baseInfo.data.name} />
             <Heading color={"fg.muted"} size={{ base: "xl", lg: "2xl" }}>
               {baseInfo.data.tripDay}
             </Heading>
