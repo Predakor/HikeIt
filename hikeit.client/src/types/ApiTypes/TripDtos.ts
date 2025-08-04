@@ -7,8 +7,10 @@ import type { TripAnalytic } from "./Analytics";
 
 export interface TripDto {
   id: string;
-  name: string;
-  tripDay: string;
+  base: {
+    name: string;
+    tripDay: string;
+  };
   region: {
     id: number;
     name: string;

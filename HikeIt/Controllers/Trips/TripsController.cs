@@ -40,7 +40,7 @@ public class TripsController : ControllerBase {
     [ProducesResponseType(typeof(List<TripDto.Summary>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll() {
         return await _authService
-            .Me()
+            .WithLoggedUser()
             .BindAsync(user => _queryService.GetAllAsync(user.Id))
             .ToActionResultAsync();
     }
@@ -49,8 +49,8 @@ public class TripsController : ControllerBase {
     [ProducesResponseType(typeof(TripDto.WithBasicAnalytics), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById(Guid id) {
         return await _authService
-            .Me()
-            .MapAsync(user => _queryService.GetByIdAsync(id, user.Id))
+            .WithLoggedUser()
+            .BindAsync(user => _queryService.GetByIdAsync(id, user.Id))
             .ToActionResultAsync();
     }
 
@@ -58,7 +58,7 @@ public class TripsController : ControllerBase {
     public async Task<IActionResult> Create([FromBody] Create newTrip) {
         var ctx = CreateTripContext.Create().WithRequest(newTrip);
         return await _authService
-            .Me()
+            .WithLoggedUser()
             .MapAsync(ctx.WithUser)
             .BindAsync(_tripService.CreateSimpleAsync)
             .ToActionResultAsync();
@@ -68,7 +68,7 @@ public class TripsController : ControllerBase {
     public async Task<IActionResult> CreateWithFile([FromForm] Create newTrip, IFormFile file) {
         var ctx = CreateTripContext.Create().WithRequest(newTrip).WithFile(file);
         return await _authService
-            .Me()
+            .WithLoggedUser()
             .MapAsync(ctx.WithUser)
             .BindAsync(_ => _fileService.Validate(file))
             .BindAsync(_ => _tripService.CreateAsync(ctx))
