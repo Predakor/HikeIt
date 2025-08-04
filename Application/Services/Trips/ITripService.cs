@@ -5,9 +5,8 @@ using Domain.Trips;
 namespace Application.Services.Trips;
 
 public interface ITripService {
-
+    public Task<Result<Trip>> CreateAsync(TripDraft draft);
     public Task<Result<Trip>> CreateAsync(CreateTripContext ctx);
     public Task<Result<Guid>> CreateSimpleAsync(CreateTripContext ctx);
-
     public Task<Result<bool>> DeleteAsync(Guid id, Guid userId);
 }

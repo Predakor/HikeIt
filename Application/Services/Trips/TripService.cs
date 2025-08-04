@@ -44,6 +44,15 @@ public class TripService : ITripService {
             .BindAsync(SaveTripChanges);
     }
 
+    public async Task<Result<Trip>> CreateAsync(TripDraft draft) {
+        return await _unitOfWork
+            .TripRepository.Add(draft.Trip)
+            .MapAsync(async _ => {
+                await _unitOfWork.SaveChangesAsync();
+                return draft.Trip;
+            });
+    }
+
     public async Task<Result<bool>> DeleteAsync(Guid tripId, Guid userId) {
         var tripsReachedOnTrip = await _reachedPeaksQureryService.ReachedOnTrip(tripId);
 
