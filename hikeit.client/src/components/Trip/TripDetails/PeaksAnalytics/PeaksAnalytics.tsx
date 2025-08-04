@@ -1,13 +1,13 @@
 import { Card, Show, SimpleGrid, Stack } from "@chakra-ui/react";
-import type { PeaksAnalyticData } from "../../Types/TripAnalyticsTypes";
 import { PeakBadge } from "../Common/PeakBadge";
 import { RankStat } from "../Common/RankStat";
 import { HighestPeak } from "./HighestPeak";
 import { PeakSummary } from "./PeakSummary";
 import ReachedPeaksList from "./ReachedPeaksList";
 import usePeakAnalytics from "./usePeakAnalytics";
+import type { PeaksAnalytics } from "@/types/ApiTypes/Analytics";
 
-export default function PeaksAnalytics({ data }: { data: PeaksAnalyticData }) {
+export default function PeaksAnalytics({ data }: { data: PeaksAnalytics }) {
   const { peaks, highest } = usePeakAnalytics(data);
 
   const secondarySpace = "-5 / span 4 ";

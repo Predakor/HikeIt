@@ -72,7 +72,7 @@ static class Mappers {
         this RegionDto.Complete region,
         List<Peak> peaks
     ) {
-        var mappedPeaks = peaks.Select(p => new PeakDto.Base(p.Height, p.Name)).ToList();
+        var mappedPeaks = peaks.Select(p => new PeakDto.Base(p.Height, p.Name, p.Id)).ToList();
 
         return new RegionDto.WithPeaks(region, mappedPeaks);
     }

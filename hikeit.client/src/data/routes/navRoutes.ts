@@ -1,7 +1,7 @@
 import {
   BadgesPage,
   LandingPage,
-  RegionsPage,
+  RegionsSummaries,
   TripsPage,
 } from "@/pages/__index";
 import type { RouteItem } from "./routeTypes";
@@ -26,7 +26,7 @@ export const navRoutes: RouteItem[] = [
     type: "item",
     path: "/regions",
     label: "Regions",
-    Page: RegionsPage,
+    Page: RegionsSummaries,
     // Icon: MapIcon,
   },
   {

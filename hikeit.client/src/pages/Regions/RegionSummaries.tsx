@@ -1,7 +1,7 @@
-import RegionSummary from "@/components/Regions/Card/RegionSummary";
+import ProgressedRegion from "@/components/Regions/Card/ProgressedRegion";
 import UnprogressedRegion from "@/components/Regions/Card/UnprogressedRegion";
 import FetchWrapper from "@/components/Wrappers/Fetching";
-import type { Region, RegionProgressSummary } from "@/data/types";
+import type { Region, RegionProgressSummary } from "@/types/ApiTypes/types";
 import UseRegionsProgressions from "@/hooks/Regions/UseRegionsProgressions";
 import {
   Box,
@@ -48,7 +48,7 @@ function RegionSummaries({
   return (
     <For each={summaries}>
       {(summary) => (
-        <RegionSummary progressSummary={summary} key={summary.region.id} />
+        <ProgressedRegion progressSummary={summary} key={summary.region.id} />
       )}
     </For>
   );

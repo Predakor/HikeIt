@@ -1,8 +1,8 @@
 import { toUkDate } from "@/Utils/Formatters/dateFormatter";
-import type { PeaksAnalyticData } from "../../Types/TripAnalyticsTypes";
 import type { ReachedPeakWithBadges } from "@/components/AddFile/AddFile/tripTypes";
+import type { PeaksAnalytics } from "@/types/ApiTypes/Analytics";
 
-function usePeakAnalytics(data: PeaksAnalyticData) {
+function usePeakAnalytics(data: PeaksAnalytics) {
   let highest = data.reached.reduce((max, item) =>
     item.height > max.height ? item : max
   ) as ReachedPeakWithBadges;

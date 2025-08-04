@@ -54,4 +54,12 @@ public class UsersController : ControllerBase {
             .BindAsync(u => _userQueries.GetRegionsSummaries(u.Id))
             .ToActionResultAsync();
     }
+
+    [HttpGet("regions/{regionId}")]
+    public async Task<IActionResult> GetRegionProgress(int regionId) {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(u => _userQueries.GetRegionProgess(u.Id, regionId))
+            .ToActionResultAsync();
+    }
 }

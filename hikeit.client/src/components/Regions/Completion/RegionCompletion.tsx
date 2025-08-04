@@ -5,7 +5,7 @@ interface Props {
   finished: number;
 }
 
-function RegionProgress({ total, finished }: Props) {
+export default function RegionCompletion({ total, finished }: Props) {
   const finishedPercentage = Math.floor((finished / total) * 100);
   const isComplete = finished === total;
 
@@ -24,4 +24,3 @@ function RegionProgress({ total, finished }: Props) {
     </Progress.Root>
   );
 }
-export default RegionProgress;

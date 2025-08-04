@@ -1,10 +1,10 @@
-﻿using Domain.Common.Utils;
+﻿using Application.ReachedPeaks.Dtos;
+using Domain.Common.Utils;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 
 namespace Application.Dto.Analytics;
 
-public record ReachedPeakDto(string Name, int Height, DateTime? ReachedAt = null);
 
 public record PeakAnalyticsDto(uint Total, uint Unique, uint New, List<ReachedPeakDto> Reached);
 
