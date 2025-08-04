@@ -2,7 +2,7 @@ import AddTripCard from "@/components/Trips/Card/AddTripCard";
 import NoTrips from "@/components/Trips/NoTrips";
 import RenderTripCards from "@/components/Trips/RenderTripCards";
 import FetchWrapper from "@/components/Wrappers/Fetching";
-import { useTrips } from "@/hooks/useTrips";
+import { useTrips } from "@/hooks/UseTrips/useTrips";
 import { Box, Grid, Heading, Stack } from "@chakra-ui/react";
 import { Link } from "react-router";
 

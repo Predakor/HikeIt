@@ -1,7 +1,7 @@
 import apiClient from "@/Utils/Api/ApiClient";
 import GoBackButton from "@/components/Buttons/GoBackButton";
 import PageTitle from "@/components/Titles/PageTitle";
-import { useTripRemove } from "@/hooks/useTrips";
+import { useTripRemove } from "@/hooks/UseTrips/useTripRemove";
 import type { TripDto } from "@/types/ApiTypes/TripDtos";
 import { Button, Flex, Heading, Skeleton } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";

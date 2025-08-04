@@ -2,7 +2,7 @@ import QueryResult from "@/components/RequestResult/QueryResult";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import { regionsList } from "@/data/regionsList";
-import { useTripCreate } from "@/hooks/useTrips";
+import { useTripCreate } from "@/hooks/UseTrips/useTripCreate";
 import { Button, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 export interface CreateTripForm {
