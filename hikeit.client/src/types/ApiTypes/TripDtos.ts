@@ -22,12 +22,6 @@ export interface TripDtoFull extends TripDto {
   gpxFile?: {};
 }
 
-export interface CreateTrip {
-  regionId: number;
-  base: BaseTrip;
-  file?: File;
-}
-
 export interface FieldEntry {
   name: string;
   type: HTMLInputTypeAttribute;

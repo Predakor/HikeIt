@@ -53,6 +53,6 @@ export interface PeakWithReachStatus extends Peak {
 export interface PeakSummaryData {
   total: number;
   unique: number;
+  new: number;
   highest: ReachedPeak;
-  firstTimeVisits: number;
 }

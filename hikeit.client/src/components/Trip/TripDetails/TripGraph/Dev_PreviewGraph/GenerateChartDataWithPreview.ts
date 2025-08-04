@@ -1,4 +1,4 @@
-import type { GpxEntry } from "@/types/ApiTypes/TripDtos";
+import type { GpxEntry } from "@/types/ApiTypes/GpxTypes";
 import { GenerateChartData } from "../GenerateChartData";
 import type { GainDto, GpxGainPoint } from "../_graph_types";
 

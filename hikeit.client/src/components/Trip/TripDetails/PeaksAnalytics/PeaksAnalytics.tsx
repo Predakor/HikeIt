@@ -5,10 +5,15 @@ import { HighestPeak } from "./HighestPeak";
 import { PeakSummary } from "./PeakSummary";
 import ReachedPeaksList from "./ReachedPeaksList";
 import usePeakAnalytics from "./usePeakAnalytics";
-import type { PeaksAnalytics } from "@/types/ApiTypes/Analytics";
+import type {
+  PeakSummaryData,
+  PeaksAnalytics,
+} from "@/types/ApiTypes/Analytics";
 
 export default function PeaksAnalytics({ data }: { data: PeaksAnalytics }) {
   const { peaks, highest } = usePeakAnalytics(data);
+
+  console.log(data);
 
   const secondarySpace = "-5 / span 4 ";
 
@@ -25,7 +30,7 @@ export default function PeaksAnalytics({ data }: { data: PeaksAnalytics }) {
           <PeakCardTitle title={"Peaks Summary"} />
         </Card.Header>
         <Card.Body justifyContent={"space-evenly"} gapY={8}>
-          <PeakSummary summary={data.summary} />
+          <PeakSummary summary={data as unknown as PeakSummaryData} />
         </Card.Body>
       </Card.Root>
 
