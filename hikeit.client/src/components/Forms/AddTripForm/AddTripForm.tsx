@@ -3,7 +3,7 @@ import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import { regionsList } from "@/data/regionsList";
 import { useTripCreate } from "@/hooks/UseTrips/useTripCreate";
-import { Button, Stack } from "@chakra-ui/react";
+import { Button, Spinner, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 export interface CreateTripForm {
   name: string;
@@ -50,6 +50,12 @@ function AddTripForm({ initData, file }: Props) {
 
     createTrip.mutate(formData);
   });
+
+  if (createTrip.isPending) {
+    return <Spinner />;
+  }
+
+  console.log(createTrip);
 
   return (
     <Stack asChild>
