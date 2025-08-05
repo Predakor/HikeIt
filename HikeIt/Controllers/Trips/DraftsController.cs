@@ -7,7 +7,7 @@ using Application.TripAnalytics.Interfaces;
 using Application.Trips;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Trips.ValueObjects;
+using Domain.Trips;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,35 +64,16 @@ public class DraftsController {
     }
 
     [HttpPatch("{draftId}")]
-    public async Task<IActionResult> UpdateDraft(Guid draftId, [FromBody] UpdateTripDto dto) {
-        var draft = await _draftService.Get(draftId);
-
-        if (dto.TripName is not null) {
-            draft.Trip.Name = dto.TripName;
-        }
-
-        if (dto.TripDay.HasValue) {
-            draft.Trip.TripDay = dto.TripDay.Value;
-        }
-
-        Console.WriteLine(dto.RegionId);
-        Console.WriteLine(dto.RegionId);
-        Console.WriteLine(dto.RegionId);
-        Console.WriteLine(dto.RegionId);
-        Console.WriteLine(dto.RegionId);
-
-
-        if (dto.RegionId is not null) {
-
-            draft.Trip.ChangeRegion(dto.RegionId.Value);
-        }
-
-        return new OkObjectResult(draftId);
+    public async Task<IActionResult> UpdateDraft(Guid draftId, [FromBody] UpdateTripDto update) {
+        return await GetDraft(draftId)
+            .MapAsync(draft => draft.AddTask(PartialUpdate(update)))
+            .ToActionResultAsync();
     }
 
     [HttpPost("{draftId}/submit")]
     public async Task<IActionResult> SubmitDraft(Guid draftId) {
         return await GetDraft(draftId)
+            .MapAsync(draft => draft.AwaitAll())
             .BindAsync(_tripService.CreateAsync)
             .MapAsync(trip => $"/trips/{trip.Id}")
             .ToActionResultAsync(ResultType.created);
@@ -102,22 +83,42 @@ public class DraftsController {
     public async Task<IActionResult> AttachFile(Guid draftId, IFormFile file) {
         var draft = await _draftService.Get(draftId);
 
-        var ctx = CreateTripContext.Create(draftId).WithFile(file).WithTrip(draft.Trip);
-
-        return await _authService
-            .WithLoggedUser()
-            .MapAsync(ctx.WithUser)
+        return await CreateContext(draft, file)
             .BindAsync(ProccesGpxFile)
-            .MapAsync(ctx.WithAnalyticData)
             .BindAsync(_analyticService.GenerateAnalytic)
             .MapAsync(draft.AddAnalytics)
             .ToActionResultAsync(ResultType.created);
     }
 
-    Task<Result<AnalyticData>> ProccesGpxFile(CreateTripContext ctx) {
+    Task<Result<CreateTripContext>> CreateContext(TripDraft draft, IFormFile file) {
+        var ctx = CreateTripContext.Create(draft.Id).WithFile(file).WithTrip(draft.Trip);
+
+        return _authService.WithLoggedUser().MapAsync(ctx.WithUser);
+    }
+
+    Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx) {
         return _fileService
             .Validate(ctx.File)
             .BindAsync(file => _fileService.CreateAsync(file, ctx.User.Id, ctx.Id))
-            .BindAsync(file => _fileService.ExtractGpxData(ctx.File));
+            .BindAsync(file => _fileService.ExtractGpxData(ctx.File))
+            .MapAsync(ctx.WithAnalyticData);
+    }
+
+    static Func<Trip, Task> PartialUpdate(UpdateTripDto update) {
+        return async (trip) => {
+            if (update.TripName is not null) {
+                trip.Name = update.TripName;
+            }
+
+            if (update.TripDay.HasValue) {
+                trip.TripDay = update.TripDay.Value;
+            }
+
+            if (update.RegionId.HasValue) {
+                trip.ChangeRegion(update.RegionId.Value);
+            }
+
+            await Task.CompletedTask;
+        };
     }
 }

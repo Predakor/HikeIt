@@ -36,6 +36,8 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public GpxFile? GpxFile { get; set; }
     #endregion
 
+    public ICollection<ReachedPeak> Peaks { get; private set; } = [];
+
     public static Trip Create(Guid tripId, string name, DateOnly tripDay, Guid userId) {
         var trip = new Trip {
             Id = tripId,
@@ -63,6 +65,18 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         }
 
         AddDomainEvent(new UserReachedNewPeaksEvent(new(UserId, Id, newPeaks)));
+
+        return this;
+    }
+
+    public Result<Trip> AddReachedPeaks(List<ReachedPeak> newPeaks) {
+        if (newPeaks.Count == 0) {
+            return Errors.EmptyCollection("new peaks");
+        }
+
+        foreach (var newPeak in newPeaks) {
+            Peaks.Add(newPeak);
+        }
 
         return this;
     }

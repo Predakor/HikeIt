@@ -44,12 +44,12 @@ public class TripService : ITripService {
             .BindAsync(SaveTripChanges);
     }
 
-    public async Task<Result<Trip>> CreateAsync(TripDraft draft) {
+    public async Task<Result<Trip>> CreateAsync(Trip trip) {
         return await _unitOfWork
-            .TripRepository.Add(draft.Trip)
+            .TripRepository.Add(trip)
             .MapAsync(async _ => {
                 await _unitOfWork.SaveChangesAsync();
-                return draft.Trip;
+                return trip;
             });
     }
 

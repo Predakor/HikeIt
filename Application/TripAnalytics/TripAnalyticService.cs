@@ -71,10 +71,14 @@ public class TripAnalyticService : ITripAnalyticService {
         return _elevationProfileService.Create(ctx).BindAsync(_unitOfWork.Elevations.AddAsync);
     }
 
-    Task<Result<IList<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx) {
+    Task<Result<List<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx) {
         return _reachedPeakService
             .CreateReachedPeaks(ctx.AnalyticData, ctx.Trip)
-            .BindAsync(_unitOfWork.ReachedPeaks.AddRangeAsync);
+            .MapAsync(peaks => {
+                ctx.Trip.AddReachedPeaks(peaks);
+                return peaks;
+            });
+
     }
 
     Task<Result<PeaksAnalytic>> GeneratePeaksAnalytics(CreateTripContext ctx) {
