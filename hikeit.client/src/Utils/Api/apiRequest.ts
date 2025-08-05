@@ -46,9 +46,37 @@ const get = async <T>(
     : resolveApiResponse(request);
 };
 
+const patch = async <T>(
+  path: string,
+  params?: Record<string, any>,
+  responseResolver?: ResponseResolver<T>
+): Promise<T> => {
+  const body = JSON.stringify({ ...params });
+  var request = await apiRequest(path, { method: "PATCH", body });
+
+  return responseResolver
+    ? responseResolver(request)
+    : resolveApiResponse(request);
+};
+
+const put = async <T>(
+  path: string,
+  params?: Record<string, any>,
+  responseResolver?: ResponseResolver<T>
+): Promise<T> => {
+  const query = params ? `?${toQueryString(params)}` : "";
+  var request = await apiRequest(path + query, { method: "PUT" });
+
+  return responseResolver
+    ? responseResolver(request)
+    : resolveApiResponse(request);
+};
+
 const api = {
   get,
   post,
+  patch,
+  put,
 } as const;
 
 export default api;

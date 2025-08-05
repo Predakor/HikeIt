@@ -16,14 +16,14 @@ namespace Api.Controllers.Trips;
 [Authorize]
 [ApiController]
 [Route("api/trips/[controller]/")]
-public class DraftController {
+public class DraftsController {
     readonly IAuthService _authService;
     readonly ITripService _tripService;
     readonly IGpxFileService _fileService;
     readonly IDraftService<TripDraft> _draftService;
     readonly ITripAnalyticService _analyticService;
 
-    public DraftController(
+    public DraftsController(
         IAuthService authService,
         ITripService tripService,
         IGpxFileService fileService,
@@ -45,6 +45,14 @@ public class DraftController {
         return draft;
     }
 
+    [HttpGet("{draftId}/get")]
+    public async Task<IActionResult> Get(Guid draftId) {
+        return await _authService
+            .WithLoggedUser()
+            .MapAsync(_ => _draftService.Get(draftId))
+            .ToActionResultAsync();
+    }
+
     [HttpPost("new")]
     public async Task<IActionResult> Create() {
         return await _authService
@@ -55,23 +63,29 @@ public class DraftController {
             .ToActionResultAsync(ResultType.created);
     }
 
-    [HttpGet("{draftId}/get")]
-    public async Task<IActionResult> Get(Guid draftId) {
-        return await _authService
-            .WithLoggedUser()
-            .MapAsync(_ => _draftService.Get(draftId))
-            .ToActionResultAsync();
-    }
-
     [HttpPatch("{draftId}")]
     public async Task<IActionResult> UpdateDraft(Guid draftId, [FromBody] UpdateTripDto dto) {
         var draft = await _draftService.Get(draftId);
 
-        if (dto.TripName is not null)
+        if (dto.TripName is not null) {
             draft.Trip.Name = dto.TripName;
+        }
 
-        if (dto.TripDay.HasValue)
+        if (dto.TripDay.HasValue) {
             draft.Trip.TripDay = dto.TripDay.Value;
+        }
+
+        Console.WriteLine(dto.RegionId);
+        Console.WriteLine(dto.RegionId);
+        Console.WriteLine(dto.RegionId);
+        Console.WriteLine(dto.RegionId);
+        Console.WriteLine(dto.RegionId);
+
+
+        if (dto.RegionId is not null) {
+
+            draft.Trip.ChangeRegion(dto.RegionId.Value);
+        }
 
         return new OkObjectResult(draftId);
     }
@@ -79,11 +93,12 @@ public class DraftController {
     [HttpPost("{draftId}/submit")]
     public async Task<IActionResult> SubmitDraft(Guid draftId) {
         return await GetDraft(draftId)
-            .MapAsync(_tripService.CreateAsync)
+            .BindAsync(_tripService.CreateAsync)
+            .MapAsync(trip => $"/trips/{trip.Id}")
             .ToActionResultAsync(ResultType.created);
     }
 
-    [HttpPut("{draftId}/file")]
+    [HttpPost("{draftId}/file")]
     public async Task<IActionResult> AttachFile(Guid draftId, IFormFile file) {
         var draft = await _draftService.Get(draftId);
 

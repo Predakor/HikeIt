@@ -3,6 +3,7 @@ import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import { regionsList } from "@/data/regionsList";
 import { useTripCreate } from "@/hooks/UseTrips/useTripCreate";
+import { useTripDraft } from "@/hooks/UseTrips/useTripDraft";
 import { Button, Spinner, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 export interface CreateTripForm {
@@ -32,35 +33,32 @@ interface Props {
 
 function AddTripForm({ initData, file }: Props) {
   const createTrip = useTripCreate();
+  const draft = useTripDraft(file);
 
   const formHook = useForm<CreateTripForm>({
     defaultValues: initData,
   });
 
   const submitHandler = formHook.handleSubmit(async (data) => {
-    const formData = new FormData();
+    const selectedRegion = data.regionId as unknown as string[];
 
-    formData.append("Base.Name", data.name);
-    formData.append("RegionId", data.regionId.toString());
-    formData.append("Base.TripDay", data.tripDay);
+    await draft?.update.mutateAsync({
+      tripDay: data.tripDay,
+      tripName: data.name,
+      regionId: parseInt(selectedRegion[0]),
+    });
 
-    if (file) {
-      formData.append("file", file);
-    }
-
-    createTrip.mutate(formData);
+    await draft?.submit.mutateAsync();
   });
 
-  if (createTrip.isPending) {
+  if (draft?.submit.isPending) {
     return <Spinner />;
   }
-
-  console.log(createTrip);
 
   return (
     <Stack asChild>
       <form onSubmit={submitHandler}>
-        <QueryResult mutation={createTrip} />
+        <QueryResult mutation={draft?.submit} />
 
         <RenderInputs
           config={addTripFormConfig}
