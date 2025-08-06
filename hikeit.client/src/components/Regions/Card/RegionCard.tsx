@@ -1,38 +1,21 @@
-import type { Region } from "@/types/ApiTypes/types";
-import { Badge, Box, Card, Flex } from "@chakra-ui/react";
-import RegionProgress from "../Completion/RegionCompletion";
+import { cardCommonStyles } from "@/components/Trips/Card/_commonStyles";
+import { Card } from "@chakra-ui/react";
+import type { ReactNode } from "react";
 
 interface Props {
-  region: Region;
+  Header: ReactNode;
+  Description: ReactNode;
+  Footer?: ReactNode;
 }
 
-function RegionCard({ region }: Props) {
-  const total = 20;
-  const randomRange = Math.floor(Math.random() * total + 1);
-
-  const isComplete = randomRange === total;
+function RegionCard({ Header, Description, Footer }: Props) {
   return (
-    <Card.Root>
-      <Card.Header>
-        <Flex>
-          <Card.Title flexGrow={1} fontSize={"2xl"}>
-            {region.name}
-          </Card.Title>
-          {isComplete && <Badge colorPalette={"green"}>Complete</Badge>}
-        </Flex>
-      </Card.Header>
+    <Card.Root {...cardCommonStyles}>
+      <Card.Header>{Header}</Card.Header>
       <Card.Body>
-        <Card.Description>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis,
-          eveniet perspiciatis laudantium eos itaque aperiam in molestiae sed
-          distinctio! Facilis?
-        </Card.Description>
+        <Card.Description>{Description}</Card.Description>
       </Card.Body>
-      <Card.Footer>
-        <Box w="100%">
-          <RegionProgress total={total} finished={randomRange} />
-        </Box>
-      </Card.Footer>
+      {Footer && <Card.Footer>{Footer}</Card.Footer>}
     </Card.Root>
   );
 }

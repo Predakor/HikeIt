@@ -13,7 +13,7 @@ export const BadgesPage = lazy(() => import("@/pages/BadgesPage"));
 export const LandingPage = lazy(() => import("@/pages/LandingPage"));
 
 export const RegionsSummaries = lazy(
-  () => import("@/pages/Regions/RegionSummaries")
+  () => import("@/pages/Regions/RegionSummariesPage")
 );
 export const RegionProgression = lazy(
   () => import("@pages/Regions/RegionProgression")

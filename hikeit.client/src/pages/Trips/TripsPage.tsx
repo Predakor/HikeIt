@@ -1,3 +1,4 @@
+import SkeletonGrid from "@/components/Placeholders/SkeletonGrid";
 import AddTripCard from "@/components/Trips/Card/AddTripCard";
 import NoTrips from "@/components/Trips/NoTrips";
 import RenderTripCards from "@/components/Trips/RenderTripCards";
@@ -18,10 +19,15 @@ function TripsPage() {
       <Grid
         alignItems={"stretch"}
         justifyItems={"stretch"}
+        flex={1}
         templateColumns={{ base: "", md: "repeat(4, 1fr)" }}
         gap={8}
       >
-        <FetchWrapper request={request} NoDataComponent={NoTrips}>
+        <FetchWrapper
+          request={request}
+          LoadingComponent={SkeletonGrid}
+          NoDataComponent={NoTrips}
+        >
           {(tripsData) => {
             return (
               <>

@@ -1,14 +1,17 @@
+import SkeletonGrid from "@/components/Placeholders/SkeletonGrid";
 import ProgressedRegion from "@/components/Regions/Card/ProgressedRegion";
 import UnprogressedRegion from "@/components/Regions/Card/UnprogressedRegion";
+import PageTitle from "@/components/Titles/PageTitle";
 import FetchWrapper from "@/components/Wrappers/Fetching";
-import type { Region, RegionProgressSummary } from "@/types/ApiTypes/types";
 import UseRegionsProgressions from "@/hooks/Regions/UseRegionsProgressions";
+import type { Region, RegionProgressSummary } from "@/types/ApiTypes/types";
 import {
   Box,
   For,
+  GridItem,
   Heading,
+  Show,
   SimpleGrid,
-  Skeleton,
   Stack,
 } from "@chakra-ui/react";
 
@@ -20,10 +23,7 @@ function RegionsPage() {
       <Box placeItems={"center"}>
         <Heading size={"5xl"}>Regions</Heading>
       </Box>
-      <FetchWrapper
-        request={regionsSummaries}
-        LoadingComponent={RegionSkeleton}
-      >
+      <FetchWrapper request={regionsSummaries} LoadingComponent={SkeletonGrid}>
         {([progressedRegions, unprogressedRegions]) => (
           <SimpleGrid
             alignItems={"stretch"}
@@ -31,8 +31,19 @@ function RegionsPage() {
             minChildWidth={{ base: "full", lg: "sm" }}
             gap={8}
           >
-            <RegionSummaries summaries={progressedRegions} />
-            <UnprogressedRegions regions={unprogressedRegions} />
+            <Show when={progressedRegions.length}>
+              <GridItem colSpan={4}>
+                <PageTitle title="Visited Regions" />
+              </GridItem>
+              <RegionSummaries summaries={progressedRegions} />
+            </Show>
+
+            <Show when={unprogressedRegions.length}>
+              <GridItem colSpan={4}>
+                <PageTitle title="Unvisited Regions" />
+              </GridItem>
+              <UnprogressedRegions regions={unprogressedRegions} />
+            </Show>
           </SimpleGrid>
         )}
       </FetchWrapper>
@@ -62,18 +73,4 @@ function UnprogressedRegions({ regions }: { regions: Region[] }) {
   );
 }
 
-function RegionSkeleton() {
-  return (
-    <>
-      <Skeleton height="200px" />
-      <Skeleton height="200px" />
-      <Skeleton height="200px" />
-      <Skeleton height="200px" />
-      <Skeleton height="200px" />
-      <Skeleton height="200px" />
-      <Skeleton height="200px" />
-      <Skeleton height="200px" />
-    </>
-  );
-}
 export default RegionsPage;

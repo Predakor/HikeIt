@@ -32,7 +32,7 @@ function FetchWrapper<T>({
     return <ErrorComponent error={error} />;
   }
 
-  if (!data) {
+  if (!data || (Array.isArray(data) && data.length === 0)) {
     return <NoDataComponent />;
   }
 
