@@ -59,13 +59,15 @@ function AddTripForm({ initData, file, resetForm }: Props) {
             <RenderInputs
               config={addTripFormConfig}
               formHook={formHook}
-              displayOptions={{ label: "ontop", size: "lg" }}
+              displayOptions={{ label: "ontop", size: "xl" }}
             />
 
             <Button
               loading={draft?.submit.isPending}
               loadingText="Uploading"
+              colorPalette={"blue"}
               size={"xl"}
+              marginTop={2}
               type="submit"
             >
               Upload
