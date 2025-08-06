@@ -8,7 +8,7 @@ export default function RouteAnalytics({ data }: { data: TripAnalytic }) {
   return (
     <SimpleGrid columns={{ base: 1, lg: 3 }} gapY={8}>
       {entries.map(([name, value]) => (
-        <RowStat value={value} label={name} />
+        <RowStat value={value} label={name} key={name} />
       ))}
     </SimpleGrid>
   );

@@ -23,14 +23,17 @@ function AddTripInfo({ fileChangeHandler }: Props) {
       gridTemplateColumns={{ base: "", lg: "1fr auto 1fr" }}
       gap={{ base: 4, lg: 24 }}
     >
-      <OptionCard title={"Yes"} description={fileOptionDescription}>
+      <OptionCard title={"Use Gpx File"} description={fileOptionDescription}>
         <Field.Root flexGrow={1}>
           <DropFile allowedFiles={[".gpx"]} onFileChange={fileChangeHandler} />
         </Field.Root>
       </OptionCard>
       <Divider />
 
-      <OptionCard title={"No"} description={noFileOptionDescription}>
+      <OptionCard
+        title={"Create Mannualy"}
+        description={noFileOptionDescription}
+      >
         <SimpleGrid templateColumns={"1fr 1fr"} gap={4}>
           <Button colorPalette={"blue"} size={"2xl"}>
             Manual Creation

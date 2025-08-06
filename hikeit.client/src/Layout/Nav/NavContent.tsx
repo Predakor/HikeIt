@@ -9,7 +9,9 @@ export default function NavContent() {
   return (
     <>
       <For each={visibleRoutes}>
-        {(route) => <NavItem path={route.path} label={route.label} />}
+        {(route) => (
+          <NavItem path={route.path} label={route.label} key={route.path} />
+        )}
       </For>
 
       <Spacer />

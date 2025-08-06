@@ -24,11 +24,8 @@ export function useTripDraft(file?: File) {
       const request = await getDraft.mutateAsync();
 
       if (request) {
-        const request2 = attachFile.mutateAsync(file);
-        console.log("r2 " + request2);
+        attachFile.mutateAsync(file);
       }
-
-      console.log(request);
     };
 
     if (!getDraft.isPending) {

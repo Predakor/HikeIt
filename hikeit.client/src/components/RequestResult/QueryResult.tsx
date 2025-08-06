@@ -3,17 +3,21 @@ import type { UseMutationResult } from "@tanstack/react-query";
 import { Link } from "react-router";
 
 interface Props {
-  mutation: UseMutationResult<
+  mutation?: UseMutationResult<
     {
       location: string;
     },
     Error,
-    object,
+    any,
     unknown
   >;
 }
 
 function QueryResult({ mutation }: Props) {
+  if (!mutation) {
+    return;
+  }
+
   const { isSuccess, isError, isPending, data, error } = mutation;
 
   const alertTitle = isSuccess ? "Created succesfully" : "Failed to create";

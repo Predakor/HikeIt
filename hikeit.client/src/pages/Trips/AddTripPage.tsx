@@ -1,9 +1,11 @@
 import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
+import GoBackButton from "@/components/Buttons/GoBackButton";
 import AddTripForm, {
   type TripFormInitData,
 } from "@/components/Forms/AddTripForm/AddTripForm";
+import PageTitle from "@/components/Titles/PageTitle";
 import AddTripInstructions from "@/components/Trip/AddTripInfo/AddTripInfo";
-import { Heading, Stack } from "@chakra-ui/react";
+import { Flex, Stack } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 
 function AddTripPage() {
@@ -35,17 +37,19 @@ function AddTripPage() {
   };
 
   return (
-    <Stack alignItems={{ base: "", lg: "center" }} gapY={8}>
-      <Heading color={"GrayText"} size={"5xl"}>
-        Add Your Trip
-      </Heading>
+    <Stack gapY={{ base: 8, lg: 16 }}>
+      <Flex gap={4}>
+        <GoBackButton />
+        <PageTitle title="Add Your Trip" />
+      </Flex>
 
-      <Stack gapY={12}>
-        <Heading as={"h3"} fontWeight={"bold"} fontSize={"4xl"}>
-          {showForm ? "Trip Details" : "Do you have a gpx file?"}
-        </Heading>
+      <Stack alignSelf={"center"} gapY={12}>
         {showForm ? (
-          <AddTripForm initData={initStatsRef.current} file={fileRef.current} />
+          <AddTripForm
+            initData={initStatsRef.current}
+            file={fileRef.current}
+            resetForm={() => setShowForm(false)}
+          />
         ) : (
           <AddTripInstructions fileChangeHandler={fileChangeHandler} />
         )}

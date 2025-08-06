@@ -10,7 +10,7 @@ export function NavItem({ path, label }: { path: string; label: string }) {
 
   return (
     <LinkBox fontSize={"inherit"} asChild>
-      <NavLink to={path} aria-label={label} key={path}>
+      <NavLink to={path} aria-label={label} key={path} prefetch="viewport">
         {({ isActive }) => {
           const color = isActive ? "fg" : "fg.muted";
           return (

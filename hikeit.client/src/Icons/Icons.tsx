@@ -15,6 +15,8 @@ export {
   FaSquare as IconStop,
   FaRoute as IconJourney,
   FaArrowUp as IconArrowUp,
+  FaArrowRight as IconArrowRight,
+  FaPlus as IconPlus,
 } from "react-icons/fa";
 
 export {
