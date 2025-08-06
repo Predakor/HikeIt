@@ -16,6 +16,7 @@ export function NavItem({ path, label }: { path: string; label: string }) {
           return (
             <Text
               transition={"color 100ms"}
+              fontWeight={"medium"}
               scale={isActive ? 1.1 : 1}
               color={color}
               _hover={hover}

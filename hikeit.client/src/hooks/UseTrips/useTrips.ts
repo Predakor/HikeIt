@@ -1,5 +1,5 @@
 import apiClient from "@/Utils/Api/ApiClient";
-import type { TripDto, TripDtoFull } from "@/types/ApiTypes/TripDtos";
+import type { TripDtoFull, TripSummaries } from "@/types/ApiTypes/TripDtos";
 import { useQuery } from "@tanstack/react-query";
 
 const staleTime = 1000 * 60 * 30;
@@ -11,7 +11,7 @@ export const tripConfig = {
   fetchTrip: (id: string) =>
     apiClient<TripDtoFull>(`${basePath}/${id}/analytics`),
 
-  fetchTrips: () => apiClient<TripDto[]>(`${basePath}/`),
+  fetchTrips: () => apiClient<TripSummaries>(`${basePath}/`),
 };
 
 export function useTrip(tripId: string) {
@@ -24,7 +24,7 @@ export function useTrip(tripId: string) {
 }
 
 export function useTrips() {
-  return useQuery<TripDto[]>({
+  return useQuery<TripSummaries>({
     queryKey: [basePath],
     queryFn: tripConfig.fetchTrips,
     staleTime: staleTime,

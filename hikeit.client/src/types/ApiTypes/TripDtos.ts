@@ -17,6 +17,18 @@ export interface TripDto {
   };
 }
 
+export interface TripSummary {
+  id: string;
+  name: string;
+  tripDay: string;
+  region: {
+    id: number;
+    name: string;
+  };
+}
+
+export type TripSummaries = TripSummary[];
+
 export interface TripDtoFull extends TripDto {
   trackAnalytic: TripAnalytic | null;
   trackGraph?: GraphData[];

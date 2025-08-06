@@ -12,9 +12,7 @@ function RegionCard({ Header, Description, Footer }: Props) {
   return (
     <Card.Root {...cardCommonStyles}>
       <Card.Header>{Header}</Card.Header>
-      <Card.Body>
-        <Card.Description>{Description}</Card.Description>
-      </Card.Body>
+      <Card.Body>{Description}</Card.Body>
       {Footer && <Card.Footer>{Footer}</Card.Footer>}
     </Card.Root>
   );

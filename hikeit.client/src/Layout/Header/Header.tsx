@@ -17,7 +17,7 @@ export default function Header() {
 
   return (
     <header>
-      <Flex fontSize={"xl"} gapX={8} alignItems={"center"} as="nav">
+      <Flex fontSize={"2xl"} gapX={8} alignItems={"center"} as="nav">
         <LinkBox flexGrow={{ base: 1, lg: 0 }}>
           <NavLink to="/">
             <PageLogo />
@@ -49,9 +49,9 @@ export function PageLogo() {
       >
         <IconLogo />
       </Icon>
-      <Heading color="fg" fontSize={"inherit"}>
+      <Heading color="fg" fontSize={"inherit"} fontWeight={"semibold"}>
         Hike
-        <Span fontSize={"smaller"} color={"blue"}>
+        <Span fontSize={"smaller"} color={"blue"} fontWeight={"bold"}>
           IT
         </Span>
       </Heading>

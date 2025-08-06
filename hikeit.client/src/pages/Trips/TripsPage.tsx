@@ -1,46 +1,49 @@
+import { IconPlus } from "@/Icons/Icons";
 import SkeletonGrid from "@/components/Placeholders/SkeletonGrid";
-import AddTripCard from "@/components/Trips/Card/AddTripCard";
+import PageTitle from "@/components/Titles/PageTitle";
 import NoTrips from "@/components/Trips/NoTrips";
 import RenderTripCards from "@/components/Trips/RenderTripCards";
 import FetchWrapper from "@/components/Wrappers/Fetching";
 import { useTrips } from "@/hooks/UseTrips/useTrips";
-import { Box, Grid, Heading, Stack } from "@chakra-ui/react";
+import { Button, SimpleGrid, Spacer, Stack } from "@chakra-ui/react";
 import { Link } from "react-router";
 
 function TripsPage() {
-  const request = useTrips();
+  const getTrips = useTrips();
 
   return (
     <Stack gap={10}>
-      <Box placeItems={"center"}>
-        <Heading size={"5xl"}>Your trips</Heading>
-      </Box>
+      <Stack direction={"row"} placeItems={"baseline"} gap={8}>
+        <PageTitle title="Your trips" />
+        <Spacer />
+        <Button
+          fontWeight={"semibold"}
+          colorPalette={"blue"}
+          size={{ base: "sm", lg: "lg" }}
+          asChild
+        >
+          <Link to={"add"}>
+            {"New Trip"}
+            <IconPlus />
+          </Link>
+        </Button>
+      </Stack>
 
-      <Grid
+      <SimpleGrid
         alignItems={"stretch"}
         justifyItems={"stretch"}
         flex={1}
-        templateColumns={{ base: "", md: "repeat(4, 1fr)" }}
+        columns={{ base: 1, lg: 4 }}
         gap={8}
       >
         <FetchWrapper
-          request={request}
+          request={getTrips}
           LoadingComponent={SkeletonGrid}
           NoDataComponent={NoTrips}
         >
-          {(tripsData) => {
-            return (
-              <>
-                <RenderTripCards trips={tripsData} />
-
-                <Link to={"add"}>
-                  <AddTripCard />
-                </Link>
-              </>
-            );
-          }}
+          {(tripsData) => <RenderTripCards trips={tripsData} />}
         </FetchWrapper>
-      </Grid>
+      </SimpleGrid>
     </Stack>
   );
 }

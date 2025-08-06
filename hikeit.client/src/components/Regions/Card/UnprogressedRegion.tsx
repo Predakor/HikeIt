@@ -13,7 +13,7 @@ function UnprogressedRegion({ region }: { region: Region }) {
           </Card.Title>
         }
         Description={
-          <Span textAlign={"center"}>
+          <Span color={"fg.muted"} textAlign={"center"}>
             <span>This region hasn't been explored yet.</span>
             <br />
             <span>Add a trip that visits it to unlock progress.</span>

@@ -1,4 +1,5 @@
 import apiClient from "@/Utils/Api/ApiClient";
+import { formatDate } from "@/Utils/Formatters";
 import GoBackButton from "@/components/Buttons/GoBackButton";
 import PageTitle from "@/components/Titles/PageTitle";
 import { useTripRemove } from "@/hooks/UseTrips/useTripRemove";
@@ -20,9 +21,11 @@ function TripDetailsHeader({ id }: Props) {
   });
 
   return (
-    <Flex alignItems={"center"} gapX={4}>
+    <Flex alignItems={"center"} width={"full"} gapX={4}>
       <GoBackButton />
-      <TripName data={baseInfo} />
+      <Flex flexGrow={1} alignItems={"center"} gapX={8}>
+        <TripName data={baseInfo} />
+      </Flex>
       <Button
         onClick={() => deleteTrip.mutate(id)}
         colorPalette={"red"}
@@ -44,6 +47,7 @@ function TripName({ data: request }: { data: UseQueryResult<TripDto> }) {
   }
 
   const data = request.data.base;
+
   return (
     <>
       <PageTitle title={data.name} />
@@ -52,7 +56,7 @@ function TripName({ data: request }: { data: UseQueryResult<TripDto> }) {
         color={"fg.muted"}
         size={{ base: "xl", lg: "2xl" }}
       >
-        {data.tripDay}
+        {formatDate.toUkDate(data.tripDay)}
       </Heading>
     </>
   );

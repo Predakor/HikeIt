@@ -1,8 +1,19 @@
 import api from "@/Utils/Api/apiRequest";
+import {
+  GenericFormatter,
+  KeyToLabelFormatter,
+} from "@/Utils/Formatters/valueFormatter";
 import { ObjectToArray } from "@/Utils/ObjectToArray";
 import RowStat from "@/components/Stats/RowStat";
 import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
-import { For, Heading, SimpleGrid, Stack, VStack } from "@chakra-ui/react";
+import {
+  For,
+  Grid,
+  Heading,
+  SimpleGrid,
+  Stack,
+  VStack,
+} from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 
 export type UserStats = {
@@ -32,7 +43,7 @@ export type Metas = {
 };
 
 function UserSummaryPage() {
-  var stats = useQuery<UserStats>({
+  const stats = useQuery<UserStats>({
     queryKey: ["user-stats"],
     queryFn: () => api.get<UserStats>("users/stats"),
     staleTime: 1000 * 60 * 60,
@@ -46,16 +57,19 @@ function UserSummaryPage() {
         const metas = ObjectToArray(data.metas);
 
         return (
-          <Stack
+          <SimpleGrid
             justifySelf={"center"}
             alignSelf={"center"}
+            columns={2}
             gap={16}
             placeContent={"center"}
           >
             <RenderStats name="Totals" stats={totals} />
+
             <RenderStats name="Locations" stats={locations} />
+
             <RenderStats name="Meatas" stats={metas} />
-          </Stack>
+          </SimpleGrid>
         );
       }}
     </FetchWrapper>
@@ -76,7 +90,12 @@ function RenderStats({
       </Heading>
       <SimpleGrid columns={{ base: 2, lg: 3 }} gap={8}>
         <For each={stats}>
-          {([key, value]) => <RowStat value={value} label={key} />}
+          {([key, value]) => (
+            <RowStat
+              value={GenericFormatter(value)}
+              label={KeyToLabelFormatter(key)}
+            />
+          )}
         </For>
       </SimpleGrid>
     </VStack>
