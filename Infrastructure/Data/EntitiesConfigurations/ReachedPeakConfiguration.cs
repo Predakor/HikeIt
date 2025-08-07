@@ -11,11 +11,6 @@ public class ReachedPeakConfiguration : IEntityTypeConfiguration<ReachedPeak> {
                .HasForeignKey(rp => rp.PeakId)
                .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne(rp => rp.Trip)
-               .WithMany()
-               .HasForeignKey(t => t.TripId)
-               .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasOne(rp => rp.User)
                .WithMany()
                .HasForeignKey(u => u.UserId)

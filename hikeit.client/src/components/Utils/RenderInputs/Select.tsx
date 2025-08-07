@@ -37,6 +37,7 @@ function Select<T extends FieldValues>({
             field={field}
             collection={collection}
             placeholder={inlineLabel ? entry.label : ""}
+            displayOptions={displayOptions}
           />
         )}
       />

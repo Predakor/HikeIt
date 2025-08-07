@@ -1,10 +1,10 @@
 import QueryResult from "@/components/RequestResult/QueryResult";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
-import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import { regionsList } from "@/data/regionsList";
-import { useTripCreate } from "@/hooks/useTrips";
+import { useTripDraft } from "@/hooks/UseTrips/useTripDraft";
 import { Button, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+import { TripAddedSucces } from "./TripAddedSucces";
+import { addTripFormConfig } from "./addTripFormConfig";
 export interface CreateTripForm {
   name: string;
   tripDay: string;
@@ -13,60 +13,70 @@ export interface CreateTripForm {
 
 export type TripFormInitData = Omit<CreateTripForm, "regionId">;
 
-const addTripFormConfig: InputsConfig = [
-  { key: "name", label: "Trip name", type: "text", min: 3, max: 63 },
-  { key: "tripDay", label: "", type: "date", min: 0, max: Date.now() },
-  {
-    key: "regionId",
-    label: "Region",
-    type: "select",
-    collection: { items: regionsList, type: "static" },
-    required: true,
-  },
-];
-
 interface Props {
   initData?: TripFormInitData;
   file?: File;
+  resetForm: () => void;
 }
 
-function AddTripForm({ initData, file }: Props) {
-  const createTrip = useTripCreate();
+function AddTripForm({ initData, file, resetForm }: Props) {
+  const draft = useTripDraft(file);
 
   const formHook = useForm<CreateTripForm>({
     defaultValues: initData,
   });
 
   const submitHandler = formHook.handleSubmit(async (data) => {
-    const formData = new FormData();
-
-    formData.append("Base.Name", data.name);
-    formData.append("RegionId", data.regionId.toString());
-    formData.append("Base.TripDay", data.tripDay);
-
-    if (file) {
-      formData.append("file", file);
+    if (draft?.submit.isPending) {
+      return;
     }
 
-    createTrip.mutate(formData);
+    const selectedRegion = data.regionId as unknown as string[];
+
+    await draft?.update.mutateAsync({
+      tripDay: data.tripDay,
+      tripName: data.name,
+      regionId: parseInt(selectedRegion[0]),
+    });
+
+    await draft?.submit.mutateAsync();
   });
 
   return (
-    <Stack asChild>
-      <form onSubmit={submitHandler}>
-        <QueryResult mutation={createTrip} />
-
-        <RenderInputs
-          config={addTripFormConfig}
-          formHook={formHook}
-          displayOptions={{ label: "ontop", size: "lg" }}
+    <Stack>
+      {draft?.submit.isSuccess && (
+        <TripAddedSucces
+          tripLocation={draft.submit.data.location}
+          resetForm={resetForm}
         />
+      )}
 
-        <Button size={"xl"} type="submit">
-          Upload
-        </Button>
-      </form>
+      {!draft?.submit.data && (
+        <form onSubmit={submitHandler}>
+          <Stack>
+            <QueryResult mutation={draft?.submit} />
+
+            <RenderInputs
+              config={addTripFormConfig}
+              formHook={formHook}
+              displayOptions={{ label: "ontop", size: "xl" }}
+            />
+
+            <Button
+              loading={draft?.submit.isPending}
+              loadingText="Uploading"
+              colorPalette={"blue"}
+              size={"xl"}
+              marginTop={2}
+              type="submit"
+            >
+              Upload
+            </Button>
+          </Stack>
+        </form>
+      )}
     </Stack>
   );
 }
+
 export default AddTripForm;

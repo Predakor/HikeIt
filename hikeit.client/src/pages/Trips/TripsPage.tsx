@@ -1,40 +1,49 @@
-import AddTripCard from "@/components/Trips/Card/AddTripCard";
+import { IconPlus } from "@/Icons/Icons";
+import SkeletonGrid from "@/components/Placeholders/SkeletonGrid";
+import PageTitle from "@/components/Titles/PageTitle";
 import NoTrips from "@/components/Trips/NoTrips";
 import RenderTripCards from "@/components/Trips/RenderTripCards";
 import FetchWrapper from "@/components/Wrappers/Fetching";
-import { useTrips } from "@/hooks/useTrips";
-import { Box, Grid, Heading, Stack } from "@chakra-ui/react";
+import { useTrips } from "@/hooks/UseTrips/useTrips";
+import { Button, SimpleGrid, Spacer, Stack } from "@chakra-ui/react";
 import { Link } from "react-router";
 
 function TripsPage() {
-  const request = useTrips();
+  const getTrips = useTrips();
 
   return (
     <Stack gap={10}>
-      <Box placeItems={"center"}>
-        <Heading size={"5xl"}>Your trips</Heading>
-      </Box>
+      <Stack direction={"row"} placeItems={"baseline"} gap={8}>
+        <PageTitle title="Your trips" />
+        <Spacer />
+        <Button
+          fontWeight={"semibold"}
+          colorPalette={"blue"}
+          size={{ base: "sm", lg: "lg" }}
+          asChild
+        >
+          <Link to={"add"}>
+            {"New Trip"}
+            <IconPlus />
+          </Link>
+        </Button>
+      </Stack>
 
-      <Grid
+      <SimpleGrid
         alignItems={"stretch"}
         justifyItems={"stretch"}
-        templateColumns={{ base: "", md: "repeat(4, 1fr)" }}
+        flex={1}
+        columns={{ base: 1, lg: 4 }}
         gap={8}
       >
-        <FetchWrapper request={request} NoDataComponent={NoTrips}>
-          {(tripsData) => {
-            return (
-              <>
-                <RenderTripCards trips={tripsData} />
-
-                <Link to={"add"}>
-                  <AddTripCard />
-                </Link>
-              </>
-            );
-          }}
+        <FetchWrapper
+          request={getTrips}
+          LoadingComponent={SkeletonGrid}
+          NoDataComponent={NoTrips}
+        >
+          {(tripsData) => <RenderTripCards trips={tripsData} />}
         </FetchWrapper>
-      </Grid>
+      </SimpleGrid>
     </Stack>
   );
 }

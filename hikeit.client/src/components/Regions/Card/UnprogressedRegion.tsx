@@ -1,24 +1,25 @@
 import type { Region } from "@/types/ApiTypes/types";
-import { Card } from "@chakra-ui/react";
+import { Card, Span } from "@chakra-ui/react";
 import { Link } from "react-router";
+import RegionCard from "./RegionCard";
 
 function UnprogressedRegion({ region }: { region: Region }) {
   return (
-    <Link to={`regions/${region.id}`}>
-      <Card.Root>
-        <Card.Header textAlign={"center"}>
-          <Card.Title flexGrow={1} fontSize={"2xl"}>
+    <Link to={`/regions/${region.id}`}>
+      <RegionCard
+        Header={
+          <Card.Title textAlign={"center"} flexGrow={1} fontSize={"2xl"}>
             {region.name}
           </Card.Title>
-        </Card.Header>
-        <Card.Body>
-          <Card.Description textAlign={"center"}>
+        }
+        Description={
+          <Span color={"fg.muted"} textAlign={"center"}>
             <span>This region hasn't been explored yet.</span>
             <br />
             <span>Add a trip that visits it to unlock progress.</span>
-          </Card.Description>
-        </Card.Body>
-      </Card.Root>
+          </Span>
+        }
+      />
     </Link>
   );
 }

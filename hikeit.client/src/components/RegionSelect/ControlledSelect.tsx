@@ -1,13 +1,25 @@
-import { Select, Portal, type ListCollection } from "@chakra-ui/react";
+import {
+  Select,
+  Portal,
+  type ListCollection,
+  type ConditionalValue,
+} from "@chakra-ui/react";
 import type { ControllerRenderProps } from "react-hook-form";
+import type { DisplayOptions } from "../Utils/RenderInputs/inputTypes";
 
 interface Props {
   field: ControllerRenderProps;
   collection: ListCollection;
   placeholder?: string;
+  displayOptions?: DisplayOptions;
 }
 
-function ControlledSelect({ field, collection, placeholder }: Props) {
+function ControlledSelect({
+  field,
+  collection,
+  placeholder,
+  displayOptions,
+}: Props) {
   return (
     <Select.Root
       name={field.name}
@@ -15,6 +27,7 @@ function ControlledSelect({ field, collection, placeholder }: Props) {
       onValueChange={({ value }) => field.onChange(value)}
       onInteractOutside={() => field.onBlur()}
       collection={collection}
+      size={mapToSizes(displayOptions)}
     >
       <Select.HiddenSelect />
       <Select.Control>
@@ -40,4 +53,24 @@ function ControlledSelect({ field, collection, placeholder }: Props) {
     </Select.Root>
   );
 }
+
+const mapToSizes = (
+  displayOptions?: DisplayOptions
+): ConditionalValue<"sm" | "md" | "lg" | "xs" | undefined> => {
+  const size = displayOptions?.size;
+
+  if (!size) {
+    return "lg";
+  }
+
+  if (size == "md") {
+    return "md";
+  }
+
+  if (size == "2xl" || size == "xl") {
+    return "lg";
+  }
+
+  return size;
+};
 export default ControlledSelect;

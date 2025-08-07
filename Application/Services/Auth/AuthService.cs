@@ -27,7 +27,6 @@ public class AuthService : IAuthService {
         }
 
         return user;
-
     }
 
     //added for naming clarity
@@ -45,7 +44,19 @@ public class AuthService : IAuthService {
         return user;
     }
 
+    public async Task<Result<Guid>> WithLoggedUserId() {
+        var cookieUser = _httpContextAccessor.HttpContext?.User;
+        if (cookieUser is null) {
+            return Errors.NotAuthorized();
+        }
 
+        var user = await _userManager.GetUserAsync(cookieUser);
+        if (user is null) {
+            return Errors.NotAuthorized();
+        }
+
+        return user.Id;
+    }
 
     public async Task<Result<User>> GetByLoginOrEmail(string loginOrEmail) {
         bool isEmail = loginOrEmail.Contains('@');
@@ -57,13 +68,9 @@ public class AuthService : IAuthService {
         var user = await query;
         if (user == null) {
             var credentialType = isEmail ? "email" : "username";
-            return Errors.NotFound(
-                $"user with {credentialType}: {loginOrEmail}"
-            );
+            return Errors.NotFound($"user with {credentialType}: {loginOrEmail}");
         }
 
         return user;
     }
-
-
 }

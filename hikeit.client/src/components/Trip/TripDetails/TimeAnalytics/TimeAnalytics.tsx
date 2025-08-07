@@ -1,3 +1,7 @@
+import {
+  GenericFormatter,
+  KeyToLabelFormatter,
+} from "@/Utils/Formatters/valueFormatter";
 import { ObjectToArray } from "@/Utils/ObjectToArray";
 import RowStat from "@/components/Stats/RowStat";
 import type { TimeAnalytic } from "@/types/ApiTypes/Analytics";
@@ -8,7 +12,10 @@ function TimeAnalytics({ data }: { data: TimeAnalytic }) {
   return (
     <SimpleGrid columns={{ base: 1, lg: 3 }} gapY={8}>
       {entries.map(([name, value]) => (
-        <RowStat value={value} label={name} />
+        <RowStat
+          value={GenericFormatter(value)}
+          label={KeyToLabelFormatter(name)}
+        />
       ))}
     </SimpleGrid>
   );

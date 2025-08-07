@@ -10,10 +10,10 @@ export default function RegionCompletion({ total, finished }: Props) {
   const isComplete = finished === total;
 
   const color = isComplete ? "fg" : "fg.muted";
-  const progressColor = finishedPercentage > 40 ? "fg" : "fg.muted";
+  const progressColor = finishedPercentage > 65 ? "fg" : "fg.muted";
 
   return (
-    <Progress.Root defaultValue={40} value={finished} max={total} size={"lg"}>
+    <Progress.Root defaultValue={40} value={finished} max={total} size={"xl"}>
       <HStack gap="5">
         <Progress.Label color={color}>Completed</Progress.Label>
         <Progress.Track flexGrow={1}>

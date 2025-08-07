@@ -8,10 +8,8 @@ export default function GoBackButton() {
   const goBack = () => navigation(-1);
 
   return (
-    <Button onClick={goBack} variant={"ghost"}>
-      <Icon size={"2xl"}>
-        <MdOutlineArrowBack />
-      </Icon>
+    <Button onClick={goBack} variant={"ghost"} aria-label="Go to previous page">
+      <Icon as={MdOutlineArrowBack} boxSize={10} />
     </Button>
   );
 }

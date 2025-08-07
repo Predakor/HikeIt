@@ -49,14 +49,14 @@ public class TripAnalyticService : ITripAnalyticService {
         return builder.Build();
     }
 
-    void GenerateRouteAndTimeAnalytics(
+    static TripAnalyticBuilder GenerateRouteAndTimeAnalytics(
         List<GpxPoint> points,
         List<GpxGain> gains,
         TripAnalyticBuilder builder
     ) {
         var routeAnalytics = RouteAnalyticFactory.Create(points, gains);
         if (routeAnalytics is null) {
-            return;
+            return builder;
         }
 
         builder.WithRouteAnalytic(routeAnalytics);
@@ -65,16 +65,22 @@ public class TripAnalyticService : ITripAnalyticService {
         if (timeAnalytics is not null) {
             builder.WithTimeAnalytic(timeAnalytics);
         }
+
+        return builder;
     }
 
     Task<Result<ElevationProfile>> GenerateElevationProfile(CreateTripContext ctx) {
         return _elevationProfileService.Create(ctx).BindAsync(_unitOfWork.Elevations.AddAsync);
     }
 
-    Task<Result<IList<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx) {
+    Task<Result<List<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx) {
         return _reachedPeakService
             .CreateReachedPeaks(ctx.AnalyticData, ctx.Trip)
-            .BindAsync(_unitOfWork.ReachedPeaks.AddRangeAsync);
+            .MapAsync(peaks => {
+                ctx.Trip.AddReachedPeaks(peaks);
+                return peaks;
+            });
+
     }
 
     Task<Result<PeaksAnalytic>> GeneratePeaksAnalytics(CreateTripContext ctx) {

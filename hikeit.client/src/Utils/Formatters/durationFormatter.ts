@@ -8,7 +8,7 @@ export function toMinutes(stat: any): string | number | null {
   const [hours, minutes, seconds] = stat.split(":").map(Number);
   const date = new Date();
   date.setHours(hours, minutes, seconds, 0);
-  return hours * 60 + date.getMinutes();
+  return hours * 60 + Number(minutes);
 }
 
 export function toHours(stat: any): string | number | null {

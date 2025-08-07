@@ -23,7 +23,9 @@ public class GpxPipelineTests {
 
         // Just assert ascent >= 0 and descent <= 0 (descent is negative sum)
         Assert.True(analytics.TotalAscentMeters >= 0);
-        Assert.True(analytics.TotalDescentMeters <= 0);
+
+        //Descent is a Math.Abs value 
+        Assert.True(analytics.TotalDescentMeters >= 0);
     }
 
     [Theory]

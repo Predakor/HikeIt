@@ -1,8 +1,4 @@
-import {
-  UserProfilePage,
-  UserSettingsPage,
-  UserStatsPage,
-} from "@/pages/__index";
+import { UserProfilePage, UserSettingsPage } from "@/pages/__index";
 import type { RouteGroup } from "./routeTypes";
 
 export const userRoutes: RouteGroup = {
@@ -21,12 +17,6 @@ export const userRoutes: RouteGroup = {
       path: "options",
       label: "Options",
       Page: UserSettingsPage,
-    },
-    {
-      type: "item",
-      path: "stats",
-      label: "Stats",
-      Page: UserStatsPage,
     },
   ],
 };

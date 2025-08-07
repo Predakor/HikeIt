@@ -1,10 +1,11 @@
 import apiClient from "@/Utils/Api/ApiClient";
+import { formatDate } from "@/Utils/Formatters";
 import GoBackButton from "@/components/Buttons/GoBackButton";
 import PageTitle from "@/components/Titles/PageTitle";
-import { useTripRemove } from "@/hooks/useTrips";
+import { useTripRemove } from "@/hooks/UseTrips/useTripRemove";
 import type { TripDto } from "@/types/ApiTypes/TripDtos";
 import { Button, Flex, Heading, Skeleton } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 interface Props {
   id: string;
@@ -19,23 +20,12 @@ function TripDetailsHeader({ id }: Props) {
     staleTime: 1000 * 60 * 30,
   });
 
-  if (baseInfo.isLoading) {
-    return <Skeleton width={"full"} height={12}></Skeleton>;
-  }
-
-  const data = baseInfo.data?.base;
-
   return (
-    <Flex alignItems={"center"} gapX={4}>
+    <Flex alignItems={"center"} width={"full"} gapX={4}>
       <GoBackButton />
-      {data && (
-        <>
-          <PageTitle title={data.name} />
-          <Heading color={"fg.muted"} size={{ base: "xl", lg: "2xl" }}>
-            {data.tripDay}
-          </Heading>
-        </>
-      )}
+      <Flex flexGrow={1} alignItems={"center"} gapX={8}>
+        <TripName data={baseInfo} />
+      </Flex>
       <Button
         onClick={() => deleteTrip.mutate(id)}
         colorPalette={"red"}
@@ -46,4 +36,30 @@ function TripDetailsHeader({ id }: Props) {
     </Flex>
   );
 }
+
+function TripName({ data: request }: { data: UseQueryResult<TripDto> }) {
+  if (request.isLoading) {
+    return <Skeleton width={"full"} height={12}></Skeleton>;
+  }
+
+  if (!request.data) {
+    return;
+  }
+
+  const data = request.data.base;
+
+  return (
+    <>
+      <PageTitle title={data.name} />
+      <Heading
+        display={{ base: "none", lg: "block" }}
+        color={"fg.muted"}
+        size={{ base: "xl", lg: "2xl" }}
+      >
+        {formatDate.toUkDate(data.tripDay)}
+      </Heading>
+    </>
+  );
+}
+
 export default TripDetailsHeader;
