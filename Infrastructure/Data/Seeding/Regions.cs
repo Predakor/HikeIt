@@ -35,3 +35,5 @@ internal static partial class DataSeed {
         new() { Id = 28, Name = "Masyw Ślęży" },
     ];
 }
+
+

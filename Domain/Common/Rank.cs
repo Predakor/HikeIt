@@ -9,7 +9,7 @@ public readonly record struct Rank(ushort Position, ushort Size) {
     }
 }
 
-public static partial class Extentions {
+public static partial class RankExtentions {
     public static ushort ToUshort(this int value) {
         return (ushort)Math.Clamp(value, 0, uint.MaxValue);
     }

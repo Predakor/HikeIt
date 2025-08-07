@@ -11,19 +11,30 @@ namespace Infrastructure.Data.Loaders;
 record PeakCsvEntry(string Name, int Height, string Range, double Lat, double Lon);
 
 internal class PeakCsvLoader {
-    static List<T> ExtractData<T>(string path) {
+    static T[] ExtractData<T>(string stringStream) {
         var csvConfig = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture) {
             PrepareHeaderForMatch = args => args.Header.ToLower(),
         };
 
-        using var reader = new StreamReader(path);
+        using var reader = new StringReader(stringStream);
         using var csv = new CsvReader(reader, csvConfig);
 
-        return [.. csv.GetRecords<T>()];
+        return csv.GetRecords<T>().ToArray();
     }
 
-    public static ImmutableArray<Peak> LoadFrom(string path) {
-        return ExtractData<PeakCsvEntry>(path).MapToPeaks(DataSeed.Regions);
+    public static async Task<ImmutableArray<Peak>> LoadFromLink(string link) {
+        HttpClient client = new();
+        var response = await client.GetAsync(link);
+
+        if (!response.IsSuccessStatusCode) {
+            throw new Exception("failed to fetch data required for seeding terminating app");
+        }
+
+        var csv =
+            await response.Content.ReadAsStringAsync()
+            ?? throw new Exception("failed to fetch data required for seeding terminating app");
+
+        return ExtractData<PeakCsvEntry>(csv).MapToPeaks(DataSeed.Regions);
     }
 }
 
