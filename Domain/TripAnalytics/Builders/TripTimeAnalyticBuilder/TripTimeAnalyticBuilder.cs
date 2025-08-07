@@ -22,7 +22,7 @@ public static class TimeAnalyticsDirector {
     static readonly TimeAnalyticConfig defaultConfig = new() {
         AscentTreshold = 0.1d,
         DescentTreshold = -0.2d,
-        IdleSpeedTreshold = 0.02d,
+        IdleSpeedTreshold = 0.5d,
     };
 
     public static TimeAnalytic Create(TimeAnalyticData data, TimeAnalyticConfig? config = null) {
@@ -99,7 +99,10 @@ internal class TripTimeAnalyticBuilder(TimeAnalyticData data, TimeAnalyticConfig
 
     public TripTimeAnalyticBuilder WithActivityTime() {
         double activeTime = _gains
-            .Where(g => g.TimeDelta >= _config.IdleSpeedTreshold)
+            .Where(g => {
+                var kphSpeed = (g.DistanceDelta / g.TimeDelta) * 3.6;
+                return kphSpeed >= _config.IdleSpeedTreshold;
+            })
             .Sum(g => g.TimeDelta);
 
         ActiveTime = TimeSpan.FromSeconds(activeTime);

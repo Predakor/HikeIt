@@ -1,9 +1,9 @@
 import type { TripSummaries } from "@/types/ApiTypes/TripDtos";
 import { For, GridItem } from "@chakra-ui/react";
+import { Fragment } from "react/jsx-runtime";
 import SubTitle from "../Titles/SubTitle";
 import TripCard from "./Card/TripCard";
 import sortTrips from "./sortTrips";
-import { Fragment } from "react/jsx-runtime";
 
 interface Props {
   trips: TripSummaries;

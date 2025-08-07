@@ -27,16 +27,6 @@ public static class RouteAnalyticsDirector {
             .WithAverageAscentSlope()
             .Build();
     }
-
-    public static RouteAnalytic Basic(List<GpxPoint> points, List<GpxGain>? gains = null) {
-        return new RouteAnalyticsBuilder(points, gains ?? points.ToGains())
-            .WithTotalDistance()
-            .WithTotalAscent()
-            .WithTotalDescent()
-            .WithHighestPoint()
-            .WithLowestPoint()
-            .Build();
-    }
 }
 
 public class RouteAnalyticsBuilder(List<GpxPoint> points, List<GpxGain> gains) {
@@ -75,7 +65,7 @@ public class RouteAnalyticsBuilder(List<GpxPoint> points, List<GpxGain> gains) {
     }
 
     public RouteAnalyticsBuilder WithTotalDescent() {
-        _totalDescent = _gains.Where(p => p.ElevationDelta < 0).Sum(p => p.ElevationDelta);
+        _totalDescent = Math.Abs(_gains.Where(p => p.ElevationDelta < 0).Sum(p => p.ElevationDelta));
         return this;
     }
 

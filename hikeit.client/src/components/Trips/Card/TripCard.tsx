@@ -1,5 +1,5 @@
 import { toUkDate } from "@/Utils/Formatters/dateFormatter";
-import type { TripDto, TripSummary } from "@/types/ApiTypes/TripDtos";
+import type { TripSummary } from "@/types/ApiTypes/TripDtos";
 import { Badge, Card, CardTitle, Flex, Span, Stack } from "@chakra-ui/react";
 import type { UtilityValues } from "node_modules/@chakra-ui/react/dist/types/styled-system/generated/prop-types.gen";
 import { Link } from "react-router";

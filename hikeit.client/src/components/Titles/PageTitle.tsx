@@ -5,5 +5,9 @@ interface Props {
 }
 
 export default function PageTitle({ title }: Props) {
-  return <Heading size={{ base: "2xl", lg: "4xl" }}>{title}</Heading>;
+  return (
+    <Heading size={{ base: "2xl", lg: "4xl" }} fontWeight={"semibold"}>
+      {title}
+    </Heading>
+  );
 }
