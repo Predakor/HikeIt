@@ -37,7 +37,7 @@ ScaffoldingReadMe.txt
 *.snupkg
 
 #Server Upload Files
-/HikeIt/wwwroot/
+/HikeIt/wwwroot/uploads
 
 # Others
 ~$*

@@ -92,6 +92,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
 
     public Trip AddGpxFile(GpxFile gpxFile) {
         ArgumentNullException.ThrowIfNull(gpxFile);
+        GpxFile = gpxFile;
         GpxFileId = gpxFile.Id;
         return this;
     }
