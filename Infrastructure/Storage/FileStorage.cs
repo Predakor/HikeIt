@@ -21,7 +21,7 @@ public class FileStorage(string root = "wwwroot", string subFolder = "uploads") 
             var uploadsDir = folderPath != null ? Path.Combine(basePath, folderPath) : basePath;
             Directory.CreateDirectory(uploadsDir);
 
-            Console.WriteLine("checkpoint");
+            Console.WriteLine("Saving file in location: " + uploadsDir);
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
             var fullPath = Path.Combine(uploadsDir, fileName);
 

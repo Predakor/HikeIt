@@ -1,13 +1,15 @@
-﻿using Domain.Users;
+﻿using Application.Commons.Options;
+using Domain.Users;
 using Infrastructure.Data.Loaders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Data.Seeding;
 
 internal static class DataSeeder {
-    static async Task Seed(TripDbContext dbContext, IServiceScope scope) {
+    static async Task Seed(TripDbContext dbContext, IServiceScope scope, SeedingOptions options) {
         bool hasNoRegionsInDb = !await dbContext.Regions.AnyAsync();
         if (hasNoRegionsInDb) {
             Console.WriteLine("Seeding regions");
@@ -18,10 +20,10 @@ internal static class DataSeeder {
         if (hasNoPeaksInDb) {
             Console.WriteLine("Seeding Peaks");
 
-            var resourcePath = Path.Combine(AppContext.BaseDirectory, "peaks.csv");
-            Console.WriteLine("Path for seeding source: " + resourcePath);
+            var resourcePath = options.PeaksUrl;
+            Console.WriteLine("Seeding from: " + resourcePath);
 
-            await new InsertMountainPeaks(PeakCsvLoader.LoadFrom(resourcePath)).Seed(dbContext);
+            await new InsertMountainPeaks(await PeakCsvLoader.LoadFromLink(resourcePath)).Seed(dbContext);
         }
 
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
@@ -38,7 +40,9 @@ internal static class DataSeeder {
         try {
             using var scope = services.CreateScope();
 
-            await Seed(dbContext, scope);
+            var seedOptions = scope.ServiceProvider.GetRequiredService<IOptions<SeedingOptions>>().Value!;
+
+            await Seed(dbContext, scope, seedOptions);
 
             await dbContext.SaveChangesAsync();
         }

@@ -1,4 +1,6 @@
-﻿namespace Api.DI;
+﻿using Application.Commons.Options;
+
+namespace Api.DI;
 
 internal static partial class DIextentions {
     public static void InjectAppConfig(this WebApplicationBuilder builder) {
@@ -6,6 +8,10 @@ internal static partial class DIextentions {
             .Configuration.SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", true)
             .AddEnvironmentVariables();
+
+        builder.Services.Configure<SeedingOptions>(
+            builder.Configuration.GetSection(SeedingOptions.Seeding)
+        );
 
         if (builder.Environment.IsDevelopment()) {
             builder.Configuration.AddUserSecrets<Program>();

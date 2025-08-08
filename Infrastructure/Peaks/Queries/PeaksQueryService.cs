@@ -2,6 +2,7 @@
 using Application.Mappers.Implementations;
 using Application.Mountains;
 using Domain.Common;
+using Domain.Common.Extentions;
 using Domain.Common.Result;
 using Domain.Mountains.Peaks;
 using Domain.ReachedPeaks.Builders;
@@ -10,7 +11,6 @@ using Infrastructure.Data;
 using Infrastructure.Peaks.Extentions;
 using Infrastructure.Peaks.Factories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Collections.Immutable;
 
 namespace Infrastructure.Peaks.Queries;

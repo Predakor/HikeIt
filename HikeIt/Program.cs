@@ -14,7 +14,6 @@ builder
     .AddAplication()
     .AddControllers();
 
-
 builder.InjectSwagger();
 builder.InjectIdentity();
 builder.InjectServices();
@@ -31,16 +30,20 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI(c => {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "HikeIT Api v1");
     });
-
-    app.UseCors(policy => {
-        policy
-            .WithOrigins("http://localhost:54840")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()
-            .WithExposedHeaders("Location");
-    });
 }
+
+var allowedOrigins =
+    app.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? throw new Exception("allowed origins are undefined");
+
+app.UseCors(policy => {
+    policy
+        .WithOrigins(allowedOrigins)
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .WithExposedHeaders("Location");
+});
 
 app.UseHttpsRedirection();
 
