@@ -1,6 +1,6 @@
 import schemas from "@/Utils/Schemas";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import type { RegisterForm } from "@/hooks/useAuth";
+import type { RegisterForm } from "@/hooks/Auth/useAuth";
 import { useForm } from "react-hook-form";
 
 const registerFormConfgig: InputsConfig = [

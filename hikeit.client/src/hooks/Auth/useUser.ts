@@ -14,3 +14,16 @@ export default function useUser() {
 
   return [user, authActions] as const;
 }
+
+export function useAdminUser() {
+  const authActions = useAuth();
+
+  const user = useQuery<UserType>({
+    queryKey: ["user"],
+    queryFn: authActions.me,
+    staleTime: 1000 * 60 * 10,
+    retry: false,
+  });
+
+  return user;
+}

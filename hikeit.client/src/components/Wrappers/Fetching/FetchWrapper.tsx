@@ -1,3 +1,4 @@
+import { Skeleton } from "@chakra-ui/react";
 import { type UseQueryResult } from "@tanstack/react-query";
 import type { FunctionComponent, ReactNode } from "react";
 
@@ -10,7 +11,7 @@ interface Props<T> {
   request: UseQueryResult<T>;
 }
 
-const DefaultLoading = () => <div>Loading...</div>;
+const DefaultLoading = () => <Skeleton width={"full"} />;
 const DefaultError = () => <div>Something went wrong.</div>;
 const DefaultNoData = () => <div>No data available.</div>;
 

@@ -1,15 +1,17 @@
 import { userRoutes } from "@/data/routes/userRoutes";
-import useUser from "@/hooks/useUser";
+import useUser from "@/hooks/Auth/useUser";
 import { Avatar, Button, Heading, Icon, Menu, Stack } from "@chakra-ui/react";
 import { FaAngleDown } from "react-icons/fa";
 import { NavLink } from "react-router";
 
+export type UserRole = "user" | "moderator" | "admin" | "demo";
 export interface UserType {
   userName: string;
   firstName: string;
   lastName: string;
   email: string;
   avatar: string;
+  role: UserRole;
 }
 
 export default function User() {

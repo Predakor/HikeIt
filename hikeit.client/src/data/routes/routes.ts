@@ -4,6 +4,7 @@ import { tripRoutes } from "./tripRoutes";
 import { navRoutes } from "./navRoutes";
 import { userRoutes } from "./userRoutes";
 import { regionRoutes } from "./regionRoutes";
+import { adminRoutes } from "./admin/adminRoutes";
 
 export const routes: RouteEntry[] = [
   ...navRoutes,
@@ -11,4 +12,5 @@ export const routes: RouteEntry[] = [
   tripRoutes,
   userRoutes,
   regionRoutes,
+  adminRoutes,
 ];

@@ -1,6 +1,6 @@
 import RegisterUserForm from "@/components/Forms/RegisterUserForm/RegisterUserForm";
 import NavButton from "@/components/Utils/NavButton/NavButton";
-import { useAuth, type AuthError } from "@/hooks/useAuth";
+import { useAuth, type AuthError } from "@/hooks/Auth/useAuth";
 import { Alert, Fieldset, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
