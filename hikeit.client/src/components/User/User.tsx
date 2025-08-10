@@ -1,6 +1,16 @@
+import { NavItem } from "@/Layout/Nav/NavItem";
+import IsAdminUser from "@/Utils/IsAdminUser";
 import { userRoutes } from "@/data/routes/userRoutes";
 import useUser from "@/hooks/Auth/useUser";
-import { Avatar, Button, Heading, Icon, Menu, Stack } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Heading,
+  Icon,
+  Menu,
+  Stack,
+} from "@chakra-ui/react";
 import { FaAngleDown } from "react-icons/fa";
 import { NavLink } from "react-router";
 
@@ -11,7 +21,7 @@ export interface UserType {
   lastName: string;
   email: string;
   avatar: string;
-  role: UserRole;
+  roles: UserRole[];
 }
 
 export default function User() {
@@ -25,6 +35,12 @@ export default function User() {
 
   return (
     <Stack alignItems={"center"} direction={"row"}>
+      {IsAdminUser(user) && (
+        <Box pr={4}>
+          <NavItem path={"/admin"} label={"Admin Center"} />
+        </Box>
+      )}
+
       <Avatar.Root>
         <Avatar.Fallback></Avatar.Fallback>
         <Avatar.Image src={user.avatar}></Avatar.Image>

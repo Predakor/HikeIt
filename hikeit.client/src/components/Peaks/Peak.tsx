@@ -1,4 +1,4 @@
-import { Flex, Stack, Heading, Text } from "@chakra-ui/react";
+import { Flex, Stack, Heading, Text, For } from "@chakra-ui/react";
 import { PeakIcon } from "../Trip/TripDetails/Common/PeakIcon";
 import type { Peak } from "@/types/ApiTypes/Analytics";
 
@@ -12,4 +12,8 @@ export default function Peak({ peak }: { peak: Peak }) {
       </Stack>
     </Flex>
   );
+}
+
+export function PeakList({ peaks }: { peaks: Peak[] }) {
+  return <For each={peaks}>{(peak) => <Peak peak={peak} />}</For>;
 }

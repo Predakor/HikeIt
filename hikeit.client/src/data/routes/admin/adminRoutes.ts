@@ -1,6 +1,5 @@
-import ManagePeaksAdminPage from "@/pages/Admin/ManagePeaksAdminPage";
 import type { RouteGroup } from "../routeTypes";
-
+import AdminPages from "@/pages/Admin";
 export const adminRoutes: RouteGroup = {
   type: "group",
   path: "admin/",
@@ -10,19 +9,19 @@ export const adminRoutes: RouteGroup = {
       type: "item",
       path: "",
       label: "Admin",
-      Page: ManagePeaksAdminPage,
+      Page: AdminPages.AdminCenter,
     },
     {
       type: "item",
       path: "peaks",
       label: "peaks",
-      Page: ManagePeaksAdminPage,
+      Page: AdminPages.ManagePeaks,
     },
     {
       type: "item",
-      path: ":regionId",
+      path: "regions",
       label: "regions",
-      Page: ManagePeaksAdminPage,
+      Page: AdminPages.ManageRegions,
     },
   ],
 };

@@ -1,18 +1,18 @@
+import IsAdminUser from "@/Utils/IsAdminUser";
 import { useAdminUser } from "@/hooks/Auth/useUser";
 import type { ReactNode } from "react";
-import FetchWrapper from "../Wrappers/Fetching";
+import FetchWrapper from "../Wrappers/Fetching/FetchWrapper";
 
 interface Props {
-  children: ReactNode;
+  children: ReactNode | ReactNode[];
 }
 
-function AdminPage(props: Props) {
+export default function AdminPage({ children }: Props) {
   const getUser = useAdminUser();
 
   return (
     <FetchWrapper request={getUser}>
-      {(user) => (user.role === "admin" ? props.children : "No acces bitch")}
+      {(user) => (IsAdminUser(user) ? children : "No Acces")}
     </FetchWrapper>
   );
 }
-export default AdminPage;

@@ -5,12 +5,12 @@ import SubTitle from "@/components/Titles/SubTitle";
 import { adminRoutes } from "@/data/routes/admin/adminRoutes";
 import { For, Stack } from "@chakra-ui/react";
 
-function ManageAdminPage() {
+export default function ManageAdminPage() {
   return (
     <AdminPage>
       <PageTitle title="Welcome to admin center" />
       <SubTitle title="See what action you can do bellow" />
-      <Stack>
+      <Stack direction={"row"} gapX={8}>
         <For each={adminRoutes.pages}>
           {(route) => (
             <NavItem path={route.path} label={route.label} key={route.path} />
@@ -20,4 +20,3 @@ function ManageAdminPage() {
     </AdminPage>
   );
 }
-export default ManageAdminPage;

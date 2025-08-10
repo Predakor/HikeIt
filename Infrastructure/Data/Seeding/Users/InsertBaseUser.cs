@@ -10,7 +10,15 @@ internal class InsertBaseUser : ISeeder {
 
     public InsertBaseUser(IServiceProvider provider) {
         _userManager = provider.GetRequiredService<UserManager<User>>();
-        _user = User.DemoUser;
+
+        _user = new User() {
+            Id = User.DemoUser.Id,
+            Email = User.DemoUser.Email,
+            UserName = User.DemoUser.UserName,
+            FirstName = User.DemoUser.FirstName,
+            LastName = User.DemoUser.LastName,
+            EmailConfirmed = true,
+        };
     }
 
     public async Task Seed(TripDbContext dbContext) {
@@ -23,5 +31,7 @@ internal class InsertBaseUser : ISeeder {
             Console.WriteLine("Seeding default users");
             await _userManager.CreateAsync(_user, "Default123!");
         }
+
+        await _userManager.AddToRoleAsync(_user, "Demo");
     }
 }

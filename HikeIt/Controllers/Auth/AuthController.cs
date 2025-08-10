@@ -31,8 +31,10 @@ public class AuthController : ControllerBase {
     public async Task<IActionResult> Me() {
         var query = await _authService.Me();
 
+        var roles = await _userManager.GetRolesAsync(query.Value!);
+
         return query.Match<IActionResult>(
-            user => Ok(UserDtoFactory.CreateBasic(user)),
+            user => Ok(user.ToBasic([.. roles])),
             error => Unauthorized()
         );
     }
@@ -80,12 +82,25 @@ public class AuthController : ControllerBase {
             Email = dto.Email,
         };
 
-        var result = await _userManager.CreateAsync(user, dto.Password);
+        return await CreateNewUser(user, dto.Password)
+            .BindAsync(user => AsignUserRole(user))
+            .MapAsync(u => u.Id);
+    }
+
+    async Task<Result<User>> CreateNewUser(User user, string password) {
+        var result = await _userManager.CreateAsync(user, password);
         if (result.Errors.Any()) {
             return Errors.BadRequest(result.Errors.First().Description);
         }
+        return user;
+    }
 
-        return userId;
+    async Task<Result<User>> AsignUserRole(User user) {
+        var result = await _userManager.AddToRoleAsync(user, "User");
+        if (result.Errors.Any()) {
+            return Errors.Unknown(result.Errors.First().Description);
+        }
+        return user;
     }
 
     async Task<Result<bool>> ValidateEmail(string email) {

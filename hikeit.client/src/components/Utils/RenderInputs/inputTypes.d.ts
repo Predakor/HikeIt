@@ -28,7 +28,7 @@ interface RangeInputConfigEntry extends InputConfigEntryBase {
   type: "range";
   min: number;
   max: number;
-  formatValue?: (value: number) => number;
+  step?: number;
 }
 
 interface PasswordInputConfigEntry extends InputConfigEntryBase {
