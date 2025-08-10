@@ -1,7 +1,8 @@
 import { copyToClipboard } from "@/Utils/CopyToClipboard";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import { Button, Stack } from "@chakra-ui/react";
+import { PrimaryButton, SecondaryButton } from "@/components/ui/Buttons";
+import { Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import type { ChartData } from "../_graph_types";
@@ -22,9 +23,9 @@ const elevationDevConfig: InputsConfig = [
     key: "EmaSmoothingAlpha",
     label: "",
     type: "range",
-    min: 1,
-    max: 50,
-    formatValue: (value) => value / 100,
+    min: 0.01,
+    max: 0.5,
+    step: 0.01,
   },
   { key: "MedianFilterWindowSize", label: "", type: "range", min: 3, max: 10 },
   { key: "RoundingDecimalsCount", label: "", type: "range", min: 0, max: 10 },
@@ -44,17 +45,13 @@ export function DevConfig({ onSubmit }: Props) {
   const copyConfig = () => copyToClipboard(formHook.getValues());
 
   return (
-    <form onSubmit={formHook.handleSubmit(send)}>
-      <Stack flexGrow={1}>
+    <form onSubmit={(e) => formHook.handleSubmit(send)(e)}>
+      <Stack flexGrow={1} gap={4}>
         <RenderInputs config={elevationDevConfig} formHook={formHook} />
 
-        <Button colorPalette={"blue"} type={"submit"}>
-          Preview
-        </Button>
+        <PrimaryButton type={"submit"}>Preview</PrimaryButton>
 
-        <Button onClick={copyConfig} colorPalette={"green"}>
-          Copy Config
-        </Button>
+        <SecondaryButton onClick={copyConfig}>Copy Config</SecondaryButton>
       </Stack>
     </form>
   );

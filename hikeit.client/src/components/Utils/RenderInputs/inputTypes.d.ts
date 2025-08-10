@@ -28,6 +28,8 @@ interface RangeInputConfigEntry extends InputConfigEntryBase {
   type: "range";
   min: number;
   max: number;
+  step?: number;
+  formatLabel?: (value: number) => number;
   formatValue?: (value: number) => number;
 }
 

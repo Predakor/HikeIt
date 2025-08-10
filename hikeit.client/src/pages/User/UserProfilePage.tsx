@@ -1,5 +1,5 @@
 import { ObjectToArray } from "@/Utils/ObjectToArray";
-import DangerButton from "@/components/Buttons/DangerButton";
+import DangerButton from "@/components/ui/Buttons/DangerButton";
 import { Avatar, Card, Field, Input, Separator, Stack } from "@chakra-ui/react";
 import type { ReactElement } from "react";
 

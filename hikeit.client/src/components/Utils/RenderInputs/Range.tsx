@@ -16,6 +16,13 @@ export function Range<T>({ entry, control }: RangeProps<T>) {
     return value;
   };
 
+  const formatLabel = (value: number) => {
+    if (entry.formatLabel) {
+      return entry.formatLabel(value);
+    }
+    return value;
+  };
+
   return (
     <Controller
       name={key}
@@ -24,7 +31,7 @@ export function Range<T>({ entry, control }: RangeProps<T>) {
         <>
           <HStack>
             <Field.Label>{label}</Field.Label>
-            {field.value && field.value}
+            {field.value && formatLabel(field.value)}
           </HStack>
           <Slider.Root
             onValueChange={({ value }) =>
@@ -33,6 +40,7 @@ export function Range<T>({ entry, control }: RangeProps<T>) {
             width={"full"}
             max={entry.max}
             min={entry.min}
+            step={entry.step}
           >
             <Slider.Control>
               <Slider.Track>

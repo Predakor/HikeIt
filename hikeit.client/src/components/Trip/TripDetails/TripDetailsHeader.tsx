@@ -1,6 +1,6 @@
 import apiClient from "@/Utils/Api/ApiClient";
 import { formatDate } from "@/Utils/Formatters";
-import GoBackButton from "@/components/Buttons/GoBackButton";
+import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import PageTitle from "@/components/Titles/PageTitle";
 import { useTripRemove } from "@/hooks/UseTrips/useTripRemove";
 import type { TripDto } from "@/types/ApiTypes/TripDtos";

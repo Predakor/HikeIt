@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import type { ChartProps } from "./BarGraph";
 
-function ElevationChart({ chartConfig, styleProps }: ChartProps) {
+function ElevationChart({ chartConfig, ...rest }: ChartProps) {
   const chart = useChart(chartConfig);
 
   const formatX = (value: number) =>
@@ -21,7 +21,7 @@ function ElevationChart({ chartConfig, styleProps }: ChartProps) {
     })(value / 1000);
 
   return (
-    <Chart.Root {...styleProps} chart={chart}>
+    <Chart.Root {...rest} chart={chart}>
       <LineChart data={chart.data}>
         <CartesianGrid stroke={chart.color("border")} vertical={false} />
         <XAxis

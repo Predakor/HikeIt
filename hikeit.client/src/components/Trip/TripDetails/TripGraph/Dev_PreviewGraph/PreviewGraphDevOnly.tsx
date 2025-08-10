@@ -1,5 +1,5 @@
 import { LazyLineGraph } from "@/components/Graphs";
-import { Flex, Skeleton } from "@chakra-ui/react";
+import { Flex, Skeleton, Stack } from "@chakra-ui/react";
 import { Suspense, memo, useState } from "react";
 import type { ChartData, GainDto } from "../_graph_types";
 import { DevConfig } from "./DevPreview.tsx";
@@ -17,15 +17,15 @@ function PreviewGraphDevOnly({ data }: Props) {
   const chartPoints = GenerateChartDataWithPreview(gains, start, preview);
 
   const styles = {
-    width: "full",
-    minWidth: "80vw",
+    minWidth: "85vw",
     height: "60vh",
   };
 
   return (
-    <Flex gapX={8}>
+    <Stack direction={{ base: "column", lg: "row" }} gapX={8}>
       <Suspense fallback={<Skeleton {...styles} />}>
         <LazyLineGraph
+          {...styles}
           chartConfig={{
             data: chartPoints,
             series: [
@@ -33,11 +33,10 @@ function PreviewGraphDevOnly({ data }: Props) {
               { name: "previewEle", color: "red" },
             ],
           }}
-          styleProps={styles}
         />
       </Suspense>
       <DevConfig onSubmit={(data: ChartData) => setPreview(data.gains)} />
-    </Flex>
+    </Stack>
   );
 }
 
