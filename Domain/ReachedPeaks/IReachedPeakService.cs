@@ -1,5 +1,5 @@
 ﻿using Domain.Common.Result;
-using Domain.Mountains.Peaks;
+using Domain.Peaks;
 using Domain.Trips;
 using Domain.Trips.ValueObjects;
 using Domain.Users;

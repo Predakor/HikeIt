@@ -2,8 +2,9 @@
 using Application.Dto;
 using Application.Services.Auth;
 using Application.Services.Files;
-using Application.Services.Trips;
 using Application.Trips;
+using Application.Trips.Queries;
+using Application.Trips.Services;
 using Domain.Common.Result;
 using Domain.TripAnalytics.Interfaces;
 using Microsoft.AspNetCore.Authorization;

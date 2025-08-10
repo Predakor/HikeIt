@@ -5,7 +5,7 @@ using Application.Users.Stats;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Common.Utils;
-using Domain.Mountains.Peaks;
+using Domain.Peaks;
 using Domain.Users;
 using Domain.Users.RegionProgresses;
 using Infrastructure.Data;

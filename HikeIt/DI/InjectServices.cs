@@ -1,10 +1,6 @@
-﻿using Application.Interfaces;
-using Application.Mappers.Implementations;
+﻿using Application.Mappers.Implementations;
 using Application.Services.Files;
-using Domain.TripAnalytics.Interfaces;
 using Infrastructure.Parsers;
-using Infrastructure.Storage;
-using Infrastructure.UnitOfWorks;
 using System.Reflection;
 
 namespace Api.DI;
@@ -18,12 +14,8 @@ internal static partial class DIextentions {
         builder
             .Services.AddHttpContextAccessor()
             .InjectMappers()
-            .InjectRepositories(assemblies)
-            .InjectStorages()
             .InjectServices(assemblies)
-            .InjectParsers()
-            .InjectUnitOfWorks()
-            .AddQueryServices(assemblies);
+            .InjectParsers();
 
         return builder;
     }
@@ -33,31 +25,9 @@ internal static partial class DIextentions {
         return services;
     }
 
-    static IServiceCollection InjectStorages(this IServiceCollection services) {
-        services.AddScoped<IFileStorage, FileStorage>();
-        return services;
-    }
-
     static IServiceCollection InjectMappers(this IServiceCollection services) {
         services.AddScoped<PeakMapper>();
         services.AddScoped<RegionMapper>();
-        return services;
-    }
-
-    static IServiceCollection InjectRepositories(
-        this IServiceCollection services,
-        Assembly[] targetAssemblies
-    ) {
-        services.Scan(scan =>
-            scan.FromAssemblies(targetAssemblies)
-                .AddClasses(classes =>
-                    classes.Where(type =>
-                        type.Name.EndsWith("Repository") && type.IsClass && !type.IsAbstract
-                    )
-                )
-                .AsImplementedInterfaces()
-                .WithScopedLifetime()
-        );
         return services;
     }
 
@@ -67,32 +37,16 @@ internal static partial class DIextentions {
     ) {
         services.Scan(scan =>
             scan.FromAssemblies(targetAssemblies)
-                .AddClasses(classes =>
-                    classes.Where(t => t.Name.EndsWith("Service") && t.IsClass && !t.IsAbstract)
-                )
-                .AsImplementedInterfaces()
-                .WithScopedLifetime()
-        );
-        return services;
-    }
-
-    static IServiceCollection InjectUnitOfWorks(this IServiceCollection services) {
-        services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
-        return services;
-    }
-
-    static IServiceCollection AddQueryServices(
-        this IServiceCollection services,
-        Assembly[] targetAssemblies
-    ) {
-        return services.Scan(scan =>
-            scan.FromAssemblies(targetAssemblies)
                 .AddClasses(
-                    classes => classes.AssignableTo(typeof(IQueryService)),
+                    classes =>
+                        classes.Where(t =>
+                            t.Name.EndsWith("Service") && t.IsClass && !t.IsAbstract
+                        ),
                     publicOnly: false
                 )
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
+        return services;
     }
 }

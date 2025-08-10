@@ -3,8 +3,8 @@ using Application.Mappers.Implementations;
 using Application.Mountains;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
+using Domain.Peaks;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

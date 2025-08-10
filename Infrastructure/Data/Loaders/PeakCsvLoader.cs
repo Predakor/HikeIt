@@ -1,8 +1,8 @@
 ﻿using CsvHelper;
-using Domain.Mountains.Peaks;
+using Domain.Common.Factories;
 using Domain.Mountains.Regions;
+using Domain.Peaks;
 using Infrastructure.Data.Seeding;
-using NetTopologySuite.Geometries;
 using System.Collections.Immutable;
 using System.Globalization;
 
@@ -47,12 +47,10 @@ internal static class CsvExtentions {
     }
 
     static Peak MapToPeak(PeakCsvEntry r, IEnumerable<Region> regions) {
-        const int Srid = 4326;
-
         return new Peak() {
             Name = r.Name,
             Height = r.Height,
-            Location = new Point(r.Lon, r.Lat) { SRID = Srid },
+            Location = GeoFactory.CreatePoint(r.Lon, r.Lat),
             RegionID = MatchToRegionId(r.Range, regions),
         };
     }

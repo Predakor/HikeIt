@@ -1,5 +1,5 @@
 ﻿using Application.Dto;
-using Application.Services.Trips;
+using Application.Trips.Queries;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Trips;

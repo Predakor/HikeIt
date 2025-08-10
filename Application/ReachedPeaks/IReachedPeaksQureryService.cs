@@ -1,6 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Common.Result;
-using Domain.Mountains.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 
 namespace Application.ReachedPeaks;

@@ -2,7 +2,7 @@
 using Application.Interfaces;
 using Domain.Common.Result;
 
-namespace Application.Services.Trips;
+namespace Application.Trips.Queries;
 
 public interface ITripQueryService : IQueryService {
     public Task<Result<TripDto.Partial>> GetByIdAsync(Guid id, Guid userId);

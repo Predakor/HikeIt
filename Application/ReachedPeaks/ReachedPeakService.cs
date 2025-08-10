@@ -3,7 +3,7 @@ using Application.ReachedPeaks.ValueObjects;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Common.Utils;
-using Domain.Mountains.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.Builders;
 using Domain.ReachedPeaks.ValueObjects;

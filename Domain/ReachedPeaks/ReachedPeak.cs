@@ -1,6 +1,6 @@
 ﻿using Domain.Common.Result;
 using Domain.Interfaces;
-using Domain.Mountains.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks.Rules;
 using Domain.Trips;
 using Domain.Users;

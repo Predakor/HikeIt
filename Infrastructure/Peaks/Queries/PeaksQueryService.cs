@@ -3,13 +3,13 @@ using Application.Mappers.Implementations;
 using Application.Mountains;
 using Domain.Common;
 using Domain.Common.Extentions;
+using Domain.Common.Factories;
 using Domain.Common.Result;
-using Domain.Mountains.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks.Builders;
 using Domain.Trips.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Peaks.Extentions;
-using Infrastructure.Peaks.Factories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 

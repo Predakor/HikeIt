@@ -2,7 +2,7 @@
 using Domain.Common;
 using Domain.Common.Extentions;
 using Domain.Common.Result;
-using Domain.Mountains.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

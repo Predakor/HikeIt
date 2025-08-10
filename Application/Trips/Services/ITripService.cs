@@ -1,8 +1,7 @@
-﻿using Application.Trips;
-using Domain.Common.Result;
+﻿using Domain.Common.Result;
 using Domain.Trips;
 
-namespace Application.Services.Trips;
+namespace Application.Trips.Services;
 
 public interface ITripService {
     public Task<Result<Trip>> CreateAsync(Trip trip);

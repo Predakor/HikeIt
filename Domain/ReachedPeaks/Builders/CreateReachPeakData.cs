@@ -1,4 +1,4 @@
-﻿using Domain.Mountains.Peaks;
+﻿using Domain.Peaks;
 using Domain.ReachedPeaks.ValueObjects;
 using Domain.Trips.ValueObjects;
 
