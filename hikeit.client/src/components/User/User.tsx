@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   Button,
+  Flex,
   Heading,
   Icon,
   Menu,
@@ -34,51 +35,57 @@ export default function User() {
   const basePath = `/${userRoutes.path}/`;
 
   return (
-    <Stack alignItems={"center"} direction={"row"}>
+    <Stack
+      alignItems={"center"}
+      gap={8}
+      direction={{ base: "column", lg: "row" }}
+    >
       {IsAdminUser(user) && (
         <Box pr={4}>
           <NavItem path={"/admin"} label={"Admin Center"} />
         </Box>
       )}
 
-      <Avatar.Root>
-        <Avatar.Fallback></Avatar.Fallback>
-        <Avatar.Image src={user.avatar}></Avatar.Image>
-      </Avatar.Root>
+      <Flex align={"center"} gapX={4}>
+        <Avatar.Root>
+          <Avatar.Fallback></Avatar.Fallback>
+          <Avatar.Image src={user.avatar}></Avatar.Image>
+        </Avatar.Root>
 
-      <Menu.Root>
-        <Menu.Trigger asChild _hover={{ cursor: "pointer", scale: 1.1 }}>
-          <Button
-            unstyled
-            display={"flex"}
-            alignItems={"end"}
-            size={"sm"}
-            variant={"ghost"}
-          >
-            <Heading fontWeight={"semibold"} fontSize={"2xl"}>
-              {user.userName}
-            </Heading>
-            <Icon size={"lg"}>
-              <FaAngleDown />
-            </Icon>
-          </Button>
-        </Menu.Trigger>
-        <Menu.Positioner>
-          <Menu.Content>
-            {userRoutes.pages.map(({ path, label }) => (
-              <Menu.Item value={label}>
-                <NavLink to={basePath + path}>{label}</NavLink>
+        <Menu.Root>
+          <Menu.Trigger asChild _hover={{ cursor: "pointer", scale: 1.1 }}>
+            <Button
+              unstyled
+              display={"flex"}
+              alignItems={"end"}
+              size={"sm"}
+              variant={"ghost"}
+            >
+              <Heading fontWeight={"semibold"} fontSize={"2xl"}>
+                {user.userName}
+              </Heading>
+              <Icon size={"lg"}>
+                <FaAngleDown />
+              </Icon>
+            </Button>
+          </Menu.Trigger>
+          <Menu.Positioner>
+            <Menu.Content>
+              {userRoutes.pages.map(({ path, label }) => (
+                <Menu.Item value={label}>
+                  <NavLink to={basePath + path}>{label}</NavLink>
+                </Menu.Item>
+              ))}
+
+              <Menu.Item color={"fg.error"} value="logout" asChild>
+                <Button cursor={"pointer"} unstyled onClick={logout}>
+                  Log Out
+                </Button>
               </Menu.Item>
-            ))}
-
-            <Menu.Item color={"fg.error"} value="logout" asChild>
-              <Button cursor={"pointer"} unstyled onClick={logout}>
-                Log Out
-              </Button>
-            </Menu.Item>
-          </Menu.Content>
-        </Menu.Positioner>
-      </Menu.Root>
+            </Menu.Content>
+          </Menu.Positioner>
+        </Menu.Root>
+      </Flex>
     </Stack>
   );
 }

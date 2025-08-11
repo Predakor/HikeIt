@@ -1,39 +1,42 @@
 import IsAdminUser from "@/Utils/IsAdminUser";
 import { useAdminUser } from "@/hooks/Auth/useUser";
+import { Center, Flex, Spacer, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
-import FetchWrapper from "../Wrappers/Fetching/FetchWrapper";
-import PageTitle from "../Titles/PageTitle";
-import { Center, Flex, Stack } from "@chakra-ui/react";
 import GoBackButton from "../Buttons/GoBackButton";
+import PageTitle from "../Titles/PageTitle";
+import FetchWrapper from "../Wrappers/Fetching/FetchWrapper";
 
 interface Props {
   children: ReactNode | ReactNode[];
   title: string;
+  header?: ReactNode;
 }
 
-export default function AdminPage({ children, title }: Props) {
+export default function AdminPage(props: Props) {
   const getUser = useAdminUser();
 
   return (
     <FetchWrapper request={getUser}>
-      {(user) =>
-        IsAdminUser(user) ? (
-          <AdminLayout children={children} title={title} />
-        ) : (
-          <NoAcces />
-        )
-      }
+      {(user) => (IsAdminUser(user) ? <AdminLayout {...props} /> : <NoAcces />)}
     </FetchWrapper>
   );
 }
 
-function AdminLayout({ title, children }: Props) {
+function AdminLayout({ title, children, header }: Props) {
   return (
     <Stack gapY={8}>
-      <Flex alignItems={"center"} direction={"row"}>
-        <GoBackButton />
-        <PageTitle title={title} />
-      </Flex>
+      <Stack alignItems={"center"} direction={{ base: "column", lg: "row" }}>
+        <Flex alignItems={"center"}>
+          <GoBackButton />
+          <PageTitle title={title} />
+        </Flex>
+        {header && (
+          <>
+            <Spacer />
+            {header}
+          </>
+        )}
+      </Stack>
       <Stack>{children}</Stack>
     </Stack>
   );
