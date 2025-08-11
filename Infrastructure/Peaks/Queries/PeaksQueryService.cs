@@ -139,6 +139,16 @@ public class PeaksQueryService : IPeaksQueryService {
         Console.WriteLine("total matched peaks " + matchedPeaks.Count);
         return matchedPeaks;
     }
+
+    public async Task<Result<Peak>> GetPeakWithNameFromRegion(string name, int regionId) {
+        var result = await Peaks.Where(p => p.RegionID == regionId).FirstOrDefaultAsync(p => p.Name == name);
+
+        if (result is null) {
+            return Errors.NotFound("peak", name);
+        }
+
+        return result;
+    }
 }
 
 static class Mapper {

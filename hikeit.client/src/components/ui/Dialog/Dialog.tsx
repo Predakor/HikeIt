@@ -1,7 +1,7 @@
 import { IconClose } from "@/Icons/Icons";
+import SubTitle from "@/components/Titles/SubTitle";
 import {
   Dialog as ChakraDialog,
-  Flex,
   IconButton,
   type DialogRootProps,
 } from "@chakra-ui/react";
@@ -18,7 +18,10 @@ function Dialog({ children, title, ...rest }: Props) {
       <ChakraDialog.Backdrop />
       <ChakraDialog.Positioner>
         <ChakraDialog.Content>
-          <Flex align={"center"} justify={"space-between"}>
+          <ChakraDialog.Header as={"header"} flexGrow={1}>
+            <ChakraDialog.Title asChild>
+              {title && <SubTitle title={title} />}
+            </ChakraDialog.Title>
             <ChakraDialog.CloseTrigger asChild>
               <IconButton
                 size={"2xl"}
@@ -29,11 +32,7 @@ function Dialog({ children, title, ...rest }: Props) {
                 <IconClose />
               </IconButton>
             </ChakraDialog.CloseTrigger>
-
-            <ChakraDialog.Header flexGrow={1}>
-              <ChakraDialog.Title>{title && title}</ChakraDialog.Title>
-            </ChakraDialog.Header>
-          </Flex>
+          </ChakraDialog.Header>
 
           <ChakraDialog.Body>{children}</ChakraDialog.Body>
 

@@ -1,16 +1,15 @@
-import api from "@/Utils/Api/apiRequest";
 import AdminPage from "@/components/Pages/AdminPage";
-import AddPeakForm, {
-  type AddPeakConfig,
-} from "@/components/Peaks/AddPeak/AddPeakForm";
+import AddPeakForm from "@/components/Peaks/AddPeak/AddPeakForm";
+import type { AddPeakConfig } from "@/components/Peaks/AddPeak/addPeakFormConfig";
 import { PeakList } from "@/components/Peaks/Peak";
 import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import Dialog from "@/components/ui/Dialog/Dialog";
+import { toaster } from "@/components/ui/toaster";
+import usePeakMutations from "@/hooks/Peaks/usePeakMutations";
 import UseRegionPeaks from "@/hooks/Regions/UseRegionPeaks";
 import type { RegionWithPeaks } from "@/types/ApiTypes/types";
 import { Button, Stack } from "@chakra-ui/react";
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useParams } from "react-router";
 
@@ -33,21 +32,20 @@ export default function ManageRegionAdminPage() {
 function ManageRegionPeaks({ region }: { region: RegionWithPeaks }) {
   const [showForm, setShowForm] = useState(false);
 
-  const addPeak = useMutation({
-    mutationFn: (data: AddPeakConfig) => api.post("admin/peaks/add", data),
-  });
+  const addPeak = usePeakMutations();
 
-  const upload = (data: AddPeakConfig): void => {
-    data = { ...data, regionId: region.region.id };
-    addPeak.mutate(data);
+  const upload = (data: AddPeakConfig) => {
+    addPeak.mutate({
+      ...data,
+      regionId: region.region.id,
+    });
   };
-  console.log(addPeak);
 
   return (
     <>
       <SimpleCard
         title="Peaks in the region"
-        headerCta={<Button onClick={() => setShowForm(true)}>Add Trip</Button>}
+        headerCta={<Button onClick={() => setShowForm(true)}>Add Peak</Button>}
       >
         <Stack gap={4}>
           <PeakList peaks={region.peaks} />
@@ -58,7 +56,7 @@ function ManageRegionPeaks({ region }: { region: RegionWithPeaks }) {
         title="Add Peak to the region"
         open={showForm}
       >
-        <AddPeakForm onSubmit={upload} />
+        <AddPeakForm requestState={addPeak} onSubmit={upload} />
       </Dialog>
     </>
   );

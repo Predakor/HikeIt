@@ -1,4 +1,6 @@
 ﻿using Application.Dto;
+using Application.Mountains;
+using Domain.Common;
 using Domain.Common.Factories;
 using Domain.Common.Result;
 using Domain.Peaks;
@@ -8,12 +10,19 @@ namespace Application.Peaks;
 
 public class PeakService : IPeaksService {
     readonly IPeaksRepository _repository;
+    readonly IPeaksQueryService _queries;
 
-    public PeakService(IPeaksRepository repository) {
+    public PeakService(IPeaksRepository repository, IPeaksQueryService queries) {
         _repository = repository;
+        _queries = queries;
     }
 
     public async Task<Result<Peak>> Add(PeakDto.CreateNew newPeak) {
+        var existingPeak = await _queries.GetPeakWithNameFromRegion(newPeak.Name, newPeak.RegionId);
+        if (existingPeak.IsSuccess) {
+            return Errors.NotUnique("peak with that name and region already exists");
+        }
+
         IGeoPoint location = new GpxPoint(newPeak.Latitude, newPeak.Longitude, newPeak.Height);
 
         var peak = Peak.Create(newPeak.Name, location, newPeak.RegionId);

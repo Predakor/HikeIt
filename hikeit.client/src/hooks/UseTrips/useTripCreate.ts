@@ -1,7 +1,7 @@
+import { resolveCreated } from "@/Utils/Api/Resolvers/resolveCreated";
 import api from "@/Utils/Api/apiRequest";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { basePath, tripConfig } from "./useTrips";
-import { resolveCreated } from "@/Utils/Api/Resolvers/resolveCreated";
 
 export function useTripCreate() {
   const queryClient = useQueryClient();
