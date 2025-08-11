@@ -14,14 +14,20 @@ export const adminRoutes: RouteGroup = {
     {
       type: "item",
       path: "peaks",
-      label: "peaks",
+      label: "manage peaks",
       Page: AdminPages.ManagePeaks,
     },
     {
       type: "item",
       path: "regions",
-      label: "regions",
+      label: "manage regions",
       Page: AdminPages.ManageRegions,
+    },
+    {
+      type: "item",
+      path: "regions/:regionId",
+      label: "manage regions",
+      Page: AdminPages.UpdateRegion,
     },
   ],
 };

@@ -15,5 +15,5 @@ export default function Peak({ peak }: { peak: Peak }) {
 }
 
 export function PeakList({ peaks }: { peaks: Peak[] }) {
-  return <For each={peaks}>{(peak) => <Peak peak={peak} />}</For>;
+  return <For each={peaks}>{(peak) => <Peak peak={peak} key={peak.id} />}</For>;
 }

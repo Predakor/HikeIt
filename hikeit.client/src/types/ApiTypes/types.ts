@@ -15,6 +15,11 @@ export interface Region {
   name: string;
 }
 
+export interface RegionWithPeaks {
+  region: Region;
+  peaks: Peak[];
+}
+
 export interface RegionProgressSummary {
   region: Region;
   uniqueReachedPeaks: number;

@@ -18,7 +18,7 @@ export default function MapEntry<TFor extends FieldValues>({
   displayOptions: options,
   error,
 }: FieldWrapper<TFor>) {
-  const { key, label, type } = entry;
+  const { key, label, type, ...rest } = entry;
 
   const inlineLabel = options?.label === "inline" ? label : "";
 
@@ -56,10 +56,19 @@ export default function MapEntry<TFor extends FieldValues>({
         </FieldWrapper>
       );
 
+    case "text":
+      const { key, validate, ...baseProps } = entry;
+
+      return (
+        <FieldWrapper {...wrapperConfig}>
+          <Input {...baseProps} {...inputConfig} {...validationConfig} />
+        </FieldWrapper>
+      );
+
     default:
       return (
         <FieldWrapper {...wrapperConfig}>
-          <Input {...inputConfig} {...validationConfig} />
+          <Input {...rest} {...inputConfig} {...validationConfig} />
         </FieldWrapper>
       );
   }

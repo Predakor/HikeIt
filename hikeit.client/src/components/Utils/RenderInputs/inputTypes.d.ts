@@ -1,4 +1,5 @@
 import type { FullMap } from "@/types/Utils/MappingTypes";
+import type { InputProps } from "@chakra-ui/react";
 import type { CollectionType } from "@components/RegionSelect/useCollection";
 import type { AllowedInputTypes } from "@utils/Schemas/index";
 interface InputConfigEntryBase {
@@ -45,7 +46,9 @@ interface TextInputConfigEntry extends InputConfigEntryBase {
   placeholder?: string;
 }
 
-interface NumberInputConfigEntry extends InputConfigEntryBase {
+interface NumberInputConfigEntry
+  extends InputConfigEntryBase,
+    Partial<HTMLInputElement> {
   type: "number";
 }
 

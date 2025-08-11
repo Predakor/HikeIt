@@ -1,11 +1,13 @@
 import { emailSchema } from "./emailSchema";
 import { loginSchema } from "./loginSchema";
 import { passwordSchema } from "./passwordSchema";
+import { regionsSchema } from "./regionsSchema";
 
 const schemas = {
   login: loginSchema,
   password: passwordSchema,
   email: emailSchema,
+  region: regionsSchema,
 };
 
 export default schemas;

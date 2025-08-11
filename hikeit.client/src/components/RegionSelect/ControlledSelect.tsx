@@ -1,8 +1,7 @@
 import {
   Select,
-  Portal,
-  type ListCollection,
   type ConditionalValue,
+  type ListCollection,
 } from "@chakra-ui/react";
 import type { ControllerRenderProps } from "react-hook-form";
 import type { DisplayOptions } from "../Utils/RenderInputs/inputTypes";
@@ -38,18 +37,16 @@ function ControlledSelect({
           <Select.Indicator />
         </Select.IndicatorGroup>
       </Select.Control>
-      <Portal>
-        <Select.Positioner>
-          <Select.Content>
-            {collection.items.map((item) => (
-              <Select.Item item={item} key={item.id}>
-                {item.name}
-                <Select.ItemIndicator />
-              </Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Positioner>
-      </Portal>
+      <Select.Positioner>
+        <Select.Content>
+          {collection.items.map((item) => (
+            <Select.Item item={item} key={item.id}>
+              {item.name}
+              <Select.ItemIndicator />
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Positioner>
     </Select.Root>
   );
 }
