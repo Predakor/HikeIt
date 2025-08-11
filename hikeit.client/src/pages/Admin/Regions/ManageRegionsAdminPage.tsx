@@ -3,7 +3,7 @@ import AdminPage from "@/components/Pages/AdminPage";
 import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
 import LinkCard from "@/components/ui/Cards/LinkCard";
 import useRegions from "@/hooks/Regions/useRegions";
-import type { Region } from "@/types/ApiTypes/types";
+import type { Region } from "@/types/ApiTypes/region.types";
 import { Button, For, Input, Separator, SimpleGrid } from "@chakra-ui/react";
 import { useState } from "react";
 

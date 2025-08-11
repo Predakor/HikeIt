@@ -1,6 +1,6 @@
 import Peak from "@/components/Peaks/Peak";
 import { PeakBadge } from "@/components/Trip/TripDetails/Common/PeakBadge";
-import type { PeakWithReachStatus } from "@/types/ApiTypes/Analytics";
+import type { PeakWithReachStatus } from "@/types/ApiTypes/peak.types";
 import { Card, Stack, For, Flex } from "@chakra-ui/react";
 
 interface Props {

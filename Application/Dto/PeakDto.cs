@@ -7,7 +7,7 @@ public abstract record PeakDto {
 
     public sealed record Complete(int Height, string Name, RegionDto.Complete Region) : PeakDto;
 
-    public sealed record WithLocation(int Height, string Name, double Lat, double Lon) : PeakDto;
+    public sealed record WithLocation(int Id, int Height, string Name, double Lat, double Lon) : PeakDto;
 
     public sealed record Reached(int Id, int Height, DateTime? Time = null);
 

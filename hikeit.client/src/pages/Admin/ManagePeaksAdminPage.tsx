@@ -2,7 +2,7 @@ import api from "@/Utils/Api/apiRequest";
 import AdminPage from "@/components/Pages/AdminPage";
 import { PeakList } from "@/components/Peaks/Peak";
 import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
-import type { Peak } from "@/types/ApiTypes/Analytics";
+import type { Peak } from "@/types/ApiTypes/peak.types";
 import { useQuery } from "@tanstack/react-query";
 
 export default function ManagePeaksAdminPage() {

@@ -19,12 +19,4 @@ public class PeakMapper : IEntityDtoMapper<Peak, PeakDto> {
         return new PeakDto.Complete(entity.Height, entity.Name, regionDto);
     }
 
-    public static PeakDto.WithLocation ToWithLocation(Peak peak) {
-        return new PeakDto.WithLocation(
-            peak.Height,
-            peak.Name ?? "",
-            peak.Location.Y,
-            peak.Location.X
-        );
-    }
 }

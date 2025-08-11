@@ -1,5 +1,5 @@
 import api from "@/Utils/Api/apiRequest";
-import type { RegionWithPeaks } from "@/types/ApiTypes/types";
+import type { RegionWithPeaks } from "@/types/ApiTypes/region.types";
 import { useQuery } from "@tanstack/react-query";
 
 export const config = {
@@ -10,15 +10,23 @@ export const config = {
   ],
   queryFn: (regionId: string | number) =>
     api.get<RegionWithPeaks>(`regions/${regionId}/peaks`),
+  getDetailed: (regionId: string | number) =>
+    api.get<RegionWithPeaks>(`regions/${regionId}/detailed`),
 };
 
 function UseRegionPeaks(regionId: number) {
-  const request = useQuery<RegionWithPeaks>({
+  return useQuery<RegionWithPeaks>({
     queryKey: ["region", regionId, "peaks"],
     queryFn: () => config.queryFn(regionId),
     enabled: !!regionId,
   });
+}
 
-  return request;
+export function UseDetailedRegionPeaks(regionId: number) {
+  return useQuery<RegionWithPeaks>({
+    queryKey: ["region", regionId, "detailed"],
+    queryFn: () => config.getDetailed(regionId),
+    enabled: !!regionId,
+  });
 }
 export default UseRegionPeaks;

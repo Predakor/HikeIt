@@ -11,4 +11,6 @@ public interface IRegionQueryService : IQueryService {
     Task<Result<int>> GetPeakCount(int regionId);
 
     Task<Result<RegionDto.WithPeaks>> AllPeaksFromRegion(RegionDto.Complete region);
+    Task<Result<RegionDto.WithDetailedPeaks>> AllDetailedPeaksFromRegion(RegionDto.Complete region);
+
 }

@@ -1,5 +1,5 @@
 import SubTitle from "@/components/Titles/SubTitle";
-import { Button, Flex, Spacer } from "@chakra-ui/react";
+import { Flex, Spacer } from "@chakra-ui/react";
 import { Card } from "@chakra-ui/react/card";
 import type { ReactNode } from "react";
 

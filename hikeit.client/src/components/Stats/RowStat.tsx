@@ -15,7 +15,7 @@ export default function RowStat({ value, label, addons }: Props) {
   return (
     <Stat.Root alignItems={{ base: "start", lg: "center" }}>
       <Stat.Label>{ToTitleCase(label)}</Stat.Label>
-      <Stack alignItems={"baseline"} fontSize={"lg"}>
+      <Stack direction={"row"} alignItems={"baseline"} fontSize={"lg"}>
         {IconSource && (
           <Icon size={"md"}>
             <IconSource />

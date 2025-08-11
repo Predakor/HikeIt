@@ -1,6 +1,6 @@
-import { Flex, Stack, Heading, Text, For } from "@chakra-ui/react";
+import type { Peak } from "@/types/ApiTypes/peak.types";
+import { Flex, For, Heading, Stack, Text } from "@chakra-ui/react";
 import { PeakIcon } from "../Trip/TripDetails/Common/PeakIcon";
-import type { Peak } from "@/types/ApiTypes/Analytics";
 
 export default function Peak({ peak }: { peak: Peak }) {
   return (

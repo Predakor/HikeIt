@@ -40,16 +40,6 @@ export interface PeaksAnalytics {
   reached: ReachedPeak[];
 }
 
-export interface Peak {
-  id: number;
-  name: string;
-  height: number;
-}
-
-export interface PeakWithReachStatus extends Peak {
-  reached: boolean;
-}
-
 export interface PeakSummaryData {
   total: number;
   unique: number;

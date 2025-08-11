@@ -1,5 +1,5 @@
 import api from "@/Utils/Api/apiRequest";
-import type { RegionProgressFull } from "@/types/ApiTypes/types";
+import type { RegionProgressFull } from "@/types/ApiTypes/region.types";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 
