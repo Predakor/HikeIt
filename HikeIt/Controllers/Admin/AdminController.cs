@@ -24,7 +24,7 @@ public class AdminController : ControllerBase {
 
     [HttpPatch("peaks/{peakId}/update")]
     public async Task<IActionResult> UpdatePeak(int peakId, PeakDto.Update request) {
-        return await _peakService.Update(peakId, request).ToActionResultAsync();
+        return await _peakService.Update(peakId, request).ToActionResultAsync(ResultType.noContent);
     }
 }
 

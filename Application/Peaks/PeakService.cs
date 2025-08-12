@@ -31,7 +31,10 @@ public class PeakService : IPeaksService {
     }
 
     public async Task<Result<Peak>> Update(int peakId, PeakDto.Update changes) {
-        return await _repository.GetByIdAsync(peakId).MapAsync(peak => peak.ApplyChanges(changes));
+        return await _repository
+            .GetByIdAsync(peakId)
+            .MapAsync(peak => peak.ApplyChanges(changes))
+            .BindAsync(SaveChanges);
     }
 
     async Task<Result<Peak>> SaveChanges(Peak peak) {
@@ -53,17 +56,19 @@ static class Helpers {
             peak.RegionID = changes.RegionId.Value;
         }
 
-        var lat = peak.Location.X;
-        var lon = peak.Location.Y;
+        var lat = peak.Location.Y;
+        var lon = peak.Location.X;
 
-        if (changes.Latitude.HasValue) {
-            lat = changes.Latitude.Value;
+        if (changes.Lat.HasValue) {
+            lat = changes.Lat.Value;
         }
-        if (changes.Longitude.HasValue) {
-            lon = changes.Longitude.Value;
+        if (changes.Lon.HasValue) {
+            lon = changes.Lon.Value;
         }
+
 
         if (lat != peak.Location.X || lon != peak.Location.Y) {
+            Console.WriteLine("updating peak");
             peak.Location = GeoFactory.CreatePoint(lat, lon);
         }
 

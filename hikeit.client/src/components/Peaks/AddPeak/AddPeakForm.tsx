@@ -1,15 +1,16 @@
 "use client";
+import { isPendingOrNotFetched } from "@/Utils/Api/queryHelpers";
 import SubTitle from "@/components/Titles/SubTitle";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
+import { MutationResult } from "@/components/ui/Results/MutationResult";
 import { Button, Separator, Stack } from "@chakra-ui/react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { AddPeakResult, isPendingOrNotFetched } from "./AddPeakResult";
 import { FormHelpers } from "./FormHelpers";
 import { addPeakFormConfig, type AddPeakConfig } from "./addPeakFormConfig";
 
-export type MutationResult = UseMutationResult<
+export type MutResult = UseMutationResult<
   {
     location: string;
   },
@@ -20,7 +21,7 @@ export type MutationResult = UseMutationResult<
 
 interface Props {
   onSubmit: (data: AddPeakConfig) => void;
-  requestState: MutationResult;
+  requestState: MutResult;
 }
 
 export default function AddPeakForm({ requestState, onSubmit }: Props) {
@@ -40,7 +41,17 @@ export default function AddPeakForm({ requestState, onSubmit }: Props) {
 
   return (
     <Stack gapY={8}>
-      <AddPeakResult requestState={requestState} />
+      <MutationResult
+        requestState={requestState}
+        succesMesage={{
+          title: "Succes",
+          description: "Your peak was succesfully added",
+        }}
+        errorMessage={{
+          title: "Failed to create",
+          description: `${requestState.error?.message}`,
+        }}
+      />
 
       <Stack>
         <form onSubmit={formHook.handleSubmit(onSubmit)}>

@@ -19,6 +19,7 @@ export {
   FaArrowUp as IconArrowUp,
   FaArrowRight as IconArrowRight,
   FaPlus as IconPlus,
+  FaEdit as IconEdit,
 } from "react-icons/fa";
 
 export {

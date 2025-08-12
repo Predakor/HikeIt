@@ -24,8 +24,8 @@ public abstract record PeakDto {
     public sealed record Update(
         string? Name,
         int? Height,
-        double? Latitude,
-        double? Longitude,
+        double? Lat,
+        double? Lon,
         int? RegionId
     );
 }

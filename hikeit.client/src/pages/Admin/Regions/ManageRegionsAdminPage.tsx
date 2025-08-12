@@ -8,7 +8,7 @@ import { Button, For, Input, Separator, SimpleGrid } from "@chakra-ui/react";
 import { useState } from "react";
 
 const filters = {
-  withValue: (region: Region, value: string) =>
+  includes: (region: Region, value: string) =>
     region.name.toLowerCase().includes(value.toLowerCase()),
   withId: (region: Region, id: number) => region.id === id,
 };
@@ -37,7 +37,7 @@ export default function ManageRegionsAdminPage() {
       <FetchWrapper request={getRegions}>
         {(regions) => (
           <ManageRegions
-            filter={(region) => filters.withValue(region, filterValue)}
+            filter={(region) => filters.includes(region, filterValue)}
             regions={regions}
           />
         )}

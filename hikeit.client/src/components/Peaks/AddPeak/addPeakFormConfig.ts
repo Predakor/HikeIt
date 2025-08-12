@@ -3,8 +3,8 @@ import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 export type AddPeakConfig = {
   name: string;
   height: number;
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lon: number;
   regionId?: number;
 };
 
@@ -30,8 +30,8 @@ export const addPeakFormConfig: InputsConfig = [
     required: true,
   },
   {
-    key: "latitude",
-    label: "",
+    key: "lat",
+    label: "latitude",
     type: "number",
     step: "0.001",
     min: 0,
@@ -39,8 +39,8 @@ export const addPeakFormConfig: InputsConfig = [
     required: true,
   },
   {
-    key: "longitude",
-    label: "",
+    key: "lon",
+    label: "longitude",
     type: "number",
     step: "0.001",
     min: 0,
