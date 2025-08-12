@@ -14,11 +14,11 @@ public class UserService(IUserRepository repository, IAuthService authService) :
         return await _authService
             .Me()
             .BindAsync(user => _repository.GetByIdAsync(user.Id))
-            .MapAsync(UserDtoFactory.CreateComplete);
+            .MapAsync(UserDtoFactory.ToComplete);
     }
 
     public async Task<Result<UserDto.PublicProfile>> GetUserAsync(Guid id) {
-        return await _repository.GetByIdAsync(id).MapAsync(UserDtoFactory.CreatePublicProfile);
+        return await _repository.GetByIdAsync(id).MapAsync(UserDtoFactory.ToPublicProfile);
     }
 
     public async Task<Result<User>> CreateUserAsync(UserDto.Complete dto) {

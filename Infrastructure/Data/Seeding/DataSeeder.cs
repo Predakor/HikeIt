@@ -1,7 +1,6 @@
 ﻿using Application.Commons.Options;
-using Domain.Users;
 using Infrastructure.Data.Loaders;
-using Microsoft.AspNetCore.Identity;
+using Infrastructure.Data.Seeding.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -23,24 +22,23 @@ internal static class DataSeeder {
             var resourcePath = options.PeaksUrl;
             Console.WriteLine("Seeding from: " + resourcePath);
 
-            await new InsertMountainPeaks(await PeakCsvLoader.LoadFromLink(resourcePath)).Seed(dbContext);
+            await new InsertMountainPeaks(await PeakCsvLoader.LoadFromLink(resourcePath)).Seed(
+                dbContext
+            );
         }
 
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-        var demoUser = User.DemoUser;
-        var hasNoDemoUser = (await userManager.FindByNameAsync(demoUser.UserName!)) == null;
-        if (hasNoDemoUser) {
-            Console.WriteLine("Seeding default users");
-            await new InsertBaseUser(userManager, demoUser).Seed(dbContext);
-        }
+        await new InsertRoles(scope.ServiceProvider).Seed(dbContext);
+        await new InsertBaseUser(scope.ServiceProvider).Seed(dbContext);
+        await new InsertAdminUser(scope.ServiceProvider).Seed(dbContext);
     }
 
     public static async Task TrySeeding(TripDbContext dbContext, IServiceProvider services) {
         try {
             using var scope = services.CreateScope();
 
-            var seedOptions = scope.ServiceProvider.GetRequiredService<IOptions<SeedingOptions>>().Value!;
+            var seedOptions = scope
+                .ServiceProvider.GetRequiredService<IOptions<SeedingOptions>>()
+                .Value!;
 
             await Seed(dbContext, scope, seedOptions);
 

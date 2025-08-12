@@ -1,5 +1,5 @@
 import RowStat from "@/components/Stats/RowStat";
-import type { RegionProgressSummary } from "@/types/ApiTypes/types";
+import type { RegionProgressSummary } from "@/types/ApiTypes/region.types";
 import { Badge, Box, Card, Flex, Stack } from "@chakra-ui/react";
 import { Link } from "react-router";
 import RegionProgress from "../Completion/RegionCompletion";

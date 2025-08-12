@@ -3,13 +3,13 @@ using Application.Mappers.Implementations;
 using Application.Mountains;
 using Domain.Common;
 using Domain.Common.Extentions;
+using Domain.Common.Factories;
 using Domain.Common.Result;
-using Domain.Mountains.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks.Builders;
 using Domain.Trips.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Peaks.Extentions;
-using Infrastructure.Peaks.Factories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 
@@ -35,7 +35,7 @@ public class PeaksQueryService : IPeaksQueryService {
     }
 
     public async Task<Result<IEnumerable<PeakDto.Complete>>> GetAllAsync() {
-        var peaks = await Peaks.ToListAsync();
+        var peaks = await Peaks.Include(p => p.Region).ToListAsync();
 
         if (peaks.Count == 0) {
             return Errors.EmptyCollection(nameof(Peak));
@@ -138,6 +138,16 @@ public class PeaksQueryService : IPeaksQueryService {
 
         Console.WriteLine("total matched peaks " + matchedPeaks.Count);
         return matchedPeaks;
+    }
+
+    public async Task<Result<Peak>> GetPeakWithNameFromRegion(string name, int regionId) {
+        var result = await Peaks.Where(p => p.RegionID == regionId).FirstOrDefaultAsync(p => p.Name == name);
+
+        if (result is null) {
+            return Errors.NotFound("peak", name);
+        }
+
+        return result;
     }
 }
 

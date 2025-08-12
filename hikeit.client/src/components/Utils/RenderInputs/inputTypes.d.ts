@@ -1,4 +1,5 @@
 import type { FullMap } from "@/types/Utils/MappingTypes";
+import type { InputProps } from "@chakra-ui/react";
 import type { CollectionType } from "@components/RegionSelect/useCollection";
 import type { AllowedInputTypes } from "@utils/Schemas/index";
 interface InputConfigEntryBase {
@@ -24,13 +25,12 @@ interface EmailInputConfigEntry extends InputConfigEntryBase {
   type: "email";
   pattern: RegExp;
 }
+
 interface RangeInputConfigEntry extends InputConfigEntryBase {
   type: "range";
   min: number;
   max: number;
   step?: number;
-  formatLabel?: (value: number) => number;
-  formatValue?: (value: number) => number;
 }
 
 interface PasswordInputConfigEntry extends InputConfigEntryBase {
@@ -47,7 +47,9 @@ interface TextInputConfigEntry extends InputConfigEntryBase {
   placeholder?: string;
 }
 
-interface NumberInputConfigEntry extends InputConfigEntryBase {
+interface NumberInputConfigEntry
+  extends InputConfigEntryBase,
+    Partial<HTMLInputElement> {
   type: "number";
 }
 

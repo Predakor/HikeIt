@@ -1,5 +1,5 @@
 import { apiPath } from "@/data/apiPaths";
-import type { Region } from "@/types/ApiTypes/types";
+import type { Region } from "@/types/ApiTypes/region.types";
 import { useRef } from "react";
 
 function useRegionMatcher() {

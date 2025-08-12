@@ -18,13 +18,13 @@ public abstract record UserDto(string UserName) {
         DateOnly BirthDay
     ) : UserDto(UserName);
 
-    public record Basic(
-        string UserName,
-        string FirstName,
-        string LastName,
-        string Email,
-        string Avatar = ""
-    ) : UserDto(UserName);
+    public record Basic(string UserName) : UserDto(UserName) {
+        public string FirstName { get; init; } = string.Empty;
+        public string LastName { get; init; } = string.Empty;
+        public string Email { get; init; } = string.Empty;
+        public string Avatar { get; init; } = string.Empty;
+        public string[] Roles { get; init; } = [];
+    }
 
     public record Register(
         string FirstName,
@@ -38,16 +38,17 @@ public abstract record UserDto(string UserName) {
 }
 
 public static class UserDtoFactory {
-    public static UserDto.Basic CreateBasic(User user) {
-        return new(
-            user.UserName ?? "not specified",
-            user.FirstName,
-            user.LastName,
-            user.Email ?? "unknown"
-        );
+    public static UserDto.Basic ToBasic(this User user, string[] roles) {
+        return new(user.UserName!) {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email!,
+            Avatar = user.Avatar ?? "",
+            Roles = roles,
+        };
     }
 
-    public static UserDto.Complete CreateComplete(User user) {
+    public static UserDto.Complete ToComplete(this User user) {
         return new(
             user.FirstName,
             user.LastName,
@@ -57,7 +58,7 @@ public static class UserDtoFactory {
         );
     }
 
-    public static UserDto.PublicProfile CreatePublicProfile(User user) {
+    public static UserDto.PublicProfile ToPublicProfile(this User user) {
         return new(user.FirstName, user.UserName, user.Avatar = "");
     }
 }

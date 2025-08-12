@@ -6,7 +6,7 @@ interface Props {
 
 export default function SubTitle({ title }: Props) {
   return (
-    <Heading as={"h3"} color={"inherit"} size={{ base: "lg", lg: "xl" }}>
+    <Heading as={"h3"} color={"inherit"} size={{ base: "lg", lg: "2xl" }}>
       {title}
     </Heading>
   );

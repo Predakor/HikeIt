@@ -1,6 +1,6 @@
 export const resolveCreated = async (response: Response) => {
   if (!response.ok) {
-    throw new Error();
+    throw await MapToError(response);
   }
 
   const res = {
@@ -16,3 +16,9 @@ export const resolveCreated = async (response: Response) => {
   }
   return res;
 };
+
+async function MapToError(response: Response) {
+  const bodyText = await response.text();
+  const err = JSON.parse(bodyText);
+  return new Error(err.message);
+}

@@ -2,9 +2,9 @@
 using Application.Commons.Drafts;
 using Application.Services.Auth;
 using Application.Services.Files;
-using Application.Services.Trips;
 using Application.TripAnalytics.Interfaces;
 using Application.Trips;
+using Application.Trips.Services;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Trips;

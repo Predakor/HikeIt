@@ -1,4 +1,4 @@
-import type { Region } from "@/types/ApiTypes/types";
+import type { Region } from "@/types/ApiTypes/region.types";
 import { Card, Span } from "@chakra-ui/react";
 import { Link } from "react-router";
 import RegionCard from "./RegionCard";

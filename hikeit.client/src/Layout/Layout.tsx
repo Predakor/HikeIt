@@ -2,6 +2,7 @@ import { Stack } from "@chakra-ui/react";
 import type { PropsWithChildren } from "react";
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
+import { Toaster } from "@/components/ui/toaster";
 
 function Layout({ children }: PropsWithChildren) {
   return (
@@ -14,6 +15,7 @@ function Layout({ children }: PropsWithChildren) {
       gap={12}
     >
       <Header />
+      <Toaster />
       <Stack as="main" flexGrow={1}>
         {children}
       </Stack>

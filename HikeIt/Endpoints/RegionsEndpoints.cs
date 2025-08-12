@@ -11,6 +11,8 @@ public static class RegionsEndpoints {
         group.MapGet("/", GetAll);
         group.MapGet("/{id}", GetById);
         group.MapGet("/{id}/peaks", GetAllFromRegion);
+        group.MapGet("/{id}/detailed", GetDetailedFromRegion);
+
 
         return group;
     }
@@ -19,6 +21,12 @@ public static class RegionsEndpoints {
         return await queries
             .GetById(id)
             .BindAsync(queries.AllPeaksFromRegion)
+            .ToApiResultAsync();
+    }
+    static async Task<IResult> GetDetailedFromRegion(IRegionQueryService queries, int id) {
+        return await queries
+            .GetById(id)
+            .BindAsync(queries.AllDetailedPeaksFromRegion)
             .ToApiResultAsync();
     }
 

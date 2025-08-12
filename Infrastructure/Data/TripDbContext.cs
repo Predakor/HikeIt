@@ -1,7 +1,7 @@
 ﻿using Domain.Common.AggregateRoot;
 using Domain.Interfaces;
-using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Entities.ElevationProfile;

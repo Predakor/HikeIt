@@ -27,7 +27,7 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
         return this;
     }
 
-    public static readonly User DemoUser = new() {
+    public static User DemoUser => new() {
         Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
         UserName = "defaultuser",
         FirstName = "Default",

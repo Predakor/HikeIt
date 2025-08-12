@@ -1,5 +1,5 @@
 import RowStat from "@/components/Stats/RowStat";
-import type { Peak } from "@/types/ApiTypes/Analytics";
+import type { Peak } from "@/types/ApiTypes/peak.types";
 import { Card, Flex } from "@chakra-ui/react";
 
 export default function RegionHighestPeak({ peak }: { peak: Peak }) {

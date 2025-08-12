@@ -1,5 +1,3 @@
-import type { Peak, PeakWithReachStatus } from "./Analytics";
-
 export interface Trip {
   id: number;
   height: number; // Required float
@@ -8,24 +6,4 @@ export interface Trip {
   tripDay?: string; // DateOnly will be represented as a string in TypeScript (ISO format)
 
   regionID: number; // Required int
-}
-
-export interface Region {
-  id: number;
-  name: string;
-}
-
-export interface RegionProgressSummary {
-  region: Region;
-  uniqueReachedPeaks: number;
-  totalPeaksInRegion: number;
-}
-
-export interface RegionProgressFull {
-  region: Region;
-  totalPeaksInRegion: number;
-  totalReachedPeaks: number;
-  uniqueReachedPeaks: number;
-  highestPeak: Peak;
-  peaks: PeakWithReachStatus[];
 }

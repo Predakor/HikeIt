@@ -3,8 +3,8 @@ using Application.Mappers.Implementations;
 using Application.Mountains;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Mountains.Peaks;
 using Domain.Mountains.Regions;
+using Domain.Peaks;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,7 +54,6 @@ public class RegionQueryService : IRegionQueryService {
         return await Peaks.Where(r => r.RegionID == regionId).CountAsync();
     }
 
-
     public async Task<Result<RegionDto.WithPeaks>> AllPeaksFromRegion(RegionDto.Complete region) {
         var peaksFromRegion = await Peaks.Where(p => p.RegionID == region.Id).ToListAsync();
 
@@ -65,6 +64,17 @@ public class RegionQueryService : IRegionQueryService {
         return region.ToRegionWithPeaks(peaksFromRegion);
     }
 
+    public async Task<Result<RegionDto.WithDetailedPeaks>> AllDetailedPeaksFromRegion(
+        RegionDto.Complete region
+    ) {
+        var peaksFromRegion = await Peaks.Where(p => p.RegionID == region.Id).ToListAsync();
+
+        if (peaksFromRegion.Count == 0) {
+            return Errors.EmptyCollection("No peaks found");
+        }
+
+        return region.ToRegionWithDetailedPeaks(peaksFromRegion);
+    }
 }
 
 static class Mappers {
@@ -75,6 +85,21 @@ static class Mappers {
         var mappedPeaks = peaks.Select(p => new PeakDto.Base(p.Height, p.Name, p.Id)).ToList();
 
         return new RegionDto.WithPeaks(region, mappedPeaks);
+    }
+
+    public static RegionDto.WithDetailedPeaks ToRegionWithDetailedPeaks(
+        this RegionDto.Complete region,
+        List<Peak> peaks
+    ) {
+        return new RegionDto.WithDetailedPeaks(region, peaks.ToPeaksWithLocation());
+    }
+
+    public static PeakDto.WithLocation ToWithLocation(this Peak peak) {
+        return new(peak.Id, peak.Height, peak.Name, peak.Location.Y, peak.Location.X);
+    }
+
+    public static List<PeakDto.WithLocation> ToPeaksWithLocation(this IEnumerable<Peak> peaks) {
+        return [.. peaks.Select(ToWithLocation)];
     }
 
     public static RegionDto.Complete ToComplete(this Region region) {

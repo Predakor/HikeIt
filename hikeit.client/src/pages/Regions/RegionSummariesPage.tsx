@@ -4,7 +4,10 @@ import UnprogressedRegion from "@/components/Regions/Card/UnprogressedRegion";
 import PageTitle from "@/components/Titles/PageTitle";
 import FetchWrapper from "@/components/Wrappers/Fetching";
 import UseRegionsProgressions from "@/hooks/Regions/UseRegionsProgressions";
-import type { Region, RegionProgressSummary } from "@/types/ApiTypes/types";
+import type {
+  Region,
+  RegionProgressSummary,
+} from "@/types/ApiTypes/region.types";
 import { For, GridItem, Show, SimpleGrid, Stack } from "@chakra-ui/react";
 
 function RegionsPage() {

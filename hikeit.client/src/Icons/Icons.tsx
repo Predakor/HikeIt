@@ -5,6 +5,8 @@ export {
   GiHiking as IconHiking,
 } from "react-icons/gi";
 
+export { GrClose as IconClose } from "react-icons/gr";
+
 export {
   FaCalendar as IconCalendar,
   FaArrowDown as IconArrowDown,
@@ -17,6 +19,7 @@ export {
   FaArrowUp as IconArrowUp,
   FaArrowRight as IconArrowRight,
   FaPlus as IconPlus,
+  FaEdit as IconEdit,
 } from "react-icons/fa";
 
 export {
