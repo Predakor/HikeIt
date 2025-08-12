@@ -18,6 +18,4 @@ export const tripDetailsTabs: TabConfig<TripDtoFull> = [
     base: "trackAnalytic",
     items: tripAnalyticTabs,
   },
-  { key: "region", label: "Region", Component: ELevationGraph },
-  // { key: "pictures", label: "pictures", Component: TripGraph },
 ] as const;

@@ -25,6 +25,7 @@ interface EmailInputConfigEntry extends InputConfigEntryBase {
   type: "email";
   pattern: RegExp;
 }
+
 interface RangeInputConfigEntry extends InputConfigEntryBase {
   type: "range";
   min: number;

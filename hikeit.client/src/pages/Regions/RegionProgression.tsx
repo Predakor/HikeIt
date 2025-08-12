@@ -1,4 +1,4 @@
-import GoBackButton from "@/components/Buttons/GoBackButton";
+import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import RegionHighestPeak from "@/components/Regions/HighestPeak/RegionHighestPeak";
 import RegionPeaks from "@/components/Regions/Peaks/RegionPeaks";
 import RegionStats from "@/components/Regions/Stats/RegionStats";

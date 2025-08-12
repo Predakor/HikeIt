@@ -8,7 +8,6 @@ interface RangeProps<T> extends RenderInputBaseProps<T> {
 
 export function Range<T>({ entry, control }: RangeProps<T>) {
   const { key, label } = entry;
-
   return (
     <Controller
       name={key}
@@ -17,7 +16,7 @@ export function Range<T>({ entry, control }: RangeProps<T>) {
         <>
           <HStack>
             <Field.Label>{label}</Field.Label>
-            {field.value && field.value}
+            {field.value && formatLabel(field.value)}
           </HStack>
           <Slider.Root
             onValueChange={({ value }) => field.onChange(value[0])}
