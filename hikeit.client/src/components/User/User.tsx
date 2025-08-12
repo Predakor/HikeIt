@@ -40,7 +40,7 @@ export default function User() {
       gap={8}
       direction={{ base: "column", lg: "row" }}
     >
-      {IsAdminUser(user) && (
+      {user && IsAdminUser(user) && (
         <Box pr={4}>
           <NavItem path={"/admin"} label={"Admin Center"} />
         </Box>
