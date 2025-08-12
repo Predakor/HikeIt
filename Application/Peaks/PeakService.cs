@@ -23,7 +23,7 @@ public class PeakService : IPeaksService {
             return Errors.NotUnique("peak with that name and region already exists");
         }
 
-        IGeoPoint location = new GpxPoint(newPeak.Latitude, newPeak.Longitude, newPeak.Height);
+        IGeoPoint location = new GpxPoint(newPeak.Lat, newPeak.Lon, newPeak.Height);
 
         var peak = Peak.Create(newPeak.Name, location, newPeak.RegionId);
 

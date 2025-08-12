@@ -16,8 +16,8 @@ export function FormHelpers({ setForm }: Props) {
       .map((v) => Number(v).toFixed(3))
       .map((v) => Number(v));
 
-    setForm("latitude", lat);
-    setForm("longitude", lon);
+    setForm("lat", lat);
+    setForm("lon", lon);
   };
 
   const extractNameAndHeight = (e: ChangeEvent<HTMLInputElement>) => {

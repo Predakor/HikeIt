@@ -16,8 +16,8 @@ public abstract record PeakDto {
     public sealed record CreateNew(
         string Name,
         int Height,
-        double Latitude,
-        double Longitude,
+        double Lat,
+        double Lon,
         int RegionId
     );
 

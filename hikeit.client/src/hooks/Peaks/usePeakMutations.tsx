@@ -1,11 +1,11 @@
-import api from "@/Utils/Api/apiRequest";
-import type { AddPeakConfig } from "@/components/Peaks/AddPeak/addPeakFormConfig";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { config, detailedConfig } from "../Regions/UseRegionPeaks";
 import { resolveCreated } from "@/Utils/Api/Resolvers/resolveCreated";
-import type { RegionWithDetailedPeaks } from "@/types/ApiTypes/region.types";
-import { useParams } from "react-router";
+import api from "@/Utils/Api/apiRequest";
 import { applyChanges } from "@/Utils/objectHelpers";
+import type { AddPeakConfig } from "@/components/Peaks/AddPeak/addPeakFormConfig";
+import type { RegionWithDetailedPeaks } from "@/types/ApiTypes/region.types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router";
+import { detailedConfig } from "../Regions/UseRegionPeaks";
 
 const basePath = "admin/peaks";
 
@@ -22,19 +22,21 @@ export default function usePeakMutations() {
   const queryClient = useQueryClient();
   const { regionId } = useParams();
 
+  const keys = detailedConfig.queryKey(regionId!);
+
   const create = useMutation({
     mutationFn: (data: AddPeakConfig) =>
       api.post<PostResult>(`${basePath}/add`, data, resolveCreated),
-    onSuccess: (_, { regionId }) => {
-      const keys = config.queryKey(regionId!);
+    onSuccess: (_, newPeak) => {
+      queryClient.setQueryData(keys, (prev: RegionWithDetailedPeaks) => {
+        return {
+          ...prev,
+          peaks: [...prev.peaks, newPeak],
+        };
+      });
 
       queryClient.invalidateQueries({
         queryKey: keys,
-      });
-
-      queryClient.fetchQuery({
-        queryKey: keys,
-        queryFn: () => config.queryFn(regionId!),
       });
     },
   });
@@ -44,9 +46,7 @@ export default function usePeakMutations() {
       api.patch<{}>(`${basePath}/${peakId}/update`, data),
 
     onSuccess: (_, { data: changes, peakId }) => {
-      const key = detailedConfig.queryKey(regionId!);
-
-      queryClient.setQueryData(key, (prev: RegionWithDetailedPeaks) => {
+      queryClient.setQueryData(keys, (prev: RegionWithDetailedPeaks) => {
         if (!prev) {
           return prev;
         }
@@ -61,7 +61,7 @@ export default function usePeakMutations() {
         };
       });
 
-      queryClient.invalidateQueries({ queryKey: key });
+      queryClient.invalidateQueries({ queryKey: keys });
     },
   });
 

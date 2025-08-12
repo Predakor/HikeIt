@@ -42,7 +42,7 @@ export default function AddPeakForm({ requestState, onSubmit }: Props) {
   return (
     <Stack gapY={8}>
       <MutationResult
-        requestState={requestState}
+        requestState={requestState as UseMutationResult}
         succesMesage={{
           title: "Succes",
           description: "Your peak was succesfully added",
