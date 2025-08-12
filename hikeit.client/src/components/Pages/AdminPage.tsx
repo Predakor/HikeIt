@@ -2,9 +2,9 @@ import IsAdminUser from "@/Utils/IsAdminUser";
 import { useAdminUser } from "@/hooks/Auth/useUser";
 import { Center, Flex, Spacer, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
-import GoBackButton from "../Buttons/GoBackButton";
 import PageTitle from "../Titles/PageTitle";
 import FetchWrapper from "../Wrappers/Fetching/FetchWrapper";
+import { GoBackButton } from "../ui/Buttons";
 
 interface Props {
   children: ReactNode | ReactNode[];

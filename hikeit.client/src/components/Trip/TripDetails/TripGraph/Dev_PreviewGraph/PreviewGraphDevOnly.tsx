@@ -1,5 +1,5 @@
 import { LazyLineGraph } from "@/components/Graphs";
-import { Flex, Skeleton, Stack } from "@chakra-ui/react";
+import { Skeleton, Stack } from "@chakra-ui/react";
 import { Suspense, memo, useState } from "react";
 import type { ChartData, GainDto } from "../_graph_types";
 import { DevConfig } from "./DevPreview.tsx";

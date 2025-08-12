@@ -16,7 +16,7 @@ export function Range<T>({ entry, control }: RangeProps<T>) {
         <>
           <HStack>
             <Field.Label>{label}</Field.Label>
-            {field.value && formatLabel(field.value)}
+            {field.value && field.value}
           </HStack>
           <Slider.Root
             onValueChange={({ value }) => field.onChange(value[0])}

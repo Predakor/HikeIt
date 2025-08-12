@@ -2,11 +2,12 @@
 using Application.Dto;
 using Application.Peaks;
 using Domain.Common.Result;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.Admin;
 
-
+[Authorize(Roles = "Admin")]
 [Route("api/[controller]/")]
 [ApiController]
 public class AdminController : ControllerBase {
