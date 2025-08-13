@@ -8,3 +8,12 @@ export interface UserType {
   avatar: string;
   roles: UserRole[];
 }
+
+export interface UserBaseProfile {
+  userName: string;
+  rank: string;
+  avatar: string;
+  totalTrips: number;
+  totalDistance: number;
+  totalPeaks: number;
+}

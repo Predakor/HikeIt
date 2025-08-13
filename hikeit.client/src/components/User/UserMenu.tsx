@@ -1,16 +1,16 @@
 import { userRoutes } from "@/data/routes/userRoutes";
+import { useAuth } from "@/hooks/Auth/useAuth";
 import { Button, For, Heading, Icon, Menu } from "@chakra-ui/react";
 import { FaAngleDown } from "react-icons/fa";
 import { NavLink } from "react-router";
 
 export interface Props {
   userName: string;
-  logout: () => void;
 }
 
-export function UserMenu({ userName, logout }: Props) {
+export function UserMenu({ userName }: Props) {
   const basePath = `/${userRoutes.path}/`;
-
+  const { logout } = useAuth();
   return (
     <Menu.Root>
       <Menu.Trigger
@@ -50,7 +50,7 @@ export function UserMenu({ userName, logout }: Props) {
             color={"fg.error"}
             cursor={"pointer"}
             value="logout"
-            onConfirm={logout}
+            onClick={logout}
           >
             <NavLink to={"/auth/login"}>Log Out</NavLink>
           </Menu.Item>

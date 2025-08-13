@@ -1,75 +1,37 @@
 import { ObjectToArray } from "@/Utils/ObjectToArray";
+import { UserHeaderCard } from "@/components/User/Profile/UserHeaderCard";
 import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
+import { LogoutButton } from "@/components/ui/Buttons";
 import DangerButton from "@/components/ui/Buttons/DangerButton";
-import { useAuth } from "@/hooks/Auth/useAuth";
+import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import useUserData from "@/hooks/User/useUserData";
-import {
-  Avatar,
-  ButtonGroup,
-  Card,
-  Field,
-  Input,
-  Separator,
-  Spacer,
-  Stack,
-} from "@chakra-ui/react";
-import type { ReactElement } from "react";
+import { Field, Input, Stack } from "@chakra-ui/react";
 
 function UserProfilePage() {
   const getUser = useUserData();
-  const { logout } = useAuth();
   return (
     <FetchWrapper request={getUser}>
       {(user) => (
         <Stack>
-          <Card.Root>
-            <Card.Body asChild>
-              <Stack
-                alignItems={"center"}
-                justifyItems={"center"}
-                direction={{ base: "column", md: "row" }}
-                gap={4}
-              >
-                <AccountBase base={user.base} />
-                <Spacer />
-                <ButtonGroup>
-                  <DangerButton
-                    onConfirm={logout}
-                    alertConfig={{
-                      confirmButtonText: "logout",
-                      warningDescription:
-                        "You are about to log out are you sure?",
-                    }}
-                  >
-                    logout
-                  </DangerButton>
-                </ButtonGroup>
-              </Stack>
-            </Card.Body>
-          </Card.Root>
+          <UserHeaderCard user={user.base} />
 
-          <UserDataCard title="Personal Information">
+          <SimpleCard title="Personal Information">
             <MapStats stats={user.personal} />
-          </UserDataCard>
+          </SimpleCard>
 
-          <UserDataCard title="Account Details" Footer={<AccountActions />}>
+          <SimpleCard title="Account Details" footer={<AccountActions />}>
             <MapStats stats={user.accountState} />
-          </UserDataCard>
+          </SimpleCard>
         </Stack>
       )}
     </FetchWrapper>
   );
 }
 
-interface CardProps {
-  title: string;
-  children: ReactElement | ReactElement[];
-  Footer?: ReactElement | ReactElement[];
-}
-
 function AccountActions() {
   return (
     <Stack direction={{ base: "column", lg: "row" }}>
+      <LogoutButton />
       <DangerButton
         onConfirm={() => console.log("doing something in account actions")}
         variant={"outline"}
@@ -85,48 +47,11 @@ function AccountActions() {
   );
 }
 
-function UserDataCard({ title, children }: CardProps) {
-  return (
-    <Card.Root size={"lg"}>
-      <Card.Body gapY={4}>
-        <Card.Title color={"MenuText"} fontSize={"3xl"} fontWeight={"semibold"}>
-          {title}
-        </Card.Title>
-        <Separator />
-        {children}
-      </Card.Body>
-    </Card.Root>
-  );
-}
-
-function AccountBase({ base }: { base: typeof userBase }) {
-  const { userName, email, avatar } = base;
-  return (
-    <>
-      <Avatar.Root
-        aspectRatio={"square"}
-        width={{ base: "4em", mdDown: "3/4" }}
-        height={"auto"}
-      >
-        <Avatar.Image src={avatar} />
-        <Avatar.Fallback>+</Avatar.Fallback>
-      </Avatar.Root>
-
-      <Stack>
-        <Card.Title fontSize={"4xl"} fontWeight={"black"}>
-          {userName}
-        </Card.Title>
-        <Card.Description fontSize={"xl"}>{email}</Card.Description>
-      </Stack>
-    </>
-  );
-}
-
 function MapStats({ stats }: { stats: object }) {
   const mappedObject = ObjectToArray(stats);
 
   return mappedObject.map(([key, data]) => (
-    <MockupField2 label={key} value={data} />
+    <InfoField label={key} value={data} />
   ));
 }
 
@@ -135,7 +60,7 @@ interface Props {
   value: string | number;
 }
 
-function MockupField2({ label, value }: Props) {
+function InfoField({ label, value }: Props) {
   return (
     <Field.Root width={{ base: "full", md: "md" }}>
       <Field.Label fontSize={"md"} color={"GrayText"}>

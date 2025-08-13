@@ -20,6 +20,7 @@ function DangerButton(props: Props) {
     <>
       <Button
         size={"xl"}
+        fontWeight={"bold"}
         {...rest}
         colorPalette={"red"}
         onClick={handleConfirmation}

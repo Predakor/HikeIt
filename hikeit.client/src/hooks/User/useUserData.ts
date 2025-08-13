@@ -1,11 +1,15 @@
 import api from "@/Utils/Api/apiRequest";
 import { cacheTimes } from "@/Utils/Api/staleTimes";
+import type { UserBaseProfile } from "@/types/User/user.types";
 import { useQuery } from "@tanstack/react-query";
 
-const userBase = {
+const userBase: UserBaseProfile = {
   userName: "janusz",
-  email: "mistrzbiznesu.wp.pl",
+  rank: "Novice hiker",
   avatar: "https://assets.puzzlefactory.com/puzzle/190/564/original.jpg",
+  totalTrips: 1,
+  totalDistance: 14008,
+  totalPeaks: 2,
 };
 
 const accountState = {
@@ -17,6 +21,7 @@ const accountState = {
 const userPersonal = {
   firstName: "janusz",
   lastName: "janusz",
+  email: "mistrzbiznesu.wp.pl",
   birthDay: undefined,
   country: "poland",
   gender: "Male",

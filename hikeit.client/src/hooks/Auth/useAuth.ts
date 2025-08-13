@@ -1,6 +1,4 @@
-import apiClient from "@/Utils/Api/ApiClient";
 import api from "@/Utils/Api/apiRequest";
-import type { UserType } from "@/types/User/user.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
@@ -24,8 +22,7 @@ export function useAuth() {
   const queryClient = useQueryClient();
 
   const removeUserQueries = () => {
-    queryClient.invalidateQueries();
-    queryClient.removeQueries({ queryKey: ["user"] });
+    queryClient.clear();
   };
 
   const logout = () => {
@@ -34,15 +31,6 @@ export function useAuth() {
       removeUserQueries();
       navigate("/auth/login");
     } catch (error) {}
-  };
-
-  const me = async (): Promise<UserType> => {
-    try {
-      const user = await apiClient<UserType>("auth/me");
-      return user;
-    } catch (error) {
-      throw error;
-    }
   };
 
   const login = async (username: string, password: string) => {
@@ -81,7 +69,7 @@ export function useAuth() {
     return null;
   };
 
-  return { login, logout, me, register };
+  return { login, logout, register };
 }
 
 const resolveAuthResponse = async <T>(
