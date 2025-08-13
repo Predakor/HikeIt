@@ -14,16 +14,47 @@
 html {
   margin: 0;
   overflow-x: clip;
+  background-color: #09090b;
 }
 
 body {
+  min-height: 100svh;
   margin: 0 !important;
   padding: 0 !important;
   display: flex;
   place-items: center;
+  justify-content: center;
 }
 
 #root {
   width: 100%;
+  max-width: 1920px;
   height: 100%;
+}
+
+#splash {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+
+  animation: draw 2s 0.5s alternate infinite;
+
+  & h1 {
+    font-size: 3rem;
+  }
+  & span {
+    color: rgb(6, 6, 183);
+  }
+  & svg {
+  }
+}
+@keyframes draw {
+  from {
+    opacity: 25%;
+  }
+  to {
+    opacity: 100%;
+  }
 }

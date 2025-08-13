@@ -1,5 +1,5 @@
 import { ToTitleCase } from "@/Utils/ObjectToArray";
-import type { StatAddons } from "@/types/Utils/StatTypes";
+import type { StatAddons } from "@/types/Utils/stat.types";
 import { Icon, Stack, Stat } from "@chakra-ui/react";
 
 interface Props {

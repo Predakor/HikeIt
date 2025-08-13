@@ -1,34 +1,23 @@
-import { Provider } from "@/components/ui/provider";
-import { QueryClient } from "@tanstack/react-query";
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router";
-import Layout from "./Layout/Layout";
-import RenderRoutes from "./components/RenderRoutes/RenderRoutes";
-
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { Suspense, lazy } from "react";
+import { GiMountaintop } from "react-icons/gi";
 import "./index.css";
 
-const queryClient = new QueryClient();
-
-const asyncStoragePersister = createAsyncStoragePersister({
-  storage: window.localStorage,
-});
+const App = lazy(() => import("./App"));
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <Provider>
-        <PersistQueryClientProvider
-          client={queryClient}
-          persistOptions={{ persister: asyncStoragePersister }}
-        >
-          <Layout>
-            <RenderRoutes />
-          </Layout>
-        </PersistQueryClientProvider>
-      </Provider>
-    </BrowserRouter>
-  </StrictMode>
+  <Suspense fallback={<SplashScreen />}>
+    <App />
+  </Suspense>
 );
+
+function SplashScreen() {
+  return (
+    <div id="splash">
+      <GiMountaintop size={128} />
+      <h1>
+        Hike <span>It</span>
+      </h1>
+    </div>
+  );
+}

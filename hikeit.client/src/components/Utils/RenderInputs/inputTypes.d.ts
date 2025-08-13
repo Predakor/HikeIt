@@ -1,4 +1,4 @@
-import type { FullMap } from "@/types/Utils/MappingTypes";
+import type { FullMap } from "@/types/Utils/mapping.types";
 import type { InputProps } from "@chakra-ui/react";
 import type { CollectionType } from "@components/RegionSelect/useCollection";
 import type { AllowedInputTypes } from "@utils/Schemas/index";

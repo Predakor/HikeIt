@@ -39,7 +39,7 @@ const get = async <T>(
   responseResolver?: ResponseResolver<T>
 ): Promise<T> => {
   const query = params ? `?${toQueryString(params)}` : "";
-  var request = await apiRequest(path + query, { method: "GET" });
+  const request = await apiRequest(path + query, { method: "GET" });
 
   return responseResolver
     ? responseResolver(request)
@@ -52,7 +52,7 @@ const patch = async <T>(
   responseResolver?: ResponseResolver<T>
 ): Promise<T> => {
   const body = JSON.stringify({ ...params });
-  var request = await apiRequest(path, { method: "PATCH", body });
+  const request = await apiRequest(path, { method: "PATCH", body });
 
   return responseResolver
     ? responseResolver(request)
@@ -65,7 +65,7 @@ const put = async <T>(
   responseResolver?: ResponseResolver<T>
 ): Promise<T> => {
   const query = params ? `?${toQueryString(params)}` : "";
-  var request = await apiRequest(path + query, { method: "PUT" });
+  const request = await apiRequest(path + query, { method: "PUT" });
 
   return responseResolver
     ? responseResolver(request)

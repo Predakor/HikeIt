@@ -1,6 +1,6 @@
 import { formatDuration } from "@/Utils/Formatters";
 import RowStat from "@/components/Stats/RowStat";
-import type { StatAddons } from "@/types/Utils/StatTypes";
+import type { StatAddons } from "@/types/Utils/stat.types";
 import type { Totals, Locations } from "../Utils/statTypes";
 import { formatter } from "../Utils/formatter";
 import StatsCard from "../StatsCard";
@@ -20,7 +20,7 @@ export function AverageTrip({ totals, locations }: Props) {
     totalTrips,
   } = totals;
 
-  const { regionsVisited, } = locations;
+  const { regionsVisited } = locations;
 
   const __mockupAscentTime = "07:12:10";
   const __mockupDescentTime = "05:12:10";

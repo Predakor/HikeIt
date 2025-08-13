@@ -2,7 +2,7 @@ import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 import { ToTitleCase } from "@/Utils/ObjectToArray";
 import RenderTabEntry from "@/components/Utils/RenderTabs/RenderTabEntry";
 import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
-import type { EntryItem, TabConfig } from "@/types/Utils/OrderTypes";
+import type { EntryItem, TabConfig } from "@/types/Utils/order.types";
 import { For, Stack, Tabs } from "@chakra-ui/react";
 
 interface Props {

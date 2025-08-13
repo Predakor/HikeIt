@@ -1,4 +1,4 @@
-import type { EntryType } from "@/types/Utils/OrderTypes";
+import type { EntryType } from "@/types/Utils/order.types";
 import type { BaseProps } from "./typesRender";
 import { GroupRender } from "./GroupRender";
 import { ItemRender } from "./ItemRender";

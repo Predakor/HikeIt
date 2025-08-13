@@ -1,4 +1,4 @@
-import type { TabConfig } from "@/types/Utils/OrderTypes";
+import type { TabConfig } from "@/types/Utils/order.types";
 import { ELevationGraph } from "../TripDetails/lazy";
 import { RouteAnalytics, TimeAnalytics, PeaksAnalytics } from "../TripDetails";
 import type { TripAnalytic } from "@/types/ApiTypes/Analytics";

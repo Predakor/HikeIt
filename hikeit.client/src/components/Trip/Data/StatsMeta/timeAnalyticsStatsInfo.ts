@@ -15,7 +15,7 @@ import {
   NumberFormatter,
 } from "@/Utils/Formatters/valueFormatter";
 import type { TimeAnalytic } from "@/types/ApiTypes/Analytics";
-import type { StatsMetaList } from "@/types/Utils/StatTypes";
+import type { StatsMetaList } from "@/types/Utils/stat.types";
 
 export const timeAnalyticsStatsInfo: StatsMetaList<TimeAnalytic> = {
   duration: {

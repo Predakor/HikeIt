@@ -1,5 +1,5 @@
 import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
-import type { StatsMetaList } from "@/types/Utils/StatTypes";
+import type { StatsMetaList } from "@/types/Utils/stat.types";
 import { IconArrowDown, IconArrowUp, IconJourney } from "@/Icons/Icons";
 import type { RouteAnalytic } from "@/types/ApiTypes/Analytics";
 

@@ -1,6 +1,6 @@
 type RequestState = {
-  isPending: Boolean;
-  isSuccess: Boolean;
+  isPending: boolean;
+  isSuccess: boolean;
   isError: boolean;
 };
 

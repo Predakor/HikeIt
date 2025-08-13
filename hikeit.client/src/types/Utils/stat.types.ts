@@ -1,6 +1,6 @@
 import type { IconType } from "react-icons";
 import type { ReactElement } from "react";
-import type { PartialMap } from "@/types/Utils/MappingTypes";
+import type { PartialMap } from "@/types/Utils/mapping.types";
 
 export type PercentUnit = "%";
 export type LengthUnit = "m" | "km";

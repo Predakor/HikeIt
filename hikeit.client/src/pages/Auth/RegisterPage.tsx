@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const [requestErrors, setRequestErrors] = useState<AuthError[] | null>(null);
 
   const onSubmit = async (data: any) => {
-    var errors = await authActions.register(data);
+    const errors = await authActions.register(data);
     if (errors) {
       setRequestErrors(errors);
       return;

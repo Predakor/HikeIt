@@ -38,7 +38,7 @@ export function useAuth() {
 
   const me = async (): Promise<UserType> => {
     try {
-      var user = await apiClient<UserType>("auth/me");
+      const user = await apiClient<UserType>("auth/me");
       return user;
     } catch (error) {
       throw error;
@@ -46,7 +46,7 @@ export function useAuth() {
   };
 
   const login = async (username: string, password: string) => {
-    var response = await api.post<AuthResponse<null>>(
+    const response = await api.post<AuthResponse<null>>(
       "auth/login",
       {
         username,
@@ -67,7 +67,7 @@ export function useAuth() {
   };
 
   const register = async (data: RegisterForm) => {
-    var request = await api.post<AuthResponse<null>>(
+    const request = await api.post<AuthResponse<null>>(
       "auth/register",
       data,
       resolveAuthResponse
@@ -88,7 +88,7 @@ const resolveAuthResponse = async <T>(
   response: Response
 ): Promise<AuthResponse<T>> => {
   if (!response.ok) {
-    var result = await response.json();
+    const result = await response.json();
     return { errors: result };
   }
 

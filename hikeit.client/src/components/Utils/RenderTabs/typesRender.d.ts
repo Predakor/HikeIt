@@ -1,4 +1,4 @@
-import type { EntryItem } from "@/types/Utils/OrderTypes";
+import type { EntryItem } from "@/types/Utils/order.types";
 import type { ReactElement } from "react";
 
 export interface BaseProps<T> {

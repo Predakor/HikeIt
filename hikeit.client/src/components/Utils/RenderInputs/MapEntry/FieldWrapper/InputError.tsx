@@ -1,4 +1,4 @@
-import type { FullMap } from "@/types/Utils/MappingTypes";
+import type { FullMap } from "@/types/Utils/mapping.types";
 import { Field } from "@chakra-ui/react";
 import type { FieldError, RegisterOptions } from "react-hook-form";
 
