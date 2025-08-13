@@ -27,8 +27,9 @@ public class UserService(IUserRepository repository, IAuthService authService) :
             LastName = "bizensme",
             UserName = dto.UserName,
             Email = dto.Email,
-            BirthDay = dto.BirthDay,
         };
+
+        user.SetBirthday(dto.BirthDay);
 
         if (await _repository.Create(user)) {
             return Errors.Unknown("couldn't save user");

@@ -1,5 +1,4 @@
 ﻿using Api.Extentions;
-using Application.Dto;
 using Application.Services.Auth;
 using Application.Services.Files;
 using Application.Trips;
@@ -37,23 +36,7 @@ public class TripsController : ControllerBase {
         _queryService = queryService;
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(List<TripDto.Summary>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll() {
-        return await _authService
-            .WithLoggedUser()
-            .BindAsync(user => _queryService.GetAllAsync(user.Id))
-            .ToActionResultAsync();
-    }
 
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(TripDto.WithBasicAnalytics), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetById(Guid id) {
-        return await _authService
-            .WithLoggedUser()
-            .BindAsync(user => _queryService.GetByIdAsync(id, user.Id))
-            .ToActionResultAsync();
-    }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Create newTrip) {

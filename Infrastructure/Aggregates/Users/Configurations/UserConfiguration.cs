@@ -16,7 +16,19 @@ internal class UserConfiguration : IEntityTypeConfiguration<User> {
         builder
             .HasMany(u => u.RegionProgresses)
             .WithOne(rp => rp.User)
-            .HasForeignKey(u => u.UserId)
+            .HasForeignKey(rp => rp.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasMany(u => u.Trips)
+            .WithOne(t => t.User)
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder
+
+            .HasOne(u => u.Rank)
+            .WithMany()
+            .HasForeignKey(u => u.RankId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

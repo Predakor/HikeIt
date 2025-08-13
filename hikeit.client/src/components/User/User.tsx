@@ -12,8 +12,8 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router";
-import { UserMenu } from "./UserMenu";
 import FetchWrapper from "../Wrappers/Fetching/FetchWrapper";
+import { UserMenu } from "./UserMenu";
 
 export default function User() {
   const getUser = useUser();
