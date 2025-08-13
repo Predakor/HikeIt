@@ -1,5 +1,5 @@
 import IsAdminUser from "@/Utils/IsAdminUser";
-import { useAdminUser } from "@/hooks/Auth/useUser";
+import { useAdminUser } from "@/hooks/User/useUser";
 import { Center, Flex, Spacer, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import PageTitle from "../Titles/PageTitle";

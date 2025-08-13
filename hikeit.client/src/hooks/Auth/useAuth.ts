@@ -1,6 +1,6 @@
 import apiClient from "@/Utils/Api/ApiClient";
 import api from "@/Utils/Api/apiRequest";
-import type { UserType } from "@/components/User/User";
+import type { UserType } from "@/types/User/user.types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
@@ -28,9 +28,9 @@ export function useAuth() {
     queryClient.removeQueries({ queryKey: ["user"] });
   };
 
-  const logout = async () => {
+  const logout = () => {
     try {
-      await api.post("auth/logout", resolveAuthResponse);
+      api.post("auth/logout", resolveAuthResponse);
       removeUserQueries();
       navigate("/auth/login");
     } catch (error) {}

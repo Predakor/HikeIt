@@ -1,65 +1,63 @@
 import { ObjectToArray } from "@/Utils/ObjectToArray";
+import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
 import DangerButton from "@/components/ui/Buttons/DangerButton";
-import { Avatar, Card, Field, Input, Separator, Stack } from "@chakra-ui/react";
+import { useAuth } from "@/hooks/Auth/useAuth";
+import useUserData from "@/hooks/User/useUserData";
+import {
+  Avatar,
+  ButtonGroup,
+  Card,
+  Field,
+  Input,
+  Separator,
+  Spacer,
+  Stack,
+} from "@chakra-ui/react";
 import type { ReactElement } from "react";
 
-const userBase = {
-  userName: "janusz",
-  email: "mistrzbiznesu.wp.pl",
-  avatar: "https://assets.puzzlefactory.com/puzzle/190/564/original.jpg",
-};
-
-const accountState = {
-  status: "active",
-  role: "user",
-  createdAt: new Date().toDateString(),
-};
-
-const userPersonal = {
-  firstName: "janusz",
-  lastName: "janusz",
-  birthDay: undefined,
-  country: "poland",
-  gender: "Male",
-};
-
-const __mockupUser__ = {
-  base: userBase,
-  personal: userPersonal,
-  accountState,
-};
-
 function UserProfilePage() {
-  // const request = useQuery({
-  //   queryKey: ["profile"],
-  //   queryFn: () => api.get("users/profile"),
-  // });
-
-  const user = __mockupUser__;
-
+  const getUser = useUserData();
+  const { logout } = useAuth();
   return (
-    <Stack>
-      <Card.Root>
-        <Card.Body>
-          <Stack
-            alignItems={"center"}
-            justifyItems={"center"}
-            direction={{ base: "column", md: "row" }}
-            gap={4}
-          >
-            <AccountBase base={user.base} />
-          </Stack>
-        </Card.Body>
-      </Card.Root>
+    <FetchWrapper request={getUser}>
+      {(user) => (
+        <Stack>
+          <Card.Root>
+            <Card.Body asChild>
+              <Stack
+                alignItems={"center"}
+                justifyItems={"center"}
+                direction={{ base: "column", md: "row" }}
+                gap={4}
+              >
+                <AccountBase base={user.base} />
+                <Spacer />
+                <ButtonGroup>
+                  <DangerButton
+                    onConfirm={logout}
+                    alertConfig={{
+                      confirmButtonText: "logout",
+                      warningDescription:
+                        "You are about to log out are you sure?",
+                    }}
+                  >
+                    logout
+                  </DangerButton>
+                </ButtonGroup>
+              </Stack>
+            </Card.Body>
+          </Card.Root>
 
-      <UserDataCard title="Personal Information">
-        <MapStats stats={user.personal} />
-      </UserDataCard>
+          <UserDataCard title="Personal Information">
+            <MapStats stats={user.personal} />
+          </UserDataCard>
 
-      <UserDataCard title="Account Details" Footer={<AccountActions />}>
-        <MapStats stats={user.accountState} />
-      </UserDataCard>
-    </Stack>
+          <UserDataCard title="Account Details" Footer={<AccountActions />}>
+            <MapStats stats={user.accountState} />
+          </UserDataCard>
+        </Stack>
+      )}
+    </FetchWrapper>
   );
 }
 
@@ -72,8 +70,17 @@ interface CardProps {
 function AccountActions() {
   return (
     <Stack direction={{ base: "column", lg: "row" }}>
-      <DangerButton variant={"outline"}>{"Deactivate my account"}</DangerButton>
-      <DangerButton>{"Remove my account"}</DangerButton>
+      <DangerButton
+        onConfirm={() => console.log("doing something in account actions")}
+        variant={"outline"}
+      >
+        {"Deactivate my account"}
+      </DangerButton>
+      <DangerButton
+        onConfirm={() => console.log("doing something in account actions")}
+      >
+        {"Remove my account"}
+      </DangerButton>
     </Stack>
   );
 }

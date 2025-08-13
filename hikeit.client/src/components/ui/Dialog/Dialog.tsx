@@ -1,10 +1,7 @@
-import { IconClose } from "@/Icons/Icons";
 import SubTitle from "@/components/Titles/SubTitle";
-import {
-  Dialog as ChakraDialog,
-  IconButton,
-  type DialogRootProps,
-} from "@chakra-ui/react";
+import { Dialog as ChakraDialog, type DialogRootProps } from "@chakra-ui/react";
+import { CloseModal } from "./Common/CloseModal";
+import { DialogTitle } from "./Common/DialogTitle";
 
 interface Props extends DialogRootProps {
   title?: string;
@@ -19,19 +16,8 @@ function Dialog({ children, title, ...rest }: Props) {
       <ChakraDialog.Positioner>
         <ChakraDialog.Content>
           <ChakraDialog.Header as={"header"} flexGrow={1}>
-            <ChakraDialog.Title asChild>
-              {title && <SubTitle title={title} />}
-            </ChakraDialog.Title>
-            <ChakraDialog.CloseTrigger asChild>
-              <IconButton
-                size={"2xl"}
-                padding={0}
-                variant={"ghost"}
-                aria-label="Close modal"
-              >
-                <IconClose />
-              </IconButton>
-            </ChakraDialog.CloseTrigger>
+            <DialogTitle title={title} />
+            <CloseModal />
           </ChakraDialog.Header>
 
           <ChakraDialog.Body>{children}</ChakraDialog.Body>
@@ -42,4 +28,5 @@ function Dialog({ children, title, ...rest }: Props) {
     </ChakraDialog.Root>
   );
 }
+
 export default Dialog;

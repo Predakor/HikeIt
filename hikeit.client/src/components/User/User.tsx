@@ -1,46 +1,25 @@
 import { NavItem } from "@/Layout/Nav/NavItem";
 import IsAdminUser from "@/Utils/IsAdminUser";
-import { userRoutes } from "@/data/routes/userRoutes";
 import useUser from "@/hooks/Auth/useUser";
-import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Icon,
-  Menu,
-  Stack,
-} from "@chakra-ui/react";
-import { FaAngleDown } from "react-icons/fa";
+import { Avatar, Box, Flex, Stack, useBreakpointValue } from "@chakra-ui/react";
 import { NavLink } from "react-router";
-
-export type UserRole = "user" | "moderator" | "admin" | "demo";
-export interface UserType {
-  userName: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatar: string;
-  roles: UserRole[];
-}
+import { UserMenu } from "./UserMenu";
 
 export default function User() {
   const [user, { logout }] = useUser();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   if (!user) {
     return;
   }
 
-  const basePath = `/${userRoutes.path}/`;
-
   return (
     <Stack
+      direction={{ base: "column", lg: "row" }}
       alignItems={"center"}
       gap={8}
-      direction={{ base: "column", lg: "row" }}
     >
-      {user && IsAdminUser(user) && (
+      {IsAdminUser(user) && (
         <Box pr={4}>
           <NavItem path={"/admin"} label={"Admin Center"} />
         </Box>
@@ -52,39 +31,11 @@ export default function User() {
           <Avatar.Image src={user.avatar}></Avatar.Image>
         </Avatar.Root>
 
-        <Menu.Root>
-          <Menu.Trigger asChild _hover={{ cursor: "pointer", scale: 1.1 }}>
-            <Button
-              unstyled
-              display={"flex"}
-              alignItems={"end"}
-              size={"sm"}
-              variant={"ghost"}
-            >
-              <Heading fontWeight={"semibold"} fontSize={"2xl"}>
-                {user.userName}
-              </Heading>
-              <Icon size={"lg"}>
-                <FaAngleDown />
-              </Icon>
-            </Button>
-          </Menu.Trigger>
-          <Menu.Positioner>
-            <Menu.Content>
-              {userRoutes.pages.map(({ path, label }) => (
-                <Menu.Item value={label}>
-                  <NavLink to={basePath + path}>{label}</NavLink>
-                </Menu.Item>
-              ))}
-
-              <Menu.Item color={"fg.error"} value="logout" asChild>
-                <Button cursor={"pointer"} unstyled onClick={logout}>
-                  Log Out
-                </Button>
-              </Menu.Item>
-            </Menu.Content>
-          </Menu.Positioner>
-        </Menu.Root>
+        {isMobile ? (
+          <NavLink to={"user/profile"}>{user.userName}</NavLink>
+        ) : (
+          <UserMenu userName={user.userName} logout={logout} />
+        )}
       </Flex>
     </Stack>
   );
