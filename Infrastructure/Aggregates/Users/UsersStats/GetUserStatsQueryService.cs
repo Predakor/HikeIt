@@ -5,7 +5,7 @@ using Application.Users.Stats;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Common.Utils;
-using Domain.Peaks;
+using Domain.Trips;
 using Domain.Users;
 using Domain.Users.RegionProgresses;
 using Infrastructure.Data;
@@ -16,8 +16,8 @@ namespace Infrastructure.Aggregates.Users.UsersStats;
 internal class UserQueryService : IUserQueryService {
     readonly TripDbContext _dbContext;
     readonly IRegionQueryService _regionQueries;
-    IQueryable<Peak> Peaks => _dbContext.Peaks.AsNoTracking();
     IQueryable<User> Users => _dbContext.Users.AsNoTracking();
+    IQueryable<Trip> Trips => _dbContext.Trips.AsNoTracking();
 
     IQueryable<RegionProgress> RegionProgresses => _dbContext.Set<RegionProgress>().AsNoTracking();
 
@@ -61,15 +61,12 @@ internal class UserQueryService : IUserQueryService {
             .Where(rp => rp.UserId == userId && rp.RegionId == RegionId)
             .FirstOrDefaultAsync();
 
-
         if (region is null) {
             return Errors.NotFound("region");
         }
 
-
-
-        var peaksWithReachStatus = region.Peaks
-            .Select(p => p.ToPeakDtoWithReachStatus(p.WasReached(regionSummary)))
+        var peaksWithReachStatus = region
+            .Peaks.Select(p => p.ToPeakDtoWithReachStatus(p.WasReached(regionSummary)))
             .ToArray();
 
         var highestPeak = region.Peaks.MaxBy(p => p.Height)!;
@@ -104,7 +101,10 @@ static class Extentions {
         return regionSummary.PeakVisits.ContainsKey(peak.Id);
     }
 
-    public static PeakDto.WithReachStatus ToPeakDtoWithReachStatus(this PeakDto.Base peak, bool reached) {
+    public static PeakDto.WithReachStatus ToPeakDtoWithReachStatus(
+        this PeakDto.Base peak,
+        bool reached
+    ) {
         return new(peak.Id, peak.Name, peak.Height, reached);
     }
 }

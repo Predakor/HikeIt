@@ -7,3 +7,5 @@ export interface Trip {
 
   regionID: number; // Required int
 }
+
+export type ResourceUrl = string;

@@ -19,15 +19,15 @@ public class TripsController : ControllerBase {
     readonly IAuthService _authService;
     readonly ITripService _tripService;
     readonly IGpxFileService _fileService;
-    readonly ITripAnalyticUnitOfWork _unitOfWork;
     readonly ITripQueryService _queryService;
+    readonly ITripAnalyticUnitOfWork _unitOfWork;
 
     public TripsController(
         ITripService service,
-        IGpxFileService fileService,
         IAuthService authService,
-        ITripAnalyticUnitOfWork unitOfWork,
-        ITripQueryService queryService
+        IGpxFileService fileService,
+        ITripQueryService queryService,
+        ITripAnalyticUnitOfWork unitOfWork
     ) {
         _tripService = service;
         _fileService = fileService;
@@ -36,7 +36,13 @@ public class TripsController : ControllerBase {
         _queryService = queryService;
     }
 
-
+    [HttpGet("{tripId}")]
+    public async Task<IActionResult> Get(Guid tripId) {
+        return await _authService
+            .WithLoggedUserId()
+            .BindAsync(userId => _queryService.GetWithBasicAnalytics(tripId, userId))
+            .ToActionResultAsync();
+    }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Create newTrip) {

@@ -5,15 +5,12 @@ using Domain.Trips.Entities.GpxFiles;
 
 namespace Application.Dto;
 
-/// <summary>
-/// Core trip properties shared by all trip DTOs.
-/// </summary>
 public record TripBase(string Name, DateOnly TripDay);
 public abstract record TripDto(TripBase Base) {
 
     public record Summary(Guid Id, string Name, DateOnly TripDay, Region Region);
 
-    public record WithBasicAnalytics(Summary Summary, TripAnalyticsDto.Basic Analytics);
+    public record WithBasicAnalytics(Guid Id, string Name, DateOnly TripDay, TripAnalyticsDto.Basic Analytics);
 
     public record Partial(
         Guid Id,

@@ -1,5 +1,5 @@
 import api from "@/Utils/Api/apiRequest";
-import type { ChartData } from "../_graph_types";
+import type { ChartData } from "../grap.types";
 import type { ElevationProfileConfig } from "./DevPreview";
 
 function useChartPreview(id: any, onSucces: (data: ChartData) => void) {

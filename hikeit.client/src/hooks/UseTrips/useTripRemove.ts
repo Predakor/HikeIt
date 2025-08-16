@@ -1,8 +1,8 @@
-import apiClient from "@/Utils/Api/ApiClient";
+import api from "@/Utils/Api/apiRequest";
+import type { TripDto } from "@/types/ApiTypes/TripDtos";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { basePath } from "./useTrips";
-import type { TripDto } from "@/types/ApiTypes/TripDtos";
 
 export function useTripRemove() {
   const queryClient = useQueryClient();
@@ -10,12 +10,10 @@ export function useTripRemove() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const tryDelete = await apiClient(basePath + "/" + id, {
-        method: "DELETE",
-      });
+      const response = await api.deleteR(`trips/${id}`);
 
       //returns null in case of succes
-      if (tryDelete === null) {
+      if (response === null) {
         return id;
       }
     },

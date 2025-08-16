@@ -1,19 +1,21 @@
-import TripDetails from "@/components/Trip/TripDetails/TripDetails";
+import TripDetailsHeader from "@/components/Trip/TripDetails/TripDetailsHeader";
+import { TripDetailsMenu } from "@/components/Trip/TripDetails/TripDetailsMenu/TripDetailsTabs";
 import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
-import { useTrip } from "@/hooks/UseTrips/useTrips";
-import { Spinner } from "@chakra-ui/react";
-import { useParams } from "react-router";
+import { useTrip } from "@/hooks/UseTrips/useTrip";
+import { Spinner, Stack, VStack } from "@chakra-ui/react";
 
 export default function TripDetailsPage() {
-  const { tripId } = useParams();
-
-  const getTripDetails = useTrip(tripId!);
-
+  const getTripDetails = useTrip();
   return (
-    <FetchWrapper
-      request={getTripDetails}
-      LoadingComponent={Spinner}
-      Component={TripDetails}
-    />
+    <FetchWrapper request={getTripDetails} LoadingComponent={Spinner}>
+      {(data) => (
+        <VStack alignItems={"start"} gap={8}>
+          <TripDetailsHeader trip={data} />
+          <Stack w={"full"} justifyItems={"center"} gap={8}>
+            <TripDetailsMenu data={data.analytics} />
+          </Stack>
+        </VStack>
+      )}
+    </FetchWrapper>
   );
 }

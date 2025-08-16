@@ -1,33 +1,32 @@
-import apiClient from "@/Utils/Api/ApiClient";
 import { formatDate } from "@/Utils/Formatters";
-import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import PageTitle from "@/components/Titles/PageTitle";
+import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import { useTripRemove } from "@/hooks/UseTrips/useTripRemove";
-import type { TripDto } from "@/types/ApiTypes/TripDtos";
-import { Button, Flex, Heading, Skeleton } from "@chakra-ui/react";
-import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import type { TripWithBasicAnalytics } from "@/types/ApiTypes/TripDtos";
+import { Button, Flex, Heading } from "@chakra-ui/react";
 
 interface Props {
-  id: string;
+  trip: TripWithBasicAnalytics;
 }
 
-function TripDetailsHeader({ id }: Props) {
+export default function TripDetailsHeader({ trip }: Props) {
   const deleteTrip = useTripRemove();
-
-  const baseInfo = useQuery<TripDto>({
-    queryKey: ["trip-base", id],
-    queryFn: () => apiClient<TripDto>(`trips/${id}/`),
-    staleTime: 1000 * 60 * 30,
-  });
 
   return (
     <Flex alignItems={"center"} width={"full"} gapX={4}>
       <GoBackButton />
       <Flex flexGrow={1} alignItems={"center"} gapX={8}>
-        <TripName data={baseInfo} />
+        <PageTitle title={trip.name} />
+        <Heading
+          display={{ base: "none", lg: "block" }}
+          color={"fg.muted"}
+          size={{ base: "xl", lg: "2xl" }}
+        >
+          {formatDate.toUkDate(trip.tripDay)}
+        </Heading>
       </Flex>
       <Button
-        onClick={() => deleteTrip.mutate(id)}
+        onClick={() => deleteTrip.mutate(trip.id)}
         colorPalette={"red"}
         variant={"solid"}
       >
@@ -36,30 +35,3 @@ function TripDetailsHeader({ id }: Props) {
     </Flex>
   );
 }
-
-function TripName({ data: request }: { data: UseQueryResult<TripDto> }) {
-  if (request.isLoading) {
-    return <Skeleton width={"full"} height={12}></Skeleton>;
-  }
-
-  if (!request.data) {
-    return;
-  }
-
-  const data = request.data.base;
-
-  return (
-    <>
-      <PageTitle title={data.name} />
-      <Heading
-        display={{ base: "none", lg: "block" }}
-        color={"fg.muted"}
-        size={{ base: "xl", lg: "2xl" }}
-      >
-        {formatDate.toUkDate(data.tripDay)}
-      </Heading>
-    </>
-  );
-}
-
-export default TripDetailsHeader;

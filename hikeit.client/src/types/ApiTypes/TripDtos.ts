@@ -3,7 +3,12 @@ import type {
   ReachedPeak,
 } from "@/components/AddFile/AddFile/tripTypes";
 import type { HTMLInputTypeAttribute } from "react";
-import type { TripAnalytic } from "./Analytics";
+import type {
+  BasicAnalytics,
+  RouteAnalytic,
+  TimeAnalytic,
+  TripAnalytic,
+} from "./Analytics";
 
 export interface TripDto {
   id: string;
@@ -28,6 +33,13 @@ export interface TripSummary {
 }
 
 export type TripSummaries = TripSummary[];
+
+export interface TripWithBasicAnalytics {
+  id: string;
+  name: string;
+  tripDay: string;
+  analytics: BasicAnalytics;
+}
 
 export interface TripDtoFull extends TripDto {
   trackAnalytic: TripAnalytic | null;

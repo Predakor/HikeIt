@@ -8,7 +8,7 @@ export default function UseRegionProgress() {
 
   const request = useQuery<RegionProgressFull>({
     queryKey: ["regionProgress", regionId],
-    queryFn: () => api.get<RegionProgressFull>(`users/regions/${regionId}`),
+    queryFn: () => api.get<RegionProgressFull>(`users/me/regions/${regionId}`),
     enabled: !!regionId,
   });
 

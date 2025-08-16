@@ -15,30 +15,34 @@ function RegionsPage() {
 
   return (
     <Stack gap={8}>
-      <FetchWrapper request={regionsSummaries} LoadingComponent={SkeletonGrid}>
-        {([progressedRegions, unprogressedRegions]) => (
-          <SimpleGrid
-            alignItems={"stretch"}
-            justifyItems={"stretch"}
-            minChildWidth={{ base: "full", lg: "sm" }}
-            gap={8}
-          >
-            <Show when={progressedRegions.length}>
-              <GridItem colSpan={4}>
-                <PageTitle title="Visited Regions" />
-              </GridItem>
-              <RegionSummaries summaries={progressedRegions} />
-            </Show>
-
-            <Show when={unprogressedRegions.length}>
-              <GridItem colSpan={4}>
-                <PageTitle title="Unvisited Regions" />
-              </GridItem>
-              <UnprogressedRegions regions={unprogressedRegions} />
-            </Show>
-          </SimpleGrid>
-        )}
-      </FetchWrapper>
+      <SimpleGrid
+        alignItems={"stretch"}
+        justifyItems={"stretch"}
+        minChildWidth={{ base: "full", lg: "sm" }}
+        gap={8}
+      >
+        <FetchWrapper
+          request={regionsSummaries}
+          LoadingComponent={SkeletonGrid}
+        >
+          {([progressedRegions, unprogressedRegions]) => (
+            <>
+              <Show when={progressedRegions.length}>
+                <GridItem colSpan={4}>
+                  <PageTitle title="Visited Regions" />
+                </GridItem>
+                <RegionSummaries summaries={progressedRegions} />
+              </Show>
+              <Show when={unprogressedRegions.length}>
+                <GridItem colSpan={4}>
+                  <PageTitle title="Unvisited Regions" />
+                </GridItem>
+                <UnprogressedRegions regions={unprogressedRegions} />
+              </Show>
+            </>
+          )}
+        </FetchWrapper>
+      </SimpleGrid>
     </Stack>
   );
 }

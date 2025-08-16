@@ -14,6 +14,10 @@ public class TripAnalytic : IEntity<Guid> {
     public TimeAnalytic? TimeAnalytics { get; private set; }
     #endregion
 
+
+    public Guid PeaksAnalyticsId { get; private set; }
+    public Guid ElevationProfileId { get; private set; }
+
     //navigation
     public PeaksAnalytic? PeaksAnalytic { get; set; }
     public ElevationProfile? ElevationProfile { get; set; }
@@ -31,24 +35,27 @@ public class TripAnalytic : IEntity<Guid> {
             TimeAnalytics = timeAnalytics,
         };
 
-        if (peaksAnalytics != null) {
+        if (peaksAnalytics is not null) {
             analytics.AddPeaksAnalytic(peaksAnalytics);
         }
 
-        if (elevationProfile != null) {
+        if (elevationProfile is not null) {
             analytics.AddElevationProfile(elevationProfile);
         }
+
         return analytics;
     }
 
     public void AddPeaksAnalytic(PeaksAnalytic analytics) {
         ArgumentNullException.ThrowIfNull(analytics);
         PeaksAnalytic = analytics;
+        PeaksAnalyticsId = Id;
     }
 
     public void AddElevationProfile(ElevationProfile profile) {
         ArgumentNullException.ThrowIfNull(profile);
         ElevationProfile = profile;
+        ElevationProfileId = Id;
     }
 
     public void AddTimeAnalytics(TimeAnalytic analytics) {

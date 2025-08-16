@@ -3,25 +3,15 @@ import type { TripDtoFull, TripSummaries } from "@/types/ApiTypes/TripDtos";
 import { useQuery } from "@tanstack/react-query";
 
 const staleTime = 1000 * 60 * 30;
-export const basePath = "trips";
+export const basePath = "users/me/trips";
 
 export const tripConfig = {
   baseKey: basePath,
   queryKey: (id?: string) => [basePath, id],
-  fetchTrip: (id: string) =>
-    apiClient<TripDtoFull>(`${basePath}/${id}/analytics`),
+  fetchTrip: (id: string) => apiClient<TripDtoFull>(`trips/${id}/analytics`),
 
   fetchTrips: () => apiClient<TripSummaries>(`${basePath}/`),
 };
-
-export function useTrip(tripId: string) {
-  return useQuery<TripDtoFull>({
-    queryKey: tripConfig.queryKey(tripId),
-    queryFn: () => tripConfig.fetchTrip(tripId),
-    enabled: !!tripId,
-    staleTime: staleTime,
-  });
-}
 
 export function useTrips() {
   return useQuery<TripSummaries>({

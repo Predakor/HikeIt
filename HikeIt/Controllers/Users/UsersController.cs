@@ -1,5 +1,7 @@
 ﻿using Api.Extentions;
+using Application.Dto;
 using Application.Services.Auth;
+using Application.Trips.Queries;
 using Application.Users;
 using Application.Users.Stats;
 using Domain.Common.Result;
@@ -15,15 +17,18 @@ public class UsersController : ControllerBase {
     readonly IUserService _userService;
     readonly IAuthService _authService;
     readonly IUserQueryService _userQueries;
+    readonly ITripQueryService _tripQueries;
 
     public UsersController(
         IUserService service,
         IAuthService authService,
-        IUserQueryService userQueries
+        IUserQueryService userQueries,
+        ITripQueryService tripQueries
     ) {
         _userService = service;
         _authService = authService;
         _userQueries = userQueries;
+        _tripQueries = tripQueries;
     }
 
     [HttpGet]
@@ -45,26 +50,23 @@ public class UsersController : ControllerBase {
             .ToActionResultAsync();
     }
 
+    [HttpGet("trips")]
+    [ProducesResponseType(typeof(List<TripDto.Summary>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll() {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(user => _tripQueries.GetAllAsync(user.Id))
+            .ToActionResultAsync();
+    }
 
-
-    //[HttpGet]
-    //[ProducesResponseType(typeof(List<TripDto.Summary>), StatusCodes.Status200OK)]
-    //public async Task<IActionResult> GetAll() {
-    //    return await _authService
-    //        .WithLoggedUser()
-    //        .BindAsync(user => _queryService.GetAllAsync(user.Id))
-    //        .ToActionResultAsync();
-    //}
-
-    //[HttpGet("{id}")]
-    //[ProducesResponseType(typeof(TripDto.WithBasicAnalytics), StatusCodes.Status200OK)]
-    //public async Task<IActionResult> GetById(Guid id) {
-    //    return await _authService
-    //        .WithLoggedUser()
-    //        .BindAsync(user => _queryService.GetByIdAsync(id, user.Id))
-    //        .ToActionResultAsync();
-    //}
-
+    [HttpGet("trips/{id}")]
+    [ProducesResponseType(typeof(TripDto.WithBasicAnalytics), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetById(Guid id) {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(user => _tripQueries.GetByIdAsync(id, user.Id))
+            .ToActionResultAsync();
+    }
 
     [HttpGet("regions")]
     public async Task<IActionResult> GetRegionsSummary() {

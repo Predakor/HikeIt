@@ -16,7 +16,7 @@ function UseRegionsProgressions() {
 
   const summariesQuery = useQuery<RegionProgressSummary[]>({
     queryKey: ["region-summaries"],
-    queryFn: () => apiClient<RegionProgressSummary[]>("users/regions"),
+    queryFn: () => apiClient<RegionProgressSummary[]>("users/me/regions"),
   });
 
   const { data: regions, isSuccess: regionsLoaded } = regionsQuery;

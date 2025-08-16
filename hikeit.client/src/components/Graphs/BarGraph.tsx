@@ -1,16 +1,19 @@
-import { BarSegment, useChart, type UseChartProps } from "@chakra-ui/charts";
-import type { SystemStyleObject } from "@chakra-ui/react";
+import {
+  BarSegment,
+  useChart,
+  type BarSegmentBarProps,
+  type UseChartProps,
+} from "@chakra-ui/charts";
 
-export interface ChartProps {
+export interface ChartProps extends BarSegmentBarProps {
   chartConfig: UseChartProps<any>;
-  styleProps?: SystemStyleObject;
 }
 
-function BarGraph({ chartConfig, styleProps }: ChartProps) {
+function BarGraph({ chartConfig, ...rest }: ChartProps) {
   const chart = useChart(chartConfig);
 
   return (
-    <BarSegment.Root {...(styleProps as any)} chart={chart}>
+    <BarSegment.Root {...rest} chart={chart}>
       <BarSegment.Content>
         <BarSegment.Value />
         <BarSegment.Bar />

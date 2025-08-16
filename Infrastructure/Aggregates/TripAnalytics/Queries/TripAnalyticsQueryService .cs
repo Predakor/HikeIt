@@ -40,14 +40,7 @@ public class TripAnalyticsQueryService : ITripAnalyticsQueryService {
 
         var dto = await Analytics
             .Where(t => t.Id == tripId)
-            .Select(t => new Basic(
-                t.RouteAnalytics,
-                t.TimeAnalytics,
-                t.PeaksAnalytic != null ? new Uri($"{basePath}/peaks", UriKind.Relative) : null,
-                t.ElevationProfile != null
-                    ? new Uri($"{basePath}/elevation", UriKind.Relative)
-                    : null
-            ))
+            .Select(t => t.ToBasicDto())
             .FirstOrDefaultAsync();
 
         if (dto is null) {
@@ -83,4 +76,7 @@ public class TripAnalyticsQueryService : ITripAnalyticsQueryService {
 
         return new Full(routeAnalyticsDto, timeAnalyticDto, peakAnalyticDto, elevationDto, data.Id);
     }
+
+
+
 }

@@ -1,6 +1,6 @@
 import type { GpxEntry } from "@/types/ApiTypes/GpxTypes";
 import { GenerateChartData } from "../GenerateChartData";
-import type { GainDto, GpxGainPoint } from "../_graph_types";
+import type { GainDto, GpxGainPoint } from "../grap.types";
 
 export interface GpxGainPointWithPreview extends GpxGainPoint {
   previewEle?: number;

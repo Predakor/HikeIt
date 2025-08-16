@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Dto\NewFolder\" />
     <Folder Include="TripAnalytics\RouteAnalytic\" />
     <Folder Include="TripAnalytics\TimeAnalytic\" />
   </ItemGroup>

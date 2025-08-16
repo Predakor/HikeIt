@@ -1,5 +1,5 @@
 import type { GpxEntry } from "@/types/ApiTypes/GpxTypes";
-import type { GainDto, GpxGainPoint } from "./_graph_types";
+import type { GainDto, GpxGainPoint } from "./grap.types";
 
 export function GenerateChartData(gains: GainDto[], start: GpxEntry) {
   if (!gains || !start) {
@@ -27,14 +27,16 @@ export function GenerateChartData(gains: GainDto[], start: GpxEntry) {
     ele += curr.ele;
     time += curr?.time || 0;
 
+    const slope = (curr.dist > 0 ? curr.ele / curr.dist : 0) * 100;
     const current: GpxGainPoint = {
-      dist: dist,
+      dist: Math.round(dist),
       ele: ele,
-      slope: dist > 0 ? ele / dist : 0,
+      slope: Math.abs(Math.round(slope)),
       time: time,
     };
 
     chartPoints[i + 1] = current;
   }
+
   return chartPoints;
 }

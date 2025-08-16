@@ -72,11 +72,25 @@ const put = async <T>(
     : resolveApiResponse(request);
 };
 
+const deleteR = async <T>(
+  path: string,
+  params?: Record<string, any>,
+  responseResolver?: ResponseResolver<T>
+): Promise<T> => {
+  const query = params ? `?${toQueryString(params)}` : "";
+  const request = await apiRequest(path + query, { method: "DELETE" });
+
+  return responseResolver
+    ? responseResolver(request)
+    : resolveApiResponse(request);
+};
+
 const api = {
   get,
   post,
   patch,
   put,
+  deleteR,
 } as const;
 
 export default api;

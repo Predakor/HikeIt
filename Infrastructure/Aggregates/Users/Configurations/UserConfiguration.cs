@@ -24,8 +24,8 @@ internal class UserConfiguration : IEntityTypeConfiguration<User> {
             .WithOne(t => t.User)
             .HasForeignKey(t => t.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-        builder
 
+        builder
             .HasOne(u => u.Rank)
             .WithMany()
             .HasForeignKey(u => u.RankId)

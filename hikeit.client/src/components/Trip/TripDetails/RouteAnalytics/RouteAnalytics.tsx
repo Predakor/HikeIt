@@ -9,6 +9,8 @@ import { SimpleGrid } from "@chakra-ui/react";
 
 export default function RouteAnalytics({ data }: { data: TripAnalytic }) {
   const entries = ObjectToArray(data);
+  console.log(data);
+
   return (
     <SimpleGrid columns={{ base: 1, lg: 3 }} gapY={8}>
       {entries.map(([name, value]) => (

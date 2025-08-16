@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Dto.Analytics;
 using Application.Trips.Queries;
 using Domain.Common;
 using Domain.Common.Result;
@@ -16,15 +17,24 @@ public class TripQueryService : ITripQueryService {
         _context = context;
     }
 
-    public Task<Result<TripDto.WithBasicAnalytics>> GetWithBasicAnalytics(Guid id, Guid userId) {
-        throw new NotImplementedException();
+    public async Task<Result<TripDto.WithBasicAnalytics>> GetWithBasicAnalytics(
+        Guid id,
+        Guid userId
+    ) {
+        var trip = await Trips
+            .Include(t => t.Analytics)
+            .Where(t => t.Id == id && t.UserId == userId)
+            .FirstOrDefaultAsync();
+
+        if (trip is null) {
+            return Errors.NotFound("trip", id);
+        }
+
+        return trip.ToWithBasicAnalyticsDto();
     }
 
     public async Task<Result<List<TripDto.Summary>>> GetAllAsync(Guid userId) {
-        var trips = await Trips
-            .Where(t => t.UserId == userId)
-            .Include(t => t.Region)
-            .ToListAsync();
+        var trips = await Trips.Where(t => t.UserId == userId).Include(t => t.Region).ToListAsync();
 
         if (trips.Count == 0)
             return Errors.EmptyCollection("user has no trips");
@@ -33,9 +43,7 @@ public class TripQueryService : ITripQueryService {
     }
 
     public async Task<Result<TripDto.Partial>> GetByIdAsync(Guid id, Guid userId) {
-        var query = await Trips
-            .Where(t => t.UserId == userId)
-            .FirstOrDefaultAsync(t => t.Id == id);
+        var query = await Trips.Where(t => t.UserId == userId).FirstOrDefaultAsync(t => t.Id == id);
 
         if (query == null) {
             return Errors.NotFound("trip with id:" + id);
@@ -48,6 +56,14 @@ public class TripQueryService : ITripQueryService {
 static class Helpers {
     public static TripDto.Summary ToSummaryDto(this Trip trip) {
         return new(trip.Id, trip.Name, trip.TripDay, trip.Region);
+    }
+
+    public static TripDto.WithBasicAnalytics ToWithBasicAnalyticsDto(this Trip trip) {
+        if (trip.Analytics is null) {
+            throw new Exception("trip has no analytics");
+        }
+
+        return new(trip.Id, trip.Name, trip.TripDay, trip.Analytics.ToBasicDto());
     }
 
     public static TripDto.Request.ResponseBasic ToBasicDto(this Trip trip) {

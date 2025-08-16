@@ -1,3 +1,5 @@
+import type { GpxEntry } from "@/types/ApiTypes/GpxTypes";
+
 export interface ChartData {
   start: GpxEntry;
   gains: GainDto[];

@@ -7,17 +7,11 @@ interface Props {
 
 function SkeletonGrid({ amount = 8, height = 200 }: Props) {
   return (
-    <SimpleGrid
-      columns={{ base: 1, lg: 4 }}
-      alignItems={"stretch"}
-      justifyItems={"stretch"}
-      minChildWidth={{ base: "full", lg: "sm" }}
-      gap={8}
-    >
+    <>
       {Array.from({ length: amount }).map((_, i) => (
         <Skeleton key={i} height={`${height}px`} />
       ))}
-    </SimpleGrid>
+    </>
   );
 }
 export default SkeletonGrid;

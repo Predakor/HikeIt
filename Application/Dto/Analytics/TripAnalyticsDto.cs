@@ -1,4 +1,6 @@
-﻿using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
+﻿using Application.Commons;
+using Domain.TripAnalytics;
+using Domain.TripAnalytics.ValueObjects.RouteAnalytics;
 using Domain.TripAnalytics.ValueObjects.TimeAnalytics;
 
 namespace Application.Dto.Analytics;
@@ -13,12 +15,8 @@ public abstract record TripAnalyticsDto {
         Uri? ElevationProfile
     ) : TripAnalyticsDto;
 
-    public record Basic(
-        RouteAnalytic RouteAnalytics,
-        TimeAnalytic? TimeAnalytics,
-        Uri? Peaks,
-        Uri? ElevationProfile
-    ) : TripAnalyticsDto;
+    public record Basic(RouteAnalytic Route, TimeAnalytic? Time, Uri? Peaks, Uri? Elevation)
+        : TripAnalyticsDto;
 
     public record Full(
         RouteAnalytic RouteAnalytics,
@@ -27,4 +25,15 @@ public abstract record TripAnalyticsDto {
         ElevationProfileDto? ElevationProfile,
         Guid Id
     ) : TripAnalyticsDto;
+}
+
+public static class Extentions {
+    public static TripAnalyticsDto.Basic ToBasicDto(this TripAnalytic analytics) {
+        return new(
+            analytics.RouteAnalytics,
+            analytics.TimeAnalytics,
+            analytics.PeaksAnalyticsId.ToResoutceUrl(id => $"trips/{id}/analytics/peaks"),
+            analytics.ElevationProfileId.ToResoutceUrl(id => $"trips/{id}/analytics/elevation")
+        );
+    }
 }

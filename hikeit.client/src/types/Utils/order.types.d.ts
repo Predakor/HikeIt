@@ -10,7 +10,7 @@ type EntryType<TFor> =
   | EntryItem<keyof TFor, TFor>
   | EntryGroup<keyof TFor, TFor>;
 
-export type TabConfig<TFor extends object> = EntryType<TFor>[];
+export type TabConfig<TFor extends object> = EntryItem<keyof TFor, TFor>[];
 
 interface EntryItem<TKey, TFor> {
   type?: "item";

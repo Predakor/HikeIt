@@ -5,7 +5,7 @@ import { PrimaryButton, SecondaryButton } from "@/components/ui/Buttons";
 import { Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
-import type { ChartData } from "../_graph_types";
+import type { ChartData } from "../grap.types";
 import useChartPreview from "./useChartPreview";
 
 export type ElevationProfileConfig = {

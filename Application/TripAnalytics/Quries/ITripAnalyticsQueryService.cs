@@ -8,5 +8,4 @@ public interface ITripAnalyticsQueryService : IQueryService {
     Task<Result<TripAnalyticsDto.Basic>> GetBasicAnalytics(Guid tripId);
     Task<Result<TripAnalyticsDto.Full>> GetCompleteAnalytics(Guid id);
     Task<Result<PeakAnalyticsDto>> GetPeakAnalytics(Guid id);
-
 }

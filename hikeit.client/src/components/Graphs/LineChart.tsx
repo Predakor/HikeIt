@@ -35,7 +35,6 @@ function ElevationChart({ chartConfig, ...rest }: ChartProps) {
           tickLine={false}
           tickMargin={10}
           dataKey={chart.key("ele")}
-          stroke={chart.color("blue")}
         />
         <Tooltip
           animationDuration={100}

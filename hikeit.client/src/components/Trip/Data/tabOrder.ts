@@ -1,21 +1,11 @@
+import type { BasicAnalytics } from "@/types/ApiTypes/Analytics";
 import type { TabConfig } from "@/types/Utils/order.types";
-import { ELevationGraph } from "../TripDetails/lazy";
-import { RouteAnalytics, TimeAnalytics, PeaksAnalytics } from "../TripDetails";
-import type { TripAnalytic } from "@/types/ApiTypes/Analytics";
-import type { TripDtoFull } from "@/types/ApiTypes/TripDtos";
+import { PeaksAnalytics, RouteAnalytics, TimeAnalytics } from "../TripDetails";
+import TripGrap from "../TripDetails/TripGraph/TripGrap";
 
-export const tripAnalyticTabs: TabConfig<TripAnalytic> = [
-  { key: "routeAnalytics", label: "", Component: RouteAnalytics },
-  { key: "timeAnalytics", label: "", Component: TimeAnalytics },
-  { key: "peakAnalytics", label: "", Component: PeaksAnalytics },
-  { key: "elevationProfile", label: "", Component: ELevationGraph },
+export const tripAnalyticTabs: TabConfig<BasicAnalytics> = [
+  { key: "route", label: "", Component: RouteAnalytics },
+  { key: "time", label: "", Component: TimeAnalytics },
+  { key: "peaks", label: "", Component: PeaksAnalytics },
+  { key: "elevation", label: "", Component: TripGrap },
 ];
-
-export const tripDetailsTabs: TabConfig<TripDtoFull> = [
-  {
-    type: "group",
-    label: "Analytics",
-    base: "trackAnalytic",
-    items: tripAnalyticTabs,
-  },
-] as const;

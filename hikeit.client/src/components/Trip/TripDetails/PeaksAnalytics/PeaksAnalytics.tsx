@@ -1,21 +1,31 @@
+import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
+import useResourceLink from "@/hooks/useResourceLink";
+import type {
+  PeakSummaryData,
+  PeaksAnalytics,
+} from "@/types/ApiTypes/Analytics";
+import type { ResourceUrl } from "@/types/ApiTypes/types";
 import { Card, Show, SimpleGrid, Stack } from "@chakra-ui/react";
 import { PeakBadge } from "../Common/PeakBadge";
 import { RankStat } from "../Common/RankStat";
 import { HighestPeak } from "./HighestPeak";
 import { PeakSummary } from "./PeakSummary";
 import ReachedPeaksList from "./ReachedPeaksList";
-import usePeakAnalytics from "./usePeakAnalytics";
-import type {
-  PeakSummaryData,
-  PeaksAnalytics,
-} from "@/types/ApiTypes/Analytics";
+import extraPeaksData from "./extraPeaksData";
 
-export default function PeaksAnalytics({ data }: { data: PeaksAnalytics }) {
-  const { peaks, highest } = usePeakAnalytics(data);
+export default function PeaksAnalytics({ data }: { data: ResourceUrl }) {
+  const getAnalytics = useResourceLink<PeaksAnalytics>(data);
+  return (
+    <FetchWrapper request={getAnalytics}>
+      {(d) => <Analytics data={d} />}
+    </FetchWrapper>
+  );
+}
 
-  console.log(data);
+function Analytics({ data }: { data: PeaksAnalytics }) {
+  const { peaks, highest } = extraPeaksData(data);
 
-  const secondarySpace = "-5 / span 4 ";
+  const secondarySpace = "-4 / span 3 ";
 
   return (
     <SimpleGrid
@@ -50,7 +60,7 @@ export default function PeaksAnalytics({ data }: { data: PeaksAnalytics }) {
         </Card.Body>
       </Card.Root>
 
-      <Card.Root gridRow={"1/6"} gridColumn={"1 / span 3"}>
+      <Card.Root gridRow={"1/6"} gridColumn={"1 / span 4"}>
         <Card.Header>
           <PeakCardTitle title={"Reached Peaks"} />
         </Card.Header>

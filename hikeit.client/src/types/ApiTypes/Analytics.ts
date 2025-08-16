@@ -7,6 +7,13 @@ export interface TripAnalytic {
   elevationProfile?: {};
 }
 
+export interface BasicAnalytics {
+  route: RouteAnalytic;
+  time?: TimeAnalytic;
+  peaks: string | null;
+  elevation: string | null;
+}
+
 export interface RouteAnalytic {
   totalDistanceKm: number;
   totalAscent: number;
