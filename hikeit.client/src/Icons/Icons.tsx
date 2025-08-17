@@ -20,9 +20,11 @@ export {
   FaArrowRight as IconArrowRight,
   FaPlus as IconPlus,
   FaEdit as IconEdit,
+  FaExternalLinkAlt as IconExternal,
 } from "react-icons/fa";
 
 export {
   FiTrendingDown as IconTrendDown,
   FiTrendingUp as IconTrendUp,
+  FiDownload as IconDownload,
 } from "react-icons/fi";

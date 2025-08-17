@@ -1,6 +1,16 @@
+import { IconDownload, IconExternal } from "@/Icons/Icons";
+import api from "@/Utils/Api/apiRequest";
 import DropFile from "@/components/AddFile/AddFile/DropFile";
 import Divider from "@/components/Divider/Divider";
-import { Button, Card, Field, SimpleGrid } from "@chakra-ui/react";
+import { apiPath } from "@/data/apiPaths";
+import {
+  Button,
+  Card,
+  Field,
+  Link,
+  LinkOverlay,
+  SimpleGrid,
+} from "@chakra-ui/react";
 import type { ReactElement } from "react";
 
 const fileOptionDescription = `
@@ -13,10 +23,13 @@ const noFileOptionDescription = `
     Generate a file in the external website
     Get a test file from us
 `;
+const createRouteLink =
+  'https://mapy.com/pl/zakladni?planovani-trasy&rc=9ih2.xaeREiNLxaPgM&rs=osm&rs=osm&ri=1194918506&ri=6622983&mrp=%7B"c"%3A132%2C"dt"%3A""%2C"d"%3Atrue%7D&xc=%5B%5D&rwp=1%3B9ihK1xadhCe.seqLgshdXkYBcrzh0meSlgyXegWIOeU9gYueCc&x=15.2748531&y=50.8276675&z=12';
 
 interface Props {
   fileChangeHandler: (file: File) => void;
 }
+
 function AddTripInfo({ fileChangeHandler }: Props) {
   return (
     <SimpleGrid
@@ -35,14 +48,27 @@ function AddTripInfo({ fileChangeHandler }: Props) {
         description={noFileOptionDescription}
       >
         <SimpleGrid templateColumns={"1fr 1fr"} gap={4}>
-          <Button colorPalette={"blue"} size={"2xl"}>
+          <Button colorPalette={"blue"} size={"2xl"} disabled>
             Manual Creation
           </Button>
           <Button colorPalette={"blue"} size={"2xl"}>
+            <LinkOverlay asChild href={apiPath + "files/demo/trip"}>
+              <Link unstyled />
+            </LinkOverlay>
             Use preview file
+            <IconDownload />
           </Button>
           <Button colorPalette={"green"} gridColumn={"1 / span 2"} size={"2xl"}>
+            <LinkOverlay
+              asChild
+              href={createRouteLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Link unstyled />
+            </LinkOverlay>
             Generate route in external website
+            <IconExternal />
           </Button>
         </SimpleGrid>
       </OptionCard>
