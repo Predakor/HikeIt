@@ -1,4 +1,3 @@
-import SubTitle from "@/components/Titles/SubTitle";
 import { Dialog as ChakraDialog, type DialogRootProps } from "@chakra-ui/react";
 import { CloseModal } from "./Common/CloseModal";
 import { DialogTitle } from "./Common/DialogTitle";

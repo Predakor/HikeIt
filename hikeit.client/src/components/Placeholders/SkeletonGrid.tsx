@@ -1,4 +1,4 @@
-import { SimpleGrid, Skeleton } from "@chakra-ui/react";
+import { Skeleton } from "@chakra-ui/react";
 
 interface Props {
   height?: number;

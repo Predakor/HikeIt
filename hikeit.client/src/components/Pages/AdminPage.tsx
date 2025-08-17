@@ -1,5 +1,5 @@
 import IsAdminUser from "@/Utils/IsAdminUser";
-import { useAdminUser } from "@/hooks/User/useUser";
+import useUser from "@/hooks/Auth/useUser";
 import { Center, Flex, Spacer, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import PageTitle from "../Titles/PageTitle";
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function AdminPage(props: Props) {
-  const getUser = useAdminUser();
+  const getUser = useUser();
 
   return (
     <FetchWrapper request={getUser}>

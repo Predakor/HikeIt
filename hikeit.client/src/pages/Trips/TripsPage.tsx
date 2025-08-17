@@ -5,12 +5,13 @@ import NoTrips from "@/components/Trips/NoTrips";
 import RenderTripCards from "@/components/Trips/RenderTripCards";
 import FetchWrapper from "@/components/Wrappers/Fetching";
 import { useTrips } from "@/hooks/UseTrips/useTrips";
+import usePagePreload from "@/hooks/Utils/usePagePreload";
 import { Button, SimpleGrid, Spacer, Stack } from "@chakra-ui/react";
 import { Link } from "react-router";
 
 function TripsPage() {
   const getTrips = useTrips();
-
+  usePagePreload("/trips/add");
   return (
     <Stack gap={10}>
       <Stack direction={"row"} placeItems={"baseline"} gap={8}>

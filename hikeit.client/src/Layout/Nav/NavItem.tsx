@@ -32,9 +32,8 @@ export function NavItem({ path, label, options = defaultOptions }: Props) {
     }
   }, []);
 
-  const handlePreload = () => {
-    return options?.preload === "onHover" ? preload(path) : undefined;
-  };
+  const preloadOnHover = options?.preload === "onHover";
+  const handlePreload = preloadOnHover ? () => preload(path) : undefined;
 
   return (
     <LinkBox onMouseEnter={handlePreload} fontSize={"inherit"} asChild>
