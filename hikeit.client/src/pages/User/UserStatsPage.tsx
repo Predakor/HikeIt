@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 export default function UserStatsPage() {
   const stats = useQuery<UserStats>({
     queryKey: ["user-stats"],
-    queryFn: () => api.get<UserStats>("users/stats"),
+    queryFn: () => api.get<UserStats>("users/me/stats"),
     staleTime: 1000 * 60 * 60,
   });
 

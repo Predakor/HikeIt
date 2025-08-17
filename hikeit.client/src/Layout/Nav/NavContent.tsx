@@ -10,7 +10,12 @@ export default function NavContent() {
     <>
       <For each={visibleRoutes}>
         {(route) => (
-          <NavItem path={route.path} label={route.label} key={route.path} />
+          <NavItem
+            path={route.path}
+            label={route.label}
+            key={route.path}
+            options={{ preload: "onRender" }}
+          />
         )}
       </For>
 

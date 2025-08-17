@@ -1,8 +1,8 @@
-import type { RouteGroup } from "../routeTypes";
+import type { RouteGroup } from "../route.types";
 import AdminPages from "@/pages/Admin";
 export const adminRoutes: RouteGroup = {
   type: "group",
-  path: "admin/",
+  path: "admin",
   label: "",
   pages: [
     {

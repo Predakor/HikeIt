@@ -4,6 +4,7 @@ import UnprogressedRegion from "@/components/Regions/Card/UnprogressedRegion";
 import PageTitle from "@/components/Titles/PageTitle";
 import FetchWrapper from "@/components/Wrappers/Fetching";
 import UseRegionsProgressions from "@/hooks/Regions/UseRegionsProgressions";
+import usePagePreload from "@/hooks/Utils/usePagePreload";
 import type {
   Region,
   RegionProgressSummary,
@@ -11,6 +12,7 @@ import type {
 import { For, GridItem, Show, SimpleGrid, Stack } from "@chakra-ui/react";
 
 function RegionsPage() {
+  usePagePreload("regions/:regionId");
   const regionsSummaries = UseRegionsProgressions();
 
   return (
@@ -31,7 +33,7 @@ function RegionsPage() {
                 <GridItem colSpan={4}>
                   <PageTitle title="Visited Regions" />
                 </GridItem>
-                <RegionSummaries summaries={progressedRegions} />
+                <ProgressedRegions regions={progressedRegions} />
               </Show>
               <Show when={unprogressedRegions.length}>
                 <GridItem colSpan={4}>
@@ -47,13 +49,9 @@ function RegionsPage() {
   );
 }
 
-function RegionSummaries({
-  summaries,
-}: {
-  summaries: RegionProgressSummary[];
-}) {
+function ProgressedRegions({ regions }: { regions: RegionProgressSummary[] }) {
   return (
-    <For each={summaries}>
+    <For each={regions}>
       {(summary) => (
         <ProgressedRegion progressSummary={summary} key={summary.region.id} />
       )}

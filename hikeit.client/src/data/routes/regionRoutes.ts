@@ -1,9 +1,9 @@
-import { RegionProgression, RegionsSummaries } from "@/pages/__index";
-import type { RouteGroup } from "./routeTypes";
+import { RegionProgression, RegionsSummaries } from "@/pages";
+import type { RouteGroup } from "./route.types";
 
 export const regionRoutes: RouteGroup = {
   type: "group",
-  path: "regions/",
+  path: "regions",
   label: "",
   pages: [
     {

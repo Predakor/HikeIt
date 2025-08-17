@@ -4,8 +4,8 @@ import {
   RegionsSummaries,
   TripsPage,
   UserStatsPage,
-} from "@/pages/__index";
-import type { RouteItem } from "./routeTypes";
+} from "@/pages";
+import type { RouteItem } from "./route.types";
 
 export const navRoutes: RouteItem[] = [
   {
@@ -18,28 +18,28 @@ export const navRoutes: RouteItem[] = [
   },
   {
     type: "item",
-    path: "trips/",
+    path: "trips",
     label: "Trips",
     Page: TripsPage,
     // Icon: FaRoute,
   },
   {
     type: "item",
-    path: "/regions",
+    path: "regions",
     label: "Regions",
     Page: RegionsSummaries,
     // Icon: MapIcon,
   },
   {
     type: "item",
-    path: "/stats",
+    path: "stats",
     label: "Stats",
     Page: UserStatsPage,
     // Icon: MapIcon,
   },
   {
     type: "item",
-    path: "/badges",
+    path: "badges",
     label: "Badges",
     Page: BadgesPage,
     // Icon: BadgeIcon,

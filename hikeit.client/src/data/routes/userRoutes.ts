@@ -1,5 +1,5 @@
-import { UserProfilePage, UserSettingsPage } from "@/pages/__index";
-import type { RouteGroup } from "./routeTypes";
+import { UserProfilePage, UserSettingsPage } from "@/pages";
+import type { RouteGroup } from "./route.types";
 
 export const userRoutes: RouteGroup = {
   type: "group",

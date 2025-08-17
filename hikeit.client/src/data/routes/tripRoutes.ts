@@ -1,5 +1,5 @@
-import { TripsPage, AddTripPage, TripDetailsPage } from "@/pages/__index";
-import type { RouteGroup } from "./routeTypes";
+import { TripsPage, AddTripPage, TripDetailsPage } from "@/pages";
+import type { RouteGroup } from "./route.types";
 
 export const tripRoutes: RouteGroup = {
   type: "group",

@@ -1,3 +1,4 @@
+import usePagePreload from "@/hooks/Utils/usePagePreload";
 import type { TripSummaries } from "@/types/ApiTypes/TripDtos";
 import { For, GridItem } from "@chakra-ui/react";
 import { Fragment } from "react/jsx-runtime";
@@ -10,6 +11,7 @@ interface Props {
 }
 
 function RenderTripCards({ trips }: Props) {
+  usePagePreload("trips/:tripId");
   const groupedByYears = sortTrips(trips);
 
   return (

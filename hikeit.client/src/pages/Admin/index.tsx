@@ -1,8 +1,12 @@
-import { lazy } from "react";
+import { lazyWithPreload } from "..";
 
 export default {
-  ManageRegions: lazy(() => import("./Regions/ManageRegionsAdminPage")),
-  UpdateRegion: lazy(() => import("./Regions/UpdateRegionAdminPage")),
-  ManagePeaks: lazy(() => import("./ManagePeaksAdminPage")),
-  AdminCenter: lazy(() => import("./AdminCenterPage")),
+  ManageRegions: lazyWithPreload(
+    () => import("./Regions/ManageRegionsAdminPage")
+  ),
+  UpdateRegion: lazyWithPreload(
+    () => import("./Regions/UpdateRegionAdminPage")
+  ),
+  ManagePeaks: lazyWithPreload(() => import("./ManagePeaksAdminPage")),
+  AdminCenter: lazyWithPreload(() => import("./AdminCenterPage")),
 };
