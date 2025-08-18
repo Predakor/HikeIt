@@ -3,6 +3,7 @@ using Application.Dto;
 using Application.Services.Auth;
 using Application.Trips.Queries;
 using Application.Users;
+using Application.Users.Avatar;
 using Application.Users.Stats;
 using Domain.Common.Result;
 using Microsoft.AspNetCore.Authorization;
@@ -18,17 +19,20 @@ public class UsersController : ControllerBase {
     readonly IAuthService _authService;
     readonly IUserQueryService _userQueries;
     readonly ITripQueryService _tripQueries;
+    readonly IUserAvatarFileService _userAvatarFileService;
 
     public UsersController(
         IUserService service,
         IAuthService authService,
         IUserQueryService userQueries,
-        ITripQueryService tripQueries
+        ITripQueryService tripQueries,
+        IUserAvatarFileService userAvatarFileService
     ) {
         _userService = service;
         _authService = authService;
         _userQueries = userQueries;
         _tripQueries = tripQueries;
+        _userAvatarFileService = userAvatarFileService;
     }
 
     [HttpGet]
@@ -82,5 +86,21 @@ public class UsersController : ControllerBase {
             .WithLoggedUser()
             .BindAsync(u => _userQueries.GetRegionProgess(u.Id, regionId))
             .ToActionResultAsync();
+    }
+
+    [HttpPost("data/avatar")]
+    public async Task<IActionResult> UploadAvatar(IFormFile file) {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(user => _userAvatarFileService.Upload(file, user))
+            .ToActionResultAsync();
+    }
+
+    [HttpDelete("data/avatar")]
+    public async Task<IActionResult> DeleteAvatar() {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(_userAvatarFileService.Delete)
+            .ToActionResultAsync(ResultType.noContent);
     }
 }

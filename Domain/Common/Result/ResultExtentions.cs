@@ -1,4 +1,5 @@
 ﻿namespace Domain.Common.Result;
+
 public static class ResultExtentions {
     public static Result<TReturn> Map<TIn, TReturn>(this Result<TIn> result, Func<TIn, TReturn> map) {
         return result.IsSuccess
@@ -24,13 +25,4 @@ public static class ResultExtentions {
             ? func(result.Value)
             : Result<TOut>.Failure(result.Error!);
     }
-
-
-    //[Obsolete]
-    //public static void Match<T>(this Result<T> result, Action<T> onSuccess, Action<Error> onFailure) {
-    //    if (result.IsSuccess && result.Value is not null)
-    //        onSuccess(result.Value);
-    //    else
-    //        onFailure(result.Error!);
-    //}
 }
