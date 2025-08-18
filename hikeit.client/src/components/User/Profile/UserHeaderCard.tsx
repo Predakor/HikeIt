@@ -29,11 +29,11 @@ export function UserHeaderCard({ user }: { user: UserBaseProfile }) {
 
           <Spacer />
           <SimpleGrid gap={12} gridAutoFlow={"column"}>
-            <RowStat label="Trips" value={user.totalTrips} />
-            <RowStat label={"Peaks "} value={user.totalPeaks} />
+            <RowStat label="Trips" value={user.trips} />
+            <RowStat label={"Peaks "} value={user.peaks} />
             <RowStat
               label="Travaled"
-              value={user.totalDistance}
+              value={user.traveled}
               addons={{ unit: "km", formatt: formatter.toKm }}
             />
           </SimpleGrid>

@@ -39,10 +39,11 @@ public class UsersController : ControllerBase {
     public async Task<IActionResult> GetMe() => await _userService.GetMe().ToActionResultAsync();
 
     [HttpGet("profile")]
+    [ProducesResponseType(typeof(UserDto.Profile), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserProfile() {
         return await _authService
-            .WithLoggedUser()
-            .BindAsync(user => _userService.GetUserAsync(user.Id))
+            .WithLoggedUserId()
+            .BindAsync(_userQueries.GetProfile)
             .ToActionResultAsync();
     }
 

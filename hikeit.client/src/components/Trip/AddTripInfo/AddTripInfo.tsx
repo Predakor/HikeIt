@@ -1,5 +1,4 @@
 import { IconDownload, IconExternal } from "@/Icons/Icons";
-import api from "@/Utils/Api/apiRequest";
 import DropFile from "@/components/AddFile/AddFile/DropFile";
 import Divider from "@/components/Divider/Divider";
 import { apiPath } from "@/data/apiPaths";

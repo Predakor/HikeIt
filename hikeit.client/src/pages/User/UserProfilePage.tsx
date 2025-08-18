@@ -4,16 +4,17 @@ import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
 import { LogoutButton } from "@/components/ui/Buttons";
 import DangerButton from "@/components/ui/Buttons/DangerButton";
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
-import useUserData from "@/hooks/User/useUserData";
+import useUserProfile from "@/hooks/User/useUserProfile";
 import { Field, Input, Stack } from "@chakra-ui/react";
 
 function UserProfilePage() {
-  const getUser = useUserData();
+  const getUser = useUserProfile();
+
   return (
     <FetchWrapper request={getUser}>
       {(user) => (
         <Stack>
-          <UserHeaderCard user={user.base} />
+          <UserHeaderCard user={user.summary} />
 
           <SimpleCard title="Personal Information">
             <MapStats stats={user.personal} />

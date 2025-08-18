@@ -20,7 +20,7 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
     public required string LastName { get; set; }
     public DateOnly BirthDay { get; private set; }
     public DateOnly CreatedAt { get; init; }
-    public string? Avatar { get; set; }
+    public string Avatar { get; set; } = string.Empty;
     public string? Country { get; set; }
     public Gender? Gender { get; set; }
 

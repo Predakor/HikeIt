@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { basePath, tripConfig } from "./useTrips";
+import { config as userProfileConfig } from "../User/useUserProfile";
 
 function useTripCache() {
   const queryClient = useQueryClient();
@@ -26,6 +27,7 @@ function useTripCache() {
   const invalidateTripCachces = async () => {
     queryClient.invalidateQueries({ queryKey: ["user-stats"] });
     queryClient.invalidateQueries({ queryKey: [basePath] });
+    queryClient.invalidateQueries({ queryKey: userProfileConfig.key });
   };
 
   return { prefetchAndCache, invalidateTripCachces };

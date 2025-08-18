@@ -11,9 +11,28 @@ export interface UserType {
 
 export interface UserBaseProfile {
   userName: string;
-  rank: string;
   avatar: string;
-  totalTrips: number;
-  totalDistance: number;
-  totalPeaks: number;
+  rank: string;
+  trips: number;
+  peaks: number;
+  traveled: number;
+}
+
+export interface UserProfile {
+  summary: UserBaseProfile;
+
+  personal: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    birthDay: string;
+    country: string;
+    gender: string | null;
+  };
+
+  accountState: {
+    role: string;
+    createdAt: string;
+    status: string;
+  };
 }
