@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;
-public interface IFileStorage {
+public interface IGpxFileStorage {
 
     Task<IFormFile> Get(string path);
     Task<Result<FileCreationInfo>> Save(IFormFile file, string folderPath);

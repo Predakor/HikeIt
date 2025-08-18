@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Storage;
 
-public class FileStorage(string root = "wwwroot", string subFolder = "uploads") : IFileStorage {
+public class FileStorage(string root = "wwwroot", string subFolder = "uploads") : IGpxFileStorage {
     public readonly string basePath = Path.Combine(root, subFolder);
 
     public Task<bool> Delete(string path) {

@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;
 
-public class GpxFileService(IFileStorage storage, IGpxFileRepository repository, IGpxParser parser)
+public class GpxFileService(IGpxFileStorage storage, IGpxFileRepository repository, IGpxParser parser)
     : IGpxFileService {
-    readonly IFileStorage _fileStorage = storage;
+    readonly IGpxFileStorage _fileStorage = storage;
     readonly IGpxFileRepository _repository = repository;
     readonly IGpxParser _parser = parser;
 

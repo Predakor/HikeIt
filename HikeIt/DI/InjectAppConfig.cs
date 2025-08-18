@@ -13,6 +13,10 @@ internal static partial class DIextentions {
             builder.Configuration.GetSection(SeedingOptions.Seeding)
         );
 
+        builder.Services.Configure<StorageOptions>(
+            builder.Configuration.GetSection(StorageOptions.Path)
+        );
+
         if (builder.Environment.IsDevelopment()) {
             builder.Configuration.AddUserSecrets<Program>();
         }
