@@ -25,7 +25,6 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public Guid UserId { get; private set; }
     public int RegionId { get; private set; }
     public int? PeakId { get; private set; }
-    public TripAnalytic? Analytics { get; set; }
     public Guid? GpxFileId { get; private set; }
     #endregion
 
@@ -34,6 +33,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public Peak? Target { get; set; }
     public Region? Region { get; set; }
     public GpxFile? GpxFile { get; set; }
+    public TripAnalytic? Analytics { get; set; }
     #endregion
 
     public ICollection<ReachedPeak> Peaks { get; private set; } = [];

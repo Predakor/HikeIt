@@ -2,7 +2,6 @@
 using Application.Services.Files;
 using Application.TripAnalytics.Commands;
 using Application.TripAnalytics.Interfaces;
-using Application.Trips;
 using Domain.Common.Result;
 using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;

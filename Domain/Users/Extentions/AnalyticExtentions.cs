@@ -6,14 +6,20 @@ namespace Domain.Users.Extentions;
 public static class AnalyticExtentions {
     public static StatsUpdates.All ToStatUpdate(this TripAnalytic analytics, DateOnly tripDay) {
         if (analytics.RouteAnalytics is null) {
-            throw new NullReferenceException("NO route analytics ");
+            throw new NullReferenceException("No route analytics ");
         }
 
         var routeAnalytics = analytics.RouteAnalytics;
         var timeAnalytics = analytics.TimeAnalytics;
 
         var peakAnalytics = analytics.PeaksAnalytic;
-        var newPeaks = peakAnalytics?.Total;
+
+        var totalPeaks = peakAnalytics?.Total ?? 0;
+        var newPeaks = peakAnalytics?.New ?? 0;
+
+        Console.WriteLine("new peaks added/removed " + newPeaks);
+        Console.WriteLine("total peaks added/removed " + totalPeaks);
+
 
         var newRegions = 0;
 
@@ -23,11 +29,11 @@ public static class AnalyticExtentions {
             tripDistanceMeters,
             routeAnalytics.TotalAscentMeters.ToSafeUint(),
             routeAnalytics.TotalDescentMeters.ToSafeUint(),
-            newPeaks ?? 0,
+            totalPeaks,
             timeAnalytics?.Duration ?? TimeSpan.Zero
         );
 
-        var locationsUpdate = new StatsUpdates.Locations(newPeaks ?? 0, 1);
+        var locationsUpdate = new StatsUpdates.Locations(newPeaks, 1);
 
         var metasUpdate = new StatsUpdates.Metas(tripDay, tripDistanceMeters);
 

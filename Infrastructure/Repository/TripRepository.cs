@@ -20,6 +20,7 @@ public class TripRepository : ResultRepository<Trip, Guid>, ITripRepository {
         var trip = await DbSet
             .Include(x => x.Region)
             .Include(x => x.Analytics)
+            .ThenInclude(a => a.PeaksAnalytic)
             .Where(x => x.UserId == userId)
             .FirstOrDefaultAsync(x => x.Id == tripId);
 

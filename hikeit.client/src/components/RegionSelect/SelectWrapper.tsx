@@ -16,6 +16,8 @@ function SelectWrapper<T extends WithId>({
   onValueChange,
   children,
 }: Props<T>) {
+  console.log(collection.items);
+
   return (
     <Select.Root
       collection={collection}
@@ -38,12 +40,16 @@ function SelectWrapper<T extends WithId>({
       <Select.Positioner>
         <Select.Content>
           <For each={collection.items}>
-            {(data: T) => (
-              <Select.Item item={data} key={data.id}>
-                {children(data)}
-                <Select.ItemIndicator />
-              </Select.Item>
-            )}
+            {(data: T) => {
+              console.log(data);
+
+              return (
+                <Select.Item item={data} key={data.id}>
+                  {data.region.name}
+                  <Select.ItemIndicator />
+                </Select.Item>
+              );
+            }}
           </For>
         </Select.Content>
       </Select.Positioner>

@@ -27,6 +27,8 @@ internal class TripRemovedEventHandler : IDomainEventHandler<TripRemovedEvent> {
         var tripDay = trip.TripDay;
         var statsUpdate = trip.Analytics.ToStatUpdate(tripDay);
 
+        Console.WriteLine(trip.Analytics);
+
         await _userRepository.UpdateStats(trip.UserId, statsUpdate, UpdateMode.Decrease);
     }
 }
