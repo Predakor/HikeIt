@@ -4,7 +4,7 @@ using Domain.Users;
 
 namespace Application.Users.Stats.EventHandlers;
 
-internal class TripCreatedEventHandler : IDomainEventHandler<TripAnalyticsCreatedEvent> {
+internal sealed class TripCreatedEventHandler : IDomainEventHandler<TripAnalyticsCreatedEvent> {
     readonly IUserRepository _userRepository;
 
     public TripCreatedEventHandler(IUserRepository userRepository) {

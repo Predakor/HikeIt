@@ -5,7 +5,7 @@ using Domain.Users.Extentions;
 
 namespace Application.Users.Stats.EventHandlers;
 
-internal class TripRemovedEventHandler : IDomainEventHandler<TripRemovedEvent> {
+internal sealed class TripRemovedEventHandler : IDomainEventHandler<TripRemovedEvent> {
     readonly IUserRepository _userRepository;
 
     public TripRemovedEventHandler(IUserRepository userRepository) {

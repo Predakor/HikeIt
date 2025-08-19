@@ -91,12 +91,15 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         PeakId = peak.Id;
     }
 
-    public void SetDate(DateOnly date) {
+    public Result<Trip> SetDate(DateOnly date) {
         var validTripDay = new DateOnlyValidator().NotInTheFuture().Validate(date);
-
-        if (validTripDay.IsSuccess) {
-            TripDay = date;
+        if (validTripDay.HasErrors(out var error)) {
+            return error;
         }
+
+        TripDay = date;
+        AddDomainEvent(new TripDateUpdatedEvent(this));
+        return this;
     }
 
     public Trip AddGpxFile(GpxFile gpxFile) {
