@@ -8,9 +8,9 @@ import type {
   SelectInputConfigEntry,
 } from "./inputTypes";
 
-interface Props<T extends FieldValues> extends RenderInputBaseProps<T> {
+interface Props<T extends FieldValues>
+  extends Omit<RenderInputBaseProps<T>, "register"> {
   entry: SelectInputConfigEntry;
-  register: undefined;
 }
 
 function Select<T extends FieldValues>({

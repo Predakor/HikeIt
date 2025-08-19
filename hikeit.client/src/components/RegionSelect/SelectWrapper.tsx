@@ -38,7 +38,7 @@ function SelectWrapper<T extends WithId>({
       <Select.Positioner>
         <Select.Content>
           <For each={collection.items}>
-            {(data) => (
+            {(data: T) => (
               <Select.Item item={data} key={data.id}>
                 {children(data)}
                 <Select.ItemIndicator />

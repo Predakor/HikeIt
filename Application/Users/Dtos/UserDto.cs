@@ -50,7 +50,7 @@ public static class UsersDtoExtentions {
             Email = user.Email ?? "",
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Gender = user.Gender,
+            Gender = user.Gender.ToString(),
         };
     }
 

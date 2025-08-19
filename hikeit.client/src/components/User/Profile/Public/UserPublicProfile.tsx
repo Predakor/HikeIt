@@ -2,10 +2,10 @@ import RowStat from "@/components/Stats/RowStat";
 import SubTitle from "@/components/Titles/SubTitle";
 import type { UserBaseProfile } from "@/types/User/user.types";
 import { Card, SimpleGrid, Spacer, Stack, Text } from "@chakra-ui/react";
-import EditableAvatar from "../Avatar/EditableAvatar";
-import { formatter } from "../Stats/Utils/formatter";
+import EditableAvatar from "../../Avatar/EditableAvatar";
+import { formatter } from "../../Stats/Utils/formatter";
 
-export function UserHeaderCard({ user }: { user: UserBaseProfile }) {
+export function UserPublicProfile({ user }: { user: UserBaseProfile }) {
   return (
     <Card.Root>
       <Stack

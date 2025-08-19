@@ -57,7 +57,9 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
         }
 
         if (update.Gender is not null) {
-            Gender = update.Gender;
+            if (Enum.TryParse<Gender>(update.Gender, true, out var gender)) {
+                Gender = gender;
+            }
         }
 
         if (update.BirthDay is not null) {

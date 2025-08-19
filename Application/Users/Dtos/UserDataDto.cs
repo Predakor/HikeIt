@@ -1,6 +1,4 @@
-﻿using Domain.Users;
-
-namespace Application.Users.Dtos;
+﻿namespace Application.Users.Dtos;
 
 public abstract record UserDataDto {
     public sealed record Personal {
@@ -9,7 +7,7 @@ public abstract record UserDataDto {
         public required string Email { get; init; }
         public required DateOnly BirthDay { get; init; }
         public required string Country { get; init; }
-        public required Gender? Gender { get; init; }
+        public required string? Gender { get; init; }
     }
 
     public sealed record AccountState {

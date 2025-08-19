@@ -5,5 +5,5 @@ public sealed record PersonalInfoUpdate {
     public string? LastName { get; init; }
     public DateOnly? BirthDay { get; init; }
     public string? Country { get; init; }
-    public Gender? Gender { get; init; }
+    public string? Gender { get; init; }
 }

@@ -18,21 +18,23 @@ export interface UserBaseProfile {
   traveled: number;
 }
 
+export interface UserPersonal {
+  firstName: string;
+  lastName: string;
+  email: string;
+  birthDay: string;
+  country: string;
+  gender: string | null;
+}
+
+export interface UserAccountState {
+  role: string;
+  createdAt: string;
+  status: string;
+}
+
 export interface UserProfile {
   summary: UserBaseProfile;
-
-  personal: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    birthDay: string;
-    country: string;
-    gender: string | null;
-  };
-
-  accountState: {
-    role: string;
-    createdAt: string;
-    status: string;
-  };
+  personal: UserPersonal;
+  accountState: UserAccountState;
 }
