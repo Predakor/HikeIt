@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Mountains;
+using Application.Users.Dtos;
 using Application.Users.RegionProgresses.Dtos;
 using Application.Users.Stats;
 using Domain.Common;

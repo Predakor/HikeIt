@@ -4,8 +4,10 @@ using Application.Services.Auth;
 using Application.Trips.Queries;
 using Application.Users;
 using Application.Users.Avatar;
+using Application.Users.Dtos;
 using Application.Users.Stats;
 using Domain.Common.Result;
+using Domain.Users.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -103,5 +105,13 @@ public class UsersController : ControllerBase {
             .WithLoggedUser()
             .BindAsync(_userAvatarFileService.Delete)
             .ToActionResultAsync(ResultType.noContent);
+    }
+
+    [HttpPatch("data/personal")]
+    public async Task<IActionResult> UpdatePersonalData(PersonalInfoUpdate update) {
+        return await _authService
+            .WithLoggedUser()
+            .MapAsync(user => _userService.UpdatePersonalInfo(user, update))
+            .ToActionResultAsync();
     }
 }

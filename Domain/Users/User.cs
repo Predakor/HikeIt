@@ -4,15 +4,15 @@ using Domain.Trips;
 using Domain.Users.Entities;
 using Domain.Users.RegionProgresses;
 using Domain.Users.RegionProgresses.ValueObjects;
+using Domain.Users.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Users;
 
-
 public enum Gender {
     Male,
     Female,
-    Other
+    Other,
 }
 
 public class User : IdentityUser<Guid>, IEntity<Guid> {
@@ -38,6 +38,30 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
 
         if (regionToUpdate is not null) {
             regionToUpdate.AddPeakVisits(progressUpdate.PeaksIds);
+        }
+
+        return this;
+    }
+
+    public User UpdatePersonalInfo(PersonalInfoUpdate update) {
+        if (update.FirstName is not null) {
+            FirstName = update.FirstName;
+        }
+
+        if (update.LastName is not null) {
+            LastName = update.LastName;
+        }
+
+        if (update.Country is not null) {
+            Country = update.Country;
+        }
+
+        if (update.Gender is not null) {
+            Gender = update.Gender;
+        }
+
+        if (update.BirthDay is not null) {
+            SetBirthday(update.BirthDay);
         }
 
         return this;

@@ -1,33 +1,10 @@
 ﻿using Domain.Users;
+using static Application.Users.Dtos.UserDataDto;
 
-namespace Application.Dto;
+namespace Application.Users.Dtos;
 
 public abstract record UserDto(string UserName) {
     public sealed record Basic(string UserName, string[] Roles, string Avatar);
-
-    public sealed record Personal {
-        public required string FirstName { get; init; }
-        public required string LastName { get; init; }
-        public required string Email { get; init; }
-        public required DateOnly BirthDay { get; init; }
-        public required string Country { get; init; }
-        public required Gender? Gender { get; init; }
-    }
-
-    public sealed record AccountState {
-        public required string Role { get; init; }
-        public required DateOnly CreatedAt { get; init; }
-        public required string Status { get; init; } = "Active";
-    }
-
-    public sealed record PublicProfile() {
-        public required string UserName { get; init; }
-        public required string Avatar { get; init; }
-        public required string Rank { get; init; }
-        public required uint Trips { get; init; }
-        public required uint Peaks { get; init; }
-        public required uint Traveled { get; init; }
-    }
 
     public sealed record Profile(
         PublicProfile Summary,
@@ -55,7 +32,7 @@ public abstract record UserDto(string UserName) {
 }
 
 public static class UsersDtoExtentions {
-    public static UserDto.PublicProfile ToPublicProfile(this User user) {
+    public static PublicProfile ToPublicProfile(this User user) {
         return new() {
             UserName = user.UserName!,
             Avatar = user.Avatar,
@@ -66,8 +43,8 @@ public static class UsersDtoExtentions {
         };
     }
 
-    public static UserDto.Personal ToPersonal(this User user) {
-        return new UserDto.Personal() {
+    public static Personal ToPersonal(this User user) {
+        return new() {
             BirthDay = user.BirthDay,
             Country = user.Country ?? "",
             Email = user.Email ?? "",
@@ -77,7 +54,7 @@ public static class UsersDtoExtentions {
         };
     }
 
-    public static UserDto.AccountState ToAccountState(this User user) {
+    public static AccountState ToAccountState(this User user) {
         return new() {
             CreatedAt = user.CreatedAt,
             Role = "user",

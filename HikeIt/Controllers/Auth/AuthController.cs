@@ -1,6 +1,6 @@
 ﻿using Api.Extentions;
-using Application.Dto;
 using Application.Services.Auth;
+using Application.Users.Dtos;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Users;

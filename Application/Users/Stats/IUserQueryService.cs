@@ -1,5 +1,5 @@
-﻿using Application.Dto;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Application.Users.Dtos;
 using Application.Users.RegionProgresses.Dtos;
 using Domain.Common.Result;
 
