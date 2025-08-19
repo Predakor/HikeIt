@@ -1,6 +1,6 @@
 ﻿using Domain.Common.Result;
 
-namespace Domain.Common.Rules;
+namespace Domain.Common.Validations.Rules;
 public class NotNullOrDefault<T>(T data, string? name = null) : IRule {
     public string Name => "not_null_or_default";
 

@@ -1,5 +1,4 @@
 ﻿using Application.Commons.FileStorage;
-using Application.Commons.FileStorage.FileRules;
 using Domain.Common.Result;
 using Domain.Users;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +30,7 @@ internal class UserAvatarFileService : IUserAvatarFileService {
 
     static Result<IFormFile> ValidateUserAvatar(IFormFile file) {
         return new FileValidator(file)
-            .HasMaxSizeMB(1)
+            .HasMaxSizeMB(0.5)
             .HasValidExtention([".png", ".jpg", ".webp", ".avif"])
             .Validate();
     }

@@ -1,6 +1,6 @@
 ﻿using Domain.Common.Result;
 
-namespace Domain.Common;
+namespace Domain.Common.Validations;
 
 public interface IRuleBase {
     string Name { get; }

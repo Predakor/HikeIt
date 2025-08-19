@@ -1,4 +1,6 @@
-﻿namespace Domain.Common;
+﻿using Domain.Common.Validations;
+
+namespace Domain.Common;
 
 public static class Errors {
     public static Error Unknown(string? message = "") => new Error.Unknown(message);

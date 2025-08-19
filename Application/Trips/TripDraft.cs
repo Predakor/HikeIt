@@ -49,7 +49,7 @@ public class TripDraft : IDraft {
         _tasks.Enqueue(mutation);
 
         if (_tasks.Count == 1) {
-            RunQueueAsync();
+            _ = RunQueueAsync();
         }
 
         return this;

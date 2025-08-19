@@ -116,7 +116,7 @@ public class DraftsController {
             }
 
             if (update.TripDay.HasValue) {
-                trip.TripDay = update.TripDay.Value;
+                trip.SetDate(update.TripDay.Value);
             }
 
             if (update.RegionId.HasValue) {

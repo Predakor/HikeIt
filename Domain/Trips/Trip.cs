@@ -2,6 +2,7 @@
 using Domain.Common.AggregateRoot;
 using Domain.Common.Result;
 using Domain.Common.Utils;
+using Domain.Common.Validations.Validators;
 using Domain.Interfaces;
 using Domain.Mountains.Regions;
 using Domain.Peaks;
@@ -18,7 +19,7 @@ namespace Domain.Trips;
 
 public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public required string Name { get; set; }
-    public required DateOnly TripDay { get; set; }
+    public DateOnly TripDay { get; private set; } = default;
 
     #region Foreign Keys
 
@@ -88,6 +89,14 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public void AddPeak(Peak peak) {
         ArgumentNullException.ThrowIfNull(peak);
         PeakId = peak.Id;
+    }
+
+    public void SetDate(DateOnly date) {
+        var validTripDay = new DateOnlyValidator().NotInTheFuture().Validate(date);
+
+        if (validTripDay.IsSuccess) {
+            TripDay = date;
+        }
     }
 
     public Trip AddGpxFile(GpxFile gpxFile) {

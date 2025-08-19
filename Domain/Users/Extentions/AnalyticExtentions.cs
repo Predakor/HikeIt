@@ -17,25 +17,22 @@ public static class AnalyticExtentions {
         var totalPeaks = peakAnalytics?.Total ?? 0;
         var newPeaks = peakAnalytics?.New ?? 0;
 
-        Console.WriteLine("new peaks added/removed " + newPeaks);
-        Console.WriteLine("total peaks added/removed " + totalPeaks);
-
-
-        var newRegions = 0;
 
         var tripDistanceMeters = routeAnalytics.TotalDistanceMeters.ToSafeUint();
+        var tripDuration = timeAnalytics?.Duration ?? TimeSpan.Zero;
 
         var totalsUpdate = new StatsUpdates.Totals(
             tripDistanceMeters,
             routeAnalytics.TotalAscentMeters.ToSafeUint(),
             routeAnalytics.TotalDescentMeters.ToSafeUint(),
             totalPeaks,
-            timeAnalytics?.Duration ?? TimeSpan.Zero
+            tripDuration
         );
 
         var locationsUpdate = new StatsUpdates.Locations(newPeaks, 1);
 
-        var metasUpdate = new StatsUpdates.Metas(tripDay, tripDistanceMeters);
+
+        var metasUpdate = new StatsUpdates.Metas(tripDistanceMeters, tripDuration);
 
         return new(totalsUpdate, locationsUpdate, metasUpdate);
     }

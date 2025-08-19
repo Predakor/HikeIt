@@ -1,5 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
+using Domain.Common.Validations;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
