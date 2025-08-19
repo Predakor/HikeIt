@@ -61,7 +61,7 @@ public abstract record Error(ErrorCode Code, string Message) {
         : Error(ErrorCode.file, Detail ?? "Something went wrong while processing your file.");
 
     public sealed record RuleViolation(IRuleBase Rule)
-        : Error(ErrorCode.rule_violation, $"{Rule}: {Rule.Message}" ?? "Rule Violation error.");
+        : Error(ErrorCode.rule_violation, $"{Rule.Name}: {Rule.Message}" ?? "Rule Violation error.");
 
     public sealed record NotAuthorized()
         : Error(ErrorCode.not_authorized, "You're not authorized to do this. Please log in.");

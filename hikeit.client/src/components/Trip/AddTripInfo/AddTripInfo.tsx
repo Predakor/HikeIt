@@ -37,7 +37,11 @@ function AddTripInfo({ fileChangeHandler }: Props) {
     >
       <OptionCard title={"Use Gpx File"} description={fileOptionDescription}>
         <Field.Root flexGrow={1}>
-          <DropFile allowedFiles={[".gpx"]} onFileChange={fileChangeHandler} />
+          <DropFile
+            allowedFiles={[".gpx"]}
+            onFileChange={fileChangeHandler}
+            label="Add Gpx file"
+          />
         </Field.Root>
       </OptionCard>
       <Divider />

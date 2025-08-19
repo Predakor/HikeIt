@@ -1,26 +1,28 @@
-import { Box, Field, FileUpload, Icon, VisuallyHidden } from "@chakra-ui/react";
-import type { FileChangeDetails } from "node_modules/@chakra-ui/react/dist/types/components/file-upload/namespace";
+import {
+  Box,
+  Field,
+  FileUpload,
+  Icon,
+  VisuallyHidden,
+  type FileUploadRootProps,
+} from "@chakra-ui/react";
 import { LuUpload } from "react-icons/lu";
 
-interface AddFileProps {
+interface AddFileProps extends Omit<FileUploadRootProps, "onFileChange"> {
   onFileChange: (file: File) => void;
   allowedFiles: string[];
+  label: string;
 }
 
-function DropFile({ onFileChange, allowedFiles }: AddFileProps) {
-  const handleFileChange = (f: FileChangeDetails) => {
-    const file = f.acceptedFiles[0];
-    onFileChange(file);
-  };
-
+function DropFile({ onFileChange, allowedFiles, label }: AddFileProps) {
   return (
     <>
       <VisuallyHidden>
-        <Field.Label>Gpx file</Field.Label>
+        <Field.Label>{label}</Field.Label>
       </VisuallyHidden>
       <FileUpload.Root
         accept={allowedFiles}
-        onFileChange={handleFileChange}
+        onFileChange={(f) => onFileChange(f.acceptedFiles[0])}
         alignItems="stretch"
       >
         <FileUpload.HiddenInput />
@@ -30,9 +32,7 @@ function DropFile({ onFileChange, allowedFiles }: AddFileProps) {
           </Icon>
           <FileUpload.DropzoneContent>
             <Box>Drag and drop files here</Box>
-            <Box color="fg.muted">
-              {allowedFiles.map((allowedFile) => allowedFile)}
-            </Box>
+            <Box color="fg.muted">{allowedFiles.join(" ")}</Box>
           </FileUpload.DropzoneContent>
         </FileUpload.Dropzone>
         <FileUpload.List />

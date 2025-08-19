@@ -2,7 +2,7 @@ import RowStat from "@/components/Stats/RowStat";
 import SubTitle from "@/components/Titles/SubTitle";
 import type { UserBaseProfile } from "@/types/User/user.types";
 import { Card, SimpleGrid, Spacer, Stack, Text } from "@chakra-ui/react";
-import { UserAvatar } from "../Avatar/UserAvatar";
+import EditableAvatar from "../Avatar/EditableAvatar";
 import { formatter } from "../Stats/Utils/formatter";
 
 export function UserHeaderCard({ user }: { user: UserBaseProfile }) {
@@ -15,7 +15,7 @@ export function UserHeaderCard({ user }: { user: UserBaseProfile }) {
         align={"center"}
       >
         <Card.Body>
-          <UserAvatar user={user} />
+          <EditableAvatar user={user} />
 
           <Stack>
             <SubTitle

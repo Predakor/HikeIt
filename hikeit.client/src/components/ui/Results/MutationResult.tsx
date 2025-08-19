@@ -9,7 +9,7 @@ type ResultMessage = {
 };
 
 interface Props {
-  requestState: UseMutationResult;
+  requestState: UseMutationResult | UseMutationResult<any, any, any, any>;
   succesMesage?: ResultMessage;
   errorMessage?: ResultMessage;
 }
