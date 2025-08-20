@@ -32,16 +32,6 @@ internal class AzureBlobStorage : IFileStorage {
         _avatarContainer = blobClient.GetBlobContainerClient("user-avatars");
     }
 
-    BlobClient GetClient(string path, BlobContainer container) {
-        var blobContainer = container switch {
-            BlobContainer.Avatar => _avatarContainer,
-            BlobContainer.File => _filesContainer,
-            _ => throw new Exception("Unsuported Blob type"),
-        };
-
-        return blobContainer.GetBlobClient(path.ToString());
-    }
-
     public async Task<Result<Stream>> DownloadAsync(string path, BlobContainer container) {
         BlobClient file = GetClient(path, container);
 
@@ -59,18 +49,26 @@ internal class AzureBlobStorage : IFileStorage {
     ) {
         BlobClient client = GetClient(path, type);
 
+        Console.WriteLine(client.Uri.AbsolutePath);
+        Console.WriteLine(client.Uri.AbsolutePath);
+        Console.WriteLine(client.Uri.AbsolutePath);
+
         using var stream = new MemoryStream(file.Content);
         await UploadToBlob(client, stream, file.ContentType);
 
         return FileReference.FromFileContent(file).SetUrl(client.Uri.AbsoluteUri);
     }
 
-    public Task<Result<FileReference>> UpdateAsync(string path, BlobContainer container) {
-        throw new NotImplementedException();
-    }
-
     public async Task<Result<bool>> DeleteAsync(string path, BlobContainer container) {
-        return (await GetClient(path, container).DeleteIfExistsAsync()).Value;
+        Console.WriteLine(path);
+        Console.WriteLine(path);
+        Console.WriteLine(path);
+        Console.WriteLine(path);
+        Console.WriteLine(path);
+
+        var request = await GetClient(path, container).DeleteIfExistsAsync();
+        return Result<bool>.Success(request.Value);
+
     }
 
     static async Task UploadToBlob(BlobClient client, Stream data, string contentType) {
@@ -82,22 +80,32 @@ internal class AzureBlobStorage : IFileStorage {
         await client.UploadAsync(data, options);
     }
 
-    class UploadOptions() {
-        readonly BlobHttpHeaders headers = new();
+    BlobClient GetClient(string path, BlobContainer container) {
+        var blobContainer = container switch {
+            BlobContainer.Avatar => _avatarContainer,
+            BlobContainer.File => _filesContainer,
+            _ => throw new Exception("Unsuported Blob type"),
+        };
 
-        public UploadOptions WithCache(uint hours, bool publicCache = false) {
-            string accesPolicy = publicCache ? "public" : "private";
-            headers.CacheControl = $"{accesPolicy}, max-age={hours * 60 * 60}";
-            return this;
-        }
+        return blobContainer.GetBlobClient(path.ToString());
+    }
+}
 
-        public UploadOptions WithContentType(string contenType) {
-            headers.ContentType = contenType;
-            return this;
-        }
+class UploadOptions() {
+    readonly BlobHttpHeaders headers = new();
 
-        public BlobUploadOptions Finalize() {
-            return new BlobUploadOptions { HttpHeaders = headers };
-        }
+    public UploadOptions WithCache(uint hours, bool publicCache = false) {
+        string accesPolicy = publicCache ? "public" : "private";
+        headers.CacheControl = $"{accesPolicy}, max-age={hours * 60 * 60}";
+        return this;
+    }
+
+    public UploadOptions WithContentType(string contenType) {
+        headers.ContentType = contenType;
+        return this;
+    }
+
+    public BlobUploadOptions Finalize() {
+        return new BlobUploadOptions { HttpHeaders = headers };
     }
 }

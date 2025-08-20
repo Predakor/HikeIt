@@ -29,14 +29,13 @@ internal class GpxFileAttatchedEventHandler : IDomainEventHandler<GpxFileAttatch
 
         var trip = getTrip.Value!;
 
-        var file =
+        var gpxFile =
+            trip?.GpxFile
+            ?? throw new Exception("Gpx file in trip is empty and it shouldn't check your query");
 
-        await _fileService
-            .UploadAsync(FileId, trip.UserId)
-            .TapAsync(fileUrl => {
-                if (trip.GpxFile is not null) {
-                    trip.GpxFile.Path = fileUrl;
-                }
-            });
+        var file = await _fileService
+            .UploadAsync(trip.Id, trip.UserId)
+            .TapAsync(fileUrl => trip.GpxFile.Path = fileUrl)
+            .BindAsync(_ => _repository.SaveChangesAsync());
     }
 }

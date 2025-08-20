@@ -42,7 +42,7 @@ public class GpxFileService : IGpxFileService {
                 Id = tripId,
                 Path = string.Empty,
                 Name = key,
-                OriginalName = file.Name,
+                OriginalName = file.FileName,
                 CreatedAt = DateTime.UtcNow,
             });
     }

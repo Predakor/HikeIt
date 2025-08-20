@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository;
 
-public class TripRepository : ResultRepository<Trip, Guid>, ITripRepository {
+public class TripRepository : CrudResultRepository<Trip, Guid>, ITripRepository {
     public TripRepository(TripDbContext context)
         : base(context) { }
 
@@ -19,6 +19,7 @@ public class TripRepository : ResultRepository<Trip, Guid>, ITripRepository {
     public async Task<Result<Trip>> Get(Guid tripId, Guid userId) {
         var trip = await DbSet
             .Include(x => x.Region)
+            .Include(x => x.GpxFile)
             .Include(x => x.Analytics)
             .ThenInclude(a => a.PeaksAnalytic)
             .Where(x => x.UserId == userId)
