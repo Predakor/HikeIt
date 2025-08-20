@@ -8,19 +8,19 @@ namespace Domain.TripAnalytics.Commands;
 
 public class CreateElevationProfileDataCommand : ICommand<AnalyticData> {
     readonly AnalyticData _data;
-    readonly ConfigBase _config;
+    readonly DataProccesConfig _config;
 
-    public CreateElevationProfileDataCommand(AnalyticData data, ConfigBase config) {
+    public CreateElevationProfileDataCommand(AnalyticData data, DataProccesConfig config) {
         _data = data;
         _config = config;
     }
 
     public Result<AnalyticData> Execute() {
-        var dataWithConfig = new ElevationDataWithConfig(new(_data, null), _config);
+        var dataWithConfig = new ElevationDataWithConfig(_data, _config);
         return GpxDataFactory.CreateFromConfig(dataWithConfig);
     }
 
-    public static ICommand<AnalyticData> Create(AnalyticData analyticData, ConfigBase config) {
+    public static ICommand<AnalyticData> Create(AnalyticData analyticData, DataProccesConfig config) {
         return new CreateElevationProfileDataCommand(analyticData, config);
     }
 }

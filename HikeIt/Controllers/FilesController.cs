@@ -1,7 +1,4 @@
-﻿using Application.Commons.FileStorage;
-using Application.Services.Auth;
-using Application.Services.Files;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -10,20 +7,6 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class FilesController : ControllerBase {
-    readonly IGpxFileService _fileService;
-    readonly IFileStorage _fileStorage;
-    readonly IAuthService _authService;
-
-    public FilesController(
-        IGpxFileService fileService,
-        IFileStorage fileStorage,
-        IAuthService authService
-    ) {
-        _fileService = fileService;
-        _fileStorage = fileStorage;
-        _authService = authService;
-    }
-
     [HttpGet("demo/trip")]
     public async Task<IActionResult> GetDemoTrip() {
         await Task.CompletedTask;

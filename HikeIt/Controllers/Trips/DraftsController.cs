@@ -1,10 +1,11 @@
 ﻿using Api.Extentions;
 using Application.Commons.Drafts;
 using Application.Commons.FileStorage;
+using Application.FileReferences;
 using Application.Services.Auth;
-using Application.Services.Files;
 using Application.TripAnalytics.Interfaces;
 using Application.Trips;
+using Application.Trips.GpxFile.Services;
 using Application.Trips.Services;
 using Domain.Common;
 using Domain.Common.Result;
@@ -19,6 +20,7 @@ namespace Api.Controllers.Trips;
 [ApiController]
 [Route("api/trips/[controller]/")]
 public class DraftsController {
+    readonly IGpxService _gpxService;
     readonly IAuthService _authService;
     readonly ITripService _tripService;
     readonly IGpxFileService _fileService;
@@ -26,12 +28,14 @@ public class DraftsController {
     readonly ITripAnalyticService _analyticService;
 
     public DraftsController(
+        IGpxService gpxService,
         IAuthService authService,
         ITripService tripService,
         IGpxFileService fileService,
         IDraftService<TripDraft> draftService,
         ITripAnalyticService tripAnalyticService
     ) {
+        _gpxService = gpxService;
         _authService = authService;
         _fileService = fileService;
         _tripService = tripService;
@@ -105,9 +109,9 @@ public class DraftsController {
 
     Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx) {
         return _fileService
-            .CreateAsync(ctx.File, ctx.User.Id, ctx.Id)
+            .CreateTemporrary(ctx.File, ctx.User.Id, ctx.Id)
             .TapAsync(file => ctx.Trip.AddGpxFile(file))
-            .BindAsync(file => _fileService.ExtractGpxData(ctx.File))
+            .BindAsync(file => _gpxService.ExtractGpxData(ctx.File))
             .MapAsync(ctx.WithAnalyticData);
     }
 

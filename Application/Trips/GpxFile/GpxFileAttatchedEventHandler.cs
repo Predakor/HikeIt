@@ -1,5 +1,5 @@
-﻿using Application.Interfaces;
-using Application.Services.Files;
+﻿using Application.FileReferences;
+using Application.Interfaces;
 using Domain.Common.Result;
 using Domain.Trips;
 using Domain.Trips.Events;

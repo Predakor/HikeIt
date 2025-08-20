@@ -31,7 +31,7 @@ public abstract class ResultRepository<T, TKey>
     public virtual async Task<Result<T>> GetByIdAsync(TKey id) {
         var res = await DbSet.FindAsync(id);
 
-        if (NotNullOrDefaul(res)) {
+        if (!NotNullOrDefaul(res)) {
             return Errors.NotFound(nameof(T), id);
         }
 

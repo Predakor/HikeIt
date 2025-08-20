@@ -3,11 +3,7 @@ using Domain.Trips.ValueObjects;
 
 namespace Domain.Trips.Builders.GpxDataBuilder;
 
-public record PointsToPreserve(IEnumerable<GpxPoint> Maximas, IEnumerable<GpxPoint> Minimas);
-
-public record ElevationProfileData(AnalyticData Data, PointsToPreserve? Points = null);
-
-public record ElevationDataWithConfig(ElevationProfileData Data, ConfigBase Config);
+public record ElevationDataWithConfig(AnalyticData Data, DataProccesConfig Config);
 
 internal static class GpxDataDirector {
     public static AnalyticData AnalyticData(List<GpxPoint> points) {
@@ -20,16 +16,16 @@ internal static class GpxDataDirector {
             .Build();
     }
 
-    public static AnalyticData ElevationProfile(ElevationProfileData data) {
+    public static AnalyticData ElevationProfile(AnalyticData data) {
         var config = GpxDataConfigs.ElevationProfile;
 
-        return new GpxDataBuilder(data.Data.Points)
+        return new GpxDataBuilder(data.Points)
             //.DownSample(config.DownsamplingFactor)
             .Build();
     }
 
-    public static AnalyticData FromConfig(ElevationProfileData data, ConfigBase.Nullable config) {
-        var builder = new GpxDataBuilder(data.Data.Points);
+    public static AnalyticData FromConfig(AnalyticData data, DataProccesConfig.Partial config) {
+        var builder = new GpxDataBuilder(data.Points);
         var (
             MaxElevationSpike,
             EmaSmoothingAlpha,

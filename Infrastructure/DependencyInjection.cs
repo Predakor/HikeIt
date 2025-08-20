@@ -1,6 +1,5 @@
-﻿using Application.Commons.FileStorage;
+﻿using Application.FileReferences;
 using Application.Interfaces;
-using Application.Services.Files;
 using Domain.Interfaces;
 using Domain.TripAnalytics.Interfaces;
 using Infrastructure.Data;
@@ -39,12 +38,10 @@ public static class DependencyInjection {
     static IServiceCollection AddUnitOfWork(this IServiceCollection services) {
         services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
         return services;
-
     }
 
     static IServiceCollection AddStorages(this IServiceCollection services) {
         services.AddSingleton<IFileStorage, AzureBlobStorage>();
-        services.AddScoped<IGpxFileStorage, FileStorage>();
 
         return services;
     }

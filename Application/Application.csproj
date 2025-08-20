@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <Folder Include="Dto\NewFolder\" />
-    <Folder Include="FileReferences\" />
+    <Folder Include="Services\Files\" />
     <Folder Include="TripAnalytics\RouteAnalytic\" />
     <Folder Include="TripAnalytics\TimeAnalytic\" />
   </ItemGroup>

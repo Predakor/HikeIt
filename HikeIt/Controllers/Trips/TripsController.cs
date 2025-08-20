@@ -1,6 +1,7 @@
 ﻿using Api.Extentions;
+using Application.Commons.FileStorage;
+using Application.FileReferences;
 using Application.Services.Auth;
-using Application.Services.Files;
 using Application.Trips;
 using Application.Trips.Queries;
 using Application.Trips.Services;
@@ -60,7 +61,8 @@ public class TripsController : ControllerBase {
         return await _authService
             .WithLoggedUser()
             .MapAsync(ctx.WithUser)
-            .BindAsync(_ => _fileService.ValidateAndExtract(file))
+            .BindAsync(_ => FileValidator.ValidateGpx(file))
+            .MapAsync(file => file.ToFileContent())
             .MapAsync(ctx.WithFile)
             .BindAsync(_ => _tripService.CreateAsync(ctx))
             .MapAsync(trip => $"/trips/{trip.Id}")

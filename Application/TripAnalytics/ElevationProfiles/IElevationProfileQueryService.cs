@@ -7,5 +7,5 @@ namespace Application.TripAnalytics.ElevationProfiles;
 
 public interface IElevationProfileQueryService : IQueryService {
     Task<Result<ElevationProfileDto>> GetElevationProfile(Guid id);
-    Task<Result<ElevationProfileDto?>> DevAnalyticPreview(Guid id, ConfigBase.Nullable config);
+    Task<Result<ElevationProfileDto?>> DevAnalyticPreview(Guid id, DataProccesConfig.Partial config);
 }
