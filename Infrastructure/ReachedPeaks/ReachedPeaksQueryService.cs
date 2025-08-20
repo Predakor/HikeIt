@@ -19,7 +19,7 @@ public class ReachedPeaksQueryService : IReachedPeaksQureryService {
     }
 
     public async Task<List<Peak>> ReachedByUserBefore(Guid userId, IEnumerable<int> peakIds) {
-        if (peakIds.IsNullOrEmpty()) {
+        if (peakIds.NullOrEmpty()) {
             return [];
         }
 
@@ -37,7 +37,7 @@ public class ReachedPeaksQueryService : IReachedPeaksQureryService {
             .Where(rp => rp.TripId == tripId)
             .ToListAsync();
 
-        if (query.IsNullOrEmpty()) {
+        if (query.NullOrEmpty()) {
             return Errors.EmptyCollection("reached peaks");
         }
 

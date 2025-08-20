@@ -8,7 +8,6 @@ using Application.Trips.Services;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Trips;
-using Domain.Trips.Entities.GpxFiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +22,6 @@ public class DraftsController {
     readonly IGpxFileService _fileService;
     readonly IDraftService<TripDraft> _draftService;
     readonly ITripAnalyticService _analyticService;
-    readonly IGpxFileRepository _fileRepository;
 
     public DraftsController(
         IAuthService authService,
@@ -102,10 +100,8 @@ public class DraftsController {
         return _fileService
             .Validate(ctx.File)
             .BindAsync(file => _fileService.CreateAsync(file, ctx.User.Id, ctx.Id))
-            .BindAsync(file => {
-                ctx.Trip.AddGpxFile(file);
-                return _fileService.ExtractGpxData(ctx.File);
-            })
+            .TapAsync(file => ctx.Trip.AddGpxFile(file))
+            .BindAsync(file => _fileService.ExtractGpxData(ctx.File))
             .MapAsync(ctx.WithAnalyticData);
     }
 

@@ -39,6 +39,19 @@ public class TripRepository : ResultRepository<Trip, Guid>, ITripRepository {
             .ToListAsync();
     }
 
+    public async Task<Result<Trip>> GetWithFile(Guid tripId) {
+        var trip = await DbSet
+            .Include(t => t.GpxFile)
+            .Where(t => t.Id == tripId)
+            .FirstOrDefaultAsync();
+
+        if (trip is null) {
+            return Errors.NotFound("trip", tripId);
+        }
+
+        return trip;
+    }
+
     public Result<bool> Remove(Trip trip) {
         DbSet.Remove(trip);
         return true;

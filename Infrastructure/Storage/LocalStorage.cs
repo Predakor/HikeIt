@@ -2,7 +2,6 @@
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Common.ValueObjects;
-using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Storage;
 
@@ -31,7 +30,11 @@ internal class LocalStorage : IFileStorage {
         throw new NotImplementedException();
     }
 
-    public async Task<Result<FileReference>> UploadAsync(IFormFile file, string path, BlobContainer container) {
+    public async Task<Result<FileReference>> UploadAsync(
+        FileContent file,
+        string path,
+        BlobContainer container
+    ) {
         try {
             var uploadDir = GetUploadFolder(path, container);
 
@@ -41,10 +44,9 @@ internal class LocalStorage : IFileStorage {
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
             var fullPath = Path.Combine(uploadDir, fileName);
 
-            using var stream = new FileStream(fullPath, FileMode.Create);
-            await file.CopyToAsync(stream);
+            await File.WriteAllBytesAsync(fullPath, file.Content);
 
-            return new FileReference(fullPath, fileName, file.Length, file.ContentType);
+            return FileReference.FromFileContent(file).SetUrl(fullPath).SetStorageName(fileName);
         }
         catch (Exception ex) {
             var error = Errors.Unknown($"Could not save file: {ex.Message}");

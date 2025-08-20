@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace Application.Commons.FileStorage.FileRules;
 
-internal abstract class FileRules {
+internal abstract class FileRule {
     public sealed class MaxSize(IFormFile file, double maxSize) : IRule {
         public string Name => "File too large";
         public string Message => $"Max file size is: {maxSize / 1024f / 1024f:F1} MB.";

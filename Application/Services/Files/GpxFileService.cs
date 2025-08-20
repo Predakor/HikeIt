@@ -1,25 +1,47 @@
-﻿using Domain.Common;
+﻿using Application.Commons.CacheService;
+using Application.Commons.FileStorage;
+using Domain.Common;
 using Domain.Common.Result;
-using Domain.Common.Validations;
+using Domain.Common.ValueObjects;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;
 
-public class GpxFileService(IGpxFileStorage storage, IGpxFileRepository repository, IGpxParser parser)
-    : IGpxFileService {
-    readonly IGpxFileStorage _fileStorage = storage;
-    readonly IGpxFileRepository _repository = repository;
-    readonly IGpxParser _parser = parser;
+public class GpxFileService : IGpxFileService {
+    const BlobContainer container = BlobContainer.File;
+
+    readonly IGpxFileRepository _repository;
+    readonly IFileStorage _storage;
+    readonly ICacheService _cache;
+    readonly IGpxParser _parser;
+
+    public GpxFileService(
+        IGpxFileRepository repository,
+        ICacheService cacheService,
+        IFileStorage storage,
+        IGpxParser parser
+    ) {
+        _repository = repository;
+        _cache = cacheService;
+        _storage = storage;
+        _parser = parser;
+    }
+
+    static string FileKey(Guid fileId, Guid userId) => $"{userId}/{fileId}";
 
     public async Task<Result<GpxFile>> CreateAsync(IFormFile file, Guid userId, Guid tripId) {
-        return await _fileStorage
-            .Save(file, userId.ToString())
+        string key = FileKey(tripId, userId);
+
+        var fileContent = await file.ToFileContent(key);
+
+        return await _cache
+            .SetAsync(key, fileContent)
             .MapAsync(info => new GpxFile() {
                 Id = tripId,
-                Path = info.Path,
-                Name = info.Name,
+                Path = string.Empty,
+                Name = key,
                 OriginalName = file.Name,
                 CreatedAt = DateTime.UtcNow,
             });
@@ -48,68 +70,17 @@ public class GpxFileService(IGpxFileStorage storage, IGpxFileRepository reposito
         return data;
     }
 
-    public Result<IFormFile> Validate(IFormFile file) {
-        var (isValid, errors) = FileValidation.Validate(file);
-        if (!isValid) {
-            string errorstring = errors.Select(e => e.ToString()).ToString();
-            return Errors.Unknown(errorstring);
-        }
-        return Result<IFormFile>.Success(file);
-    }
-}
+    public Result<IFormFile> Validate(IFormFile file) => FileValidator.ValidateGpx(file);
 
-internal static class FileValidation {
-    class MaxFileSizeRule(IFormFile file, double maxSize) : IRule {
-        public string Name => "File size";
-        public string Message => $"File is too large. Max size: {maxSize:F1} MB.";
-
-
-        public Result<bool> Check() {
-            if (file.Length > maxSize) {
-                double maxSizeInMB = maxSize / 1024f / 1024f;
-                return Result<bool>.Failure(Errors.RuleViolation(this));
-            }
-            return Result<bool>.Success(true);
-        }
+    public async Task<Result<string>> UploadAsync(Guid fileId, Guid userId) {
+        string key = FileKey(fileId, userId);
+        return await _cache
+            .GetAsync<FileContent>(key)
+            .BindAsync(file => _storage.UploadAsync(file, key, container))
+            .MapAsync(r => r.Url);
     }
 
-    class FileShouldBeOfType(IFormFile file, string allowedExtension) : IRule {
-        public string Name => "Invalid extention";
-        public string Message =>
-            $"\"Invalid extention\", $\"Only {{allowedExtension}} files are allowed.\"";
-
-
-        public Result<bool> Check() {
-            if (!file.FileName.EndsWith(allowedExtension, StringComparison.OrdinalIgnoreCase)) {
-                return Result<bool>.Failure(Errors.RuleViolation(this));
-            }
-
-            return Result<bool>.Success(true);
-        }
-    }
-
-    public static (bool isValid, List<Error> errors) Validate(IFormFile? file) {
-        // Return immediately here; can't proceed with other checks
-        if (file == null || file.Length == 0) {
-            return (false, [Errors.NotFound("No file uploaded.")]);
-        }
-
-        var errors = new List<Error>();
-        const int maxSizeInBytes = 1024 * 1024 / 2; // 0.5 MB
-        const string allowedExtension = ".gpx";
-
-        List<IRule> rules =
-        [
-            new MaxFileSizeRule(file, maxSizeInBytes),
-            new FileShouldBeOfType(file, allowedExtension),
-        ];
-
-        foreach (var rule in rules) {
-            if (rule.Check().HasErrors(out var error)) {
-                errors.Add(error);
-            }
-        }
-
-        return (errors.Count == 0, errors);
+    public async Task<Result<bool>> DeleteAsync(string path) {
+        return await _storage.DeleteAsync(path, container);
     }
 }

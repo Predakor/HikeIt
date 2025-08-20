@@ -1,7 +1,7 @@
 ﻿using Domain.Common;
 using Domain.Common.AggregateRoot;
+using Domain.Common.Extentions;
 using Domain.Common.Result;
-using Domain.Common.Utils;
 using Domain.Common.Validations.Validators;
 using Domain.Interfaces;
 using Domain.Mountains.Regions;
@@ -71,7 +71,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     }
 
     public Result<Trip> AddReachedPeaks(List<ReachedPeak> newPeaks) {
-        if (newPeaks.Count == 0) {
+        if (newPeaks.NullOrEmpty()) {
             return Errors.EmptyCollection("new peaks");
         }
 
@@ -106,6 +106,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         ArgumentNullException.ThrowIfNull(gpxFile);
         GpxFile = gpxFile;
         GpxFileId = gpxFile.Id;
+        AddDomainEvent(new GpxFileAttatchedEvent(gpxFile.Id, Id));
         return this;
     }
 

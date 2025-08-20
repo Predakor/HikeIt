@@ -6,7 +6,6 @@ using Azure.Storage.Blobs.Models;
 using Domain.Common;
 using Domain.Common.Result;
 using Domain.Common.ValueObjects;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -54,30 +53,16 @@ internal class AzureBlobStorage : IFileStorage {
     }
 
     public async Task<Result<FileReference>> UploadAsync(
-        IFormFile file,
+        FileContent file,
         string path,
-        BlobContainer container
+        BlobContainer type
     ) {
-        BlobClient client = GetClient(path, container);
+        BlobClient client = GetClient(path, type);
 
-        await using (Stream? data = file.OpenReadStream()) {
-            await client.UploadAsync(
-                data,
-                new BlobUploadOptions {
-                    HttpHeaders = new BlobHttpHeaders {
-                        ContentType = file.ContentType,
-                        CacheControl = "public, max-age=86400",
-                    },
-                }
-            );
-        }
+        using var stream = new MemoryStream(file.Content);
+        await UploadToBlob(client, stream, file.ContentType);
 
-        return new FileReference(
-            client.Uri.AbsoluteUri,
-            file.FileName,
-            file.Length,
-            file.ContentType
-        );
+        return FileReference.FromFileContent(file).SetUrl(client.Uri.AbsoluteUri);
     }
 
     public Task<Result<FileReference>> UpdateAsync(string path, BlobContainer container) {
@@ -85,9 +70,34 @@ internal class AzureBlobStorage : IFileStorage {
     }
 
     public async Task<Result<bool>> DeleteAsync(string path, BlobContainer container) {
-        BlobClient client = GetClient(path, container);
+        return (await GetClient(path, container).DeleteIfExistsAsync()).Value;
+    }
 
-        var result = await client.DeleteIfExistsAsync();
-        return result.Value;
+    static async Task UploadToBlob(BlobClient client, Stream data, string contentType) {
+        BlobUploadOptions options = new UploadOptions()
+            .WithCache(24)
+            .WithContentType(contentType)
+            .Finalize();
+
+        await client.UploadAsync(data, options);
+    }
+
+    class UploadOptions() {
+        readonly BlobHttpHeaders headers = new();
+
+        public UploadOptions WithCache(uint hours, bool publicCache = false) {
+            string accesPolicy = publicCache ? "public" : "private";
+            headers.CacheControl = $"{accesPolicy}, max-age={hours * 60 * 60}";
+            return this;
+        }
+
+        public UploadOptions WithContentType(string contenType) {
+            headers.ContentType = contenType;
+            return this;
+        }
+
+        public BlobUploadOptions Finalize() {
+            return new BlobUploadOptions { HttpHeaders = headers };
+        }
     }
 }

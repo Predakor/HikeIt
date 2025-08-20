@@ -20,18 +20,15 @@ internal class UserAvatarFileService : IUserAvatarFileService {
         return _fileStorage.DeleteAsync(user.Id.ToString(), Container);
     }
 
-    public Task<Result<string>> Upload(IFormFile file, User user) {
-        return ValidateUserAvatar(file)
-            .BindAsync(_ => _fileStorage.UploadAsync(file, user.Id.ToString(), Container))
+    public async Task<Result<string>> Upload(IFormFile file, User user) {
+        string path = user.Id.ToString();
+        var fileContent = await file.ToFileContent(path);
+
+        return await FileValidator
+            .ValidateAvatar(file)
+            .BindAsync(_ => _fileStorage.UploadAsync(fileContent, path, Container))
             .MapAsync(f => user.SetAvatar(f.Url))
             .TapAsync(_ => _userRepository.SaveChangesAsync())
             .MapAsync(u => u.Avatar!);
-    }
-
-    static Result<IFormFile> ValidateUserAvatar(IFormFile file) {
-        return new FileValidator(file)
-            .HasMaxSizeMB(0.5)
-            .HasValidExtention([".png", ".jpg", ".webp", ".avif"])
-            .Validate();
     }
 }
