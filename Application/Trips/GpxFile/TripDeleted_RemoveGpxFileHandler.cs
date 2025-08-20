@@ -15,7 +15,7 @@ internal class TripDeleted_RemoveGpxFileHandler : IDomainEventHandler<TripRemove
         TripRemovedEvent domainEvent,
         CancellationToken cancellationToken = default
     ) {
-        var filePath = domainEvent?.Trip?.GpxFile?.Name;
+        var filePath = domainEvent?.Trip?.GpxFile?.StorageName;
         if (filePath is null) {
             Console.WriteLine("No path to file can't delete");
             await Task.CompletedTask;

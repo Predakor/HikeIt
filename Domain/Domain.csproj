@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common\ValueObjects\" />
     <Folder Include="ReachedPeaks\Rules\" />
     <Folder Include="TripAnalytics\Builders\RouteElevationProfileBuilder\" />
     <Folder Include="Trips\ValueObjects\TripAnalytics\" />

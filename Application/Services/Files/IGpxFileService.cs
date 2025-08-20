@@ -1,16 +1,19 @@
 ﻿using Domain.Common.Result;
-using Domain.Trips.Entities.GpxFiles;
+using Domain.FileReferences;
+using Domain.FileReferences.ValueObjects;
 using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Files;
 public interface IGpxFileService {
-    Task<Result<GpxFile>> CreateAsync(IFormFile file, Guid userId, Guid tripId);
+    Task<Result<FileReference>> CreateAsync(FileContent file, Guid userId, Guid tripId);
     Task<Result<string>> UploadAsync(Guid fileId, Guid userId);
     Task<Result<bool>> DeleteAsync(string path);
-    Task<Result<AnalyticData>> ExtractGpxData(IFormFile file);
+    Task<Result<AnalyticData>> ExtractGpxData(FileContent file);
     Task<Result<AnalyticData>> ExtractGpxData(Guid id);
+    Task<Result<FileContent>> ValidateAndExtract(IFormFile file);
     Result<IFormFile> Validate(IFormFile file);
+
 
 }
 

@@ -83,7 +83,6 @@ public class TripService : ITripService {
     async Task<Result<CreateTripContext>> CreateGpxFile(CreateTripContext ctx) {
         return await _gpxFileService
             .CreateAsync(ctx.File, ctx.User.Id, ctx.Id)
-            .MapAsync(_unitOfWork.GpxFileRepository.Add)
             .MapAsync(ctx.Trip.AddGpxFile)
             .MapAsync(_ => ctx);
     }

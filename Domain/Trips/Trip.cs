@@ -3,6 +3,7 @@ using Domain.Common.AggregateRoot;
 using Domain.Common.Extentions;
 using Domain.Common.Result;
 using Domain.Common.Validations.Validators;
+using Domain.FileReferences;
 using Domain.Interfaces;
 using Domain.Mountains.Regions;
 using Domain.Peaks;
@@ -10,7 +11,6 @@ using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.ValueObjects;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Events;
-using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.Events;
 using Domain.Users;
 using Domain.Users.Extentions;
@@ -33,7 +33,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public User? User { get; set; }
     public Peak? Target { get; set; }
     public Region? Region { get; set; }
-    public GpxFile? GpxFile { get; set; }
+    public FileReference? GpxFile { get; set; }
     public TripAnalytic? Analytics { get; set; }
     #endregion
 
@@ -102,7 +102,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         return this;
     }
 
-    public Trip AddGpxFile(GpxFile gpxFile) {
+    public Trip AddGpxFile(FileReference gpxFile) {
         ArgumentNullException.ThrowIfNull(gpxFile);
         GpxFile = gpxFile;
         GpxFileId = gpxFile.Id;

@@ -1,4 +1,5 @@
 ﻿using Domain.Common.AggregateRoot;
+using Domain.FileReferences;
 using Domain.Interfaces;
 using Domain.Mountains.Regions;
 using Domain.Peaks;
@@ -7,7 +8,6 @@ using Domain.TripAnalytics;
 using Domain.TripAnalytics.Entities.ElevationProfile;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 using Domain.Trips;
-using Domain.Trips.Entities.GpxFiles;
 using Domain.Users;
 using Infrastructure.DI;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +23,7 @@ public class TripDbContext(
     public DbSet<Trip> Trips { get; set; }
     public DbSet<Peak> Peaks { get; set; }
     public DbSet<Region> Regions { get; set; }
-    public DbSet<GpxFile> GpxFiles { get; set; }
+    public DbSet<FileReference> FileReferences { get; set; }
     public DbSet<ReachedPeak> ReachedPeaks { get; set; }
     public DbSet<TripAnalytic> TripAnalytics { get; set; }
     public DbSet<ElevationProfile> ElevationProfiles { get; set; }

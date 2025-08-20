@@ -5,7 +5,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Common.ValueObjects;
+using Domain.FileReferences.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -42,21 +42,17 @@ internal class AzureBlobStorage : IFileStorage {
         return await file.OpenReadAsync();
     }
 
-    public async Task<Result<FileReference>> UploadAsync(
+    public async Task<Result<SaveFileResponse>> UploadAsync(
         FileContent file,
         string path,
         BlobContainer type
     ) {
         BlobClient client = GetClient(path, type);
 
-        Console.WriteLine(client.Uri.AbsolutePath);
-        Console.WriteLine(client.Uri.AbsolutePath);
-        Console.WriteLine(client.Uri.AbsolutePath);
-
         using var stream = new MemoryStream(file.Content);
-        await UploadToBlob(client, stream, file.ContentType);
+        await UploadToBlob(client, stream, file.Type);
 
-        return FileReference.FromFileContent(file).SetUrl(client.Uri.AbsoluteUri);
+        return new SaveFileResponse(client.Uri.AbsoluteUri, path);
     }
 
     public async Task<Result<bool>> DeleteAsync(string path, BlobContainer container) {
@@ -68,7 +64,6 @@ internal class AzureBlobStorage : IFileStorage {
 
         var request = await GetClient(path, container).DeleteIfExistsAsync();
         return Result<bool>.Success(request.Value);
-
     }
 
     static async Task UploadToBlob(BlobClient client, Stream data, string contentType) {

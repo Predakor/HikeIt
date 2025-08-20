@@ -1,5 +1,6 @@
 ﻿using Api.Extentions;
 using Application.Commons.Drafts;
+using Application.Commons.FileStorage;
 using Application.Services.Auth;
 using Application.Services.Files;
 using Application.TripAnalytics.Interfaces;
@@ -7,6 +8,7 @@ using Application.Trips;
 using Application.Trips.Services;
 using Domain.Common;
 using Domain.Common.Result;
+using Domain.FileReferences.ValueObjects;
 using Domain.Trips;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -83,14 +85,19 @@ public class DraftsController {
     public async Task<IActionResult> AttachFile(Guid draftId, IFormFile file) {
         var draft = await _draftService.Get(draftId);
 
-        return await CreateContext(draft, file)
+        return await ValidateAndExtractGpxFile(file)
+            .BindAsync(f => CreateContext(draft, f))
             .BindAsync(ProccesGpxFile)
             .BindAsync(_analyticService.GenerateAnalytic)
             .MapAsync(draft.AddAnalytics)
             .ToActionResultAsync(ResultType.created);
     }
 
-    Task<Result<CreateTripContext>> CreateContext(TripDraft draft, IFormFile file) {
+    static Task<Result<FileContent>> ValidateAndExtractGpxFile(IFormFile file) {
+        return FileValidator.ValidateGpx(file).MapAsync(f => f.ToFileContent());
+    }
+
+    Task<Result<CreateTripContext>> CreateContext(TripDraft draft, FileContent file) {
         var ctx = CreateTripContext.Create(draft.Id).WithFile(file).WithTrip(draft.Trip);
 
         return _authService.WithLoggedUser().MapAsync(ctx.WithUser);
@@ -98,8 +105,7 @@ public class DraftsController {
 
     Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx) {
         return _fileService
-            .Validate(ctx.File)
-            .BindAsync(file => _fileService.CreateAsync(file, ctx.User.Id, ctx.Id))
+            .CreateAsync(ctx.File, ctx.User.Id, ctx.Id)
             .TapAsync(file => ctx.Trip.AddGpxFile(file))
             .BindAsync(file => _fileService.ExtractGpxData(ctx.File))
             .MapAsync(ctx.WithAnalyticData);

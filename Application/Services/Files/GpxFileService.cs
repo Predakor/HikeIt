@@ -2,7 +2,8 @@
 using Application.Commons.FileStorage;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Common.ValueObjects;
+using Domain.FileReferences;
+using Domain.FileReferences.ValueObjects;
 using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
@@ -31,25 +32,18 @@ public class GpxFileService : IGpxFileService {
 
     static string FileKey(Guid fileId, Guid userId) => $"{userId}/{fileId}";
 
-    public async Task<Result<GpxFile>> CreateAsync(IFormFile file, Guid userId, Guid tripId) {
+    public async Task<Result<FileReference>> CreateAsync(FileContent file, Guid userId, Guid tripId) {
         string key = FileKey(tripId, userId);
 
-        var fileContent = await file.ToFileContent(key);
-
         return await _cache
-            .SetAsync(key, fileContent)
-            .MapAsync(info => new GpxFile() {
-                Id = tripId,
-                Path = string.Empty,
-                Name = key,
-                OriginalName = file.FileName,
-                CreatedAt = DateTime.UtcNow,
-            });
+            .SetAsync(key, file)
+            .MapAsync(info => FileReference.FromFileContent(file, key, tripId));
     }
 
-    public async Task<Result<AnalyticData>> ExtractGpxData(IFormFile file) {
+    public async Task<Result<AnalyticData>> ExtractGpxData(FileContent file) {
         try {
-            return await _parser.ParseAsync(file.OpenReadStream());
+            using var ms = new MemoryStream(file.Content);
+            return await _parser.ParseAsync(ms);
         }
         catch (Exception ex) {
             return Errors.Unknown(ex.Message);
@@ -71,6 +65,10 @@ public class GpxFileService : IGpxFileService {
     }
 
     public Result<IFormFile> Validate(IFormFile file) => FileValidator.ValidateGpx(file);
+
+    public Task<Result<FileContent>> ValidateAndExtract(IFormFile file) {
+        return Validate(file).MapAsync(f => f.ToFileContent());
+    }
 
     public async Task<Result<string>> UploadAsync(Guid fileId, Guid userId) {
         string key = FileKey(fileId, userId);

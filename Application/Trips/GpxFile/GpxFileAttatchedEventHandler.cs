@@ -35,7 +35,7 @@ internal class GpxFileAttatchedEventHandler : IDomainEventHandler<GpxFileAttatch
 
         var file = await _fileService
             .UploadAsync(trip.Id, trip.UserId)
-            .TapAsync(fileUrl => trip.GpxFile.Path = fileUrl)
+            .TapAsync(fileUrl => trip.GpxFile.SetUrl(fileUrl))
             .BindAsync(_ => _repository.SaveChangesAsync());
     }
 }

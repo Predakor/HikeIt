@@ -1,7 +1,7 @@
 ﻿using Application.Commons.FileStorage;
 using Domain.Common;
 using Domain.Common.Result;
-using Domain.Common.ValueObjects;
+using Domain.FileReferences.ValueObjects;
 
 namespace Infrastructure.Storage;
 
@@ -26,11 +26,7 @@ internal class LocalStorage : IFileStorage {
         throw new NotImplementedException();
     }
 
-    public Task<Result<FileReference>> UpdateAsync(string path, BlobContainer type) {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Result<FileReference>> UploadAsync(
+    public async Task<Result<SaveFileResponse>> UploadAsync(
         FileContent file,
         string path,
         BlobContainer container
@@ -41,12 +37,11 @@ internal class LocalStorage : IFileStorage {
             Directory.CreateDirectory(uploadDir);
 
             Console.WriteLine("Saving file in location: " + uploadDir);
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
             var fullPath = Path.Combine(uploadDir, fileName);
 
             await File.WriteAllBytesAsync(fullPath, file.Content);
-
-            return FileReference.FromFileContent(file).SetUrl(fullPath).SetStorageName(fileName);
+            return new SaveFileResponse(fullPath, fileName);
         }
         catch (Exception ex) {
             var error = Errors.Unknown($"Could not save file: {ex.Message}");

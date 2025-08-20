@@ -1,4 +1,5 @@
-﻿using Domain.Common.ValueObjects;
+﻿using Domain.FileReferences;
+using Domain.FileReferences.ValueObjects;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Commons.FileStorage;
@@ -10,14 +11,28 @@ public static class FileDataExtentios {
         return ms.ToArray();
     }
 
-    public static async Task<FileContent> ToFileContent(this IFormFile file, string storageName) {
+    public static async Task<FileContent> ToFileContent(this IFormFile file) {
         var content = await file.GetFileContent();
         return new() {
             Content = content,
-            ContentType = file.ContentType,
-            FileName = file.FileName,
+            Type = file.ContentType,
+            Name = file.FileName,
             Size = file.Length,
-            StorageName = storageName,
         };
+    }
+
+    public static FileReference ToFileReference(this IFormFile file, Guid id, string? storageName) {
+        var reference = new FileReference() {
+            Id = id,
+            FileName = file.FileName,
+            ContentType = file.ContentType,
+            Size = file.Length
+        };
+
+        if (storageName is not null) {
+            reference.SetStorageName(storageName);
+        }
+
+        return reference;
     }
 }

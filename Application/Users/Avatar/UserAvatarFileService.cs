@@ -22,7 +22,7 @@ internal class UserAvatarFileService : IUserAvatarFileService {
 
     public async Task<Result<string>> Upload(IFormFile file, User user) {
         string path = user.Id.ToString();
-        var fileContent = await file.ToFileContent(path);
+        var fileContent = await file.ToFileContent();
 
         return await FileValidator
             .ValidateAvatar(file)

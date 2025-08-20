@@ -1,14 +1,15 @@
-﻿using Domain.Trips.Entities.GpxFiles;
+﻿using Domain.FileReferences;
+using Domain.Trips.Entities.GpxFiles;
 using Infrastructure.Data;
 using Infrastructure.Repository.Generic;
 
 namespace Infrastructure.Repository;
 
-public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
+public class GpxFileRepository : Repository<FileReference, Guid>, IGpxFileRepository {
     public GpxFileRepository(TripDbContext context)
         : base(context) { }
 
-    public async Task<GpxFile?> GetGpxFile(Guid id) {
+    public async Task<FileReference?> GetGpxFile(Guid id) {
         var result = await DbSet.FindAsync(id);
         if (result != null) {
             return result;
@@ -23,14 +24,14 @@ public class GpxFileRepository : Repository<GpxFile, Guid>, IGpxFileRepository {
             return null;
         }
 
-        return File.OpenRead(result.Path);
+        return File.OpenRead(result.Url);
     }
 
-    public async Task<bool> AddAsync(GpxFile entity) {
+    public async Task<bool> AddAsync(FileReference entity) {
         await DbSet.AddAsync(entity);
         return true;
     }
-    public GpxFile Add(GpxFile entity) {
+    public FileReference Add(FileReference entity) {
         DbSet.Add(entity);
         return entity;
     }
