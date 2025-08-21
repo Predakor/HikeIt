@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
 using Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;

@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
 using Application.Users.Dtos;
 using Application.Users.RegionProgresses.Dtos;
 using Domain.Common.Result;

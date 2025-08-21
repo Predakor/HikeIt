@@ -1,13 +1,15 @@
 ﻿using Application.Commons.CacheService;
+using Application.Commons.Interfaces;
 using Application.FileReferences;
 using Domain.Common.Result;
 using Domain.FileReferences.ValueObjects;
 
 namespace Infrastructure.Storage;
 
-internal class CachedFileStorageDecorator : IFileStorage {
+internal class CachedFileStorageDecorator : IFileStorage, IDecorator<IFileStorage> {
     readonly IFileStorage _inner;
     readonly ICache _cache;
+
 
     public CachedFileStorageDecorator(IFileStorage inner, ICache cacheService) {
         _cache = cacheService;

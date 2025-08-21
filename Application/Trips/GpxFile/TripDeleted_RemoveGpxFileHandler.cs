@@ -1,5 +1,5 @@
-﻿using Application.FileReferences;
-using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
+using Application.FileReferences;
 using Domain.Trips.Events;
 
 namespace Application.Trips.GpxFile;

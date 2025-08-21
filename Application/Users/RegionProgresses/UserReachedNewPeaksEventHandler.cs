@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
 using Application.Mountains;
 using Domain.Common.Result;
 using Domain.ReachedPeaks.ValueObjects;

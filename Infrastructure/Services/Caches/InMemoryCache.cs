@@ -20,6 +20,28 @@ internal class InMemoryCache : ICache {
         return Errors.NotFound(nameof(T), key);
     }
 
+    public async Task<Result<T>> GetOrCreateAsync<T>(
+        string key,
+        Func<Task<Result<T>>> factory,
+        TimeSpan? ttl = null,
+        CancellationToken ct = default
+    ) {
+        await Task.CompletedTask;
+        var result = await _cache.GetOrCreateAsync(
+            key,
+            e => {
+                e.SetAbsoluteExpiration(ttl ?? TimeSpan.FromMinutes(5));
+                return factory();
+            }
+        );
+
+        if (result is null) {
+            return Errors.Unknown("Failed to use cache");
+        }
+
+        return result;
+    }
+
     public async Task<Result<bool>> RemoveAsync(string key, CancellationToken ct = default) {
         _cache.Remove(key);
         return await Task.FromResult(true);

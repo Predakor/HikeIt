@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
 using Domain.Trips.Events;
 using Domain.Users;
 using Domain.Users.Extentions;

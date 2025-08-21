@@ -10,5 +10,11 @@ public interface ICache {
         CancellationToken ct = default
     );
     Task<Result<T>> GetAsync<T>(string key, CancellationToken ct = default);
+    Task<Result<T>> GetOrCreateAsync<T>(
+        string key,
+        Func<Task<Result<T>>> factory,
+        TimeSpan? ttl = null,
+        CancellationToken ct = default
+    );
     Task<Result<bool>> RemoveAsync(string key, CancellationToken ct = default);
 }

@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
 using Domain.Common.Result;
 using Domain.Trips.Events;
 using Domain.Users;

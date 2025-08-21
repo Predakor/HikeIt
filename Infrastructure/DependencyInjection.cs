@@ -1,6 +1,6 @@
 ﻿using Application.Commons.CacheService;
+using Application.Commons.Interfaces;
 using Application.FileReferences;
-using Application.Interfaces;
 using Domain.Interfaces;
 using Domain.TripAnalytics.Interfaces;
 using Infrastructure.Data;
@@ -45,12 +45,8 @@ public static class DependencyInjection {
     }
 
     static IServiceCollection AddStorages(this IServiceCollection services) {
-        services.AddSingleton<AzureBlobStorage>();
-        services.AddSingleton<IFileStorage>(p => {
-            var storage = p.GetRequiredService<AzureBlobStorage>();
-            var cache = p.GetRequiredService<ICache>();
-            return new CachedFileStorageDecorator(storage, cache);
-        });
+        services.AddSingleton<IFileStorage, AzureBlobStorage>();
+        services.Decorate<IFileStorage, CachedFileStorageDecorator>();
         return services;
     }
 
@@ -69,6 +65,7 @@ public static class DependencyInjection {
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
+
         return services;
     }
 

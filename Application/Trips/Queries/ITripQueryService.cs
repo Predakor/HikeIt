@@ -1,5 +1,5 @@
-﻿using Application.Dto;
-using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
+using Application.Dto;
 using Domain.Common.Result;
 
 namespace Application.Trips.Queries;

@@ -1,5 +1,5 @@
-﻿using Application.Dto.Analytics;
-using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
+using Application.Dto.Analytics;
 using Domain.Common.Result;
 
 namespace Application.TripAnalytics.Quries;
