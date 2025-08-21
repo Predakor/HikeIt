@@ -1,7 +1,7 @@
 ﻿using Application.Dto.Analytics;
+using Domain.FileReferences;
 using Domain.Mountains.Regions;
 using Domain.TripAnalytics;
-using Domain.Trips.Entities.GpxFiles;
 
 namespace Application.Dto;
 
@@ -15,7 +15,7 @@ public abstract record TripDto(TripBase Base) {
     public record Partial(
         Guid Id,
         TripAnalytic? TrackAnalytic,
-        GpxFile? GpxFile,
+        FileReference? GpxFile,
         Region? Region,
         TripBase Base
     ) : TripDto(Base);

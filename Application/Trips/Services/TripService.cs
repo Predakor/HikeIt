@@ -1,8 +1,8 @@
-﻿using Application.ReachedPeaks;
-using Application.Services.Files;
+﻿using Application.FileReferences;
+using Application.ReachedPeaks;
 using Application.TripAnalytics.Commands;
 using Application.TripAnalytics.Interfaces;
-using Application.Trips;
+using Application.Trips.GpxFile.Services;
 using Domain.Common.Result;
 using Domain.TripAnalytics.Interfaces;
 using Domain.Trips;
@@ -10,23 +10,26 @@ using Domain.Trips;
 namespace Application.Trips.Services;
 
 public class TripService : ITripService {
+    readonly IGpxService _gpxService;
+    readonly IGpxFileService _fileService;
     readonly ITripRepository _tripRepository;
-    readonly IGpxFileService _gpxFileService;
     readonly ITripAnalyticUnitOfWork _unitOfWork;
     readonly ITripAnalyticService _analyticsService;
     readonly IReachedPeaksQureryService _reachedPeaksQureryService;
 
     public TripService(
-        ITripRepository trips,
-        IGpxFileService gpxFileService,
+        IGpxService gpxService,
+        IGpxFileService fileService,
+        ITripRepository tripRepository,
         ITripAnalyticUnitOfWork unitOfWork,
-        ITripAnalyticService tripAnalyticService,
+        ITripAnalyticService analyticsService,
         IReachedPeaksQureryService reachedPeaksQureryService
     ) {
-        _tripRepository = trips;
+        _gpxService = gpxService;
+        _fileService = fileService;
+        _tripRepository = tripRepository;
         _unitOfWork = unitOfWork;
-        _gpxFileService = gpxFileService;
-        _analyticsService = tripAnalyticService;
+        _analyticsService = analyticsService;
         _reachedPeaksQureryService = reachedPeaksQureryService;
     }
 
@@ -67,7 +70,7 @@ public class TripService : ITripService {
     }
 
     async Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx) {
-        return await _gpxFileService
+        return await _gpxService
             .ExtractGpxData(ctx.File)
             .BindAsync(data => ProccesGpxDataCommand.Create(data).Execute())
             .MapAsync(ctx.WithAnalyticData);
@@ -82,9 +85,8 @@ public class TripService : ITripService {
     }
 
     async Task<Result<CreateTripContext>> CreateGpxFile(CreateTripContext ctx) {
-        return await _gpxFileService
-            .CreateAsync(ctx.File, ctx.User.Id, ctx.Id)
-            .MapAsync(_unitOfWork.GpxFileRepository.Add)
+        return await _fileService
+            .CreateTemporrary(ctx.File, ctx.User.Id, ctx.Id)
             .MapAsync(ctx.Trip.AddGpxFile)
             .MapAsync(_ => ctx);
     }

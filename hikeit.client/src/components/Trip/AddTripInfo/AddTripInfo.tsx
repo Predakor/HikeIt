@@ -1,5 +1,4 @@
 import { IconDownload, IconExternal } from "@/Icons/Icons";
-import api from "@/Utils/Api/apiRequest";
 import DropFile from "@/components/AddFile/AddFile/DropFile";
 import Divider from "@/components/Divider/Divider";
 import { apiPath } from "@/data/apiPaths";
@@ -38,7 +37,11 @@ function AddTripInfo({ fileChangeHandler }: Props) {
     >
       <OptionCard title={"Use Gpx File"} description={fileOptionDescription}>
         <Field.Root flexGrow={1}>
-          <DropFile allowedFiles={[".gpx"]} onFileChange={fileChangeHandler} />
+          <DropFile
+            allowedFiles={[".gpx"]}
+            onFileChange={fileChangeHandler}
+            label="Add Gpx file"
+          />
         </Field.Root>
       </OptionCard>
       <Divider />

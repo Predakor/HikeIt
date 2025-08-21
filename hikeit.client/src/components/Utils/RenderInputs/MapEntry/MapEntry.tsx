@@ -41,10 +41,10 @@ export default function MapEntry<TFor extends FieldValues>({
 
   switch (type) {
     case "range":
-      return <Range entry={entry} control={control} register={undefined} />;
+      return <Range entry={entry} control={control} />;
 
     case "select":
-      return <Select entry={entry} control={control} register={undefined} />;
+      return <Select entry={entry} control={control} />;
 
     case "checkbox":
       return "not impleneted checkbox type";

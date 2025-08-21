@@ -1,6 +1,6 @@
-﻿using Domain.TripAnalytics;
+﻿using Domain.FileReferences;
+using Domain.TripAnalytics;
 using Domain.Trips;
-using Domain.Trips.Entities.GpxFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -23,7 +23,7 @@ public class TripConfiguration : IEntityTypeConfiguration<Trip> {
         builder
             .HasOne(t => t.GpxFile)
             .WithOne()
-            .HasForeignKey<GpxFile>(t => t.Id)
+            .HasForeignKey<FileReference>(t => t.Id)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder

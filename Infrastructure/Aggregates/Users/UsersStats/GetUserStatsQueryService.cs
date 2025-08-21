@@ -1,11 +1,11 @@
 ﻿using Application.Dto;
 using Application.Mountains;
+using Application.Users.Dtos;
 using Application.Users.RegionProgresses.Dtos;
 using Application.Users.Stats;
 using Domain.Common;
+using Domain.Common.Extentions;
 using Domain.Common.Result;
-using Domain.Common.Utils;
-using Domain.Trips;
 using Domain.Users;
 using Domain.Users.RegionProgresses;
 using Infrastructure.Data;
@@ -17,8 +17,6 @@ internal class UserQueryService : IUserQueryService {
     readonly TripDbContext _dbContext;
     readonly IRegionQueryService _regionQueries;
     IQueryable<User> Users => _dbContext.Users.AsNoTracking();
-    IQueryable<Trip> Trips => _dbContext.Trips.AsNoTracking();
-
     IQueryable<RegionProgress> RegionProgresses => _dbContext.Set<RegionProgress>().AsNoTracking();
 
     public UserQueryService(TripDbContext ctx, IRegionQueryService regionQueries) {
@@ -34,6 +32,21 @@ internal class UserQueryService : IUserQueryService {
 
         if (query is null) {
             return Errors.NotFound("user", "id", userId);
+        }
+
+        return query;
+    }
+
+    public async Task<Result<UserDto.Profile>> GetProfile(Guid userId) {
+        var query = await Users
+            .Include(u => u.Stats)
+            .Include(u => u.Rank)
+            .Where(u => u.Id == userId)
+            .Select(u => u.ToProfile())
+            .FirstOrDefaultAsync();
+
+        if (query is null) {
+            return Errors.NotFound("user", userId);
         }
 
         return query;
@@ -85,6 +98,10 @@ internal class UserQueryService : IUserQueryService {
 }
 
 static class Extentions {
+    public static UserDto.Profile ToProfile(this User user) {
+        return new(user.ToPublicProfile(), user.ToPersonal(), user.ToAccountState());
+    }
+
     public static RegionProgressDto.Summary ToRegionSummary(this RegionProgress progress) {
         return new RegionProgressDto.Summary(
             new(progress.Region.Id, progress.Region.Name),

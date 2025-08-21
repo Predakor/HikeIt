@@ -3,8 +3,11 @@ using Application.Dto;
 using Application.Services.Auth;
 using Application.Trips.Queries;
 using Application.Users;
+using Application.Users.Avatar;
+using Application.Users.Dtos;
 using Application.Users.Stats;
 using Domain.Common.Result;
+using Domain.Users.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,27 +21,31 @@ public class UsersController : ControllerBase {
     readonly IAuthService _authService;
     readonly IUserQueryService _userQueries;
     readonly ITripQueryService _tripQueries;
+    readonly IUserAvatarFileService _userAvatarFileService;
 
     public UsersController(
         IUserService service,
         IAuthService authService,
         IUserQueryService userQueries,
-        ITripQueryService tripQueries
+        ITripQueryService tripQueries,
+        IUserAvatarFileService userAvatarFileService
     ) {
         _userService = service;
         _authService = authService;
         _userQueries = userQueries;
         _tripQueries = tripQueries;
+        _userAvatarFileService = userAvatarFileService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetMe() => await _userService.GetMe().ToActionResultAsync();
 
     [HttpGet("profile")]
+    [ProducesResponseType(typeof(UserDto.Profile), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserProfile() {
         return await _authService
-            .WithLoggedUser()
-            .BindAsync(user => _userService.GetUserAsync(user.Id))
+            .WithLoggedUserId()
+            .BindAsync(_userQueries.GetProfile)
             .ToActionResultAsync();
     }
 
@@ -81,6 +88,30 @@ public class UsersController : ControllerBase {
         return await _authService
             .WithLoggedUser()
             .BindAsync(u => _userQueries.GetRegionProgess(u.Id, regionId))
+            .ToActionResultAsync();
+    }
+
+    [HttpPost("data/avatar")]
+    public async Task<IActionResult> UploadAvatar(IFormFile file) {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(user => _userAvatarFileService.Upload(file, user))
+            .ToActionResultAsync();
+    }
+
+    [HttpDelete("data/avatar")]
+    public async Task<IActionResult> DeleteAvatar() {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(_userAvatarFileService.Delete)
+            .ToActionResultAsync(ResultType.noContent);
+    }
+
+    [HttpPatch("data/personal")]
+    public async Task<IActionResult> UpdatePersonalData(PersonalInfoUpdate update) {
+        return await _authService
+            .WithLoggedUser()
+            .MapAsync(user => _userService.UpdatePersonalInfo(user, update))
             .ToActionResultAsync();
     }
 }

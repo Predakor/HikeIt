@@ -1,6 +1,7 @@
 ﻿using Api.Extentions;
+using Application.Commons.FileStorage;
+using Application.FileReferences;
 using Application.Services.Auth;
-using Application.Services.Files;
 using Application.Trips;
 using Application.Trips.Queries;
 using Application.Trips.Services;
@@ -56,11 +57,13 @@ public class TripsController : ControllerBase {
 
     [HttpPost("form")]
     public async Task<IActionResult> CreateWithFile([FromForm] Create newTrip, IFormFile file) {
-        var ctx = CreateTripContext.Create().WithRequest(newTrip).WithFile(file);
+        var ctx = CreateTripContext.Create().WithRequest(newTrip);
         return await _authService
             .WithLoggedUser()
             .MapAsync(ctx.WithUser)
-            .BindAsync(_ => _fileService.Validate(file))
+            .BindAsync(_ => FileValidator.ValidateGpx(file))
+            .MapAsync(file => file.ToFileContent())
+            .MapAsync(ctx.WithFile)
             .BindAsync(_ => _tripService.CreateAsync(ctx))
             .MapAsync(trip => $"/trips/{trip.Id}")
             .ToActionResultAsync(ResultType.created);

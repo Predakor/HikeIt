@@ -116,7 +116,7 @@ public class PeaksQueryService : IPeaksQueryService {
             .Distinct()
             .ToListAsync();
 
-        if (nearbyPeaks.IsNullOrEmpty()) {
+        if (nearbyPeaks.NullOrEmpty()) {
             return Errors.NotFound("No peak was found within " + radius + " radius");
         }
 
@@ -132,7 +132,7 @@ public class PeaksQueryService : IPeaksQueryService {
             }
         }
 
-        if (matchedPeaks.IsNullOrEmpty()) {
+        if (matchedPeaks.NullOrEmpty()) {
             return Errors.NotFound("No peak was found within " + radius + " radius");
         }
 

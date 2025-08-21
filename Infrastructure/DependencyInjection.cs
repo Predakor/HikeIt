@@ -1,14 +1,17 @@
-﻿using Application.Interfaces;
-using Application.Services.Files;
+﻿using Application.Commons.CacheService;
+using Application.Commons.Interfaces;
+using Application.FileReferences;
 using Domain.Interfaces;
 using Domain.TripAnalytics.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
+using Infrastructure.Services.Caches;
 using Infrastructure.Storage;
 using Infrastructure.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
 using System.Reflection;
 
 namespace Infrastructure;
@@ -19,14 +22,14 @@ public static class DependencyInjection {
         IConfiguration configuration,
         bool isDevelopment
     ) {
-        var assemblies = new[] { typeof(DependencyInjection).Assembly };
+        ImmutableArray<Assembly> assemblies = [typeof(DependencyInjection).Assembly];
 
         return services
             .AddDatabase(configuration, isDevelopment)
+            .AddCache()
+            .AddStorages()
             .AddEventDispatcher()
             .AddRepositories(assemblies)
-            .AddUnitOfWork()
-            .AddStorages()
             .AddQueryServices(assemblies);
     }
 
@@ -35,20 +38,24 @@ public static class DependencyInjection {
         return services;
     }
 
-    static IServiceCollection AddUnitOfWork(this IServiceCollection services) {
-        services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
-        return services;
+
+    static IServiceCollection AddCache(this IServiceCollection services) {
+        services.AddMemoryCache();
+        return services.AddSingleton<ICache, InMemoryCache>();
     }
 
     static IServiceCollection AddStorages(this IServiceCollection services) {
-        services.AddScoped<IFileStorage, FileStorage>();
+        services.AddSingleton<IFileStorage, AzureBlobStorage>();
+        services.Decorate<IFileStorage, CachedFileStorageDecorator>();
         return services;
     }
 
     static IServiceCollection AddRepositories(
         this IServiceCollection services,
-        Assembly[] assemblies
+        ImmutableArray<Assembly> assemblies
     ) {
+        services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
+
         services.Scan(scan =>
             scan.FromAssemblies(assemblies)
                 .AddClasses(
@@ -58,12 +65,13 @@ public static class DependencyInjection {
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
+
         return services;
     }
 
     static IServiceCollection AddQueryServices(
         this IServiceCollection services,
-        Assembly[] assemblies
+        ImmutableArray<Assembly> assemblies
     ) {
         return services.Scan(scan =>
             scan.FromAssemblies(assemblies)

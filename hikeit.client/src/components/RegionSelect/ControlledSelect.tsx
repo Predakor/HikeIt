@@ -27,6 +27,7 @@ function ControlledSelect({
       onInteractOutside={() => field.onBlur()}
       collection={collection}
       size={mapToSizes(displayOptions)}
+      multiple={false}
     >
       <Select.HiddenSelect />
       <Select.Control>
@@ -40,8 +41,8 @@ function ControlledSelect({
       <Select.Positioner>
         <Select.Content>
           {collection.items.map((item) => (
-            <Select.Item item={item} key={item.id}>
-              {item.name}
+            <Select.Item item={item} key={item.value}>
+              {item.label}
               <Select.ItemIndicator />
             </Select.Item>
           ))}

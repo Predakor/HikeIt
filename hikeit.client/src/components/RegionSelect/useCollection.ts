@@ -14,8 +14,8 @@ export interface AsyncCollection {
 }
 
 export interface CollectionEntry {
-  id: number;
-  name: string;
+  value: string;
+  label: string;
 }
 
 function useCollection(itemCollection: CollectionType) {
@@ -39,8 +39,7 @@ function useCollection(itemCollection: CollectionType) {
 const mapToCollection = (items: CollectionEntry[]) => {
   return createListCollection({
     items: items,
-    itemToString: (item) => item.name,
-    itemToValue: (item) => item.id.toString(),
   });
 };
+
 export default useCollection;

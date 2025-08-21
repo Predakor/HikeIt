@@ -1,8 +1,8 @@
-﻿using Application.Dto;
-using Application.Services.Auth;
-using Domain.Common;
+﻿using Application.Services.Auth;
+using Application.Users.Dtos;
 using Domain.Common.Result;
 using Domain.Users;
+using Domain.Users.ValueObjects;
 
 namespace Application.Users;
 
@@ -17,24 +17,12 @@ public class UserService(IUserRepository repository, IAuthService authService) :
             .MapAsync(UserDtoFactory.ToComplete);
     }
 
-    public async Task<Result<UserDto.PublicProfile>> GetUserAsync(Guid id) {
-        return await _repository.GetByIdAsync(id).MapAsync(UserDtoFactory.ToPublicProfile);
+    public async Task<Result<UserDataDto.PublicProfile>> GetUserAsync(Guid id) {
+        return await _repository.GetByIdAsync(id).MapAsync(u => u.ToPublicProfile());
     }
 
-    public async Task<Result<User>> CreateUserAsync(UserDto.Complete dto) {
-        var user = new User {
-            FirstName = "jausz",
-            LastName = "bizensme",
-            UserName = dto.UserName,
-            Email = dto.Email,
-        };
-
-        user.SetBirthday(dto.BirthDay);
-
-        if (await _repository.Create(user)) {
-            return Errors.Unknown("couldn't save user");
-        }
-
-        return user;
+    public async Task<Result<bool>> UpdatePersonalInfo(User user, PersonalInfoUpdate update) {
+        var updateUser = user.UpdatePersonalInfo(update);
+        return await _repository.SaveChangesAsync();
     }
 }

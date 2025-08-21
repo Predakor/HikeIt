@@ -38,13 +38,19 @@ export async function resolveApiResponse<T>(response: Response) {
   }
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`);
+    const body = (await response.json()) as { message: string; code: string };
+
+    throw { title: body.code, message: body.message };
   }
 
   const contentType = response.headers.get("content-type") || "";
 
   if (contentType.includes("application/json")) {
     return await response.json();
+  }
+
+  if (contentType.includes("text/plain")) {
+    return await response.text();
   }
 }
 

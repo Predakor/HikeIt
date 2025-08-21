@@ -4,15 +4,15 @@ using Domain.Trips;
 using Domain.Users.Entities;
 using Domain.Users.RegionProgresses;
 using Domain.Users.RegionProgresses.ValueObjects;
+using Domain.Users.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Users;
 
-
 public enum Gender {
     Male,
     Female,
-    Other
+    Other,
 }
 
 public class User : IdentityUser<Guid>, IEntity<Guid> {
@@ -20,7 +20,7 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
     public required string LastName { get; set; }
     public DateOnly BirthDay { get; private set; }
     public DateOnly CreatedAt { get; init; }
-    public string? Avatar { get; set; }
+    public string Avatar { get; set; } = string.Empty;
     public string? Country { get; set; }
     public Gender? Gender { get; set; }
 
@@ -43,6 +43,32 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
         return this;
     }
 
+    public User UpdatePersonalInfo(PersonalInfoUpdate update) {
+        if (update.FirstName is not null) {
+            FirstName = update.FirstName;
+        }
+
+        if (update.LastName is not null) {
+            LastName = update.LastName;
+        }
+
+        if (update.Country is not null) {
+            Country = update.Country;
+        }
+
+        if (update.Gender is not null) {
+            if (Enum.TryParse<Gender>(update.Gender, true, out var gender)) {
+                Gender = gender;
+            }
+        }
+
+        if (update.BirthDay is not null) {
+            SetBirthday(update.BirthDay);
+        }
+
+        return this;
+    }
+
     public User SetBirthday(DateOnly? date) {
         if (date is null) {
             return this;
@@ -51,6 +77,16 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
         if (date < DateOnly.FromDateTime(DateTime.Now)) {
             BirthDay = date.Value;
         }
+
+        return this;
+    }
+
+    public User SetAvatar(string avatarUrl) {
+        if (avatarUrl is null) {
+            return this;
+        }
+
+        Avatar = avatarUrl;
 
         return this;
     }

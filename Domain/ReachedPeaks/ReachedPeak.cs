@@ -1,7 +1,7 @@
 ﻿using Domain.Common.Result;
+using Domain.Common.Validations.Validators;
 using Domain.Interfaces;
 using Domain.Peaks;
-using Domain.ReachedPeaks.Rules;
 using Domain.Trips;
 using Domain.Users;
 using Domain.Users.Extentions;
@@ -56,12 +56,11 @@ public class ReachedPeak : IEntity<Guid> {
     }
 
     public Result<ReachedPeak> AddReachTime(DateTime time) {
-        var rule = new DateNotInTheFuture(time);
-        return rule.Check()
-            .Map(_ => {
-                ReachedAtTime = time.ToUniversalTime();
-                return this;
-            });
+        return new DateValidator()
+            .NotInTheFuture()
+            .Validate(time)
+            .Tap(time => ReachedAtTime = time.ToUniversalTime())
+            .Map(t => this);
     }
 
     public Result<ReachedPeak> AddReachedDistance(int distance) {

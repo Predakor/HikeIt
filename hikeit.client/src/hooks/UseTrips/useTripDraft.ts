@@ -1,8 +1,8 @@
 import { resolveCreated } from "@/Utils/Api/Resolvers/resolveCreated";
 import api from "@/Utils/Api/apiRequest";
 import { useMutation } from "@tanstack/react-query";
-import useTripCache from "./useTripCache";
 import { useEffect, useRef } from "react";
+import useTripCache from "./useTripCache";
 
 interface TripUpdate {
   tripName: string;

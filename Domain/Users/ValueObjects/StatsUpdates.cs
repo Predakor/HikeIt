@@ -13,5 +13,5 @@ public static class StatsUpdates {
 
     public record Locations(uint UniquePeaks, uint NewRegions);
 
-    public record Metas(DateOnly HikeDate, uint DistanceMeters);
+    public record Metas(uint DistanceMeters, TimeSpan? Duration);
 }

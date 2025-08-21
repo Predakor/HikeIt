@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 using Domain.Common.Result;
-using Domain.Common.Rules;
+using Domain.Common.Validations.Validators;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +14,12 @@ public abstract class ResultRepository<T, TKey>
     protected ResultRepository(TripDbContext context)
         : base(context) { }
 
+    static readonly AbstractValidator<T> validator = new AbstractValidator<T>()
+        .NotNull()
+        .NotDefault();
+
+    static bool NotNullOrDefaul(T? t) => validator.Validate(t!).IsSuccess;
+
     public virtual async Task<Result<IEnumerable<T>>> GetAllAsync() {
         var query = await DbSet.ToListAsync();
         if (query.Count == 0) {
@@ -23,18 +29,13 @@ public abstract class ResultRepository<T, TKey>
     }
 
     public virtual async Task<Result<T>> GetByIdAsync(TKey id) {
-        var nullOrDefault = new NotNullOrDefault<TKey>(id, "id").Check();
-        if (nullOrDefault.HasErrors(out var err)) {
-            return Result<T>.Failure(err);
-        }
-
         var res = await DbSet.FindAsync(id);
 
-        if (res is null) {
-            return Errors.NotFound(id?.ToString() ?? "");
+        if (!NotNullOrDefaul(res)) {
+            return Errors.NotFound(nameof(T), id);
         }
 
-        return res;
+        return res!;
     }
 }
 
@@ -42,10 +43,8 @@ public class CrudResultRepository<T, TKey>
     : ResultRepository<T, TKey>,
         ICrudResultRepository<T, TKey>
     where T : class, IEntity<TKey> {
-
     protected CrudResultRepository(TripDbContext context)
-        : base(context) {
-    }
+        : base(context) { }
 
     public virtual async Task<Result<T>> AddAsync(T entity) {
         var query = await DbSet.AddAsync(entity);

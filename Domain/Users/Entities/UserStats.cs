@@ -12,25 +12,23 @@ public class UserStats : IEntity<Guid> {
     public uint TotalDistanceMeters { get; private set; }
     public uint TotalAscentMeters { get; private set; }
     public uint TotalDescentMeters { get; private set; }
-    public uint TotalPeaks { get; private set; }
     public TimeSpan TotalDuration { get; private set; }
 
     //Locations
+    public uint TotalPeaks { get; private set; }
     public uint UniquePeaks { get; private set; }
     public uint RegionsVisited { get; private set; }
-
-    // probbably will add more in the future
-    // like actual regions eg sudety
-    //and change current regions to ranges eg tatry
 
     //Metas
     public DateOnly? FirstHikeDate { get; private set; }
     public DateOnly? LastHikeDate { get; private set; }
     public uint LongestTripMeters { get; private set; }
+    public TimeSpan LongestTripMinutes { get; private set; }
 
     public void UpdateStats(StatsUpdates.All update, UpdateMode mode) {
         //safeguard if some stats woulnd't zero out
-        if (TotalTrips == 1 && mode == UpdateMode.Decrease) {
+        bool isLastTripToDelete = TotalTrips == 1 && mode == UpdateMode.Decrease;
+        if (isLastTripToDelete) {
             Clear();
             return;
         }
@@ -49,13 +47,27 @@ public class UserStats : IEntity<Guid> {
         TotalDuration = TotalDuration.SafeUpdate(update.Duration, mode);
     }
 
-    public void UpdateMetas(StatsUpdates.Metas update) {
-        if (FirstHikeDate == null || update.HikeDate < FirstHikeDate) {
-            FirstHikeDate = update.HikeDate;
+    public void UpdateFirstLastTripDate(DateOnly date) {
+        if (FirstHikeDate is null) {
+            FirstHikeDate = date;
+            LastHikeDate = date;
+            return;
         }
 
-        if (LastHikeDate == null || update.HikeDate > LastHikeDate) {
-            LastHikeDate = update.HikeDate;
+        if (date < FirstHikeDate) {
+            FirstHikeDate = date;
+            return;
+        }
+
+        if (date > LastHikeDate) {
+            FirstHikeDate = date;
+            return;
+        }
+    }
+
+    public void UpdateMetas(StatsUpdates.Metas update) {
+        if (update.Duration is not null && update.Duration > LongestTripMinutes) {
+            LongestTripMinutes = update.Duration.Value;
         }
 
         if (update.DistanceMeters > LongestTripMeters) {

@@ -17,7 +17,7 @@ public class ElevationProfileQueryService : IElevationProfileQueryService {
 
     public Task<Result<ElevationProfileDto?>> DevAnalyticPreview(
         Guid id,
-        ConfigBase.Nullable config
+        DataProccesConfig.Partial config
     ) {
         throw new NotImplementedException();
     }

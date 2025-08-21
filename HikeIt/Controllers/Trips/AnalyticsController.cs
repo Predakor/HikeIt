@@ -1,36 +1,44 @@
 ﻿using Api.Extentions;
 using Application.Dto.Analytics;
+using Application.FileReferences;
 using Application.Services.Auth;
-using Application.Services.Files;
 using Application.TripAnalytics.ElevationProfiles;
 using Application.TripAnalytics.Quries;
-using Domain.Common;
+using Application.Trips.GpxFile.Services;
 using Domain.Common.Result;
+using Domain.FileReferences;
 using Domain.Trips.Builders.GpxDataBuilder;
 using Domain.Trips.Config;
-using Domain.Trips.ValueObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.Trips;
 
+[Authorize]
 [Route("api/trips/{id}/")]
 [ApiController]
 public class AnalyticsController : ControllerBase {
+    readonly IFileReferenceRepository _fileReferenceRepository;
     readonly IElevationProfileQueryService _elevationQueries;
     readonly ITripAnalyticsQueryService _queryService;
     readonly IGpxFileService _fileService;
     readonly IAuthService _authService;
+    readonly IGpxService _gpxService;
 
     public AnalyticsController(
+        IFileReferenceRepository fileReferenceRepository,
         IElevationProfileQueryService elevationQueries,
         ITripAnalyticsQueryService queryService,
         IGpxFileService fileService,
-        IAuthService authService
+        IAuthService authService,
+        IGpxService gpxService
     ) {
+        _fileReferenceRepository = fileReferenceRepository;
         _elevationQueries = elevationQueries;
         _queryService = queryService;
         _fileService = fileService;
         _authService = authService;
+        _gpxService = gpxService;
     }
 
     [HttpGet("analytics")]
@@ -57,38 +65,20 @@ public class AnalyticsController : ControllerBase {
             .ToActionResultAsync();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("analytics/elevations/preview")]
-    public async Task<ActionResult<ElevationProfileDto?>> DevAnalyticPreview(
+    [ProducesResponseType(typeof(ElevationProfileDto), 200)]
+    public async Task<IActionResult> DevAnalyticPreview(
         Guid id,
-        [FromBody] ConfigBase.Nullable config
+        [FromBody] DataProccesConfig.Partial config
     ) {
-        var file = await _fileService.ExtractGpxData(id);
-
-        if (file == null) {
-            return NotFound("File not found");
-        }
-
-        static GainDto ToGainDto(GpxGain g) {
-            return new GainDto(
-                g.DistanceDelta,
-                g.ElevationDelta,
-                g.TimeDelta.HasValue ? g.TimeDelta.Value : 0
-            );
-        }
-
-        if (file.HasErrors(out var error)) {
-            return BadRequest(error);
-        }
-
-        var data = file.Value!;
-
-        ElevationDataWithConfig eleData = new(new(data), config);
-        var eleDataFromConfig = GpxDataFactory.CreateFromConfig(eleData);
-        var gains = eleDataFromConfig.Gains ?? eleDataFromConfig.Points.ToGains();
-
-        var gainsDtos = gains.Select(ToGainDto).ToArray();
-
-        var eleProfileDto = new ElevationProfileDto(data.Points[0], gainsDtos);
-        return Ok(eleProfileDto);
+        return await _fileReferenceRepository
+            .GetByIdAsync(id)
+            .BindAsync(_fileService.GetAsync)
+            .BindAsync(_gpxService.ExtractGpxData)
+            .MapAsync(data => new ElevationDataWithConfig(data, config))
+            .MapAsync(GpxDataFactory.CreateFromConfig)
+            .MapAsync(x => x.ToElevationProfileDto())
+            .ToActionResultAsync();
     }
 }

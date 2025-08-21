@@ -27,7 +27,6 @@ public class UserRepository : CrudResultRepository<User, Guid>, IUserRepository 
     }
 
     public async Task<bool> Create(User newUser) {
-        // Add Validation
         await DbSet.AddAsync(newUser);
         return true;
     }
@@ -50,19 +49,22 @@ public class UserRepository : CrudResultRepository<User, Guid>, IUserRepository 
         StatsUpdates.All update,
         UpdateMode updateMode = UpdateMode.Increase
     ) {
-        var stats = await _stats.FindAsync(userId);
-        if (stats is null) {
-            Console.WriteLine("Passed not existing user");
-            return Errors.NotFound($"User with id: {userId}");
-        }
-
-        stats.UpdateStats(update, updateMode);
-
-        return await SaveChangesAsync();
+        return await GetUserStats(userId)
+            .TapAsync(s => s.UpdateStats(update, updateMode))
+            .BindAsync(_ => SaveChangesAsync());
     }
 
     public async Task<Result<RegionProgress>> CreateRegionProgress(RegionProgress regionProgres) {
         await _regionsProgress.AddAsync(regionProgres);
         return regionProgres;
+    }
+
+    public async Task<Result<UserStats>> GetUserStats(Guid userId) {
+        var stats = await _stats.FindAsync(userId);
+        if (stats is null) {
+            Console.WriteLine("Passed not existing user");
+            return Errors.NotFound("user", userId);
+        }
+        return stats;
     }
 }

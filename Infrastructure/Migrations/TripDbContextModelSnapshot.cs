@@ -24,6 +24,35 @@ namespace Infrastructure.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.FileReferences.FileReference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FileReferences");
+                });
+
             modelBuilder.Entity("Domain.Mountains.Regions.Region", b =>
                 {
                     b.Property<int>("Id")
@@ -182,31 +211,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("TripAnalytics");
                 });
 
-            modelBuilder.Entity("Domain.Trips.Entities.GpxFiles.GpxFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("OriginalName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GpxFiles");
-                });
-
             modelBuilder.Entity("Domain.Trips.Trip", b =>
                 {
                     b.Property<Guid>("Id")
@@ -256,6 +260,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<long>("LongestTripMeters")
                         .HasColumnType("bigint");
+
+                    b.Property<TimeSpan>("LongestTripMinutes")
+                        .HasColumnType("interval");
 
                     b.Property<long>("RegionsVisited")
                         .HasColumnType("bigint");
@@ -330,6 +337,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Avatar")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateOnly>("BirthDay")
@@ -543,6 +551,15 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.FileReferences.FileReference", b =>
+                {
+                    b.HasOne("Domain.Trips.Trip", null)
+                        .WithOne("GpxFile")
+                        .HasForeignKey("Domain.FileReferences.FileReference", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Peaks.Peak", b =>
                 {
                     b.HasOne("Domain.Mountains.Regions.Region", "Region")
@@ -716,15 +733,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("RouteAnalytics");
 
                     b.Navigation("TimeAnalytics");
-                });
-
-            modelBuilder.Entity("Domain.Trips.Entities.GpxFiles.GpxFile", b =>
-                {
-                    b.HasOne("Domain.Trips.Trip", null)
-                        .WithOne("GpxFile")
-                        .HasForeignKey("Domain.Trips.Entities.GpxFiles.GpxFile", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Trips.Trip", b =>

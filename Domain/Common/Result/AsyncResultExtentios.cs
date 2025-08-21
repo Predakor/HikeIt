@@ -31,7 +31,6 @@ public static class AsyncResultExtentios {
 
     #endregion
 
-
     #region match
     public static async Task<TResult> MatchAsync<T, TResult>(
         this Task<Result<T>> result,
@@ -103,7 +102,7 @@ public static class AsyncResultExtentios {
 
     #endregion
 
-
+    #region map
     public static async Task<Result<TOut>> MapAsync<TIn, TOut>(
         this Task<Result<TIn>> result,
         Func<TIn, TOut> map
@@ -126,4 +125,30 @@ public static class AsyncResultExtentios {
     ) {
         return await (await result).MapAsync(mapAsync);
     }
+    #endregion
+
+    #region tap
+    public static async Task<Result<T>> TapAsync<T>(
+        this Task<Result<T>> resultTask,
+        Func<T, Task> actionAsync
+    ) {
+        var result = await resultTask;
+        if (result.IsSuccess && result.Value is not null) {
+            await actionAsync(result.Value);
+        }
+        return result;
+    }
+
+    public static async Task<Result<T>> TapAsync<T>(
+        this Task<Result<T>> resultTask,
+        Action<T> actionAsync
+    ) {
+        var result = await resultTask;
+        if (result.IsSuccess && result.Value is not null) {
+            actionAsync(result.Value);
+        }
+        return result;
+    }
+
+    #endregion
 }

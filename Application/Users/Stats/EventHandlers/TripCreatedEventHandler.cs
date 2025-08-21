@@ -1,10 +1,10 @@
-﻿using Application.Interfaces;
+﻿using Application.Commons.Interfaces;
 using Domain.Trips.Events;
 using Domain.Users;
 
 namespace Application.Users.Stats.EventHandlers;
 
-internal class TripCreatedEventHandler : IDomainEventHandler<TripAnalyticsCreatedEvent> {
+internal sealed class TripCreatedEventHandler : IDomainEventHandler<TripAnalyticsCreatedEvent> {
     readonly IUserRepository _userRepository;
 
     public TripCreatedEventHandler(IUserRepository userRepository) {

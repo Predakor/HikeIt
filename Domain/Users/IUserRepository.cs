@@ -1,5 +1,6 @@
 ﻿using Domain.Common.Result;
 using Domain.Interfaces;
+using Domain.Users.Entities;
 using Domain.Users.Extentions;
 using Domain.Users.RegionProgresses;
 using Domain.Users.ValueObjects;
@@ -15,6 +16,7 @@ public interface IUserRepository : ICrudResultRepository<User, Guid> {
     );
 
     Task<Result<User>> GetWithRegionProgresses(Guid userId);
+    Task<Result<UserStats>> GetUserStats(Guid userId);
 
     Task<Result<RegionProgress>> CreateRegionProgress(RegionProgress regionProgres);
 }

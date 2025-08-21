@@ -1,14 +1,16 @@
 ﻿using Api.Extentions;
 using Application.Commons.Drafts;
+using Application.Commons.FileStorage;
+using Application.FileReferences;
 using Application.Services.Auth;
-using Application.Services.Files;
 using Application.TripAnalytics.Interfaces;
 using Application.Trips;
+using Application.Trips.GpxFile.Services;
 using Application.Trips.Services;
 using Domain.Common;
 using Domain.Common.Result;
+using Domain.FileReferences.ValueObjects;
 using Domain.Trips;
-using Domain.Trips.Entities.GpxFiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,20 +20,22 @@ namespace Api.Controllers.Trips;
 [ApiController]
 [Route("api/trips/[controller]/")]
 public class DraftsController {
+    readonly IGpxService _gpxService;
     readonly IAuthService _authService;
     readonly ITripService _tripService;
     readonly IGpxFileService _fileService;
     readonly IDraftService<TripDraft> _draftService;
     readonly ITripAnalyticService _analyticService;
-    readonly IGpxFileRepository _fileRepository;
 
     public DraftsController(
+        IGpxService gpxService,
         IAuthService authService,
         ITripService tripService,
         IGpxFileService fileService,
         IDraftService<TripDraft> draftService,
         ITripAnalyticService tripAnalyticService
     ) {
+        _gpxService = gpxService;
         _authService = authService;
         _fileService = fileService;
         _tripService = tripService;
@@ -85,14 +89,19 @@ public class DraftsController {
     public async Task<IActionResult> AttachFile(Guid draftId, IFormFile file) {
         var draft = await _draftService.Get(draftId);
 
-        return await CreateContext(draft, file)
+        return await ValidateAndExtractGpxFile(file)
+            .BindAsync(f => CreateContext(draft, f))
             .BindAsync(ProccesGpxFile)
             .BindAsync(_analyticService.GenerateAnalytic)
             .MapAsync(draft.AddAnalytics)
             .ToActionResultAsync(ResultType.created);
     }
 
-    Task<Result<CreateTripContext>> CreateContext(TripDraft draft, IFormFile file) {
+    static Task<Result<FileContent>> ValidateAndExtractGpxFile(IFormFile file) {
+        return FileValidator.ValidateGpx(file).MapAsync(f => f.ToFileContent());
+    }
+
+    Task<Result<CreateTripContext>> CreateContext(TripDraft draft, FileContent file) {
         var ctx = CreateTripContext.Create(draft.Id).WithFile(file).WithTrip(draft.Trip);
 
         return _authService.WithLoggedUser().MapAsync(ctx.WithUser);
@@ -100,12 +109,9 @@ public class DraftsController {
 
     Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx) {
         return _fileService
-            .Validate(ctx.File)
-            .BindAsync(file => _fileService.CreateAsync(file, ctx.User.Id, ctx.Id))
-            .BindAsync(file => {
-                ctx.Trip.AddGpxFile(file);
-                return _fileService.ExtractGpxData(ctx.File);
-            })
+            .CreateTemporrary(ctx.File, ctx.User.Id, ctx.Id)
+            .TapAsync(file => ctx.Trip.AddGpxFile(file))
+            .BindAsync(file => _gpxService.ExtractGpxData(ctx.File))
             .MapAsync(ctx.WithAnalyticData);
     }
 
@@ -116,7 +122,7 @@ public class DraftsController {
             }
 
             if (update.TripDay.HasValue) {
-                trip.TripDay = update.TripDay.Value;
+                trip.SetDate(update.TripDay.Value);
             }
 
             if (update.RegionId.HasValue) {

@@ -1,7 +1,7 @@
-﻿using Domain.Trips;
+﻿using Domain.FileReferences.ValueObjects;
+using Domain.Trips;
 using Domain.Trips.ValueObjects;
 using Domain.Users;
-using Microsoft.AspNetCore.Http;
 using static Application.Dto.TripDto;
 
 namespace Application.Trips;
@@ -9,7 +9,7 @@ namespace Application.Trips;
 public class CreateTripContext(Guid id) {
     public Guid Id { get; } = id;
     public User User { get; private set; }
-    public IFormFile File { get; private set; }
+    public FileContent File { get; private set; }
     public Request.Create Request { get; private set; }
 
     public Trip Trip { get; private set; }
@@ -21,7 +21,7 @@ public class CreateTripContext(Guid id) {
         return this;
     }
 
-    public CreateTripContext WithFile(IFormFile file) {
+    public CreateTripContext WithFile(FileContent file) {
         File = file;
         return this;
     }

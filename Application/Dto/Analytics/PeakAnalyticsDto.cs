@@ -1,5 +1,5 @@
 ﻿using Application.ReachedPeaks.Dtos;
-using Domain.Common.Utils;
+using Domain.Common.Extentions;
 using Domain.ReachedPeaks;
 using Domain.TripAnalytics.Entities.PeaksAnalytics;
 

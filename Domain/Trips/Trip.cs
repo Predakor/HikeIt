@@ -1,7 +1,9 @@
 ﻿using Domain.Common;
 using Domain.Common.AggregateRoot;
+using Domain.Common.Extentions;
 using Domain.Common.Result;
-using Domain.Common.Utils;
+using Domain.Common.Validations.Validators;
+using Domain.FileReferences;
 using Domain.Interfaces;
 using Domain.Mountains.Regions;
 using Domain.Peaks;
@@ -9,7 +11,6 @@ using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.ValueObjects;
 using Domain.TripAnalytics;
 using Domain.TripAnalytics.Events;
-using Domain.Trips.Entities.GpxFiles;
 using Domain.Trips.Events;
 using Domain.Users;
 using Domain.Users.Extentions;
@@ -18,14 +19,13 @@ namespace Domain.Trips;
 
 public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public required string Name { get; set; }
-    public required DateOnly TripDay { get; set; }
+    public DateOnly TripDay { get; private set; } = default;
 
     #region Foreign Keys
 
     public Guid UserId { get; private set; }
     public int RegionId { get; private set; }
     public int? PeakId { get; private set; }
-    public TripAnalytic? Analytics { get; set; }
     public Guid? GpxFileId { get; private set; }
     #endregion
 
@@ -33,7 +33,8 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     public User? User { get; set; }
     public Peak? Target { get; set; }
     public Region? Region { get; set; }
-    public GpxFile? GpxFile { get; set; }
+    public FileReference? GpxFile { get; set; }
+    public TripAnalytic? Analytics { get; set; }
     #endregion
 
     public ICollection<ReachedPeak> Peaks { get; private set; } = [];
@@ -70,7 +71,7 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
     }
 
     public Result<Trip> AddReachedPeaks(List<ReachedPeak> newPeaks) {
-        if (newPeaks.Count == 0) {
+        if (newPeaks.NullOrEmpty()) {
             return Errors.EmptyCollection("new peaks");
         }
 
@@ -90,10 +91,22 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         PeakId = peak.Id;
     }
 
-    public Trip AddGpxFile(GpxFile gpxFile) {
+    public Result<Trip> SetDate(DateOnly date) {
+        var validTripDay = new DateOnlyValidator().NotInTheFuture().Validate(date);
+        if (validTripDay.HasErrors(out var error)) {
+            return error;
+        }
+
+        TripDay = date;
+        AddDomainEvent(new TripDateUpdatedEvent(this));
+        return this;
+    }
+
+    public Trip AddGpxFile(FileReference gpxFile) {
         ArgumentNullException.ThrowIfNull(gpxFile);
         GpxFile = gpxFile;
         GpxFileId = gpxFile.Id;
+        AddDomainEvent(new GpxFileAttatchedEvent(gpxFile.Id, Id));
         return this;
     }
 
