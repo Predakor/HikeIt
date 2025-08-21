@@ -10,9 +10,9 @@ public class GpxFileService : IGpxFileService {
     const BlobContainer container = BlobContainer.File;
 
     readonly IFileStorage _storage;
-    readonly ICacheService _cache;
+    readonly ICache _cache;
 
-    public GpxFileService(ICacheService cacheService, IFileStorage storage) {
+    public GpxFileService(ICache cacheService, IFileStorage storage) {
         _cache = cacheService;
         _storage = storage;
     }
@@ -23,14 +23,6 @@ public class GpxFileService : IGpxFileService {
         return await _storage.DownloadAsync(reference.StorageName, container);
     }
 
-    public async Task<Result<FileReference>> CreateTemporrary(FileContent file, Guid userId, Guid tripId) {
-        string key = FileKey(tripId, userId);
-
-        return await _cache
-            .SetAsync(key, file)
-            .MapAsync(info => FileReference.FromFileContent(file, key, tripId));
-    }
-
     public async Task<Result<string>> UploadAsync(Guid fileId, Guid userId) {
         string key = FileKey(fileId, userId);
         return await _cache
@@ -38,8 +30,26 @@ public class GpxFileService : IGpxFileService {
             .BindAsync(file => _storage.UploadAsync(file, key, container))
             .MapAsync(r => r.Url);
     }
+    public async Task<Result<FileReference>> UploadAssync(FileReference reference) {
+        return await _cache
+            .GetAsync<FileContent>(reference.StorageName)
+            .BindAsync(file => _storage.UploadAsync(file, reference.StorageName, container))
+            .MapAsync(r => reference.SetUrl(r.Url));
+    }
 
     public async Task<Result<bool>> DeleteAsync(string path) {
         return await _storage.DeleteAsync(path, container);
+    }
+
+    public async Task<Result<FileReference>> CreateTemporrary(
+        FileContent file,
+        Guid userId,
+        Guid tripId
+    ) {
+        string key = FileKey(tripId, userId);
+
+        return await _cache
+            .SetAsync(key, file)
+            .MapAsync(info => FileReference.FromFileContent(file, key, tripId));
     }
 }

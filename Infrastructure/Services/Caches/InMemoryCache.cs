@@ -1,20 +1,21 @@
-﻿using Domain.Common;
+﻿using Application.Commons.CacheService;
+using Domain.Common;
 using Domain.Common.Result;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Application.Commons.CacheService;
+namespace Infrastructure.Services.Caches;
 
-internal class InMemoryCacheService : ICacheService {
+internal class InMemoryCache : ICache {
     readonly IMemoryCache _cache;
 
-    public InMemoryCacheService(IMemoryCache cache) {
+    public InMemoryCache(IMemoryCache cache) {
         _cache = cache;
     }
 
-    public async Task<Result<T?>> GetAsync<T>(string key, CancellationToken ct = default) {
+    public async Task<Result<T>> GetAsync<T>(string key, CancellationToken ct = default) {
         await Task.CompletedTask;
         if (_cache.TryGetValue<T>(key, out var value)) {
-            return value;
+            return value!;
         }
         return Errors.NotFound(nameof(T), key);
     }

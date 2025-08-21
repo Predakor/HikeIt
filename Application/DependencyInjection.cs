@@ -1,5 +1,4 @@
-﻿using Application.Commons.CacheService;
-using Application.Commons.Drafts;
+﻿using Application.Commons.Drafts;
 using Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +6,7 @@ namespace Application;
 
 public static class DependencyInjection {
     public static IServiceCollection AddAplication(this IServiceCollection services) {
-        return services.AddDomainEvents().AddCacheService().AddQueries().AddDrafts();
+        return services.AddDomainEvents().AddQueries().AddDrafts();
     }
 
     static IServiceCollection AddDomainEvents(this IServiceCollection services) {
@@ -36,9 +35,5 @@ public static class DependencyInjection {
 
     static IServiceCollection AddDrafts(this IServiceCollection services) {
         return services.AddSingleton(typeof(IDraftService<>), typeof(MemoryDraftService<>));
-    }
-
-    static IServiceCollection AddCacheService(this IServiceCollection services) {
-        return services.AddSingleton<ICacheService, InMemoryCacheService>().AddMemoryCache();
     }
 }

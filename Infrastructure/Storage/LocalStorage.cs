@@ -6,7 +6,7 @@ using Domain.FileReferences.ValueObjects;
 namespace Infrastructure.Storage;
 
 internal class LocalStorage : IFileStorage {
-    const string rooot = "wwwroot";
+    const string root = "wwwroot";
 
     static string GetContainerFolder(BlobContainer container) {
         return container switch {
@@ -19,7 +19,7 @@ internal class LocalStorage : IFileStorage {
     static string GetUploadFolder(string path, BlobContainer container) {
         string folder = GetContainerFolder(container);
 
-        return Path.Combine(rooot, folder, path.ToString());
+        return Path.Combine(root, folder, path.ToString());
     }
 
     public Task<Result<Stream>> DownloadAsync(string path, BlobContainer type) {

@@ -1,14 +1,17 @@
-﻿using Application.FileReferences;
+﻿using Application.Commons.CacheService;
+using Application.FileReferences;
 using Application.Interfaces;
 using Domain.Interfaces;
 using Domain.TripAnalytics.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.DomainEvents;
+using Infrastructure.Services.Caches;
 using Infrastructure.Storage;
 using Infrastructure.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
 using System.Reflection;
 
 namespace Infrastructure;
@@ -19,14 +22,14 @@ public static class DependencyInjection {
         IConfiguration configuration,
         bool isDevelopment
     ) {
-        var assemblies = new[] { typeof(DependencyInjection).Assembly };
+        ImmutableArray<Assembly> assemblies = [typeof(DependencyInjection).Assembly];
 
         return services
             .AddDatabase(configuration, isDevelopment)
+            .AddCache()
+            .AddStorages()
             .AddEventDispatcher()
             .AddRepositories(assemblies)
-            .AddUnitOfWork()
-            .AddStorages()
             .AddQueryServices(assemblies);
     }
 
@@ -35,21 +38,28 @@ public static class DependencyInjection {
         return services;
     }
 
-    static IServiceCollection AddUnitOfWork(this IServiceCollection services) {
-        services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
-        return services;
+
+    static IServiceCollection AddCache(this IServiceCollection services) {
+        services.AddMemoryCache();
+        return services.AddSingleton<ICache, InMemoryCache>();
     }
 
     static IServiceCollection AddStorages(this IServiceCollection services) {
-        services.AddSingleton<IFileStorage, AzureBlobStorage>();
-
+        services.AddSingleton<AzureBlobStorage>();
+        services.AddSingleton<IFileStorage>(p => {
+            var storage = p.GetRequiredService<AzureBlobStorage>();
+            var cache = p.GetRequiredService<ICache>();
+            return new CachedFileStorageDecorator(storage, cache);
+        });
         return services;
     }
 
     static IServiceCollection AddRepositories(
         this IServiceCollection services,
-        Assembly[] assemblies
+        ImmutableArray<Assembly> assemblies
     ) {
+        services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
+
         services.Scan(scan =>
             scan.FromAssemblies(assemblies)
                 .AddClasses(
@@ -64,7 +74,7 @@ public static class DependencyInjection {
 
     static IServiceCollection AddQueryServices(
         this IServiceCollection services,
-        Assembly[] assemblies
+        ImmutableArray<Assembly> assemblies
     ) {
         return services.Scan(scan =>
             scan.FromAssemblies(assemblies)
