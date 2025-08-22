@@ -3,37 +3,44 @@ using Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 
-namespace Infrastructure.DomainEvents;
+namespace Infrastructure.Commons.Events.Dispatchers;
 
 public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : IDomainEventDispatcher {
     static readonly ConcurrentDictionary<Type, Type> HandlerTypeDictionary = new();
     static readonly ConcurrentDictionary<Type, Type> WrapperTypeDictionary = new();
 
     public async Task DispatchAsync(
+        IDomainEvent domainEvent,
+        CancellationToken cancellationToken = default
+    ) {
+        Console.WriteLine(" Invoking event:" + domainEvent.ToString());
+        using IServiceScope scope = serviceProvider.CreateScope();
+
+        Type domainEventType = domainEvent.GetType();
+
+        Type handlerType = HandlerTypeDictionary.GetOrAdd(
+            domainEvent.GetType(),
+            et => typeof(IDomainEventHandler<>).MakeGenericType(et)
+        );
+
+        IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(handlerType);
+
+        foreach (object? handler in handlers) {
+            if (handler is null) {
+                continue;
+            }
+
+            var handlerWrapper = HandlerWrapper.Create(handler, domainEventType);
+            await handlerWrapper.Handle(domainEvent, cancellationToken);
+        }
+    }
+
+    public async Task DispatchAsync(
         IEnumerable<IDomainEvent> domainEvents,
         CancellationToken cancellationToken = default
     ) {
         foreach (IDomainEvent domainEvent in domainEvents) {
-            Console.WriteLine(" Invoking event:" + domainEvent.ToString());
-            using IServiceScope scope = serviceProvider.CreateScope();
-
-            Type domainEventType = domainEvent.GetType();
-
-            Type handlerType = HandlerTypeDictionary.GetOrAdd(
-                domainEvent.GetType(),
-                et => typeof(IDomainEventHandler<>).MakeGenericType(et)
-            );
-
-            IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(handlerType);
-
-            foreach (object? handler in handlers) {
-                if (handler is null) {
-                    continue;
-                }
-
-                var handlerWrapper = HandlerWrapper.Create(handler, domainEventType);
-                await handlerWrapper.Handle(domainEvent, cancellationToken);
-            }
+            await DispatchAsync(domainEvent, cancellationToken);
         }
     }
 

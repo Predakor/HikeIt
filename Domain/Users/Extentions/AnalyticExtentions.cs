@@ -4,7 +4,7 @@ using Domain.Users.ValueObjects;
 namespace Domain.Users.Extentions;
 
 public static class AnalyticExtentions {
-    public static StatsUpdates.All ToStatUpdate(this TripAnalytic analytics, DateOnly tripDay) {
+    public static StatsUpdates.All ToStatUpdate(this TripAnalytic analytics) {
         if (analytics.RouteAnalytics is null) {
             throw new NullReferenceException("No route analytics ");
         }

@@ -16,10 +16,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class TripDbContext(
-    DbContextOptions<TripDbContext> options,
-    IDomainEventDispatcher domainEventDispatcher
-) : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options) {
+public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
+    readonly IEventPublisher _eventPublisher;
+
+    public TripDbContext(DbContextOptions<TripDbContext> options, IEventPublisher eventPublisher)
+        : base(options) {
+        _eventPublisher = eventPublisher;
+    }
+
     public DbSet<Trip> Trips { get; set; }
     public DbSet<Peak> Peaks { get; set; }
     public DbSet<Region> Regions { get; set; }
@@ -42,7 +46,7 @@ public class TripDbContext(
     ) {
         var events = GatherEvents();
         var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        await PublishEvents(events);
+        await _eventPublisher.PublishAsync(events, cancellationToken);
         return result;
     }
 
@@ -52,17 +56,10 @@ public class TripDbContext(
             .Select(e => e.Entity)
             .SelectMany(aggregate => {
                 IReadOnlyCollection<IDomainEvent> events = [.. aggregate.Events];
+
                 aggregate.ClearDomainEvents();
                 return events;
             })
             .ToList();
-    }
-
-    async Task PublishEvents(List<IDomainEvent> domainEvents) {
-        bool hasEvents = domainEvents.Count > 0;
-        if (hasEvents) {
-            Console.WriteLine(domainEvents.Count + " Events found dispatching");
-            await domainEventDispatcher.DispatchAsync(domainEvents);
-        }
     }
 }

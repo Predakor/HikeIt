@@ -54,9 +54,8 @@ public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
         if (analytic == null) {
             return Errors.NotFound("passed null analytics");
         }
-
         Analytics = analytic;
-        AddDomainEvent(new TripAnalyticsCreatedEvent(this, analytic.ToStatUpdate(TripDay)));
+        AddDomainEvent(new TripAnalyticsCreatedEvent(Id, UserId, analytic.ToStatUpdate()));
         return this;
     }
 

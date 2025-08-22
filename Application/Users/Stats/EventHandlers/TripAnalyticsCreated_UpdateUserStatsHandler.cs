@@ -4,10 +4,11 @@ using Domain.Users;
 
 namespace Application.Users.Stats.EventHandlers;
 
-internal sealed class TripCreatedEventHandler : IDomainEventHandler<TripAnalyticsCreatedEvent> {
+internal sealed class TripAnalyticsCreated_UpdateUserStatsHandler
+    : IDomainEventHandler<TripAnalyticsCreatedEvent> {
     readonly IUserRepository _userRepository;
 
-    public TripCreatedEventHandler(IUserRepository userRepository) {
+    public TripAnalyticsCreated_UpdateUserStatsHandler(IUserRepository userRepository) {
         _userRepository = userRepository;
     }
 
@@ -15,8 +16,6 @@ internal sealed class TripCreatedEventHandler : IDomainEventHandler<TripAnalytic
         TripAnalyticsCreatedEvent domainEvent,
         CancellationToken cancellationToken = default
     ) {
-        Console.WriteLine("Trip added event detected: Updating user stats");
-
-        await _userRepository.UpdateStats(domainEvent.Trip.UserId, domainEvent.StatUpdate);
+        await _userRepository.UpdateStats(domainEvent.OwnerId, domainEvent.StatUpdate);
     }
 }

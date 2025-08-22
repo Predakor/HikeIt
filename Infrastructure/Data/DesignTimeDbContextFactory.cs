@@ -4,8 +4,18 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Infrastructure.Data;
 
-class NullDomainEventDispatcher : IDomainEventDispatcher {
-    public Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default) {
+class NullDomainEventDispatcher : IEventPublisher {
+    public Task PublishAsync(
+        IEnumerable<IDomainEvent> domainEvents,
+        CancellationToken cancellationToken = default
+    ) {
+        return Task.CompletedTask;
+    }
+
+    public Task PublishAsync(
+        IDomainEvent domainEvent,
+        CancellationToken cancellationToken = default
+    ) {
         return Task.CompletedTask;
     }
 }
@@ -25,7 +35,8 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<TripDbCont
                 ?? throw new Exception("Db connection string not found in enviroment");
         }
         else {
-            connectionString = "Host=127.0.0.1;Port=54322;Database=postgres;Username=postgres;Password=postgres";
+            connectionString =
+                "Host=127.0.0.1;Port=54322;Database=postgres;Username=postgres;Password=postgres";
         }
 
         Console.WriteLine($"Enviroment:: {environment}");

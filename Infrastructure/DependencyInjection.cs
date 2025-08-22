@@ -1,10 +1,14 @@
-﻿using Application.Commons.CacheService;
+﻿
+using Application.Commons.CacheService;
 using Application.Commons.Interfaces;
 using Application.FileReferences;
 using Domain.Interfaces;
 using Domain.TripAnalytics.Interfaces;
+using Infrastructure.Commons.Events.BackgroundQueues;
+using Infrastructure.Commons.Events.Dispatchers;
+using Infrastructure.Commons.Events.EventWorkers;
+using Infrastructure.Commons.Events.Publishers;
 using Infrastructure.Data;
-using Infrastructure.DomainEvents;
 using Infrastructure.Services.Caches;
 using Infrastructure.Storage;
 using Infrastructure.UnitOfWorks;
@@ -28,16 +32,21 @@ public static class DependencyInjection {
             .AddDatabase(configuration, isDevelopment)
             .AddCache()
             .AddStorages()
-            .AddEventDispatcher()
+            .AddEvents()
             .AddRepositories(assemblies)
             .AddQueryServices(assemblies);
     }
 
-    static IServiceCollection AddEventDispatcher(this IServiceCollection services) {
+    static IServiceCollection AddEvents(this IServiceCollection services) {
+        services.AddSingleton<IBackgroundQueue, InMemoryBackgroundQueue>();
+        services.AddSingleton<IEventPublisher, EventPublisher>();
+
         services.AddTransient<IDomainEventDispatcher, DomainEventDispatcher>();
+        services.Decorate<IDomainEventDispatcher, LoggedEventDispatcherDecorator>();
+
+        services.AddHostedService<BackgroundEventWorker>();
         return services;
     }
-
 
     static IServiceCollection AddCache(this IServiceCollection services) {
         services.AddMemoryCache();

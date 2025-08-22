@@ -3,16 +3,23 @@ using Application.FileReferences;
 using Domain.Common.Result;
 using Domain.Trips;
 using Domain.Trips.Events;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Trips.GpxFile;
 
 internal class GpxFileAttatchedEventHandler : IDomainEventHandler<GpxFileAttatchedEvent> {
+    readonly ILogger<GpxFileAttatchedEvent> _logger;
     readonly IGpxFileService _fileService;
     readonly ITripRepository _repository;
 
-    public GpxFileAttatchedEventHandler(IGpxFileService fileService, ITripRepository repository) {
+    public GpxFileAttatchedEventHandler(
+        ILogger<GpxFileAttatchedEvent> logger,
+        IGpxFileService fileService,
+        ITripRepository repository
+    ) {
         _fileService = fileService;
         _repository = repository;
+        _logger = logger;
     }
 
     public async Task Handle(
@@ -23,7 +30,7 @@ internal class GpxFileAttatchedEventHandler : IDomainEventHandler<GpxFileAttatch
 
         var getTrip = await _repository.GetWithFile(FileId);
         if (getTrip.HasErrors(out var error)) {
-            Console.WriteLine("Failed to update gpx file: " + error.Message);
+            _logger.LogError("Failed to update gpx file {reason}", error.Message);
             return;
         }
 

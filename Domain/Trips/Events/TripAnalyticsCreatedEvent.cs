@@ -3,5 +3,5 @@ using Domain.Users.ValueObjects;
 
 namespace Domain.Trips.Events;
 
-public sealed record TripAnalyticsCreatedEvent(Trip Trip, StatsUpdates.All StatUpdate) : IDomainEvent;
+public sealed record TripAnalyticsCreatedEvent(Guid TripId, Guid OwnerId, StatsUpdates.All StatUpdate) : IDomainEvent;
 

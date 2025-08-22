@@ -24,8 +24,7 @@ internal sealed class TripRemovedEventHandler : IDomainEventHandler<TripRemovedE
             return;
         }
 
-        var tripDay = trip.TripDay;
-        var statsUpdate = trip.Analytics.ToStatUpdate(tripDay);
+        var statsUpdate = trip.Analytics.ToStatUpdate();
 
         await _userRepository.UpdateStats(trip.UserId, statsUpdate, UpdateMode.Decrease);
     }
