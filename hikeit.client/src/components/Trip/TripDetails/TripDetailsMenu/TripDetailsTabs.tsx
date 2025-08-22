@@ -7,7 +7,7 @@ import { tripAnalyticTabs } from "../../Data/tabOrder";
 
 export function TripDetailsMenu({ data }: { data: BasicAnalytics }) {
   return (
-    <Tabs.Root lazyMount={true} unmountOnExit={true} defaultValue={"route"}>
+    <Tabs.Root lazyMount={true} defaultValue={"route"}>
       <Tabs.List
         display={"flex"}
         gapX={{ base: 12, lg: 4 }}
@@ -52,7 +52,7 @@ function TabTriggers({ data, config }: Props) {
   return (
     <For each={config}>
       {({ key, label }) => (
-        <Tabs.Trigger value={key} disabled={!data} key={key}>
+        <Tabs.Trigger value={key} disabled={!data[key]} key={key}>
           {ToTitleCase(label || KeyToLabelFormatter(key))}
         </Tabs.Trigger>
       )}

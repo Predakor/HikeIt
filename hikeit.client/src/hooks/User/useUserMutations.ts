@@ -16,7 +16,8 @@ function useUserMutations() {
   const updateAvatar = useMutation({
     mutationKey: ["user", "avatar"],
     mutationFn: (file: File) => {
-      const form = new FormData().append("file", file);
+      const form = new FormData();
+      form.append("file", file);
       return api.post<string>(`${requestBase}/avatar`, form);
     },
     onSuccess: (newAvatar) => {
