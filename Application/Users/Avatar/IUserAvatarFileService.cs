@@ -1,5 +1,4 @@
-﻿using Domain.Common.Result;
-using Domain.Users.Root;
+﻿using Domain.Users.Root;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Users.Avatar;

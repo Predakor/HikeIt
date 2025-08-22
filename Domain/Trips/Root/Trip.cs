@@ -1,8 +1,4 @@
-﻿using Domain.Common;
-using Domain.Common.Abstractions;
-using Domain.Common.AggregateRoot;
-using Domain.Common.Extentions;
-using Domain.Common.Result;
+﻿using Domain.Common.AggregateRoot;
 using Domain.Common.Validations.Validators;
 using Domain.FileReferences;
 using Domain.Locations.Peaks;
@@ -17,9 +13,9 @@ using Domain.Users.Root;
 
 namespace Domain.Trips.Root;
 
-public class Trip : AggregateRoot<Guid>, IEntity<Guid> {
+public class Trip : AggregateRoot<Guid> {
     public required string Name { get; set; }
-    public DateOnly TripDay { get; private set; } = default;
+    public DateOnly TripDay { get; private set; }
 
     #region Foreign Keys
 

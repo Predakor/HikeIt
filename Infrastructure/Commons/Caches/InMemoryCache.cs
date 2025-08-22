@@ -1,6 +1,4 @@
 ﻿using Application.Commons.Abstractions;
-using Domain.Common;
-using Domain.Common.Result;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Infrastructure.Commons.Caches;

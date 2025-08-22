@@ -1,6 +1,5 @@
 ﻿using Api.Commons.Extentions;
 using Application.Locations.Regions;
-using Domain.Common.Result;
 
 namespace Api.Endpoints;
 

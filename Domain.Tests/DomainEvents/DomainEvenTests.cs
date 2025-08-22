@@ -55,7 +55,7 @@ public class DomainEvenTests {
 
 public record DummyDomainEvent(Guid PostId) : IDomainEvent;
 
-class DummyAggregate : AggregateRoot<Guid>, IEntity<Guid> {
+class DummyAggregate : AggregateRoot<Guid> {
     public string Title { get; private set; }
 
     private DummyAggregate() { }

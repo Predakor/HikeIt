@@ -1,16 +1,12 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
-{
+namespace Infrastructure.Migrations {
     /// <inheritdoc />
-    public partial class RelationsUpdate : Migration
-    {
+    public partial class RelationsUpdate : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.AddColumn<TimeSpan>(
                 name: "LongestTripMinutes",
                 table: "UserStats",
@@ -20,8 +16,7 @@ namespace Infrastructure.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropColumn(
                 name: "LongestTripMinutes",
                 table: "UserStats");

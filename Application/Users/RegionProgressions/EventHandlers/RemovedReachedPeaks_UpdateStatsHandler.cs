@@ -1,5 +1,4 @@
 ﻿using Application.Commons.Abstractions;
-using Domain.Common.Result;
 using Domain.Trips.Root.Events;
 using Domain.Users.RegionProgressions;
 using Domain.Users.Root;

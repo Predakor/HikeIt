@@ -1,8 +1,6 @@
 ﻿using Application.Trips.Analytics.Dtos;
 using Application.Trips.Root.Dtos;
 using Application.Trips.Root.Queries;
-using Domain.Common;
-using Domain.Common.Result;
 using Domain.Trips.Root;
 using Infrastructure.Commons.Databases;
 using Infrastructure.Trips.Root.Queries;

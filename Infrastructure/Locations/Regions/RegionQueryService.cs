@@ -1,8 +1,6 @@
 ﻿using Application.Commons.Mappers.Implementations;
 using Application.Locations.Peaks;
 using Application.Locations.Regions;
-using Domain.Common;
-using Domain.Common.Result;
 using Domain.Locations.Peaks;
 using Domain.Locations.Regions;
 using Infrastructure.Commons.Databases;

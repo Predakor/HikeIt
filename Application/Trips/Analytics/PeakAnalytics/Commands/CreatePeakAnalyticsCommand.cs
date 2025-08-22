@@ -1,6 +1,4 @@
-﻿using Domain.Common;
-using Domain.Common.Abstractions;
-using Domain.Common.Result;
+﻿using Domain.Common.Abstractions;
 using Domain.ReachedPeaks;
 using Domain.Trips.Analytics.Peaks;
 

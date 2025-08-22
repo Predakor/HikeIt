@@ -1,5 +1,4 @@
-﻿using Domain.Common.Result;
-using Domain.ReachedPeaks;
+﻿using Domain.ReachedPeaks;
 using Domain.Trips.Analytics.ElevationProfiles;
 using Domain.Trips.Analytics.Peaks;
 using Domain.Trips.Root;

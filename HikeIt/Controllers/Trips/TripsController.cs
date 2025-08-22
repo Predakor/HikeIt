@@ -5,7 +5,6 @@ using Application.FileReferences;
 using Application.Trips.Root.Queries;
 using Application.Trips.Root.Services;
 using Application.Trips.Root.ValueObjects;
-using Domain.Common.Result;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,6 +1,4 @@
-﻿using Domain.Common.Result;
-
-namespace Domain.Common.Validations.Validators;
+﻿namespace Domain.Common.Validations.Validators;
 
 public class DateValidator : AbstractValidator<DateTime> {
     public DateValidator()

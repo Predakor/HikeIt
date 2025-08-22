@@ -1,6 +1,5 @@
 ﻿using Application.Commons.Abstractions.Queries;
 using Application.Trips.Root.Dtos;
-using Domain.Common.Result;
 
 namespace Application.Trips.Root.Queries;
 

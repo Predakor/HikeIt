@@ -1,6 +1,5 @@
 ﻿using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Route;
-using Domain.Trips.Analytics.Time;
 
 namespace Domain.Trips.Analytics.Time.Builders;
 

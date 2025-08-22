@@ -1,6 +1,4 @@
-﻿using Domain.Common;
-using Domain.Common.Result;
-using Domain.Trips.Analytics.ElevationProfiles;
+﻿using Domain.Trips.Analytics.ElevationProfiles;
 using Infrastructure.Commons.Databases;
 using Infrastructure.Commons.Repositories;
 

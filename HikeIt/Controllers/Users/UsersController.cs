@@ -6,7 +6,6 @@ using Application.Users.Avatar;
 using Application.Users.Root;
 using Application.Users.Root.Dtos;
 using Application.Users.Stats;
-using Domain.Common.Result;
 using Domain.Users.Root.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

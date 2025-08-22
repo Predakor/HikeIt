@@ -2,7 +2,6 @@
 using Domain.Common.Abstractions;
 using Domain.Common.Geography;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Common.Result;
 
 namespace Application.Trips.Analytics.Commands;
 

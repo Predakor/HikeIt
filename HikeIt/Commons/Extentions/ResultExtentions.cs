@@ -1,6 +1,4 @@
 ﻿using Api.Commons.Factories;
-using Domain.Common;
-using Domain.Common.Result;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Commons.Extentions;
@@ -62,7 +60,7 @@ internal static class ResultExtentions {
         };
     }
 
-    static object MapError(IHttpResultFactory factory, Error error) {
+    static object MapError(IHttpResultFactory factory, ResultError error) {
         var payload = new { error.Message, Code = error.Code.ToString() };
         return error.Code switch {
             ErrorCode.not_authorized => factory.Unauthorized(),

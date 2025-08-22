@@ -1,5 +1,4 @@
 ﻿using Application.Commons.Abstractions.Queries;
-using Domain.Common.Result;
 using Domain.Locations.Peaks;
 using Domain.ReachedPeaks;
 

@@ -1,7 +1,4 @@
-﻿using Domain.Common;
-using Domain.Common.Abstractions;
-using Domain.Common.Result;
-using Domain.Common.Validations.Validators;
+﻿using Domain.Common.Abstractions;
 using Infrastructure.Commons.Databases;
 using Microsoft.EntityFrameworkCore;
 

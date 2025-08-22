@@ -1,11 +1,8 @@
 ﻿using Application.Commons.Mappers.Implementations;
 using Application.Locations.Peaks;
-using Domain.Common;
-using Domain.Common.Extentions;
 using Domain.Common.Geography;
 using Domain.Common.Geography.Factories;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Common.Result;
 using Domain.Locations.Peaks;
 using Domain.ReachedPeaks.Builders;
 using Infrastructure.Commons.Databases;
@@ -141,7 +138,9 @@ public class PeaksQueryService : IPeaksQueryService {
     }
 
     public async Task<Result<Peak>> GetPeakWithNameFromRegion(string name, int regionId) {
-        var result = await Peaks.Where(p => p.RegionID == regionId).FirstOrDefaultAsync(p => p.Name == name);
+        var result = await Peaks
+            .Where(p => p.RegionID == regionId)
+            .FirstOrDefaultAsync(p => p.Name == name);
 
         if (result is null) {
             return Errors.NotFound("peak", name);
@@ -156,12 +155,12 @@ static class Mapper {
         return new(peak.Height, peak.Name, peak.RegionID);
     }
 
-    public static PeakDto.Complete ToComplete(this Peak peak) {
-        return new(peak.Height, peak.Name, RegionMapper.MapToCompleteDto(peak.Region));
-    }
-
     public static List<PeakDto.Simple> ToSimple(this IEnumerable<Peak> foundPeaks) {
         return [.. foundPeaks.Select(p => p.ToSimple())];
+    }
+
+    public static PeakDto.Complete ToComplete(this Peak peak) {
+        return new(peak.Height, peak.Name, RegionMapper.MapToCompleteDto(peak.Region));
     }
 
     public static List<PeakDto.Complete> ToComplete(this IEnumerable<Peak> foundPeaks) {

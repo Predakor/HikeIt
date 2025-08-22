@@ -1,8 +1,6 @@
-﻿using Domain.Common;
-using Domain.Common.Abstractions;
+﻿using Domain.Common.Abstractions;
 using Domain.Common.Geography.Extentions;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Common.Result;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Application.Trips.Analytics.Commands;
@@ -33,7 +31,7 @@ internal class ProccesGpxDataCommand(AnalyticData data) : ICommand<AnalyticData>
             return Result<AnalyticData>.Success(res);
         }
 
-        public static Result<AnalyticData> Failure(Error err) {
+        public static Result<AnalyticData> Failure(ResultError err) {
             return Result<AnalyticData>.Failure(err);
         }
     }

@@ -1,5 +1,4 @@
 ﻿using Application.Trips.Root.ValueObjects;
-using Domain.Common.Result;
 using Domain.Trips.Root;
 
 namespace Application.Trips.Root.Services;

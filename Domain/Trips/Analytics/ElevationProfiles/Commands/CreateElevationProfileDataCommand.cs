@@ -1,6 +1,5 @@
 ﻿using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Common.Result;
 using Domain.Trips.Root.Builders.Config;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 

@@ -3,8 +3,6 @@ using Application.FileReferences;
 using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Domain.Common;
-using Domain.Common.Result;
 using Domain.FileReferences.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

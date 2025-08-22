@@ -8,8 +8,6 @@ using Application.Trips.GpxFile.Services;
 using Application.Trips.Root.Dtos;
 using Application.Trips.Root.Services;
 using Application.Trips.Root.ValueObjects;
-using Domain.Common;
-using Domain.Common.Result;
 using Domain.FileReferences.ValueObjects;
 using Domain.Trips.Root;
 using Microsoft.AspNetCore.Authorization;

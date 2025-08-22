@@ -1,6 +1,5 @@
 ﻿using Application.Commons.Abstractions;
 using Application.Locations.Regions;
-using Domain.Common.Result;
 using Domain.ReachedPeaks.ValueObjects;
 using Domain.Trips.Analytics.Peaks.Events;
 using Domain.Users.RegionProgressions.Factories;

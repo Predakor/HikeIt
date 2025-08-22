@@ -1,6 +1,4 @@
 ﻿using Domain.Locations.Regions;
-using Infrastructure.Commons.Databases;
-using Infrastructure.Commons.Databases.Seeding;
 
 namespace Infrastructure.Commons.Databases.Seeding.Locations;
 

@@ -1,6 +1,4 @@
 ﻿using Application.Commons.Files.Rules;
-using Domain.Common.Result;
-using Domain.Common.Validations.Validators;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Immutable;
 

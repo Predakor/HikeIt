@@ -1,6 +1,5 @@
 ﻿using Application.Commons.Abstractions;
 using Application.FileReferences;
-using Domain.Common.Result;
 using Domain.Trips.Root;
 using Domain.Trips.Root.Events;
 using Microsoft.Extensions.Logging;
@@ -38,7 +37,7 @@ internal class FileAttatched_UploadToStorageHandler : IDomainEventHandler<GpxFil
 
         var gpxFile =
             trip?.GpxFile
-            ?? throw new Exception("Gpx file in trip is empty and it shouldn't check your query");
+            ?? throw new FileNotFoundException("Gpx file in trip is empty and it shouldn't check your query");
 
         var file = await _fileService
             .UploadAsync(trip.Id, trip.UserId)

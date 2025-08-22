@@ -2,8 +2,6 @@
 using Application.Trips.Analytics.ElevationProfiles;
 using Application.Trips.Analytics.PeakAnalytics;
 using Application.Trips.Analytics.Queries;
-using Domain.Common;
-using Domain.Common.Result;
 using Domain.Trips.Analytics.Root;
 using Infrastructure.Commons.Databases;
 using Microsoft.EntityFrameworkCore;

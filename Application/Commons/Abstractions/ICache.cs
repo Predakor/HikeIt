@@ -1,6 +1,4 @@
-﻿using Domain.Common.Result;
-
-namespace Application.Commons.Abstractions;
+﻿namespace Application.Commons.Abstractions;
 
 public interface ICache {
     Task<Result<bool>> SetAsync<T>(

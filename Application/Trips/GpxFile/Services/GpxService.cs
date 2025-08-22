@@ -1,6 +1,4 @@
-﻿using Domain.Common;
-using Domain.Common.Geography.ValueObjects;
-using Domain.Common.Result;
+﻿using Domain.Common.Geography.ValueObjects;
 using Domain.FileReferences.ValueObjects;
 using Microsoft.AspNetCore.Http;
 

@@ -1,6 +1,5 @@
 ﻿using Domain.Common.Geography.Extentions;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Trips.Analytics.Route;
 
 namespace Domain.Trips.Analytics.Route.Builders;
 

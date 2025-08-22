@@ -1,5 +1,4 @@
 ﻿using Domain.Common.Abstractions;
-using Domain.Common.Result;
 using Domain.Users.RegionProgressions;
 using Domain.Users.Stats;
 using Domain.Users.Stats.Extentions;

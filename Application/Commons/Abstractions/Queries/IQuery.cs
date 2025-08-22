@@ -1,6 +1,4 @@
-﻿using Domain.Common.Result;
-
-namespace Application.Commons.Abstractions.Queries;
+﻿namespace Application.Commons.Abstractions.Queries;
 
 public interface IQuery<TResponse> { }
 

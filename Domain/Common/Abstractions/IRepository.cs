@@ -1,6 +1,6 @@
 ﻿namespace Domain.Common.Abstractions;
 
-public interface IEntity<TKey> {
+public interface IEntity<out TKey> {
     TKey Id { get; }
 }
 

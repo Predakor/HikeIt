@@ -1,4 +1,4 @@
-﻿namespace Domain.Common.Result;
+﻿namespace Core.Results;
 
 public static class AsyncResultExtentios {
     #region Bind
@@ -35,7 +35,7 @@ public static class AsyncResultExtentios {
     public static async Task<TResult> MatchAsync<T, TResult>(
         this Task<Result<T>> result,
         Func<T, TResult> onSuccess,
-        Func<Error, TResult> onFailure
+        Func<ResultError, TResult> onFailure
     ) {
         var awaitedResult = await result;
         return awaitedResult.IsSuccess
@@ -46,7 +46,7 @@ public static class AsyncResultExtentios {
     public static async Task<TResult> MatchAsync<T, TResult>(
         this Result<T> result,
         Func<T, Task<TResult>> onSuccessAsync,
-        Func<Error, TResult> onFailure
+        Func<ResultError, TResult> onFailure
     ) {
         return result.IsSuccess && result.Value is not null
             ? await onSuccessAsync(result.Value!)
@@ -56,7 +56,7 @@ public static class AsyncResultExtentios {
     public static async Task<TResult> MatchAsync<T, TResult>(
         this Result<T> result,
         Func<T, TResult> onSuccess,
-        Func<Error, Task<TResult>> onFailureAsync
+        Func<ResultError, Task<TResult>> onFailureAsync
     ) {
         return result.IsSuccess && result.Value is not null
             ? onSuccess(result.Value!)
@@ -68,7 +68,7 @@ public static class AsyncResultExtentios {
     public static async Task<TResult> MatchAsync<T, TResult>(
         this Task<Result<T>> result,
         Func<T, Task<TResult>> onSucces,
-        Func<Error, TResult> onFailureAsync
+        Func<ResultError, TResult> onFailureAsync
     ) {
         return await (await result).MatchAsync(onSucces, onFailureAsync);
     }
@@ -76,7 +76,7 @@ public static class AsyncResultExtentios {
     public static async Task<TResult> MatchAsync<T, TResult>(
         this Task<Result<T>> result,
         Func<T, TResult> onSucces,
-        Func<Error, Task<TResult>> onFailureAsync
+        Func<ResultError, Task<TResult>> onFailureAsync
     ) {
         return await (await result).MatchAsync(onSucces, onFailureAsync);
     }
@@ -84,7 +84,7 @@ public static class AsyncResultExtentios {
     public static async Task<TResult> MatchAsync<T, TResult>(
         this Result<T> result,
         Func<T, Task<TResult>> onSuccessAsync,
-        Func<Error, Task<TResult>> onFailureAsync
+        Func<ResultError, Task<TResult>> onFailureAsync
     ) {
         return result.IsSuccess
             ? await onSuccessAsync(result.Value!)
@@ -95,7 +95,7 @@ public static class AsyncResultExtentios {
     public static async Task<TResult> MatchAsync<T, TResult>(
         this Task<Result<T>> result,
         Func<T, Task<TResult>> onSuccessAsync,
-        Func<Error, Task<TResult>> onFailureAsync
+        Func<ResultError, Task<TResult>> onFailureAsync
     ) {
         return await (await result).MatchAsync(onSuccessAsync, onFailureAsync);
     }

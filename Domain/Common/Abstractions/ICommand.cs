@@ -1,6 +1,4 @@
-﻿using Domain.Common.Result;
-
-namespace Domain.Common.Abstractions;
+﻿namespace Domain.Common.Abstractions;
 
 public interface ICommandBase { }
 

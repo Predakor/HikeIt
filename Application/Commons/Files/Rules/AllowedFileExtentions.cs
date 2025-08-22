@@ -1,7 +1,4 @@
-﻿using Domain.Common;
-using Domain.Common.Result;
-using Domain.Common.Validations;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Immutable;
 
 namespace Application.Commons.Files.Rules;

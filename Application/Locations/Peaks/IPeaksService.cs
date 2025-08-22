@@ -1,5 +1,4 @@
-﻿using Domain.Common.Result;
-using Domain.Locations.Peaks;
+﻿using Domain.Locations.Peaks;
 
 namespace Application.Locations.Peaks;
 

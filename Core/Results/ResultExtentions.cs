@@ -1,4 +1,4 @@
-﻿namespace Domain.Common.Result;
+﻿namespace Core.Results;
 
 public static class ResultExtentions {
     public static Result<TReturn> Map<TIn, TReturn>(this Result<TIn> result, Func<TIn, TReturn> map) {
@@ -10,7 +10,7 @@ public static class ResultExtentions {
     public static TResult Match<TIn, TResult>(
         this Result<TIn> result,
         Func<TIn, TResult> mapValue,
-        Func<Error, TResult> mapError
+        Func<ResultError, TResult> mapError
     ) {
         return result.IsSuccessWithValue() ? mapValue(result.Value!) : mapError(result.Error!);
     }

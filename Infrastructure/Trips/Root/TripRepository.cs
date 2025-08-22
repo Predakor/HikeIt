@@ -1,6 +1,4 @@
-﻿using Domain.Common;
-using Domain.Common.Result;
-using Domain.Trips.Root;
+﻿using Domain.Trips.Root;
 using Infrastructure.Commons.Databases;
 using Infrastructure.Commons.Repositories;
 using Microsoft.EntityFrameworkCore;

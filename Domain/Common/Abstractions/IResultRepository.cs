@@ -1,6 +1,4 @@
-﻿using Domain.Common.Result;
-
-namespace Domain.Common.Abstractions;
+﻿namespace Domain.Common.Abstractions;
 public interface IReadResultRepository<TEntity, TKey> : IRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey> {
     Task<Result<TEntity>> GetByIdAsync(TKey id);

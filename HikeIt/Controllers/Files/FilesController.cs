@@ -11,7 +11,7 @@ public class FilesController : ControllerBase {
     public async Task<IActionResult> GetDemoTrip() {
         await Task.CompletedTask;
         var fileUrl = Path.Combine("wwwroot", "demo", "wielka-sowa-trip.gpx");
-        var bytes = System.IO.File.ReadAllBytes(fileUrl);
+        var bytes = await System.IO.File.ReadAllBytesAsync(fileUrl);
 
         // 7 days
         Response.Headers.CacheControl = "public,max-age=604800";

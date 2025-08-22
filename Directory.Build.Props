@@ -1,0 +1,26 @@
+﻿<Project>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<AnalysisLevel>latest</AnalysisLevel>
+		<AnalysisMode>recommended</AnalysisMode>
+				
+		<UserSecretsId>c3dc57f9-4531-4157-9db2-1c74dbf30c60</UserSecretsId>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
+		<ProjectReference Include="..\Core\Core.csproj" Condition="'$(MSBuildProjectName)' != 'Core'" />
+
+
+
+	</ItemGroup>
+	<ItemGroup Condition="'$(MSBuildProjectName)' != 'Core'">
+		<Using Include="Core.Results"  />
+		<Using Include="Core.Validators"  />
+		<Using Include="Core.Extentions"  />
+		<Using Include="Core.Abstractions"  />
+		
+	
+	</ItemGroup>
+</Project>

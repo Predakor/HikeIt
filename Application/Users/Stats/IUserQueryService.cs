@@ -2,7 +2,6 @@
 using Application.Users.RegionProgressions.Dtos;
 using Application.Users.Root.Dtos;
 using Application.Users.Stats.Dtos;
-using Domain.Common.Result;
 
 namespace Application.Users.Stats;
 

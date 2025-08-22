@@ -2,10 +2,8 @@
 using Application.Trips.Analytics.Interfaces;
 using Application.Trips.Analytics.PeakAnalytics.Commands;
 using Application.Trips.Root.ValueObjects;
-using Domain.Common;
 using Domain.Common.Geography.Extentions;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Common.Result;
 using Domain.ReachedPeaks;
 using Domain.Trips.Analytics.ElevationProfiles;
 using Domain.Trips.Analytics.Peaks;

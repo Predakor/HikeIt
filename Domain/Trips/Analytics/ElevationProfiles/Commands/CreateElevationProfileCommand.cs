@@ -1,9 +1,6 @@
-﻿using Domain.Common;
-using Domain.Common.Abstractions;
+﻿using Domain.Common.Abstractions;
 using Domain.Common.Geography.Extentions;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Common.Result;
-using Domain.Trips.Analytics.ElevationProfiles;
 
 namespace Domain.Trips.Analytics.ElevationProfiles.Commands;
 

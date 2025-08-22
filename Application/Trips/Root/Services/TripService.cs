@@ -4,7 +4,6 @@ using Application.Trips.Analytics.Commands;
 using Application.Trips.Analytics.Interfaces;
 using Application.Trips.GpxFile.Services;
 using Application.Trips.Root.ValueObjects;
-using Domain.Common.Result;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Domain.Trips.Root;
 

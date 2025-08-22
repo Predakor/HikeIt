@@ -1,7 +1,5 @@
 ﻿using Application.Locations.Peaks;
-using Domain.Common;
 using Domain.Common.Abstractions;
-using Domain.Common.Result;
 using Domain.ReachedPeaks;
 
 namespace Application.Trips.Analytics.PeakAnalytics.Commands;

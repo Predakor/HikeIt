@@ -1,5 +1,4 @@
 ﻿using Application.Commons.Abstractions.Queries;
-using Domain.Common.Result;
 using Domain.Trips.Root.Builders.Config;
 
 namespace Application.Trips.Analytics.ElevationProfiles;

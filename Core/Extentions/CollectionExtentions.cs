@@ -1,4 +1,4 @@
-﻿namespace Domain.Common.Extentions;
+﻿namespace Core.Extentions;
 
 public static class CollectionExtentions {
     public static bool NullOrEmpty<T>(this IEnumerable<T> collection) {
@@ -10,10 +10,10 @@ public static class CollectionExtentions {
     }
 
     public static bool NotNullOrEmpty<T>(this IEnumerable<T> collection) {
-        return !NullOrEmpty(collection);
+        return !collection.NullOrEmpty();
     }
 
     public static bool NotNullOrEmpty<T>(this IList<T> collection) {
-        return !NullOrEmpty(collection);
+        return !collection.NullOrEmpty();
     }
 }

@@ -9,11 +9,11 @@ public static class GpxDataFactory {
             List<GpxPoint> points => GpxDataDirector.AnalyticData(points),
             AnalyticData analyticData => GpxDataDirector.AnalyticData(analyticData.Points),
             //ElevationProfileData elevationData => GpxDataDirector.ElevationProfile(elevationData),
-            _ => throw new Exception($"unsuported data type: {data}"),
+            _ => throw new NotImplementedException($"unsuported data type: {data}"),
         };
 
     public static AnalyticData CreateFromConfig(ElevationDataWithConfig data) {
-        //var (analyticData, config) = data;
+
         var points = data.Data.Points;
 
         return data switch {
@@ -21,7 +21,7 @@ public static class GpxDataFactory {
             (_, DataProccesConfig.ElevationProfile) => GpxDataDirector.ElevationProfile(data.Data),
             (_, DataProccesConfig.Partial config) => GpxDataDirector.FromConfig(data.Data, config),
 
-            _ => throw new Exception($"unsuported data type: {data}"),
+            _ => throw new NotImplementedException($"unsuported data type: {data}"),
         };
     }
 }

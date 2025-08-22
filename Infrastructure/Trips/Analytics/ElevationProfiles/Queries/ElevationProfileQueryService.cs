@@ -1,8 +1,6 @@
 ﻿using Application.Trips.Analytics.ElevationProfiles;
-using Domain.Common;
 using Domain.Common.Geography;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Common.Result;
 using Domain.Trips.Root.Builders.Config;
 using Infrastructure.Commons.Databases;
 

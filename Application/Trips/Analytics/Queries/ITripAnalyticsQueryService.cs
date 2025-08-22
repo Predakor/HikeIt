@@ -1,7 +1,6 @@
 ﻿using Application.Commons.Abstractions.Queries;
 using Application.Trips.Analytics.Dtos;
 using Application.Trips.Analytics.PeakAnalytics;
-using Domain.Common.Result;
 
 namespace Application.Trips.Analytics.Queries;
 
