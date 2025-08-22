@@ -1,8 +1,8 @@
-﻿using Application.Commons.CacheService;
+﻿using Application.Commons.Abstractions;
 using Domain.Common.Result;
 using Domain.FileReferences;
-using Infrastructure.Data;
-using Infrastructure.Repository.Generic;
+using Infrastructure.Commons.Databases;
+using Infrastructure.Commons.Repositories;
 
 namespace Infrastructure.FileReferences;
 

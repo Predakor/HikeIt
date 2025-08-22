@@ -1,13 +1,13 @@
-﻿using Api.Extentions;
-using Application.Dto;
-using Application.Services.Auth;
-using Application.Trips.Queries;
-using Application.Users;
+﻿using Api.Commons.Extentions;
+using Application.Commons.Services.Auth;
+using Application.Trips.Root.Dtos;
+using Application.Trips.Root.Queries;
 using Application.Users.Avatar;
-using Application.Users.Dtos;
+using Application.Users.Root;
+using Application.Users.Root.Dtos;
 using Application.Users.Stats;
 using Domain.Common.Result;
-using Domain.Users.ValueObjects;
+using Domain.Users.Root.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

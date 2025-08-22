@@ -1,14 +1,13 @@
-﻿using Api.Extentions;
-using Application.Dto.Analytics;
+﻿using Api.Commons.Extentions;
+using Application.Commons.Services.Auth;
 using Application.FileReferences;
-using Application.Services.Auth;
-using Application.TripAnalytics.ElevationProfiles;
-using Application.TripAnalytics.Quries;
+using Application.Trips.Analytics.ElevationProfiles;
+using Application.Trips.Analytics.Queries;
 using Application.Trips.GpxFile.Services;
 using Domain.Common.Result;
 using Domain.FileReferences;
-using Domain.Trips.Builders.GpxDataBuilder;
-using Domain.Trips.Config;
+using Domain.Trips.Root.Builders.Config;
+using Domain.Trips.Root.Builders.GpxDataBuilder;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

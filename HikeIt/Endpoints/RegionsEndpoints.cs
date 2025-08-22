@@ -1,5 +1,5 @@
-﻿using Api.Extentions;
-using Application.Mountains;
+﻿using Api.Commons.Extentions;
+using Application.Locations.Regions;
 using Domain.Common.Result;
 
 namespace Api.Endpoints;

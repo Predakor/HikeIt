@@ -1,5 +1,5 @@
-﻿using Domain.TripAnalytics.Commands;
-using Domain.Trips.ValueObjects;
+﻿using Domain.Common.Geography.ValueObjects;
+using Domain.Trips.Analytics.ElevationProfiles.Commands;
 
 namespace Domain.Tests.AnalyticsData;
 

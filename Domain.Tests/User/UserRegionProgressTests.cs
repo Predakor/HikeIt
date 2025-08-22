@@ -1,4 +1,4 @@
-﻿using Domain.Users.RegionProgresses;
+﻿using Domain.Users.RegionProgressions;
 
 namespace Domain.Tests.User;
 

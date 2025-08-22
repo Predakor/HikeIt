@@ -1,5 +1,5 @@
-﻿using Application.Commons.Interfaces;
-using Domain.Interfaces;
+﻿using Application.Commons.Abstractions;
+using Domain.Common.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 

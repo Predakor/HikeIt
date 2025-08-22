@@ -13,14 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\ValueObjects\" />
-    <Folder Include="ReachedPeaks\Rules\" />
-    <Folder Include="TripAnalytics\Builders\RouteElevationProfileBuilder\" />
-    <Folder Include="Trips\ValueObjects\TripAnalytics\" />
-    <Folder Include="Users\RegionProgresses\Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.17" />
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
   </ItemGroup>

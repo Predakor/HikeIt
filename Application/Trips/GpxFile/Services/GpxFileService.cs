@@ -1,4 +1,4 @@
-﻿using Application.Commons.CacheService;
+﻿using Application.Commons.Abstractions;
 using Application.FileReferences;
 using Domain.Common.Result;
 using Domain.FileReferences;
@@ -30,6 +30,7 @@ public class GpxFileService : IGpxFileService {
             .BindAsync(file => _storage.UploadAsync(file, key, container))
             .MapAsync(r => r.Url);
     }
+
     public async Task<Result<FileReference>> UploadAssync(FileReference reference) {
         return await _cache
             .GetAsync<FileContent>(reference.StorageName)

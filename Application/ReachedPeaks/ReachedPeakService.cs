@@ -1,16 +1,16 @@
-﻿using Application.Mountains;
+﻿using Application.Locations.Peaks;
 using Application.ReachedPeaks.ValueObjects;
 using Domain.Common;
 using Domain.Common.Extentions;
+using Domain.Common.Geography.ValueObjects;
 using Domain.Common.Result;
-using Domain.Peaks;
+using Domain.Locations.Peaks;
 using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.Builders;
 using Domain.ReachedPeaks.ValueObjects;
-using Domain.TripAnalytics.Commands;
-using Domain.Trips;
-using Domain.Trips.ValueObjects;
-using Domain.Users;
+using Domain.Trips.Analytics.ElevationProfiles.Commands;
+using Domain.Trips.Root;
+using Domain.Users.Root;
 
 namespace Application.ReachedPeaks;
 
@@ -84,7 +84,7 @@ public class ReachedPeakService : IReachedPeakService {
 
         Console.WriteLine($"Matched {peaks.Count()} Peaks");
 
-        ReachedPeakData[] newPeaksEventData = [.. peaks.Select(p => p.Build())];
+        CreateReachedPeak[] newPeaksEventData = [.. peaks.Select(p => p.Build())];
         trip.AddReachedPeaks(newPeaksEventData);
 
         return peaks

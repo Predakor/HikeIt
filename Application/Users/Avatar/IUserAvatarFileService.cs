@@ -1,5 +1,5 @@
 ﻿using Domain.Common.Result;
-using Domain.Users;
+using Domain.Users.Root;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Users.Avatar;

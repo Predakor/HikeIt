@@ -1,8 +1,8 @@
-﻿using Domain.Common.Result;
-using Domain.Peaks;
-using Domain.Trips;
-using Domain.Trips.ValueObjects;
-using Domain.Users;
+﻿using Domain.Common.Geography.ValueObjects;
+using Domain.Common.Result;
+using Domain.Locations.Peaks;
+using Domain.Trips.Root;
+using Domain.Users.Root;
 
 namespace Domain.ReachedPeaks;
 

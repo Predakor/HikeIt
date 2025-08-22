@@ -1,6 +1,5 @@
-﻿using Api.Extentions;
-using Application.Dto;
-using Application.Peaks;
+﻿using Api.Commons.Extentions;
+using Application.Locations.Peaks;
 using Domain.Common.Result;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

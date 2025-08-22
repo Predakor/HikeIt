@@ -1,4 +1,4 @@
-﻿using Domain.Trips.ValueObjects;
+﻿using Domain.Common.Geography.ValueObjects;
 
 namespace Domain.Tests;
 

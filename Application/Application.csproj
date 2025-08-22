@@ -16,11 +16,4 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dto\NewFolder\" />
-    <Folder Include="Services\Files\" />
-    <Folder Include="TripAnalytics\RouteAnalytic\" />
-    <Folder Include="TripAnalytics\TimeAnalytic\" />
-  </ItemGroup>
-
 </Project>

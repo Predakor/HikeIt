@@ -1,17 +1,18 @@
-﻿
-using Application.Commons.CacheService;
-using Application.Commons.Interfaces;
+﻿using Application.Commons.Abstractions;
+using Application.Commons.Abstractions.Queries;
 using Application.FileReferences;
-using Domain.Interfaces;
-using Domain.TripAnalytics.Interfaces;
-using Infrastructure.Commons.Events.BackgroundQueues;
+using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Root.Interfaces;
+using Infrastructure.Commons.Caches;
+using Infrastructure.Commons.Databases;
 using Infrastructure.Commons.Events.Dispatchers;
-using Infrastructure.Commons.Events.EventWorkers;
+using Infrastructure.Commons.Events.Dispatchers.Decorators;
 using Infrastructure.Commons.Events.Publishers;
-using Infrastructure.Data;
-using Infrastructure.Services.Caches;
-using Infrastructure.Storage;
-using Infrastructure.UnitOfWorks;
+using Infrastructure.Commons.Events.Queues;
+using Infrastructure.Commons.Events.Workers;
+using Infrastructure.Commons.Storage;
+using Infrastructure.Commons.Storage.Decorators;
+using Infrastructure.Commons.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,8 +34,8 @@ public static class DependencyInjection {
             .AddCache()
             .AddStorages()
             .AddEvents()
-            .AddRepositories(assemblies)
-            .AddQueryServices(assemblies);
+            .AddRepositories(assemblies);
+        //.AddQueryServices(assemblies);
     }
 
     static IServiceCollection AddEvents(this IServiceCollection services) {
@@ -49,33 +50,30 @@ public static class DependencyInjection {
     }
 
     static IServiceCollection AddCache(this IServiceCollection services) {
-        services.AddMemoryCache();
-        return services.AddSingleton<ICache, InMemoryCache>();
+        return services.AddMemoryCache().AddSingleton<ICache, InMemoryCache>();
     }
 
     static IServiceCollection AddStorages(this IServiceCollection services) {
-        services.AddSingleton<IFileStorage, AzureBlobStorage>();
-        services.Decorate<IFileStorage, CachedFileStorageDecorator>();
-        return services;
+        return services
+            .AddSingleton<IFileStorage, AzureBlobStorage>()
+            .Decorate<IFileStorage, CachedFileStorageDecorator>();
     }
 
     static IServiceCollection AddRepositories(
         this IServiceCollection services,
         ImmutableArray<Assembly> assemblies
     ) {
-        services.AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>();
-
-        services.Scan(scan =>
-            scan.FromAssemblies(assemblies)
-                .AddClasses(
-                    classes => classes.AssignableTo(typeof(IRepository<,>)),
-                    publicOnly: false
-                )
-                .AsImplementedInterfaces()
-                .WithScopedLifetime()
-        );
-
-        return services;
+        return services
+            .AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>()
+            .Scan(scan =>
+                scan.FromAssemblies(assemblies)
+                    .AddClasses(
+                        classes => classes.AssignableTo(typeof(IRepository<,>)),
+                        publicOnly: false
+                    )
+                    .AsImplementedInterfaces()
+                    .WithScopedLifetime()
+            );
     }
 
     static IServiceCollection AddQueryServices(

@@ -1,4 +1,4 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Common.Abstractions;
 
 namespace Domain.Common.AggregateRoot;
 

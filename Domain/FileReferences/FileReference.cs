@@ -1,5 +1,5 @@
-﻿using Domain.FileReferences.ValueObjects;
-using Domain.Interfaces;
+﻿using Domain.Common.Abstractions;
+using Domain.FileReferences.ValueObjects;
 
 namespace Domain.FileReferences;
 

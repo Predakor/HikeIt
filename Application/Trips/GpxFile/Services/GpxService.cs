@@ -1,7 +1,7 @@
 ﻿using Domain.Common;
+using Domain.Common.Geography.ValueObjects;
 using Domain.Common.Result;
 using Domain.FileReferences.ValueObjects;
-using Domain.Trips.ValueObjects;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Trips.GpxFile.Services;

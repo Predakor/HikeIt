@@ -1,6 +1,6 @@
-﻿using Application.Commons.Interfaces;
+﻿using Application.Commons.Abstractions;
+using Domain.Common.Abstractions;
 using Domain.Common.AggregateRoot;
-using Domain.Interfaces;
 
 namespace Domain.Tests.DomainEvents;
 
