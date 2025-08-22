@@ -4,11 +4,11 @@ using Swashbuckle.AspNetCore.Filters;
 namespace Api.DI;
 
 internal static partial class DIextentions {
-    public static WebApplicationBuilder InjectSwagger(this WebApplicationBuilder builder) {
+    public static IServiceCollection InjectSwagger(this IServiceCollection services) {
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
+        services.AddEndpointsApiExplorer();
 
-        builder.Services.AddSwaggerGen(options => {
+        services.AddSwaggerGen(options => {
             options.SwaggerDoc(
                 "v1",
                 new OpenApiInfo {
@@ -28,6 +28,6 @@ internal static partial class DIextentions {
             options.OperationFilter<SecurityRequirementsOperationFilter>();
         });
 
-        return builder;
+        return services;
     }
 }

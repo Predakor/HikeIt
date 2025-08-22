@@ -21,4 +21,5 @@ internal static partial class DIextentions {
             builder.Configuration.AddUserSecrets<Program>();
         }
     }
+
 }

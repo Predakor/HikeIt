@@ -5,10 +5,9 @@ using Microsoft.AspNetCore.Identity;
 namespace Api.DI;
 
 internal static partial class DIextentions {
-
-    public static WebApplicationBuilder InjectIdentity(this WebApplicationBuilder builder) {
-        builder
-            .Services.AddIdentity<User, IdentityRole<Guid>>(options => {
+    public static IServiceCollection InjectIdentity(this IServiceCollection services) {
+        services
+            .AddIdentity<User, IdentityRole<Guid>>(options => {
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
                 options.SignIn.RequireConfirmedAccount = false;
@@ -16,7 +15,7 @@ internal static partial class DIextentions {
             .AddEntityFrameworkStores<TripDbContext>()
             .AddDefaultTokenProviders();
 
-        builder.Services.ConfigureApplicationCookie(options => {
+        services.ConfigureApplicationCookie(options => {
             options.LoginPath = "/auth/login";
             options.Cookie.Name = "HikeItAuth";
 
@@ -40,8 +39,8 @@ internal static partial class DIextentions {
             };
         });
 
-        builder.Services.AddAuthorization();
+        services.AddAuthorization();
 
-        return builder;
+        return services;
     }
 }

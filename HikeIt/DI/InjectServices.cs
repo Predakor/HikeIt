@@ -6,23 +6,20 @@ using System.Reflection;
 namespace Api.DI;
 
 internal static partial class DIextentions {
-    public static WebApplicationBuilder InjectServices(this WebApplicationBuilder builder) {
-        var assemblies = new[] { "Application", "Infrastructure", "Domain", "Api" }
-            .Select(Assembly.Load)
-            .ToArray();
+    static readonly string[] sourceArray = ["Application", "Infrastructure", "Domain", "Api"];
 
-        builder
-            .Services.AddHttpContextAccessor()
-            .InjectMappers()
+    public static IServiceCollection InjectServices(this IServiceCollection services) {
+        var assemblies = sourceArray.Select(Assembly.Load).ToArray();
+
+        return services
+            .AddHttpContextAccessor()
             .InjectServices(assemblies)
+            .InjectMappers()
             .InjectParsers();
-
-        return builder;
     }
 
     static IServiceCollection InjectParsers(this IServiceCollection services) {
-        services.AddScoped<IGpxParser, GpxParser>();
-        return services;
+        return services.AddScoped<IGpxParser, GpxParser>();
     }
 
     static IServiceCollection InjectMappers(this IServiceCollection services) {
@@ -35,7 +32,7 @@ internal static partial class DIextentions {
         this IServiceCollection services,
         Assembly[] targetAssemblies
     ) {
-        services.Scan(scan =>
+        return services.Scan(scan =>
             scan.FromAssemblies(targetAssemblies)
                 .AddClasses(
                     classes =>
@@ -47,6 +44,5 @@ internal static partial class DIextentions {
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
-        return services;
     }
 }
