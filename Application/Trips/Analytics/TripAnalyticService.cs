@@ -74,11 +74,7 @@ public class TripAnalyticService : ITripAnalyticService {
     Task<Result<List<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx) {
         return _reachedPeakService
             .CreateReachedPeaks(ctx.AnalyticData, ctx.Trip)
-            .MapAsync(peaks => {
-                ctx.Trip.AddReachedPeaks(peaks);
-                return peaks;
-            });
-
+            .TapAsync(peaks => ctx.Trip.AddReachedPeaks(peaks));
     }
 
     Task<Result<PeaksAnalytic>> GeneratePeaksAnalytics(CreateTripContext ctx) {

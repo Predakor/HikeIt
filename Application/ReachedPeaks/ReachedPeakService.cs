@@ -38,7 +38,7 @@ public class ReachedPeakService : IReachedPeakService {
     static Result<List<ReachedPeakDataBuilder>> ExtractPotentialPeaks(AnalyticData data) {
         return data.ToLocalMaximaWithDistance()
             .WithProximityMerge()
-            .Select(ReachedPeakDataFactory.CreateFromGpxPointWithDistance)
+            .Select(ReachedPeakDataFactory.FromPointWithDistance)
             .ToList();
     }
 
