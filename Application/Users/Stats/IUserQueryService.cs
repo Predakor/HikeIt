@@ -1,7 +1,7 @@
-﻿using Application.Commons.Interfaces;
-using Application.Users.Dtos;
-using Application.Users.RegionProgresses.Dtos;
-using Domain.Common.Result;
+﻿using Application.Commons.Abstractions.Queries;
+using Application.Users.RegionProgressions.Dtos;
+using Application.Users.Root.Dtos;
+using Application.Users.Stats.Dtos;
 
 namespace Application.Users.Stats;
 

@@ -1,6 +1,5 @@
-﻿using Application.Commons.Interfaces;
-using Domain.Common.Result;
-using Domain.Peaks;
+﻿using Application.Commons.Abstractions.Queries;
+using Domain.Locations.Peaks;
 using Domain.ReachedPeaks;
 
 namespace Application.ReachedPeaks;

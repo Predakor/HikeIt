@@ -1,7 +1,7 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Common.Abstractions;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Mountains.Regions;
+namespace Domain.Locations.Regions;
 
 public class Region : IEntity<int> {
     public int Id { get; set; }

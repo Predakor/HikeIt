@@ -1,7 +1,8 @@
+using Api;
 using Api.DI;
 using Application;
 using Infrastructure;
-using Infrastructure.Data;
+using Infrastructure.Commons.Databases.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,18 +10,15 @@ var isDevelopment = builder.Environment.IsDevelopment();
 
 builder.InjectAppConfig();
 
-builder
-    .Services.AddInfrastructure(builder.Configuration, isDevelopment)
+builder.Services
+    .AddApi()
+    .AddInfrastructure(builder.Configuration, isDevelopment)
     .AddAplication()
     .AddControllers();
 
-builder.InjectSwagger();
-builder.InjectIdentity();
-builder.InjectServices();
-
 var app = builder.Build();
 
-await MigrationHelper.MigrateDatabaseAsync(app.Services);
+await DbHelpers.TryMigrationAndSeeding(app.Services);
 
 Console.WriteLine($"Current Directory in api: {Directory.GetCurrentDirectory()}");
 

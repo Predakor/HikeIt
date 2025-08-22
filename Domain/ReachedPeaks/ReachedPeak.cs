@@ -1,10 +1,9 @@
-﻿using Domain.Common.Result;
+﻿using Domain.Common.Abstractions;
 using Domain.Common.Validations.Validators;
-using Domain.Interfaces;
-using Domain.Peaks;
-using Domain.Trips;
-using Domain.Users;
-using Domain.Users.Extentions;
+using Domain.Locations.Peaks;
+using Domain.Trips.Analytics.Root.Extentions;
+using Domain.Trips.Root;
+using Domain.Users.Root;
 
 namespace Domain.ReachedPeaks;
 

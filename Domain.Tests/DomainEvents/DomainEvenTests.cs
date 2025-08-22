@@ -1,6 +1,6 @@
-﻿using Application.Commons.Interfaces;
+﻿using Application.Commons.Abstractions;
+using Domain.Common.Abstractions;
 using Domain.Common.AggregateRoot;
-using Domain.Interfaces;
 
 namespace Domain.Tests.DomainEvents;
 
@@ -55,7 +55,7 @@ public class DomainEvenTests {
 
 public record DummyDomainEvent(Guid PostId) : IDomainEvent;
 
-class DummyAggregate : AggregateRoot<Guid>, IEntity<Guid> {
+class DummyAggregate : AggregateRoot<Guid> {
     public string Title { get; private set; }
 
     private DummyAggregate() { }

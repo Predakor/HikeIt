@@ -1,5 +1,6 @@
-﻿using Domain.Common;
-using Domain.Trips.ValueObjects;
+﻿using Domain.Common.Geography;
+using Domain.Common.Geography.Extentions;
+using Domain.Common.Geography.ValueObjects;
 
 namespace Domain.Tests;
 

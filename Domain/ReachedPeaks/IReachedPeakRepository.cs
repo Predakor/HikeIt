@@ -1,5 +1,4 @@
-﻿using Domain.Common.Result;
-using Domain.Interfaces;
+﻿using Domain.Common.Abstractions;
 
 namespace Domain.ReachedPeaks;
 public interface IReachedPeakRepository : ICrudRepository<ReachedPeak, Guid> {

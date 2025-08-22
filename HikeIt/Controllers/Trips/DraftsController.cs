@@ -1,16 +1,15 @@
-﻿using Api.Extentions;
+﻿using Api.Commons.Extentions;
 using Application.Commons.Drafts;
-using Application.Commons.FileStorage;
+using Application.Commons.Files;
+using Application.Commons.Services.Auth;
 using Application.FileReferences;
-using Application.Services.Auth;
-using Application.TripAnalytics.Interfaces;
-using Application.Trips;
+using Application.Trips.Analytics.Interfaces;
 using Application.Trips.GpxFile.Services;
-using Application.Trips.Services;
-using Domain.Common;
-using Domain.Common.Result;
+using Application.Trips.Root.Dtos;
+using Application.Trips.Root.Services;
+using Application.Trips.Root.ValueObjects;
 using Domain.FileReferences.ValueObjects;
-using Domain.Trips;
+using Domain.Trips.Root;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

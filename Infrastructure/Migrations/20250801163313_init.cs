@@ -1,39 +1,32 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
-{
+namespace Infrastructure.Migrations {
     /// <inheritdoc />
-    public partial class init : Migration
-    {
+    public partial class init : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:PostgresExtension:postgis", ",,");
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
@@ -54,36 +47,31 @@ namespace Infrastructure.Migrations
                     LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Regions",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_Regions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     RoleId = table.Column<Guid>(type: "uuid", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
@@ -95,16 +83,14 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
@@ -116,15 +102,13 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
-                columns: table => new
-                {
+                columns: table => new {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     ProviderKey = table.Column<string>(type: "text", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
@@ -136,13 +120,11 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
-                columns: table => new
-                {
+                columns: table => new {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
@@ -160,15 +142,13 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
-                columns: table => new
-                {
+                columns: table => new {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
@@ -180,8 +160,7 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserStats",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TotalTrips = table.Column<long>(type: "bigint", nullable: false),
                     TotalDistanceMeters = table.Column<long>(type: "bigint", nullable: false),
@@ -195,8 +174,7 @@ namespace Infrastructure.Migrations
                     LastHikeDate = table.Column<DateOnly>(type: "date", nullable: true),
                     LongestTripMeters = table.Column<long>(type: "bigint", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_UserStats", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserStats_AspNetUsers_Id",
@@ -208,8 +186,7 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Peaks",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Height = table.Column<int>(type: "integer", nullable: false),
@@ -217,8 +194,7 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     RegionID = table.Column<int>(type: "integer", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_Peaks", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Peaks_Regions_RegionID",
@@ -230,8 +206,7 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "RegionProgress",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     RegionId = table.Column<int>(type: "integer", nullable: false),
@@ -240,8 +215,7 @@ namespace Infrastructure.Migrations
                     UniqueReachedPeaks = table.Column<short>(type: "smallint", nullable: false),
                     PeakVisits = table.Column<string>(type: "jsonb", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_RegionProgress", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RegionProgress_AspNetUsers_UserId",
@@ -259,8 +233,7 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Trips",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     TripDay = table.Column<DateOnly>(type: "date", nullable: false),
@@ -269,8 +242,7 @@ namespace Infrastructure.Migrations
                     PeakId = table.Column<int>(type: "integer", nullable: true),
                     GpxFileId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_Trips", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Trips_AspNetUsers_UserId",
@@ -291,16 +263,14 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "GpxFiles",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Path = table.Column<string>(type: "text", nullable: false),
                     OriginalName = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_GpxFiles", x => x.Id);
                     table.ForeignKey(
                         name: "FK_GpxFiles_Trips_Id",
@@ -312,8 +282,7 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ReachedPeaks",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstTime = table.Column<bool>(type: "boolean", nullable: false),
                     ReachedAtTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -322,8 +291,7 @@ namespace Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     PeakId = table.Column<int>(type: "integer", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_ReachedPeaks", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ReachedPeaks_AspNetUsers_UserId",
@@ -345,8 +313,7 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "TripAnalytics",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     RouteAnalytics_TotalDistanceMeters = table.Column<double>(type: "double precision", nullable: true),
                     RouteAnalytics_TotalAscentMeters = table.Column<double>(type: "double precision", nullable: true),
@@ -367,8 +334,7 @@ namespace Infrastructure.Migrations
                     TimeAnalytics_AverageAscentKph = table.Column<double>(type: "double precision", nullable: true),
                     TimeAnalytics_AverageDescentKph = table.Column<double>(type: "double precision", nullable: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_TripAnalytics", x => x.Id);
                     table.ForeignKey(
                         name: "FK_TripAnalytics_Trips_Id",
@@ -380,8 +346,7 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ElevationProfiles",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Start_Lat = table.Column<double>(type: "double precision", nullable: false),
                     Start_Lon = table.Column<double>(type: "double precision", nullable: false),
@@ -389,8 +354,7 @@ namespace Infrastructure.Migrations
                     Start_Time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     GainsData = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_ElevationProfiles", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ElevationProfiles_TripAnalytics_Id",
@@ -402,15 +366,13 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "PeaksAnalytics",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Total = table.Column<long>(type: "bigint", nullable: false),
                     Unique = table.Column<long>(type: "bigint", nullable: false),
                     New = table.Column<long>(type: "bigint", nullable: false)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_PeaksAnalytics", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PeaksAnalytics_TripAnalytics_Id",
@@ -504,8 +466,7 @@ namespace Infrastructure.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

@@ -1,10 +1,7 @@
-﻿using Api.Extentions;
-using Application.Services.Auth;
-using Application.Users.Dtos;
-using Domain.Common;
-using Domain.Common.Result;
-using Domain.Common.Validations;
-using Domain.Users;
+﻿using Api.Commons.Extentions;
+using Application.Commons.Services.Auth;
+using Application.Users.Root.Dtos;
+using Domain.Users.Root;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;

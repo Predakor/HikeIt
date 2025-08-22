@@ -1,5 +1,5 @@
-﻿using Domain.Common;
-using Domain.Trips.ValueObjects;
+﻿using Domain.Common.Geography.Extentions;
+using Domain.Common.Geography.ValueObjects;
 
 namespace Domain.Tests;
 
@@ -12,7 +12,7 @@ public class GpxHelpersTests {
         new(17.5, 18, 104, DateTime.UtcNow), // with timestamp
     ];
 
-    static readonly List<Trips.ValueObjects.GpxPoint> gpxFileData =
+    static readonly List<GpxPoint> gpxFileData =
     [
         new(50.67983628, 16.53870464, 487, DateTime.Parse("2025-05-01T07:05:52Z")),
         new(50.67988247, 16.53873224, 488, DateTime.Parse("2025-05-01T07:05:57Z")),

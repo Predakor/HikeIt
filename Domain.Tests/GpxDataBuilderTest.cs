@@ -1,5 +1,5 @@
-﻿using Domain.Trips.Builders.GpxDataBuilder;
-using Domain.Trips.ValueObjects;
+﻿using Domain.Common.Geography.ValueObjects;
+using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Domain.Tests;
 

@@ -1,5 +1,5 @@
-﻿using Domain.ReachedPeaks.Builders;
-using Domain.Trips.ValueObjects;
+﻿using Domain.Common.Geography.ValueObjects;
+using Domain.ReachedPeaks.Builders;
 
 namespace Application.ReachedPeaks.ValueObjects;
 

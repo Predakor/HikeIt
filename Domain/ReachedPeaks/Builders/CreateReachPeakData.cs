@@ -1,6 +1,6 @@
-﻿using Domain.Peaks;
+﻿using Domain.Common.Geography.ValueObjects;
+using Domain.Locations.Peaks;
 using Domain.ReachedPeaks.ValueObjects;
-using Domain.Trips.ValueObjects;
 
 namespace Domain.ReachedPeaks.Builders;
 
@@ -48,8 +48,8 @@ public class ReachedPeakDataBuilder {
         return this;
     }
 
-    public ReachedPeakData Build() {
-        return new ReachedPeakData() {
+    public CreateReachedPeak Build() {
+        return new CreateReachedPeak() {
             Id = Id,
             Location = Location,
             PeakId = PeakId,

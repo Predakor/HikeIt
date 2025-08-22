@@ -1,8 +1,8 @@
-﻿using Domain.Common;
-using Domain.TripAnalytics.Builders.RouteAnalyticsBuilder;
-using Domain.TripAnalytics.Factories;
-using Domain.Trips.Builders.GpxDataBuilder;
-using Domain.Trips.ValueObjects;
+﻿using Domain.Common.Geography.Extentions;
+using Domain.Common.Geography.ValueObjects;
+using Domain.Trips.Analytics.Route.Builders;
+using Domain.Trips.Analytics.Time;
+using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Domain.Tests;
 

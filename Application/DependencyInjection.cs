@@ -1,6 +1,6 @@
-﻿using Application.Commons.Drafts;
-using Application.Commons.Interfaces;
-using Application.Interfaces;
+﻿using Application.Commons.Abstractions;
+using Application.Commons.Abstractions.Queries;
+using Application.Commons.Drafts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;

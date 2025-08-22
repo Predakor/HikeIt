@@ -1,15 +1,14 @@
-﻿using Api.Extentions;
-using Application.Commons.FileStorage;
+﻿using Api.Commons.Extentions;
+using Application.Commons.Files;
+using Application.Commons.Services.Auth;
 using Application.FileReferences;
-using Application.Services.Auth;
-using Application.Trips;
-using Application.Trips.Queries;
-using Application.Trips.Services;
-using Domain.Common.Result;
-using Domain.TripAnalytics.Interfaces;
+using Application.Trips.Root.Queries;
+using Application.Trips.Root.Services;
+using Application.Trips.Root.ValueObjects;
+using Domain.Trips.Analytics.Root.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Application.Dto.TripDto.Request;
+using static Application.Trips.Root.Dtos.TripDto.Request;
 
 namespace Api.Controllers.Trips;
 

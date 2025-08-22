@@ -1,5 +1,5 @@
-﻿using Domain.Trips.ValueObjects;
-using Infrastructure.Parsers;
+﻿using Domain.Common.Geography.ValueObjects;
+using Infrastructure.Commons.Parsers;
 
 namespace Domain.Tests;
 
