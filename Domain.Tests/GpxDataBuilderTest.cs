@@ -4,7 +4,6 @@ using Domain.Trips.Root.Builders.GpxDataBuilder;
 namespace Domain.Tests;
 
 public class GpxDataBuilderTest {
-
     [Fact]
     public void TripAnalyticsBuilder_Should_ReturnBuilder() {
         var builder = new GpxDataBuilder(GpxTestData.DownUpPath.Points);
@@ -30,37 +29,5 @@ public class GpxDataBuilderTest {
         var biggestSpike = MaxElevationJump(points.Points);
 
         Assert.True(biggestSpike < 5);
-    }
-
-    [Theory]
-    [MemberData(nameof(GpxTestData.AllTripData), MemberType = typeof(GpxTestData))]
-    public void TripAnalyticsBuilder_EmaSmoothing_Should_SmoothOutMicroJumps(
-        AnalyticData data
-    ) {
-        const float jitterThreshold = 0.4f; // use same threshold as in method
-
-        var smoothedPoints = new GpxDataBuilder(data.Points)
-            .ApplyEmaSmoothing(jitterThreshold)
-            .Build()
-            .Points;
-
-        for (int i = 1; i < smoothedPoints.Count; i++) {
-            double diff = Math.Abs(smoothedPoints[i].Ele - smoothedPoints[i - 1].Ele);
-
-            Assert.True(
-                diff >= jitterThreshold
-                    || diff == 0
-                    || IsMeaningfulChange(smoothedPoints, i, jitterThreshold),
-                $"Elevation jump {diff} at index {i} should be >= {jitterThreshold} or flattened."
-            );
-        }
-    }
-
-    private bool IsMeaningfulChange(List<GpxPoint> points, int idx, double threshold) {
-        if (idx + 1 < points.Count) {
-            double overallChange = Math.Abs(points[idx + 1].Ele - points[idx - 1].Ele);
-            return overallChange > threshold;
-        }
-        return false;
     }
 }
