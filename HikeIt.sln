@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "HikeIt\Api.csproj", "{9F65B798-B039-4401-9067-4EC0D3CE18BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{9F65B798-B039-4401-9067-4EC0D3CE18BA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F54C0CFC-F704-4B95-8575-42167D3E9FBE} = {F54C0CFC-F704-4B95-8575-42167D3E9FBE}
 		{FB39C332-940E-49D7-AD5C-68C9FF1B97F7} = {FB39C332-940E-49D7-AD5C-68C9FF1B97F7}
@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		supabase\config.toml = supabase\config.toml
-		Directory.Build.Props = Directory.Build.Props
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{F54C0CFC-F704-4B95-8575-42167D3E9FBE}"

@@ -3,10 +3,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
 	<PackageReference Include="Scrutor" Version="6.1.0" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
-	  <PrivateAssets>all</PrivateAssets>
-	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	</PackageReference>
+
   </ItemGroup>
 
   <ItemGroup>

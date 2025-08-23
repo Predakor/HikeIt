@@ -9,6 +9,11 @@
 	</PropertyGroup>
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
 		<ProjectReference Include="..\Core\Core.csproj" Condition="'$(MSBuildProjectName)' != 'Core'" />
+		
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 	<ItemGroup Condition="'$(MSBuildProjectName)' != 'Core'">
 		<Using Include="Core.Results"  />
