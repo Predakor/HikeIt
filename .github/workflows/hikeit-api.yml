@@ -5,14 +5,9 @@ on:
     branches:
       - master
     paths:
-      - 'Api/**'
-      - 'Core/**'
-      - 'Domain/**'
-      - 'Infrastructure/**'
-      - 'Application/**'
+      - '**/*.cs'
       - 'HikeIt.sln'
       - 'Directory.Build.*'
-      - 'tests/**' 
 
 env:
   AZURE_WEBAPP_NAME: hikeit-api
