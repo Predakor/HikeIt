@@ -8,6 +8,7 @@ on:
       - '**/*.cs'
       - 'HikeIt.sln'
       - 'Directory.Build.*'
+      - '.github/workflows/**'
 
 env:
   AZURE_WEBAPP_NAME: hikeit-api
