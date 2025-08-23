@@ -4,14 +4,23 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'Api/**'
+      - 'Core/**'
+      - 'Domain/**'
+      - 'Infrastructure/**'
+      - 'Application/**'
+      - 'HikeIt.sln'
+      - 'Directory.Build.*'
+      - 'tests/**' 
 
 env:
   AZURE_WEBAPP_NAME: hikeit-api
   AZURE_WEBAPP_PACKAGE_PATH: HikeIt/publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
-  SOLUTION_FILE: HikeIt.sln
-  API_PROJECT: HikeIt/Api/Api.csproj
+  SOLUTION_FILE: ./HikeIt.sln
+  API_PROJECT: ./Api/Api.csproj
 
 jobs:
   build:
