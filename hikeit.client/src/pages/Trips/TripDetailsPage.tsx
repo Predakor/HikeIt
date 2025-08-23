@@ -1,6 +1,6 @@
-import TripDetailsHeader from "@/components/Trip/TripDetails/TripDetailsHeader";
-import { TripDetailsMenu } from "@/components/Trip/TripDetails/TripDetailsMenu/TripDetailsTabs";
-import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
+import TripDetailsHeader from "@/components/Trip/Details/TripDetailsHeader";
+import { TripDetailsMenu } from "@/components/Trip/Details/TripDetailsMenu/TripDetailsTabs";
+import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import { useTrip } from "@/hooks/UseTrips/useTrip";
 import { Spinner, Stack, VStack } from "@chakra-ui/react";
 

@@ -2,7 +2,7 @@ import usePagePreload from "@/hooks/Utils/usePagePreload";
 import type { TripSummaries } from "@/types/ApiTypes/TripDtos";
 import { For, GridItem } from "@chakra-ui/react";
 import { Fragment } from "react/jsx-runtime";
-import SubTitle from "../Titles/SubTitle";
+import SubTitle from "../ui/Titles/SubTitle";
 import TripCard from "./Card/TripCard";
 import sortTrips from "./sortTrips";
 

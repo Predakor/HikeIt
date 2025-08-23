@@ -4,27 +4,27 @@ import { IconArrowDown, IconArrowUp, IconJourney } from "@/Icons/Icons";
 import type { RouteAnalytic } from "@/types/ApiTypes/Analytics";
 
 export const routeAnalyticStatsInfo: StatsMetaList<RouteAnalytic> = {
-  totalDistanceKm: {
+  totalDistanceMeters: {
     IconSource: IconJourney,
     unit: "m",
     formatt: GenericFormatter,
   },
-  totalAscent: {
+  totalAscentMeters: {
     IconSource: IconArrowUp,
     unit: "m",
     formatt: GenericFormatter,
   },
-  totalDescent: {
+  totalDescentMeters: {
     IconSource: IconArrowDown,
     unit: "m",
     formatt: GenericFormatter,
   },
-  lowestElevation: {
+  lowestElevationMeters: {
     IconSource: IconArrowDown,
     unit: "m",
     formatt: GenericFormatter,
   },
-  highestElevation: {
+  highestElevationMeters: {
     IconSource: IconArrowUp,
     unit: "m",
     formatt: GenericFormatter,

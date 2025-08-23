@@ -1,12 +1,12 @@
-import ControlledSelect from "@/components/RegionSelect/ControlledSelect";
-import useCollection from "@/components/RegionSelect/useCollection";
+import ControlledSelect from "@/components/ui/Inputs/Select/ControlledSelect";
+import useCollection from "@/components/ui/Inputs/Select/useCollection";
 import { Input } from "@chakra-ui/react";
 import { Controller, type FieldValues } from "react-hook-form";
-import InputLabel from "./MapEntry/FieldWrapper/InputLabel";
+import InputLabel from "../../../Utils/RenderInputs/MapEntry/FieldWrapper/InputLabel";
 import type {
   RenderInputBaseProps,
   SelectInputConfigEntry,
-} from "./inputTypes";
+} from "../../../Utils/RenderInputs/inputTypes";
 
 interface Props<T extends FieldValues>
   extends Omit<RenderInputBaseProps<T>, "register"> {

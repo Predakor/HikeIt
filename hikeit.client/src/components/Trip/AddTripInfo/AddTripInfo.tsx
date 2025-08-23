@@ -1,6 +1,6 @@
 import { IconDownload, IconExternal } from "@/Icons/Icons";
-import DropFile from "@/components/AddFile/AddFile/DropFile";
-import Divider from "@/components/Divider/Divider";
+import DropFile from "@/components/ui/AddFile/DropFile";
+import Divider from "@/components/ui/Divider/Divider";
 import { apiPath } from "@/data/apiPaths";
 import {
   Button,

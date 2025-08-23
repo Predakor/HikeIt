@@ -2,8 +2,8 @@ import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import RegionHighestPeak from "@/components/Regions/HighestPeak/RegionHighestPeak";
 import RegionPeaks from "@/components/Regions/Peaks/RegionPeaks";
 import RegionStats from "@/components/Regions/Stats/RegionStats";
-import PageTitle from "@/components/Titles/PageTitle";
-import FetchWrapper from "@/components/Wrappers/Fetching";
+import PageTitle from "@/components/ui/Titles/PageTitle";
+import FetchWrapper from "@/components/Utils/Fetching";
 import UseRegionProgress from "@/hooks/Regions/UseRegionProgress";
 import { Flex, Grid, GridItem } from "@chakra-ui/react";
 

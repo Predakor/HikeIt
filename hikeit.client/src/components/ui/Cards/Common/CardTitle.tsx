@@ -1,4 +1,4 @@
-import SubTitle from "@/components/Titles/SubTitle";
+import SubTitle from "@/components/ui/Titles/SubTitle";
 import { Card } from "@chakra-ui/react";
 
 function CardTitle({ title }: { title: string }) {

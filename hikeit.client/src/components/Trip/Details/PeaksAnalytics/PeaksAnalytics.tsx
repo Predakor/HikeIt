@@ -1,4 +1,4 @@
-import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
+import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import useResourceLink from "@/hooks/Api/useResourceLink";
 import type {
   PeakSummaryData,

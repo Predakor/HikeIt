@@ -1,7 +1,7 @@
 import api from "@/Utils/Api/apiRequest";
 import UserStat from "@/components/User/Stats";
 import { type UserStats } from "@/components/User/Stats/Utils/statTypes";
-import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
+import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import { SimpleGrid } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 

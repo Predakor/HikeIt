@@ -1,4 +1,4 @@
-import DropFile from "@/components/AddFile/AddFile/DropFile";
+import DropFile from "@/components/ui/AddFile/DropFile";
 import { PrimaryButton } from "@/components/ui/Buttons";
 import { MutationResult } from "@/components/ui/Results/MutationResult";
 import useUserMutations from "@/hooks/User/useUserMutations";

@@ -1,9 +1,9 @@
 import { IconPlus } from "@/Icons/Icons";
 import SkeletonGrid from "@/components/Placeholders/SkeletonGrid";
-import PageTitle from "@/components/Titles/PageTitle";
+import PageTitle from "@/components/ui/Titles/PageTitle";
 import NoTrips from "@/components/Trips/NoTrips";
 import RenderTripCards from "@/components/Trips/RenderTripCards";
-import FetchWrapper from "@/components/Wrappers/Fetching";
+import FetchWrapper from "@/components/Utils/Fetching";
 import { useTrips } from "@/hooks/UseTrips/useTrips";
 import usePagePreload from "@/hooks/Utils/usePagePreload";
 import { Button, SimpleGrid, Spacer, Stack } from "@chakra-ui/react";

@@ -8,7 +8,6 @@ import {
 export interface ChartProps extends BarSegmentBarProps {
   chartConfig: UseChartProps<any>;
 }
-
 function BarGraph({ chartConfig, ...rest }: ChartProps) {
   const chart = useChart(chartConfig);
 

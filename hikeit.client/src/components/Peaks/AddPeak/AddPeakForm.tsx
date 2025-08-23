@@ -1,6 +1,6 @@
 "use client";
 import { isPendingOrNotFetched } from "@/Utils/Api/queryHelpers";
-import SubTitle from "@/components/Titles/SubTitle";
+import SubTitle from "@/components/ui/Titles/SubTitle";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import { MutationResult } from "@/components/ui/Results/MutationResult";
 import { Button, Separator, Stack } from "@chakra-ui/react";

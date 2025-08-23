@@ -1,5 +1,5 @@
 import RowStat from "@/components/Stats/RowStat";
-import SubTitle from "@/components/Titles/SubTitle";
+import SubTitle from "@/components/ui/Titles/SubTitle";
 import type { UserBaseProfile } from "@/types/User/user.types";
 import { Card, SimpleGrid, Spacer, Stack, Text } from "@chakra-ui/react";
 import EditableAvatar from "../../Avatar/EditableAvatar";

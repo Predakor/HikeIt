@@ -1,5 +1,5 @@
 import { toUkDate } from "@/Utils/Formatters/dateFormatter";
-import type { ReachedPeakWithBadges } from "@/components/AddFile/AddFile/tripTypes";
+import type { ReachedPeakWithBadges } from "@/components/ui/AddFile/tripTypes";
 import type { PeaksAnalytics } from "@/types/ApiTypes/Analytics";
 
 export default function extraPeaksData(data: PeaksAnalytics) {

@@ -3,7 +3,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { BrowserRouter } from "react-router";
 import Layout from "./Layout/Layout";
-import RenderRoutes from "./components/RenderRoutes/RenderRoutes";
+import RenderRoutes from "./components/Utils/RenderRoutes/RenderRoutes";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 

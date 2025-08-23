@@ -1,7 +1,4 @@
-import type {
-  GraphData,
-  ReachedPeak,
-} from "@/components/AddFile/AddFile/tripTypes";
+import type { GraphData, ReachedPeak } from "@/components/ui/AddFile/tripTypes";
 import type { HTMLInputTypeAttribute } from "react";
 import type { BasicAnalytics, TripAnalytic } from "./Analytics";
 

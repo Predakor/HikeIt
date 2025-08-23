@@ -12,7 +12,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router";
-import FetchWrapper from "../Wrappers/Fetching/FetchWrapper";
+import FetchWrapper from "../Utils/Fetching/FetchWrapper";
 import { UserMenu } from "./UserMenu";
 
 export default function User() {

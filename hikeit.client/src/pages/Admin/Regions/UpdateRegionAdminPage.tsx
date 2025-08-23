@@ -1,5 +1,5 @@
 import AdminPage from "@/components/Pages/AdminPage";
-import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
+import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import { UseDetailedRegionPeaks } from "@/hooks/Regions/UseRegionPeaks";
 import ManageRegionPeaks from "@components/Regions/Manage/ManageRegionPeaks";
 import { useParams } from "react-router";

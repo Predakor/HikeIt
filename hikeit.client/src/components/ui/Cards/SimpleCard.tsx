@@ -1,4 +1,4 @@
-import SubTitle from "@/components/Titles/SubTitle";
+import SubTitle from "@/components/ui/Titles/SubTitle";
 import { Flex, Spacer } from "@chakra-ui/react";
 import { Card } from "@chakra-ui/react/card";
 import type { CardProps } from "./Common/card.types";

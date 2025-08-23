@@ -1,8 +1,8 @@
 import SkeletonGrid from "@/components/Placeholders/SkeletonGrid";
 import ProgressedRegion from "@/components/Regions/Card/ProgressedRegion";
 import UnprogressedRegion from "@/components/Regions/Card/UnprogressedRegion";
-import PageTitle from "@/components/Titles/PageTitle";
-import FetchWrapper from "@/components/Wrappers/Fetching";
+import PageTitle from "@/components/ui/Titles/PageTitle";
+import FetchWrapper from "@/components/Utils/Fetching";
 import UseRegionsProgressions from "@/hooks/Regions/UseRegionsProgressions";
 import usePagePreload from "@/hooks/Utils/usePagePreload";
 import type {

@@ -1,6 +1,6 @@
 import type { FullMap } from "@/types/Utils/mapping.types";
 import type { InputProps } from "@chakra-ui/react";
-import type { CollectionType } from "@components/RegionSelect/useCollection";
+import type { CollectionType } from "@/components/ui/Inputs/Select/useCollection";
 import type { AllowedInputTypes } from "@utils/Schemas/index";
 interface InputConfigEntryBase {
   key: string;

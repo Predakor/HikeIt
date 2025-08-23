@@ -1,6 +1,6 @@
 import { IconPlus } from "@/Icons/Icons";
 import AdminPage from "@/components/Pages/AdminPage";
-import FetchWrapper from "@/components/Wrappers/Fetching/FetchWrapper";
+import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import LinkCard from "@/components/ui/Cards/LinkCard";
 import useRegions from "@/hooks/Regions/useRegions";
 import type { Region } from "@/types/ApiTypes/region.types";

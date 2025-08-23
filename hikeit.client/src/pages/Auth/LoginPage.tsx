@@ -1,5 +1,5 @@
 import schemas from "@/Utils/Schemas";
-import NavButton from "@/components/Utils/NavButton/NavButton";
+import NavButton from "@/components/ui/Buttons/NavButton";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import useLoginForm from "@/hooks/Auth/useLoginForm";

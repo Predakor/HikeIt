@@ -1,4 +1,4 @@
-import QueryResult from "@/components/RequestResult/QueryResult";
+import QueryResult from "@/components/ui/Results/QueryResult";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import { useTripDraft } from "@/hooks/UseTrips/useTripDraft";
 import { Button, Stack } from "@chakra-ui/react";

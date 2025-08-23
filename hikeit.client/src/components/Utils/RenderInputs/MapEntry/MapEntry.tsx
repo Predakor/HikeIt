@@ -1,8 +1,8 @@
-import { PasswordInput } from "@/components/ui/password-input";
+import { PasswordInput } from "@/components/ui/Inputs/Password/password-input";
 import { Input } from "@chakra-ui/react";
 import type { FieldError, FieldValues } from "react-hook-form";
-import { Range } from "../Range";
-import Select from "../Select";
+import { Range } from "../../../ui/Inputs/Range/Range";
+import Select from "../../../ui/Inputs/Select/Select";
 import type { InputConfigEntry, RenderInputBaseProps } from "../inputTypes";
 import FieldWrapper from "./FieldWrapper/FieldWrapper";
 

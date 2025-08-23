@@ -1,4 +1,4 @@
-import type { ReachedPeak } from "@/components/AddFile/AddFile/tripTypes";
+import type { ReachedPeak } from "@/components/ui/AddFile/tripTypes";
 
 export interface TripAnalytic {
   routeAnalytics: RouteAnalytic;
@@ -15,12 +15,12 @@ export interface BasicAnalytics {
 }
 
 export interface RouteAnalytic {
-  totalDistanceKm: number;
-  totalAscent: number;
-  totalDescent: number;
+  totalDistanceMeters: number;
+  totalAscentMeters: number;
+  totalDescentMeters: number;
 
-  highestElevation: number;
-  lowestElevation: number;
+  highestElevationMeters: number;
+  lowestElevationMeters: number;
 
   averageSlope: string;
   averageAscentSlope: string;

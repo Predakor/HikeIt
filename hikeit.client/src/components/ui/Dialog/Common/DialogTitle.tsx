@@ -1,4 +1,4 @@
-import SubTitle from "@/components/Titles/SubTitle";
+import SubTitle from "@/components/ui/Titles/SubTitle";
 import { Dialog as ChakraDialog } from "@chakra-ui/react";
 
 export function DialogTitle({ title }: { title?: string }) {

@@ -2,8 +2,8 @@ import IsAdminUser from "@/Utils/IsAdminUser";
 import useUser from "@/hooks/Auth/useUser";
 import { Center, Flex, Spacer, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
-import PageTitle from "../Titles/PageTitle";
-import FetchWrapper from "../Wrappers/Fetching/FetchWrapper";
+import PageTitle from "../ui/Titles/PageTitle";
+import FetchWrapper from "../Utils/Fetching/FetchWrapper";
 import { GoBackButton } from "../ui/Buttons";
 
 interface Props {

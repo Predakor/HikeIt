@@ -1,6 +1,9 @@
 import { Field, HStack, Slider } from "@chakra-ui/react";
 import { Controller } from "react-hook-form";
-import type { RangeInputConfigEntry, RenderInputBaseProps } from "./inputTypes";
+import type {
+  RangeInputConfigEntry,
+  RenderInputBaseProps,
+} from "../../../Utils/RenderInputs/inputTypes";
 
 interface RangeProps<T> extends Omit<RenderInputBaseProps<T>, "register"> {
   entry: RangeInputConfigEntry;

@@ -1,4 +1,4 @@
-import PageTitle from "@/components/Titles/PageTitle";
+import PageTitle from "@/components/ui/Titles/PageTitle";
 import { Card, Center, SimpleGrid } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 

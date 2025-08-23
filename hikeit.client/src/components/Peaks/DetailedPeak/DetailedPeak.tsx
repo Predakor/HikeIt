@@ -1,5 +1,5 @@
 import RowStat from "@/components/Stats/RowStat";
-import { PeakIcon } from "@/components/Trip/TripDetails/Common/PeakIcon";
+import { PeakIcon } from "@/components/Trip/Details/Common/PeakIcon";
 import type { Peak } from "@/types/ApiTypes/peak.types";
 import { Flex, Heading } from "@chakra-ui/react";
 

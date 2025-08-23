@@ -3,7 +3,7 @@ import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import AddTripForm, {
   type TripFormInitData,
 } from "@/components/Forms/AddTripForm/AddTripForm";
-import PageTitle from "@/components/Titles/PageTitle";
+import PageTitle from "@/components/ui/Titles/PageTitle";
 import AddTripInstructions from "@/components/Trip/AddTripInfo/AddTripInfo";
 import { Flex, Stack } from "@chakra-ui/react";
 import { useRef, useState } from "react";

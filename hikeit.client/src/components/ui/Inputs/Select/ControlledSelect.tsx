@@ -4,7 +4,7 @@ import {
   type ListCollection,
 } from "@chakra-ui/react";
 import type { ControllerRenderProps } from "react-hook-form";
-import type { DisplayOptions } from "../Utils/RenderInputs/inputTypes";
+import type { DisplayOptions } from "../../../Utils/RenderInputs/inputTypes";
 
 interface Props {
   field: ControllerRenderProps;

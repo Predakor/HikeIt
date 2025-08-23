@@ -1,8 +1,8 @@
-import type { ReachedPeakWithBadges } from "@/components/AddFile/AddFile/tripTypes";
-import { PeakBadge } from "@/components/Trip/TripDetails/Common/PeakBadge";
+import type { ReachedPeakWithBadges } from "@/components/ui/AddFile/tripTypes";
 import Peak from "../Peak";
 import ReachDistance from "./ReachDistance";
 import ReachTime from "./ReachTime";
+import { PeakBadge } from "@/components/Trip/Details/Common/PeakBadge";
 
 export default function ReachedPeak({ peak }: { peak: ReachedPeakWithBadges }) {
   const { firstTime, reachedAt } = peak;

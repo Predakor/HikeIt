@@ -1,6 +1,6 @@
 import { NavItem } from "@/Layout/Nav/NavItem";
 import AdminPage from "@/components/Pages/AdminPage";
-import SubTitle from "@/components/Titles/SubTitle";
+import SubTitle from "@/components/ui/Titles/SubTitle";
 import { adminRoutes } from "@/data/routes/admin/adminRoutes";
 import { For, Stack } from "@chakra-ui/react";
 

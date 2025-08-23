@@ -1,5 +1,5 @@
 import { IconArrowRight, IconPlus } from "@/Icons/Icons";
-import Divider from "@/components/Divider/Divider";
+import Divider from "@/components/ui/Divider/Divider";
 import { Button, Card, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router";
 

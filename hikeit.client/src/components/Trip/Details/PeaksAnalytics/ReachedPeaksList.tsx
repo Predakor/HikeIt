@@ -1,4 +1,4 @@
-import type { ReachedPeakWithBadges } from "@/components/AddFile/AddFile/tripTypes";
+import type { ReachedPeakWithBadges } from "@/components/ui/AddFile/tripTypes";
 import ReachedPeak from "@/components/Peaks/ReachedPeak/ReachedPeak";
 import { Flex, For } from "@chakra-ui/react";
 
