@@ -29,17 +29,17 @@ export const routeAnalyticStatsInfo: StatsMetaList<RouteAnalytic> = {
     unit: "m",
     formatt: GenericFormatter,
   },
-  averageSlope: {
+  averageSlopePercent: {
     IconSource: IconArrowUp,
     unit: "%",
     formatt: GenericFormatter,
   },
-  averageAscentSlope: {
+  averageAscentSlopePercent: {
     IconSource: IconArrowUp,
     unit: "%",
     formatt: GenericFormatter,
   },
-  averageDescentSlope: {
+  averageDescentSlopePercent: {
     IconSource: IconArrowUp,
     unit: "%",
     formatt: GenericFormatter,

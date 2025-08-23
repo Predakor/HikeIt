@@ -1,4 +1,6 @@
 import { lazy } from "react";
 
-export const LazyBarGraph = lazy(() => import("./BarGraph"));
+// not lazy import because barGraph is custom and doest not weight 600KB
+export { BarGraph } from "./BarGraph";
+
 export const LazyLineGraph = lazy(() => import("./LineChart"));

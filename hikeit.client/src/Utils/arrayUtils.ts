@@ -1,4 +1,21 @@
 import type { GpxArrayWithGains } from "@/types/ApiTypes/GpxTypes";
+import type { Func } from "@/types/Utils/func.types";
+
+export const arrayUtils = {
+  sum,
+  average,
+};
+
+function sum<T>(items: T[], getValue: Func<T, number>, initValue = 0) {
+  return items.reduce(
+    (accumulator, current) => (accumulator += getValue(current)),
+    initValue
+  );
+}
+
+function average<T>(items: T[], getValue: Func<T, number>) {
+  return sum(items, getValue) / items.length;
+}
 
 export function downsampleToMaxSize<T>(
   gpxArray: T[],

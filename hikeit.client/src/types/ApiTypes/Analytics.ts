@@ -22,9 +22,9 @@ export interface RouteAnalytic {
   highestElevationMeters: number;
   lowestElevationMeters: number;
 
-  averageSlope: string;
-  averageAscentSlope: string;
-  averageDescentSlope: string;
+  averageSlopePercent: number;
+  averageAscentSlopePercent: number;
+  averageDescentSlopePercent: number;
 }
 
 export interface TimeAnalytic {
