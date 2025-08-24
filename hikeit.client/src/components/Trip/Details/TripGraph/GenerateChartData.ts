@@ -1,4 +1,4 @@
-import type { GpxEntry } from "@/types/ApiTypes/GpxTypes";
+import type { GpxEntry } from "@/types/ApiTypes/gpx.types";
 import type { GainDto, GpxGainPoint } from "./grap.types";
 
 export function GenerateChartData(gains: GainDto[], start: GpxEntry) {

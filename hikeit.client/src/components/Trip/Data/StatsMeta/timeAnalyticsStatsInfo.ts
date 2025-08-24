@@ -14,7 +14,7 @@ import {
   GenericFormatter,
   NumberFormatter,
 } from "@/Utils/Formatters/valueFormatter";
-import type { TimeAnalytic } from "@/types/ApiTypes/Analytics";
+import type { TimeAnalytic } from "@/types/ApiTypes/analytics.types";
 import type { StatsMetaList } from "@/types/Utils/stat.types";
 
 export const timeAnalyticsStatsInfo: StatsMetaList<TimeAnalytic> = {

@@ -1,12 +1,4 @@
-import {
-  Box,
-  Heading,
-  Show,
-  Span,
-  Stack,
-  Strong,
-  Text,
-} from "@chakra-ui/react";
+import { Heading, Show, Span, Stack, Strong, Text } from "@chakra-ui/react";
 
 interface Props {
   title: string;

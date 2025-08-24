@@ -1,5 +1,5 @@
 import RowStat from "@/components/Stats/RowStat";
-import type { PeakSummaryData } from "@/types/ApiTypes/Analytics";
+import type { PeakSummaryData } from "@/types/ApiTypes/analytics.types";
 import { Stack } from "@chakra-ui/react";
 
 export function PeakSummary({ summary }: { summary: PeakSummaryData }) {

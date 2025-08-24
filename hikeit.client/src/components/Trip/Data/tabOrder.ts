@@ -1,4 +1,4 @@
-import type { BasicAnalytics } from "@/types/ApiTypes/Analytics";
+import type { BasicAnalytics } from "@/types/ApiTypes/analytics.types";
 import type { TabConfig } from "@/types/Utils/order.types";
 import { RouteAnalytics, TimeAnalytics, PeaksAnalytics } from "../Details";
 import TripGrap from "../Details/TripGraph/TripGrap";

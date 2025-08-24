@@ -28,19 +28,21 @@ export interface RouteAnalytic {
 }
 
 export interface TimeAnalytic {
-  duration: number; // in milliseconds
-  startTime: Date;
-  endTime: Date;
+  duration: TimeString; // actually iso stirng
+  startTime: TimeString; //actually iso stirng
+  endTime: TimeString; //actually iso stirng
 
-  activeTime: number;
-  idleTime: number;
-  ascentTime: number;
-  descentTime: number;
+  activeTime: TimeString;
+  idleTime: TimeString;
+  ascentTime: TimeString;
+  descentTime: TimeString;
 
   averageSpeedKph: number;
   averageAscentKph: number;
   averageDescentKph: number;
 }
+
+export type TimeString = string & { __brand: "dateString" };
 
 export interface PeaksAnalytics {
   summary: PeakSummaryData;

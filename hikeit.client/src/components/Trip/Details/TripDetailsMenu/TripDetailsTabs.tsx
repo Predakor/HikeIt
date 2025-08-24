@@ -1,6 +1,6 @@
 import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 import { ToTitleCase } from "@/Utils/ObjectToArray";
-import type { BasicAnalytics } from "@/types/ApiTypes/Analytics";
+import type { BasicAnalytics } from "@/types/ApiTypes/analytics.types";
 import type { TabConfig } from "@/types/Utils/order.types";
 import { For, Stack, Tabs } from "@chakra-ui/react";
 import { tripAnalyticTabs } from "../../Data/tabOrder";

@@ -1,4 +1,9 @@
-import { Chart, useChart } from "@chakra-ui/charts";
+import {
+  Chart,
+  useChart,
+  type ChartRootProps,
+  type UseChartProps,
+} from "@chakra-ui/charts";
 import {
   CartesianGrid,
   XAxis,
@@ -7,10 +12,13 @@ import {
   Line,
   LineChart,
 } from "recharts";
-import type { ChartProps } from "./BarGraph/BarGraph";
 
-function ElevationChart({ chartConfig, ...rest }: ChartProps) {
-  const chart = useChart(chartConfig);
+interface Props extends Partial<ChartRootProps<any>> {
+  config: UseChartProps<any>;
+}
+
+function ElevationChart({ config, ...rest }: Props) {
+  const chart = useChart(config);
 
   const formatX = (value: number) =>
     chart.formatNumber({

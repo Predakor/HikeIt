@@ -1,4 +1,4 @@
-import type { GpxArray, GpxArrayWithGains } from "@/types/ApiTypes/GpxTypes";
+import type { GpxArray, GpxArrayWithGains } from "@/types/ApiTypes/gpx.types";
 import { calculateStats, downsampleToMaxSize } from "../../arrayUtils";
 import {
   calculatePointToPointGains,

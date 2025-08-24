@@ -3,7 +3,7 @@ import useResourceLink from "@/hooks/Api/useResourceLink";
 import type {
   PeakSummaryData,
   PeaksAnalytics,
-} from "@/types/ApiTypes/Analytics";
+} from "@/types/ApiTypes/analytics.types";
 import type { ResourceUrl } from "@/types/ApiTypes/types";
 import { Card, Show, SimpleGrid, Stack } from "@chakra-ui/react";
 import { PeakBadge } from "../Common/PeakBadge";

@@ -26,7 +26,7 @@ function PreviewGraphDevOnly({ data }: Props) {
       <Suspense fallback={<Skeleton {...styles} />}>
         <LazyLineGraph
           {...styles}
-          chartConfig={{
+          config={{
             data: chartPoints,
             series: [
               { name: "ele", color: "gray.subtle" },
