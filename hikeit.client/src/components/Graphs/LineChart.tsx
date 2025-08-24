@@ -7,7 +7,7 @@ import {
   Line,
   LineChart,
 } from "recharts";
-import type { ChartProps } from "./BarGraph";
+import type { ChartProps } from "./BarGraph/BarGraph";
 
 function ElevationChart({ chartConfig, ...rest }: ChartProps) {
   const chart = useChart(chartConfig);

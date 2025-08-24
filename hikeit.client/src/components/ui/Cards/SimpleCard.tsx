@@ -11,7 +11,7 @@ export default function SimpleCard({
   headerCta,
 }: CardProps) {
   return (
-    <Card.Root as={"article"}>
+    <Card.Root as={"article"} height={"full"}>
       <Card.Header as={"header"}>
         {header ? (
           header

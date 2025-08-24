@@ -28,3 +28,4 @@ export default function RowStat({ value, label, addons }: Props) {
     </Stat.Root>
   );
 }
+export { RowStat };

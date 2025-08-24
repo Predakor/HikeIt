@@ -1,10 +1,11 @@
-import { BarGraph } from "@/components/Graphs";
+import { ComparedStat } from "@/components/Stats";
 import RowStat from "@/components/Stats/RowStat";
 import { formatter } from "@/components/User/Stats/Utils/formatter";
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
-import { Stack } from "@chakra-ui/react";
+import { SimpleGrid } from "@chakra-ui/react";
 import type { RouteAnalyticsProps } from "../RouteAnalytics";
-import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
+
+const marathonLengthMeters = 42200;
 
 export function DistanceSection({ data }: RouteAnalyticsProps) {
   const distance = {
@@ -15,31 +16,31 @@ export function DistanceSection({ data }: RouteAnalyticsProps) {
 
   return (
     <SimpleCard title="Distance">
-      <Stack gapY={8}>
+      <SimpleGrid
+        columns={[1, 2]}
+        alignItems={"center"}
+        justifyItems={"center"}
+        gapY={8}
+      >
         <RowStat
-          label="Total Distance "
+          label="Total Distance"
           value={distance.total}
           addons={{
             unit: "km",
             formatt: formatter.toKm,
           }}
         />
-        <BarGraph
-          formatValue={(v) => v.toFixed()}
-          items={[
-            {
-              name: "Ascent",
-              color: "green",
-              value: distance.ascent,
-            },
-            {
-              name: "Descent",
-              color: "blue",
-              value: distance.descent,
-            },
-          ]}
+        <ComparedStat
+          title="Thats"
+          helperText="of marathon length"
+          stat={distance.total}
+          unit={{
+            name: "",
+            ratio: marathonLengthMeters,
+          }}
+          options={{ valueIn: "percentile" }}
         />
-      </Stack>
+      </SimpleGrid>
     </SimpleCard>
   );
 }
