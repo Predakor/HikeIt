@@ -18,6 +18,7 @@ export function DistanceSection({ data }: RouteAnalyticsProps) {
     <SimpleCard title="Distance">
       <SimpleGrid
         columns={[1, 2]}
+        gridAutoFlow={"column"}
         alignItems={"center"}
         justifyItems={"center"}
         gapY={8}

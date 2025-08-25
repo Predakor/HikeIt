@@ -27,8 +27,7 @@ export function ElevationSection({ data }: RouteAnalyticsProps) {
             label="Total Ascent"
             value={data.totalAscentMeters}
             addons={{
-              unit: "m",
-              formatt: GenericFormatter,
+              ...sharedAddons,
               IconSource: IconTrendUp,
             }}
           />
@@ -36,22 +35,13 @@ export function ElevationSection({ data }: RouteAnalyticsProps) {
             label="Total Descent"
             value={data.totalDescentMeters}
             addons={{
-              unit: "m",
-              formatt: GenericFormatter,
+              ...sharedAddons,
               IconSource: IconTrendDown,
             }}
           />
         </Flex>
 
         <Flex>
-          <RowStat
-            value={elevation.lowest}
-            label={"Lowest elevation"}
-            addons={{
-              ...sharedAddons,
-              IconSource: IconArrowDown,
-            }}
-          />
           <RowStat
             value={elevation.highest}
             label={"Highest Elevation"}
@@ -60,19 +50,27 @@ export function ElevationSection({ data }: RouteAnalyticsProps) {
               IconSource: IconArrowUp,
             }}
           />
+          <RowStat
+            value={elevation.lowest}
+            label={"Lowest elevation"}
+            addons={{
+              ...sharedAddons,
+              IconSource: IconArrowDown,
+            }}
+          />
         </Flex>
         <BarGraph
-          formatValue={GenericFormatter}
+          formatValue={(t) => GenericFormatter(t as number)}
           unit="m"
           items={[
             {
               name: "Ascent",
-              color: "green",
+              color: "green.600",
               value: data.totalAscentMeters,
             },
             {
               name: "Descent",
-              color: "blue",
+              color: "red.600",
               value: data.totalDescentMeters,
             },
           ]}
@@ -105,7 +103,8 @@ export function ElevationSection({ data }: RouteAnalyticsProps) {
         >
           <span>From lowest to highest point</span>
           <br />
-          ascended <Strong>{elevation.delta}</Strong> meters that's about
+          ascended <Strong>{elevation.delta.toFixed()}</Strong> meters that's
+          about
           <br />
           <span>
             <Strong>{toFloors(elevation.delta)}</Strong> floors or{" "}

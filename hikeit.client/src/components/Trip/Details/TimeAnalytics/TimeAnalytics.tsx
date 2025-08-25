@@ -1,83 +1,49 @@
-import { KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
-import { ObjectToArray } from "@/Utils/ObjectToArray";
-import { BarGraph } from "@/components/Graphs";
-import RowStat from "@/components/Stats/RowStat";
-import {
-  formatter,
-  timeConverter,
-} from "@/components/User/Stats/Utils/formatter";
-import SimpleCard from "@/components/ui/Cards/SimpleCard";
+import { TimeSpan } from "@/Utils/Formatters/Duration/Duration";
 import type { TimeAnalytic } from "@/types/ApiTypes/analytics.types";
-import { Flex, SimpleGrid, Stack } from "@chakra-ui/react";
+import { GridItem, SimpleGrid } from "@chakra-ui/react";
+import TimeAnalyticSection from "./Sections";
 
-function TimeAnalytics({ data }: { data: TimeAnalytic }) {
+export type Duration = {
+  total: TimeSpan;
+  ascent: TimeSpan;
+  descent: TimeSpan;
+  iddle: TimeSpan;
+};
+
+export default function TimeAnalytics({ data }: { data: TimeAnalytic }) {
   const duration = {
-    total: data.duration,
-    ascent: data.ascentTime,
-    descent: data.descentTime,
-    iddle: data.idleTime,
+    total: TimeSpan.FromTimeString(data.duration),
+    ascent: TimeSpan.FromTimeString(data.ascentTime),
+    descent: TimeSpan.FromTimeString(data.descentTime),
+    iddle: TimeSpan.FromTimeString(data.idleTime),
   };
-
-  const speeds = {
-    average: data.averageSpeedKph,
-    ascent: data.averageAscentKph,
-    descent: data.averageDescentKph,
-  };
-
-  const tripStart = new Date(data.startTime).toLocaleTimeString();
-  const tripEnd = new Date(data.endTime).toLocaleTimeString();
 
   return (
-    <SimpleGrid columns={{ base: 1, lg: 3 }} gap={8}>
-      <SimpleCard title="time">
-        <Stack gapY={8}>
-          <RowStat
-            label="Total duration"
-            value={duration.total}
-            addons={{ formatt: formatter.toDuration }}
-          />
-          <BarGraph
-            formatValue={timeConverter.fromSeconds}
-            items={[
-              {
-                name: "Ascent",
-                value: formatter.toRawDuration(duration.ascent),
-                color: "green.500",
-              },
-              {
-                name: "Descent",
-                value: formatter.toRawDuration(duration.descent),
-                color: "red.600",
-              },
-              {
-                name: "Idle",
-                value: formatter.toRawDuration(duration.iddle),
-                color: "gray.500",
-              },
-            ]}
-          />
-        </Stack>
-      </SimpleCard>
+    <SimpleGrid
+      templateColumns={{ lg: "repeat(3,1fr)" }}
+      templateRows={{ lg: "repeat(2,1fr)" }}
+      gap={8}
+    >
+      <GridItem colSpan={{ lg: 2 }}>
+        <TimeAnalyticSection.Duration duration={duration} />
+      </GridItem>
 
-      <SimpleCard title="TimeFrame">
-        <Flex>
-          <RowStat label="Start" value={tripStart} />
-          <RowStat label="End" value={tripEnd} />
-        </Flex>
-      </SimpleCard>
+      <GridItem colSpan={{ lg: 1 }} rowSpan={{ lg: 3 }} rowStart={2}>
+        <TimeAnalyticSection.TimeDistribution duration={duration} />
+      </GridItem>
 
-      <SimpleCard title="Speeds">
-        <Flex>
-          {ObjectToArray(speeds).map(([name, value]) => (
-            <RowStat
-              label={KeyToLabelFormatter(name)}
-              value={value}
-              addons={{ formatt: (t) => t.toFixed(2) }}
-            />
-          ))}
-        </Flex>
-      </SimpleCard>
+      <GridItem colSpan={{ lg: 2 }}>
+        <TimeAnalyticSection.TimeFrame data={data} duration={duration} />
+      </GridItem>
+
+      <GridItem colSpan={{ lg: 2 }}>
+        <TimeAnalyticSection.Speed data={data} />
+      </GridItem>
     </SimpleGrid>
   );
 }
-export default TimeAnalytics;
+
+export const sharedAddons = {
+  formatt: (t: number) => t.toFixed(2),
+  unit: "km/h",
+} as const;

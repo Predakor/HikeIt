@@ -1,3 +1,4 @@
+import type { TimeString } from "@/Utils/Formatters/Duration/Duration";
 import type { ReachedPeak } from "@/components/ui/AddFile/tripTypes";
 
 export interface TripAnalytic {
@@ -41,8 +42,6 @@ export interface TimeAnalytic {
   averageAscentKph: number;
   averageDescentKph: number;
 }
-
-export type TimeString = string & { __brand: "dateString" };
 
 export interface PeaksAnalytics {
   summary: PeakSummaryData;

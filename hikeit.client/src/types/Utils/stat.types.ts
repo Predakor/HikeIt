@@ -4,7 +4,7 @@ import type { PartialMap } from "@/types/Utils/mapping.types";
 
 export type PercentUnit = "%";
 export type LengthUnit = "m" | "km";
-export type TimeUnit = "s" | "min" | "hrs";
+export type TimeUnit = "s" | "min" | "h";
 export type SpeedUnit = `${LengthUnit}/${TimeUnit}`;
 export type UnitTypes = LengthUnit | TimeUnit | PercentUnit | SpeedUnit;
 
@@ -13,11 +13,14 @@ export type IconUnit = {
   unit?: UnitTypes;
 };
 
-export type StatAddons = {
+export type StatAddons<T> = {
   IconSource?: IconType;
   unit?: UnitTypes;
   badge?: ReactElement;
-  formatt?: (stat: any) => string | number | null;
+  formatt?: (stat: T) => string | number | null;
 };
 
-export type StatsMetaList<T extends object> = PartialMap<T, StatAddons>;
+export type StatsMetaList<T extends object> = PartialMap<
+  T,
+  StatAddons<string | number>
+>;

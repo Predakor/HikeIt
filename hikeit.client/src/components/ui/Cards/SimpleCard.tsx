@@ -1,5 +1,5 @@
 import SubTitle from "@/components/ui/Titles/SubTitle";
-import { Flex, Spacer } from "@chakra-ui/react";
+import { Flex, Spacer, Stack } from "@chakra-ui/react";
 import { Card } from "@chakra-ui/react/card";
 import type { CardProps } from "./Common/card.types";
 
@@ -31,7 +31,9 @@ export default function SimpleCard({
           </Flex>
         )}
       </Card.Header>
-      <Card.Body>{children}</Card.Body>
+      <Card.Body asChild p={{ base: 4, lg: 8 }}>
+        <Stack gapY={8}>{children}</Stack>
+      </Card.Body>
       {footer && <Card.Footer>{footer}</Card.Footer>}
     </Card.Root>
   );

@@ -31,7 +31,12 @@ export function ComparedStat({
         <Span fontSize={"smaller"}> {unit.name}</Span>
       </Heading>
       <Show when={helperText}>
-        <Text color={"gray.400"} fontSize={"sm"} lineHeight={"1"}>
+        <Text
+          color={"gray.400"}
+          fontSize={"sm"}
+          textAlign={"center"}
+          lineHeight={"1"}
+        >
           {helperText}
         </Text>
       </Show>

@@ -1,4 +1,4 @@
-import type { TimeString } from "@/types/ApiTypes/analytics.types";
+import type { TimeString } from "@/Utils/Formatters/Duration/Duration";
 
 export const formatter = {
   toKm: (v: number) => (v / 1000).toFixed(1),
@@ -18,6 +18,7 @@ export const formatter = {
 
     return parts.join(" ");
   },
+  toPercentage: (v: number, precision = 1) => `${v.toFixed(precision)}%`,
 };
 
 export const timeConverter = {
@@ -33,6 +34,13 @@ export const timeConverter = {
     // optional: hide seconds if there are hours
 
     return parts.join(" ");
+  },
+
+  toRawDuration: (timeString: TimeString) => {
+    const [hours, minutes, seconds] = extractTimeUnits(timeString);
+    const hoursToSeconds = hours * 60 * 60;
+    const minutesToSeconds = minutes * 60;
+    return hoursToSeconds + minutesToSeconds + seconds;
   },
 };
 

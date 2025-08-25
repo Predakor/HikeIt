@@ -1,9 +1,5 @@
 import { IconTrendUp } from "@/Icons/Icons";
-import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
-import { arrayUtils } from "@/Utils/arrayUtils";
-import RowStat from "@/components/Stats/RowStat";
-import SimpleCard from "@/components/ui/Cards/SimpleCard";
-import type { LengthUnit, StatAddons } from "@/types/Utils/stat.types";
+import type { LengthUnit } from "@/types/Utils/stat.types";
 import {
   Button,
   ButtonGroup,
@@ -16,48 +12,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import type { RouteAnalyticsProps } from "../RouteAnalytics";
 
-export function SlopeSection({ data }: RouteAnalyticsProps) {
-  const averageSlope = arrayUtils.average(
-    [data.averageAscentSlopePercent, data.averageDescentSlopePercent],
-    Math.abs
-  );
-
-  const slopes = {
-    ascent: data.averageAscentSlopePercent,
-    descent: data.averageDescentSlopePercent,
-    average: averageSlope,
-  };
-
-  const addons = {
-    unit: "%",
-    formatt: GenericFormatter,
-  } satisfies StatAddons;
-
-  return (
-    <SimpleCard title="Slopes">
-      <Stack gapY={8}>
-        <Flex>
-          <RowStat
-            value={slopes.descent}
-            label={"Average Descent"}
-            addons={addons}
-          />
-
-          <RowStat
-            value={slopes.ascent}
-            label={"Average Ascent"}
-            addons={addons}
-          />
-        </Flex>
-        <ElevationGainPerUnit base={slopes.average} />
-      </Stack>
-    </SimpleCard>
-  );
-}
-
-function ElevationGainPerUnit({ base }: { base: number }) {
+export function ElevationGainPerUnit({ base }: { base: number }) {
   const [unit, setUnit] = useState<LengthUnit>("m");
   const [distance, setDistance] = useState(100);
 
@@ -104,7 +60,7 @@ function ElevationGainPerUnit({ base }: { base: number }) {
         <For each={buttonsData}>
           {(data) => (
             <Button
-              size={"xs"}
+              size={"sm"}
               variant={distance === data.value ? "solid" : "outline"}
               colorPalette={"green"}
               onClick={() => handleUnitChange(data.unit, data.value)}

@@ -11,7 +11,7 @@ export {
   FaCalendar as IconCalendar,
   FaArrowDown as IconArrowDown,
   FaMountain as IconMountain,
-  FaPauseCircle as IconPause,
+  FaPause as IconPause,
   FaPlay as IconPlay,
   FaClock as IconClock,
   FaSquare as IconStop,
