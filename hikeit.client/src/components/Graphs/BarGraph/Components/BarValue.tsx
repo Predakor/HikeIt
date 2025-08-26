@@ -4,14 +4,14 @@ import type { Item, Props } from "../BarGraph";
 export type BaseProps = {
   item: Item;
 };
-export function BarValue({
+export function BarValue<T>({
   item,
   unit,
-  formatValue = (t) => t,
-}: BaseProps & Pick<Props, "formatValue" | "unit">) {
+  formatValue = (t: any) => t,
+}: BaseProps & Pick<Props<T>, "formatValue" | "unit">) {
   return (
     <Span fontSize={"sm"} color={"gray.300"}>
-      {formatValue(item.value)}
+      {formatValue(item.value as any)}
 
       <Show when={unit}>{unit}</Show>
     </Span>

@@ -4,10 +4,11 @@ import type { Metas } from "../Utils/statTypes";
 import { formatter } from "../Utils/formatter";
 import RenderStats from "../RenderStats";
 import StatsCard from "../StatsCard";
+import type { TimeString } from "@/Utils/Formatters/Duration/Duration";
 
 export function MetasStats({ metas }: { metas: Metas }) {
   const { longestTripMeters, ...rest } = metas;
-  const __mockupLongestTrip = "00:34:21";
+  const __mockupLongestTrip = "00:34:21" as TimeString;
 
   return (
     <StatsCard title="Metas">

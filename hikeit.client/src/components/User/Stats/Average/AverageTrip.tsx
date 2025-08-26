@@ -73,12 +73,12 @@ export function AverageTrip({ totals, locations }: Props) {
 const distanceAddons = {
   formatt: formatter.toKm,
   unit: "km",
-} satisfies StatAddons;
+} satisfies StatAddons<number>;
 
 const durationAddons = {
   formatt: formatter.toHours,
-  unit: "hrs",
-} satisfies StatAddons;
+  unit: "h",
+} satisfies StatAddons<number>;
 
 const toMinutes = (duration: string) => {
   return Number(formatDuration.toMinutes(duration)) ?? 0;

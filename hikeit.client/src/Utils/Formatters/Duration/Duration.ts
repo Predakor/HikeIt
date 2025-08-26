@@ -71,10 +71,6 @@ const toTotalSeconds = (time: TimeString) => {
   return hoursToSeconds + minutesToSeconds + seconds;
 };
 
-const toTotalsSeconds = (times: TimeString[]) => {
-  return times.map((t) => toTotalSeconds(t));
-};
-
 const castToSeconds = (time: CastableTimes) => {
   switch (typeof time) {
     case "string":
