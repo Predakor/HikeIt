@@ -71,8 +71,8 @@ public class TripsController : ControllerBase {
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id) {
         return await _authService
-            .Me()
-            .MapAsync(user => _tripService.DeleteAsync(id, user.Id))
+            .WithLoggedUserId()
+            .MapAsync(userId => _tripService.DeleteAsync(id, userId))
             .BindAsync(_ => _unitOfWork.SaveChangesAsync())
             .ToActionResultAsync(ResultType.noContent);
     }

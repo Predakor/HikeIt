@@ -20,23 +20,23 @@ export default function TimeAnalytics({ data }: { data: TimeAnalytic }) {
 
   return (
     <SimpleGrid
-      templateColumns={{ lg: "repeat(3,1fr)" }}
-      templateRows={{ lg: "repeat(2,1fr)" }}
+      templateColumns={{ lg: "2fr 2fr" }}
+      templateRows={{ lg: "1fr 2fr" }}
       gap={8}
     >
-      <GridItem colSpan={{ lg: 2 }}>
+      <GridItem colStart={{ lg: 2 }}>
         <TimeAnalyticSection.Duration duration={duration} />
       </GridItem>
 
-      <GridItem colSpan={{ lg: 1 }} rowSpan={{ lg: 3 }} rowStart={2}>
+      <GridItem colStart={{ lg: -2 }}>
         <TimeAnalyticSection.TimeDistribution duration={duration} />
       </GridItem>
 
-      <GridItem colSpan={{ lg: 2 }}>
+      <GridItem colStart={{ lg: 1 }} rowStart={{ lg: 1 }}>
         <TimeAnalyticSection.TimeFrame data={data} duration={duration} />
       </GridItem>
 
-      <GridItem colSpan={{ lg: 2 }}>
+      <GridItem rowStart={2}>
         <TimeAnalyticSection.Speed data={data} />
       </GridItem>
     </SimpleGrid>

@@ -27,14 +27,7 @@ public class AuthController : ControllerBase {
 
     [HttpGet("me")]
     public async Task<IActionResult> Me() {
-        var query = await _authService.Me();
-
-        var roles = await _userManager.GetRolesAsync(query.Value!);
-
-        return query.Match<IActionResult>(
-            user => Ok(user.ToBasic([.. roles])),
-            error => Unauthorized()
-        );
+        return await _authService.WithLoggedUser().BindAsync(AttachRoles).ToActionResultAsync();
     }
 
     [HttpPost("login")]
@@ -80,9 +73,7 @@ public class AuthController : ControllerBase {
             Email = dto.Email,
         };
 
-        return await CreateNewUser(user, dto.Password)
-            .BindAsync(user => AsignUserRole(user))
-            .MapAsync(u => u.Id);
+        return await CreateNewUser(user, dto.Password).BindAsync(AsignUserRole).MapAsync(u => u.Id);
     }
 
     async Task<Result<User>> CreateNewUser(User user, string password) {
@@ -106,6 +97,11 @@ public class AuthController : ControllerBase {
             .IsValid(email)
             .BindAsync(_ => EmailValidation.IsUnique(email, _userManager));
     }
+
+    async Task<Result<UserDto.Basic>> AttachRoles(User user) {
+        var roles = await _userManager.GetRolesAsync(user);
+        return user.ToBasic([.. roles]);
+    }
 }
 
 internal static class EmailValidation {
@@ -121,7 +117,11 @@ internal static class EmailValidation {
 
         public Result<bool> Check() {
             var emailAttr = new EmailAddressAttribute();
-            return emailAttr.IsValid(email) ? true : Errors.RuleViolation(this);
+            if (!emailAttr.IsValid(email)) {
+                return Errors.RuleViolation(this);
+            }
+
+            return true;
         }
     }
 
@@ -132,7 +132,11 @@ internal static class EmailValidation {
         public async Task<Result<bool>> CheckAsync() {
             var user = await manager.FindByEmailAsync(email);
 
-            return user == null ? true : Errors.RuleViolation(this);
+            if (user is not null) {
+                return Errors.RuleViolation(this);
+            }
+
+            return true;
         }
     }
 }

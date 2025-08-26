@@ -11,7 +11,7 @@ public class UserService(IUserRepository repository, IAuthService authService) :
 
     public async Task<Result<UserDto.Complete>> GetMe() {
         return await _authService
-            .Me()
+            .WithLoggedUser()
             .BindAsync(user => _repository.GetByIdAsync(user.Id))
             .MapAsync(UserDtoFactory.ToComplete);
     }

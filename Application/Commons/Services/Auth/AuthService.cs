@@ -13,20 +13,6 @@ public class AuthService : IAuthService {
         _userManager = userManager;
     }
 
-    public async Task<Result<User>> Me() {
-        var cookieUser = _httpContextAccessor.HttpContext?.User;
-        if (cookieUser is null) {
-            return Errors.NotAuthorized();
-        }
-
-        var user = await _userManager.GetUserAsync(cookieUser);
-        if (user is null) {
-            return Errors.NotAuthorized();
-        }
-
-        return user;
-    }
-
     //added for naming clarity
     public async Task<Result<User>> WithLoggedUser() {
         var cookieUser = _httpContextAccessor.HttpContext?.User;

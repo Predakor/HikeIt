@@ -3,8 +3,11 @@ import type { PropsWithChildren } from "react";
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import { Toaster } from "@/components/ui/toaster";
+import useUser from "@/hooks/Auth/useUser";
 
 function Layout({ children }: PropsWithChildren) {
+  const user = useUser();
+
   return (
     <Stack
       minH={"100vh"}
