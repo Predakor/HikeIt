@@ -6,7 +6,9 @@ import { Toaster } from "@/components/ui/toaster";
 import useUser from "@/hooks/Auth/useUser";
 
 function Layout({ children }: PropsWithChildren) {
-  const user = useUser();
+  //prefetch the user data
+  // if no user it will redirect to
+  useUser();
 
   return (
     <Stack

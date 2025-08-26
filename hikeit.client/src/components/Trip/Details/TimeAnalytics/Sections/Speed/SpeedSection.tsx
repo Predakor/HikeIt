@@ -1,8 +1,14 @@
-import { IconArrowDown, IconArrowUp, IconHiking } from "@/Icons/Icons";
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconHiking,
+  IconTrendDown,
+  IconTrendUp,
+} from "@/Icons/Icons";
 import RowStat from "@/components/Stats/RowStat";
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import type { TimeAnalytic } from "@/types/ApiTypes/analytics.types";
-import { Flex } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 import { sharedAddons } from "../../TimeAnalytics";
 
 export function SpeedSection({ data }: { data: TimeAnalytic }) {
@@ -12,9 +18,11 @@ export function SpeedSection({ data }: { data: TimeAnalytic }) {
     descent: data.averageDescentKph, //vertical lose only
   };
 
+  const toMetersPerMin = (v: number) => ((v * 1000) / 60).toFixed(2);
+
   return (
     <SimpleCard title="Speeds">
-      <Flex>
+      <Stack direction={{ base: "column", lg: "row" }} alignItems={"center"}>
         <RowStat
           label="Average speed"
           value={speeds.average}
@@ -23,23 +31,53 @@ export function SpeedSection({ data }: { data: TimeAnalytic }) {
             IconSource: IconHiking,
           }}
         />
-      </Flex>
+        <RowStat
+          label="Climb speed"
+          value={speeds.average}
+          addons={{
+            ...sharedAddons,
+            IconSource: IconTrendUp,
+          }}
+        />
+        <RowStat
+          label="Descend speed"
+          value={speeds.average}
+          addons={{
+            ...sharedAddons,
+            IconSource: IconTrendDown,
+          }}
+        />
+      </Stack>
 
-      <Flex>
+      <Stack direction={{ base: "column", lg: "row" }} alignItems={"center"}>
+        <RowStat
+          label="Average Elevation Change "
+          value={(speeds.ascent + speeds.descent) / 2}
+          addons={{
+            unit: "m/min",
+            formatt: toMetersPerMin,
+            IconSource: IconHiking,
+          }}
+        />
         <RowStat
           label="Vertical Ascent "
           value={speeds.ascent}
-          addons={{ ...sharedAddons, IconSource: IconArrowUp }}
+          addons={{
+            unit: "m/min",
+            formatt: toMetersPerMin,
+            IconSource: IconArrowUp,
+          }}
         />
         <RowStat
           label="Vertical Descent "
           value={speeds.descent}
           addons={{
-            ...sharedAddons,
+            unit: "m/min",
+            formatt: toMetersPerMin,
             IconSource: IconArrowDown,
           }}
         />
-      </Flex>
+      </Stack>
     </SimpleCard>
   );
 }
