@@ -23,7 +23,7 @@ export type InputConfigEntry =
 
 interface EmailInputConfigEntry extends InputConfigEntryBase {
   type: "email";
-  pattern: RegExp;
+  validate: (value: string) => bool | string;
 }
 
 interface RangeInputConfigEntry extends InputConfigEntryBase {

@@ -1,9 +1,7 @@
 import schemas from "@/Utils/Schemas";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import type { RegisterForm } from "@/hooks/Auth/useAuth";
-import { useForm } from "react-hook-form";
 
-const registerFormConfgig: InputsConfig = [
+export const registerFormConfgig: InputsConfig = [
   schemas.login,
   schemas.email,
   {
@@ -24,9 +22,3 @@ const registerFormConfgig: InputsConfig = [
   },
   schemas.password,
 ];
-
-export default function useRegister() {
-  const hookForm = useForm<RegisterForm>();
-
-  return [hookForm, registerFormConfgig] as const;
-}
