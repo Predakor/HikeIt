@@ -1,17 +1,12 @@
 import schemas from "@/Utils/Schemas";
-import NavButton from "@/components/ui/Buttons/NavButton";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import useLoginForm from "@/hooks/Auth/useLoginForm";
-import {
-  Alert,
-  Button,
-  Fieldset,
-  Separator,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
-import type { UseMutationResult } from "@tanstack/react-query";
+import { PrimaryButton, SecondaryButton } from "@/components/ui/Buttons";
+import NavButton from "@/components/ui/Buttons/NavButton";
+import { MutationResult } from "@/components/ui/Results/MutationResult";
+import useLogin, { type LoginForm } from "@/hooks/Auth/useLogin";
+import { Fieldset, Separator, Stack, Text } from "@chakra-ui/react";
+import { useForm } from "react-hook-form";
 
 const loginFormConfig: InputsConfig = [
   schemas.login,
@@ -19,7 +14,13 @@ const loginFormConfig: InputsConfig = [
 ] as InputsConfig;
 
 function LoginPage() {
-  const { formHook, login, loginAsDemoUser, onSubmit } = useLoginForm();
+  const formHook = useForm<LoginForm>();
+  const { login, loginAsDemoUser } = useLogin();
+
+  const loadingProps = {
+    loading: login.isPending,
+    loadingText: "logging",
+  };
 
   return (
     <Stack flexGrow={1} alignItems={"center"} paddingTop={8}>
@@ -33,9 +34,16 @@ function LoginPage() {
           </Fieldset.Legend>
         </Stack>
 
-        <form onSubmit={onSubmit}>
+        <MutationResult
+          requestState={login}
+          errorMessage={{
+            title: "Failed to login",
+            description: login.error?.message!,
+          }}
+        />
+
+        <form onSubmit={formHook.handleSubmit(login.mutate as any)}>
           <Fieldset.Content gapY={6}>
-            <FormState result={login as any} />
             <RenderInputs
               config={loginFormConfig}
               formHook={formHook}
@@ -45,21 +53,12 @@ function LoginPage() {
               }}
             />
 
-            <Button
-              size={{ base: "lg", lg: "xl" }}
-              colorPalette={"blue"}
-              type={"submit"}
-            >
+            <PrimaryButton {...loadingProps} type={"submit"}>
               Log in
-            </Button>
-            <Button
-              size={{ base: "lg", lg: "xl" }}
-              colorPalette={"green"}
-              type={"button"}
-              onClick={loginAsDemoUser}
-            >
+            </PrimaryButton>
+            <SecondaryButton {...loadingProps} onClick={loginAsDemoUser}>
               Use Demo Account
-            </Button>
+            </SecondaryButton>
             <Separator size={"sm"} flex="1" />
           </Fieldset.Content>
         </form>
@@ -70,23 +69,6 @@ function LoginPage() {
         </Stack>
       </Fieldset.Root>
     </Stack>
-  );
-}
-
-function FormState({ result }: { result: UseMutationResult }) {
-  if (!result.isError) {
-    return;
-  }
-
-  return (
-    <Alert.Root status={result.status}>
-      <Stack>
-        <Alert.Title>Error occured</Alert.Title>
-        <Alert.Content>
-          <Alert.Description>{result.error.message}</Alert.Description>
-        </Alert.Content>
-      </Stack>
-    </Alert.Root>
   );
 }
 

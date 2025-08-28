@@ -1,5 +1,5 @@
 import api from "@/Utils/Api/apiRequest";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
 export interface LoginForm {
@@ -12,22 +12,12 @@ type LoginError = {
   description: string;
 };
 
-export default function useLogin() {
+export default function useLoginForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const resolver = async (result: Response) => {
-    const resp = await result.json();
-
-    if (!result.ok) {
-      throw resp;
-    }
-    return resp;
-  };
-
-  const mutation = useMutation<null, LoginError, LoginForm>({
-    mutationFn: async (form: LoginForm) =>
-      await api.post("auth/login", form, resolver),
+  const login = useMutation<null, LoginError, LoginForm>({
+    mutationFn: async (form: LoginForm) => await api.post("auth/login", form),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.refetchQueries({ queryKey: ["user"] });
@@ -35,5 +25,15 @@ export default function useLogin() {
     },
   });
 
-  return mutation;
+  const loginAsDemoUser = () => login.mutate(demoUserCredentials);
+
+  return {
+    login,
+    loginAsDemoUser,
+  } as const;
 }
+
+const demoUserCredentials = {
+  userName: "defaultuser",
+  password: "Default123!",
+};
