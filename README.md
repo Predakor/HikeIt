@@ -1,90 +1,123 @@
-# 🧩 Full-Stack Project: ASP.NET + SPA + Supabase
+# 🏔️ HikeIt: Full-Stack Hiking App
 
-This is a full-stack project combining:
+HikeIt is a full-stack web application for planning, tracking, and analyzing hiking trips.  
+It features a modern SPA frontend and a robust ASP.NET Core backend, with PostgreSQL (via Supabase) as the database.
 
-- **Backend:** ASP.NET Core Web API
-- **Frontend:** SPA (React/Vue/etc)
-- **Database:** Local Supabase instance (PostgreSQL) via Docker
+---
+## 📑 Table of Contents
+
+1. [Features](#-features)
+2. [Demo](#demo)  
+3. [Tech Stack](#%EF%B8%8F-tech-stack)  
+   - [Backend](#backend)  
+   - [Frontend](#frontend)
+4. [How To Run](#-how-to-run)  
+   - [Requirements](#%EF%B8%8F-1-requirements)  
+   - [Download and Initialize the Project](#download-and-initialize-the-project)  
+   - [Environment Configuration](#%EF%B8%8F-environment-configuration)  
+     - [Backend](#backend)  
+     - [Frontend](#frontend)  
+   - [Start Application](#start-application)
+5. [Access the App](#-access-the-app)  
+6. [Notes](#-notes)
+   
+---
+## 🚀 Features
+
+- **Authentication & Authorization**
+  - Register, login, logout with ASP.NET Identity
+  - Role-based authorization (User, Admin, …)
+
+- **User Management**
+  - Profile editing (personal info, avatar, stats)
+  - Rank and achievement system
+
+- **Trip Management**
+  - Create, update, delete, and list hiking trips
+  - File uploads (GPX files for route tracking)
+  - Analytics (distance, elevation, time, peaks reached)
+
+- **Data & Exploration**
+  - Region and peak browsing with filters
+  - Track progress across regions/peaks
+
+- **Developer Experience**
+  - RESTful API with Swagger docs
+  - Modular architecture (Domain, Application, Infrastructure, API)
+  - Environment-based config (development/production)
+  - Database seeding with demo/admin users
+  - Dockerized Supabase (PostgreSQL)
+  - Responsive SPA frontend with React Query state management
 
 ---
 
-## 📦 Prerequisites
+## 🛠️ Tech Stack
 
-Make sure the following tools are installed:
+### Backend
+- Framework: ASP.NET Core Web API (.NET 8)
+- ORM: Entity Framework Core
+- Identity: ASP.NET Identity
+- Database: PostgreSQL (Supabase, Dockerized locally)
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download)
-- [Node.js (LTS)](https://nodejs.org/)
-- [Docker & Docker Compose](https://docs.docker.com/get-docker/)
+#### Architecture
+- Domain Driven Design
+- In-memory background events queue
+- Result pattern with functional extensions
 
----
-
-## 📁 Project Structure
-
-```
-/your-repo
-  /backend      # ASP.NET Core Web API
-  /frontend     # Single Page Application (SPA)
-  /supabase     # Docker-based Supabase setup
-  .env          # Shared local environment variables
-```
-
----
-
-## ⚙️ 1. Environment Configuration
-
-Create a `.env` file in the root of the project with the following content:
-
-```env
-# Shared
-
-# Backend
-DB_CONNECTION_STRING=Host=localhost;Port=54322;Database=postgres;Username=postgres;Password=postgres
-BACKEND_URL=https://localhost:5001
-
-# Frontend
-VITE_BACKEND_URL=https://localhost:5001
-VITE_FRONTEND_URL=http://localhost:3000
-```
+### Frontend
+- Framework: React
+- Language: TypeScript
+- UI: Chakra UI
+- State Management: React Query
+- Routing: React Router
+- Build Tool: Vite
 
 ---
 
-## 🐳 2. Start Supabase Locally
+## 🐳 How To Run
 
-```bash
-cd supabase
-docker compose up -d
-```
+### ⚙️ 1. Requirements
+ Make sure you have all of the bellow on your machine
+- .NET 8 SDK  
+- Node.js >= 18  
+- pnpm >= 9  
+- Supabase CLI (installed globally)  
+- Docker & Docker Compose  
 
-- **Postgres:** `localhost:54322`
-- **Supabase Studio (optional):** `http://localhost:54323`
+### Download and Initialize the project
+  //insert required steps here
+- pnpx supabase init
+- Instal the backend dependencies
+- Instal fronted dependencies pnpm install
+ 
+  
+### ⚙️ Environment Configuration
 
+#### Backend
+Add user secrets in development. In production, provide env variables using `__` instead of `:`:
+
+- `"Cors:AllowedOrigins": "allowedOriginsUrl"`
+- `"ConnectionStrings:TripDbCS": "dbConnectionString"`
+- `"Storage:Account": "azureBlobStorageName"`
+- `"Storage:Key": "azureBlobStorageKey"`
+- `"Seeding:Users:Admin": "jsonStringWithAdminCredentials"`
+
+### Frontend
+ Create a .env.production file with
+- VITE_API_ORIGIN=backendUrl
+- VITE_API_PREFIX=api
+
+ Create a  .env file for local 
+- VITE_API_ORIGIN=http://localhost:5063
+- VITE_API_PREFIX=api
+  
 ---
 
-## 🧱 3. Run Backend (ASP.NET Core)
+### Start application
 
-```bash
-cd backend
-dotnet restore
-dotnet watch run
-```
-
-- Runs at: `https://localhost:5001`
-- Auto-reloads on code changes (`dotnet watch`)
-- Config values pulled from `.env` or `appsettings.Development.json`
-
----
-
-## 🎨 4. Run Frontend (SPA)
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-- Runs at: `http://localhost:3000`
-- Connects to backend via `VITE_BACKEND_URL`
-
+- pnpx supabase start
+- Start backend
+- Start fronted pnpm run dev
 ---
 
 ## ✅ Access the App
@@ -97,17 +130,6 @@ Once all services are running:
 
 ---
 
-## 🧹 Common Scripts
-
-| Action             | Command                        |
-|--------------------|--------------------------------|
-| Start backend      | `dotnet watch run`             |
-| Start frontend     | `npm run dev`                  |
-| Start Supabase     | `docker compose up -d`         |
-| Stop Supabase      | `docker compose down`          |
-
----
-
 ## 📝 Notes
 
 - Ensure ports `54322`, `54323`, `5001`, and `3000` are available.
@@ -116,7 +138,3 @@ Once all services are running:
 ```bash
 dotnet dev-certs https --trust
 ```
-
----
-
-Happy hacking! 🚀
