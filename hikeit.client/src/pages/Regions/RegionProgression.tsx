@@ -13,7 +13,12 @@ function RegionProgressionsPage() {
   return (
     <FetchWrapper request={getRegionProgress}>
       {(progress) => (
-        <Grid columns={{ base: 1, lg: 2 }} gap={4}>
+        <Grid
+          columns={{ base: 1, lg: 2 }}
+          templateRows={{ lg: "min-content" }}
+          flexGrow={1}
+          gap={8}
+        >
           <GridItem colSpan={{ base: 1, lg: 2 }}>
             <Flex>
               <GoBackButton />

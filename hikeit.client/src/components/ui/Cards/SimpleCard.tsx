@@ -1,7 +1,11 @@
 import SubTitle from "@/components/ui/Titles/SubTitle";
-import { Flex, Show, Spacer, Stack } from "@chakra-ui/react";
+import { Flex, Show, Spacer, Stack, type StackProps } from "@chakra-ui/react";
 import { Card } from "@chakra-ui/react/card";
 import type { CardProps } from "./Common/card.types";
+
+interface Props extends CardProps {
+  bodyStyles?: Partial<StackProps>;
+}
 
 export default function SimpleCard({
   title,
@@ -9,7 +13,8 @@ export default function SimpleCard({
   header,
   footer,
   headerCta,
-}: CardProps) {
+  bodyStyles,
+}: Props) {
   return (
     <Card.Root as={"article"} height={"full"}>
       <Card.Header as={"header"}>
@@ -30,7 +35,7 @@ export default function SimpleCard({
         )}
       </Card.Header>
       <Card.Body asChild p={{ base: 4, lg: 8 }}>
-        <Stack justify={"space-around"} gapY={8}>
+        <Stack justify={"space-around"} gapY={8} {...bodyStyles}>
           {children}
         </Stack>
       </Card.Body>

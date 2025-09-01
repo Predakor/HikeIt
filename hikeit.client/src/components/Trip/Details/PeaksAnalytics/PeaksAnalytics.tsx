@@ -1,11 +1,12 @@
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
+import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import useResourceLink from "@/hooks/Api/useResourceLink";
 import type {
   PeakSummaryData,
   PeaksAnalytics,
 } from "@/types/Api/analytics.types";
 import type { ResourceUrl } from "@/types/Api/types";
-import { Card, Show, SimpleGrid, Stack } from "@chakra-ui/react";
+import { GridItem, Show, SimpleGrid, Stack } from "@chakra-ui/react";
 import { PeakBadge } from "../Common/PeakBadge";
 import { RankStat } from "../Common/RankStat";
 import { HighestPeak } from "./HighestPeak";
@@ -35,47 +36,66 @@ function Analytics({ data }: { data: PeaksAnalytics }) {
       gridTemplateColumns={"repeat(7,1fr)"}
       gap={4}
     >
-      <Card.Root gridRow={"4 / span 2"} gridColumn={secondarySpace}>
-        <Card.Header>
-          <PeakCardTitle title={"Peaks Summary"} />
-        </Card.Header>
-        <Card.Body justifyContent={"space-evenly"} gapY={8}>
+      <GridItem gridRow={"4 / span 2"} gridColumn={secondarySpace}>
+        <SimpleCard title="Peaks Summary">
           <PeakSummary summary={data as unknown as PeakSummaryData} />
-        </Card.Body>
-      </Card.Root>
+        </SimpleCard>
+      </GridItem>
 
-      <Card.Root gridRow={"1 / span 3"} gridColumn={secondarySpace}>
-        <Card.Header flexFlow={"row"} justifyContent={"space-between"}>
-          <PeakCardTitle title={"Highest Peak"} />
-          <Show when={!highest.firstTime}>
-            <PeakBadge color="yellow" text={"Reached for the first time"} />
-          </Show>
-        </Card.Header>
-        <Card.Body justifyContent={"space-around"} gapY={8}>
+      <GridItem gridRow={"1 / span 3"} gridColumn={secondarySpace}>
+        <SimpleCard
+          title="Highest Peak"
+          headerCta={<Reached reached={!highest.firstTime} />}
+          bodyStyles={{ gap: 16 }}
+        >
           <HighestPeak highest={highest} />
-          <Stack justifyItems={"start"} direction={"row"}>
-            <RankStat value={5} maxValue={23} label={"in the region"} />
-            <RankStat value={7} maxValue={50} label={"in your history"} />
-          </Stack>
-        </Card.Body>
-      </Card.Root>
+          <PeakRanking
+            regionRank={{ place: 3, from: 5 }}
+            userRank={{ place: 4, from: 6 }}
+          />
+        </SimpleCard>
+      </GridItem>
 
-      <Card.Root gridRow={"1/6"} gridColumn={"1 / span 4"}>
-        <Card.Header>
-          <PeakCardTitle title={"Reached Peaks"} />
-        </Card.Header>
-        <Card.Body gapY={8}>
+      <GridItem gridRow={"1/6"} gridColumn={"1 / span 4"}>
+        <SimpleCard title={"Reached Peaks"} bodyStyles={{ justify: "start" }}>
           <ReachedPeaksList peaks={peaks} />
-        </Card.Body>
-      </Card.Root>
+        </SimpleCard>
+      </GridItem>
     </SimpleGrid>
   );
 }
 
-function PeakCardTitle({ title }: { title: string }) {
+function Reached({ reached }: { reached: boolean }) {
   return (
-    <Card.Title color={"fg.muted"} fontSize={"2xl"}>
-      {title}
-    </Card.Title>
+    <Show when={reached}>
+      <PeakBadge color="yellow" text={"Reached for the first time"} />
+    </Show>
+  );
+}
+
+type Rank = {
+  place: number;
+  from: number;
+};
+
+interface Props {
+  regionRank: Rank;
+  userRank: Rank;
+}
+
+function PeakRanking({ regionRank, userRank }: Props) {
+  return (
+    <Stack justifyItems={"start"} direction={"row"}>
+      <RankStat
+        value={regionRank.place}
+        maxValue={regionRank.from}
+        label={"in the region"}
+      />
+      <RankStat
+        value={userRank.place}
+        maxValue={userRank.from}
+        label={"in your history"}
+      />
+    </Stack>
   );
 }
