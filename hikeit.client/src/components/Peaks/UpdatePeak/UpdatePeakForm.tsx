@@ -1,6 +1,6 @@
 import { diffObjects } from "@/Utils/objectHelpers";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
-import type { PeakWithLocation } from "@/types/ApiTypes/peak.types";
+import type { PeakWithLocation } from "@/types/Api/peak.types";
 import { Button, Stack } from "@chakra-ui/react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";

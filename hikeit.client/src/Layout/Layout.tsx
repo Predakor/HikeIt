@@ -21,7 +21,7 @@ function Layout({ children }: PropsWithChildren) {
     >
       <Header />
       <Toaster />
-      <Stack as="main" flexGrow={1}>
+      <Stack gap={8} as="main" flexGrow={1}>
         {children}
       </Stack>
       <Footer />

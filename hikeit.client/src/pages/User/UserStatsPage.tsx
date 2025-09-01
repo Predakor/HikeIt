@@ -2,6 +2,7 @@ import api from "@/Utils/Api/apiRequest";
 import UserStat from "@/components/User/Stats";
 import { type UserStats } from "@/components/User/Stats/Utils/statTypes";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
+import PageTitle from "@/components/ui/Titles/PageTitle";
 import { SimpleGrid } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -13,23 +14,18 @@ export default function UserStatsPage() {
   });
 
   return (
-    <FetchWrapper request={stats}>
-      {(data) => {
-        return (
-          <SimpleGrid
-            justifySelf={"center"}
-            alignSelf={"center"}
-            columns={{ lg: 2 }}
-            gap={16}
-            placeContent={"center"}
-          >
+    <>
+      <PageTitle title="User Stats" />
+      <FetchWrapper request={stats}>
+        {(data) => (
+          <SimpleGrid columns={{ lg: 2 }} gap={8}>
             <UserStat.Totals stats={data.totals} />
             <UserStat.Location stats={data.locations} />
-            <UserStat.Average locations={data.locations} totals={data.totals} />
+            <UserStat.Average totals={data.totals} />
             <UserStat.Metas metas={data.metas} />
           </SimpleGrid>
-        );
-      }}
-    </FetchWrapper>
+        )}
+      </FetchWrapper>
+    </>
   );
 }

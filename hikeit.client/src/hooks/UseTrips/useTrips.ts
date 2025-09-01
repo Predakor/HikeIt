@@ -1,5 +1,5 @@
 import apiClient from "@/Utils/Api/ApiClient";
-import type { TripDtoFull, TripSummaries } from "@/types/ApiTypes/TripDtos";
+import type { TripDtoFull, TripSummaries } from "@/types/Api/TripDtos";
 import { useQuery } from "@tanstack/react-query";
 
 const staleTime = 1000 * 60 * 30;

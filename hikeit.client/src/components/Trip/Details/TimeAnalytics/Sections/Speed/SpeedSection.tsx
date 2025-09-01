@@ -7,7 +7,7 @@ import {
 } from "@/Icons/Icons";
 import RowStat from "@/components/Stats/RowStat";
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
-import type { TimeAnalytic } from "@/types/ApiTypes/analytics.types";
+import type { TimeAnalytic } from "@/types/Api/analytics.types";
 import { Stack } from "@chakra-ui/react";
 import { sharedAddons } from "../../TimeAnalytics";
 

@@ -18,7 +18,7 @@ export default function RowStat<T>({ value, label, addons, styles }: Props<T>) {
       <Stat.Label>{ToTitleCase(label)}</Stat.Label>
       <Stack direction={"row"} alignItems={"baseline"} fontSize={"lg"}>
         {IconSource && (
-          <Icon size={"md"}>
+          <Icon asChild size={"md"}>
             <IconSource />
           </Icon>
         )}

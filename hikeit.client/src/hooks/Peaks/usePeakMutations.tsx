@@ -2,7 +2,7 @@ import { resolveCreated } from "@/Utils/Api/Resolvers/resolveCreated";
 import api from "@/Utils/Api/apiRequest";
 import { applyChanges } from "@/Utils/objectHelpers";
 import type { AddPeakConfig } from "@/components/Peaks/AddPeak/addPeakFormConfig";
-import type { RegionWithDetailedPeaks } from "@/types/ApiTypes/region.types";
+import type { RegionWithDetailedPeaks } from "@/types/Api/region.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { detailedConfig } from "../Regions/UseRegionPeaks";

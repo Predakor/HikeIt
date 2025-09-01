@@ -1,5 +1,5 @@
 import { haversineDistance } from "@/Utils/haversineDistance";
-import type { Gain, GpxArray } from "@/types/ApiTypes/gpx.types";
+import type { Gain, GpxArray } from "@/types/Api/gpx.types";
 
 export async function mapFromFileToGpxArray(file: File) {
   const text = await file.text();

@@ -3,7 +3,7 @@ import UpdatePeakForm from "@/components/Peaks/UpdatePeak/UpdatePeakForm";
 import Dialog from "@/components/ui/Dialog/Dialog";
 import { MutationResult } from "@/components/ui/Results/MutationResult";
 import usePeakMutations from "@/hooks/Peaks/usePeakMutations";
-import type { PeakWithLocation } from "@/types/ApiTypes/peak.types";
+import type { PeakWithLocation } from "@/types/Api/peak.types";
 import { For, Table } from "@chakra-ui/react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import { useState } from "react";

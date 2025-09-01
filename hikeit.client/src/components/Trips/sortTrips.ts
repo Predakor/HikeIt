@@ -1,4 +1,4 @@
-import type { TripSummaries } from "@/types/ApiTypes/TripDtos";
+import type { TripSummaries } from "@/types/Api/TripDtos";
 
 type YearGroups = Record<number, TripSummaries>;
 type YearGroup = {

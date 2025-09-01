@@ -2,7 +2,7 @@ import { formatDate } from "@/Utils/Formatters";
 import PageTitle from "@/components/ui/Titles/PageTitle";
 import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import { useTripRemove } from "@/hooks/UseTrips/useTripRemove";
-import type { TripWithBasicAnalytics } from "@/types/ApiTypes/TripDtos";
+import type { TripWithBasicAnalytics } from "@/types/Api/TripDtos";
 import { Button, Flex, Heading } from "@chakra-ui/react";
 
 interface Props {

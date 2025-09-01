@@ -1,4 +1,4 @@
-import type { GpxArrayWithGains } from "@/types/ApiTypes/gpx.types";
+import type { GpxArrayWithGains } from "@/types/Api/gpx.types";
 import type { Func } from "@/types/Utils/func.types";
 
 export const arrayUtils = {

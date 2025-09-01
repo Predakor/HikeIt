@@ -1,5 +1,5 @@
 import usePagePreload from "@/hooks/Utils/usePagePreload";
-import type { TripSummaries } from "@/types/ApiTypes/TripDtos";
+import type { TripSummaries } from "@/types/Api/TripDtos";
 import { For, GridItem } from "@chakra-ui/react";
 import { Fragment } from "react/jsx-runtime";
 import SubTitle from "../ui/Titles/SubTitle";

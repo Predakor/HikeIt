@@ -1,5 +1,5 @@
 import { TimeSpan } from "@/Utils/Formatters/Duration/Duration";
-import type { TimeAnalytic } from "@/types/ApiTypes/analytics.types";
+import type { TimeAnalytic } from "@/types/Api/analytics.types";
 import { GridItem, SimpleGrid } from "@chakra-ui/react";
 import TimeAnalyticSection from "./Sections";
 

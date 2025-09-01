@@ -1,4 +1,4 @@
-import type { ReachedPeakWithBadges } from "@/components/ui/AddFile/tripTypes";
+import type { ReachedPeakWithBadges } from "@/components/ui/Inputs/File/trip.types";
 import Peak from "../Peak";
 import ReachDistance from "./ReachDistance";
 import ReachTime from "./ReachTime";

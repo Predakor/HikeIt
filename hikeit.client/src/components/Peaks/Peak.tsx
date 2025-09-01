@@ -1,4 +1,4 @@
-import type { Peak } from "@/types/ApiTypes/peak.types";
+import type { Peak } from "@/types/Api/peak.types";
 import { Flex, For, Heading, Stack, Text } from "@chakra-ui/react";
 import { PeakIcon } from "../Trip/Details/Common/PeakIcon";
 

@@ -1,4 +1,4 @@
-import GpxArrayBuilder from "@/Utils/Builders/GpxArrayBuilder";
+import GpxArrayBuilder from "@/Utils/Builders/GpxArray";
 import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import AddTripForm, {
   type TripFormInitData,

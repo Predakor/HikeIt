@@ -1,26 +1,29 @@
 import { formatDuration } from "@/Utils/Formatters";
 import RowStat from "@/components/Stats/RowStat";
 import type { StatAddons } from "@/types/Utils/stat.types";
-import type { Totals, Locations } from "../Utils/statTypes";
+import StatsCard from "../Shared/StatsCard";
 import { formatter } from "../Utils/formatter";
-import StatsCard from "../StatsCard";
+import type { Totals } from "../Utils/statTypes";
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconJourney,
+  IconTrendDown,
+  IconTrendUp,
+} from "@/Icons/Icons";
 
 interface Props {
   totals: Totals;
-  locations: Locations;
 }
 
-export function AverageTrip({ totals, locations }: Props) {
+export function AverageTrip({ totals }: Props) {
   const {
     totalAscentMeters,
     totalDescentMeters,
     totalDistanceMeters,
     totalDuration,
-    totalPeaks,
     totalTrips,
   } = totals;
-
-  const { regionsVisited } = locations;
 
   const __mockupAscentTime = "07:12:10";
   const __mockupDescentTime = "05:12:10";
@@ -34,38 +37,35 @@ export function AverageTrip({ totals, locations }: Props) {
       <RowStat
         label="Distance"
         value={totalDistanceMeters / totalTrips}
-        addons={distanceAddons}
+        addons={{ ...distanceAddons, IconSource: IconJourney }}
       />
       <RowStat
         label="Ascent"
         value={totalAscentMeters / totalTrips}
-        addons={distanceAddons}
+        addons={{ ...distanceAddons, IconSource: IconArrowUp }}
       />
       <RowStat
         label="Descent"
         value={totalDescentMeters / totalTrips}
-        addons={distanceAddons}
+        addons={{ ...distanceAddons, IconSource: IconArrowDown }}
       />
 
       <RowStat
         label="Duration"
         value={duration / totalTrips}
-        addons={durationAddons}
+        addons={{ ...durationAddons, IconSource: IconJourney }}
       />
 
       <RowStat
         label={"Ascent Time"}
         value={ascentDuration / totalTrips}
-        addons={durationAddons}
+        addons={{ ...durationAddons, IconSource: IconTrendUp }}
       />
       <RowStat
         label={"DescentTime"}
         value={descentDuration / totalTrips}
-        addons={durationAddons}
+        addons={{ ...durationAddons, IconSource: IconTrendDown }}
       />
-
-      <RowStat label={"Peaks"} value={totalPeaks / totalTrips} />
-      <RowStat label={"Regions"} value={regionsVisited / totalTrips} />
     </StatsCard>
   );
 }

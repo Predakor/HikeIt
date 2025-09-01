@@ -1,8 +1,5 @@
 import apiClient from "@/Utils/Api/ApiClient";
-import type {
-  Region,
-  RegionProgressSummary,
-} from "@/types/ApiTypes/region.types";
+import type { Region, RegionProgressSummary } from "@/types/Api/region.types";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 const staleTime = 3600 * 24 * 30;

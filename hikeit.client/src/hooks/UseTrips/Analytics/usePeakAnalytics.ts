@@ -1,6 +1,6 @@
 import api from "@/Utils/Api/apiRequest";
-import type { PeaksAnalytics } from "@/types/ApiTypes/analytics.types";
-import type { ResourceUrl } from "@/types/ApiTypes/types";
+import type { PeaksAnalytics } from "@/types/Api/analytics.types";
+import type { ResourceUrl } from "@/types/Api/types";
 import { useQuery } from "@tanstack/react-query";
 
 function usePeakAnalytics(resourceLink: ResourceUrl) {

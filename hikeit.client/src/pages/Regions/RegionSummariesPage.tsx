@@ -2,13 +2,11 @@ import SkeletonGrid from "@/components/Placeholders/SkeletonGrid";
 import ProgressedRegion from "@/components/Regions/Card/ProgressedRegion";
 import UnprogressedRegion from "@/components/Regions/Card/UnprogressedRegion";
 import PageTitle from "@/components/ui/Titles/PageTitle";
+import SubTitle from "@/components/ui/Titles/SubTitle";
 import FetchWrapper from "@/components/Utils/Fetching";
 import UseRegionsProgressions from "@/hooks/Regions/UseRegionsProgressions";
 import usePagePreload from "@/hooks/Utils/usePagePreload";
-import type {
-  Region,
-  RegionProgressSummary,
-} from "@/types/ApiTypes/region.types";
+import type { Region, RegionProgressSummary } from "@/types/Api/region.types";
 import { For, GridItem, Show, SimpleGrid, Stack } from "@chakra-ui/react";
 
 function RegionsPage() {
@@ -16,7 +14,8 @@ function RegionsPage() {
   const regionsSummaries = UseRegionsProgressions();
 
   return (
-    <Stack gap={8}>
+    <Stack gap={10}>
+      <PageTitle title="Regions" />
       <SimpleGrid
         alignItems={"stretch"}
         justifyItems={"stretch"}
@@ -31,13 +30,13 @@ function RegionsPage() {
             <>
               <Show when={progressedRegions.length}>
                 <GridItem colSpan={4}>
-                  <PageTitle title="Visited Regions" />
+                  <SubTitle color={"fg.muted"} title="Visited" />
                 </GridItem>
                 <ProgressedRegions regions={progressedRegions} />
               </Show>
               <Show when={unprogressedRegions.length}>
                 <GridItem colSpan={4}>
-                  <PageTitle title="Unvisited Regions" />
+                  <SubTitle color={"fg.muted"} title="Unvisited" />
                 </GridItem>
                 <UnprogressedRegions regions={unprogressedRegions} />
               </Show>

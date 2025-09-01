@@ -1,5 +1,5 @@
 import RowStat from "@/components/Stats/RowStat";
-import type { RegionProgressFull } from "@/types/ApiTypes/region.types";
+import type { RegionProgressFull } from "@/types/Api/region.types";
 import { Card, Stack, Box } from "@chakra-ui/react";
 import RegionCompletion from "../Completion/RegionCompletion";
 

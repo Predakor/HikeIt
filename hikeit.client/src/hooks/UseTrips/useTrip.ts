@@ -1,6 +1,6 @@
 import api from "@/Utils/Api/apiRequest";
 import { cacheTimes } from "@/Utils/Api/staleTimes";
-import type { TripWithBasicAnalytics } from "@/types/ApiTypes/TripDtos";
+import type { TripWithBasicAnalytics } from "@/types/Api/TripDtos";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useParams } from "react-router";

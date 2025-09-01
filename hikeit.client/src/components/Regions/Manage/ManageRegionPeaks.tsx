@@ -3,7 +3,7 @@ import type { AddPeakConfig } from "@/components/Peaks/AddPeak/addPeakFormConfig
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import Dialog from "@/components/ui/Dialog/Dialog";
 import usePeakMutations from "@/hooks/Peaks/usePeakMutations";
-import type { RegionWithDetailedPeaks } from "@/types/ApiTypes/region.types";
+import type { RegionWithDetailedPeaks } from "@/types/Api/region.types";
 import { Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { PeaksTable } from "./PeaksTable";

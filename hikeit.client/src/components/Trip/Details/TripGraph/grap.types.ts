@@ -1,4 +1,4 @@
-import type { GpxEntry } from "@/types/ApiTypes/gpx.types";
+import type { GpxEntry } from "@/types/Api/gpx.types";
 
 export interface ChartData {
   start: GpxEntry;

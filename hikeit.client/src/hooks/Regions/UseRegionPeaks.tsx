@@ -2,7 +2,7 @@ import api from "@/Utils/Api/apiRequest";
 import type {
   RegionWithDetailedPeaks,
   RegionWithPeaks,
-} from "@/types/ApiTypes/region.types";
+} from "@/types/Api/region.types";
 import { useQuery } from "@tanstack/react-query";
 
 export const config = {

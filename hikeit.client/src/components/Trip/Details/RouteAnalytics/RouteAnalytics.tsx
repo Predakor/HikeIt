@@ -1,4 +1,4 @@
-import type { RouteAnalytic } from "@/types/ApiTypes/analytics.types";
+import type { RouteAnalytic } from "@/types/Api/analytics.types";
 import { Grid, GridItem } from "@chakra-ui/react";
 import { RouteAnalyticSections } from "./Sections";
 

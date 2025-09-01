@@ -1,3 +1,5 @@
+import type { TimeString } from "@/Utils/Formatters/Duration/Duration";
+
 export type UserStats = {
   totals: Totals;
   locations: Locations;
@@ -8,7 +10,9 @@ export type Totals = {
   totalDistanceMeters: number;
   totalAscentMeters: number;
   totalDescentMeters: number;
-  totalDuration: string; // ISO duration or you can convert to number (seconds) if needed
+  totalDuration: TimeString;
+  totalClimbTime: TimeString;
+  totalDescentTime: TimeString;
   totalPeaks: number;
   totalTrips: number;
 };

@@ -1,5 +1,5 @@
 import api from "@/Utils/Api/apiRequest";
-import type { Region } from "@/types/ApiTypes/region.types";
+import type { Region } from "@/types/Api/region.types";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useRegions() {

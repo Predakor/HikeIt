@@ -1,5 +1,4 @@
 ﻿using Application.Commons.Abstractions;
-using Application.Commons.Abstractions.Queries;
 using Application.FileReferences;
 using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Root.Interfaces;
@@ -35,7 +34,6 @@ public static class DependencyInjection {
             .AddStorages()
             .AddEvents()
             .AddRepositories(assemblies);
-        //.AddQueryServices(assemblies);
     }
 
     static IServiceCollection AddEvents(this IServiceCollection services) {
@@ -74,21 +72,6 @@ public static class DependencyInjection {
                     .AsImplementedInterfaces()
                     .WithScopedLifetime()
             );
-    }
-
-    static IServiceCollection AddQueryServices(
-        this IServiceCollection services,
-        ImmutableArray<Assembly> assemblies
-    ) {
-        return services.Scan(scan =>
-            scan.FromAssemblies(assemblies)
-                .AddClasses(
-                    classes => classes.AssignableTo(typeof(IQueryService)),
-                    publicOnly: false
-                )
-                .AsImplementedInterfaces()
-                .WithScopedLifetime()
-        );
     }
 
     static IServiceCollection AddDatabase(

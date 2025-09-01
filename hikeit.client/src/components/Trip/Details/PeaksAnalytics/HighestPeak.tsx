@@ -1,4 +1,4 @@
-import type { ReachedPeakWithBadges } from "@/components/ui/AddFile/tripTypes";
+import type { ReachedPeakWithBadges } from "@/components/ui/Inputs/File/trip.types";
 import RowStat from "@/components/Stats/RowStat";
 import { Stack } from "@chakra-ui/react";
 

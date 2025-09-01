@@ -1,5 +1,5 @@
 import api from "@/Utils/Api/apiRequest";
-import type { TripDto } from "@/types/ApiTypes/TripDtos";
+import type { TripDto } from "@/types/Api/TripDtos";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { basePath } from "./useTrips";

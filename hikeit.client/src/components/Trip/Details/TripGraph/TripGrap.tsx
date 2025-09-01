@@ -2,7 +2,7 @@ import IsAdminUser from "@/Utils/IsAdminUser";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import useUser from "@/hooks/Auth/useUser";
 import useResourceLink from "@/hooks/Api/useResourceLink";
-import type { ResourceUrl } from "@/types/ApiTypes/types";
+import type { ResourceUrl } from "@/types/Api/types";
 import PreviewGraphDevOnly from "./Dev_PreviewGraph/PreviewGraphDevOnly";
 import ElevationGraph from "./ElevationGraph";
 import type { ChartData } from "./grap.types";
