@@ -7,7 +7,7 @@ It features a modern SPA frontend and a robust ASP.NET Core backend, with Postgr
 ## 📑 Table of Contents
 
 1. [Features](#-features)
-2. [Demo](#demo)  
+2. [Demo](#-demo)  
 3. [Tech Stack](#%EF%B8%8F-tech-stack)  
    - [Backend](#backend)  
    - [Frontend](#frontend)
@@ -22,6 +22,28 @@ It features a modern SPA frontend and a robust ASP.NET Core backend, with Postgr
 6. [Notes](#-notes)
    
 ---
+
+## 🎥 Demo
+
+You can try out **HikeIt** live here:  
+
+👉 [Live Demo]([https://your-demo-url.com](https://agreeable-forest-0c8119403.2.azurestaticapps.net))  
+No signup required — just click **“Login as Demo User”** on the login screen to explore the app instantly.
+
+### Manage your trips
+<img width="1899" height="988" alt="image" src="https://github.com/user-attachments/assets/00886539-424c-4ecd-ae7b-54a5cc78aee7" />
+
+### Get analytics from your trip
+<img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/8e290fb0-9c7a-4483-b320-5f8f37949df8" />
+
+### Track your overall stats
+<img width="1912" height="994" alt="image" src="https://github.com/user-attachments/assets/ab5034f8-6653-4b4b-ac24-d3d3d77e11ea" />
+
+### And view your region progress
+<img width="1919" height="998" alt="image" src="https://github.com/user-attachments/assets/e6ddd4c0-34c3-48f0-8b94-b05446692c96" />
+
+---
+
 ## 🚀 Features
 
 - **Authentication & Authorization**
@@ -50,6 +72,8 @@ It features a modern SPA frontend and a robust ASP.NET Core backend, with Postgr
   - Responsive SPA frontend with React Query state management
 
 ---
+
+
 
 ## 🛠️ Tech Stack
 
