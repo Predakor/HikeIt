@@ -79,6 +79,6 @@ public class TripsController : ControllerBase {
         return await _authService
             .WithLoggedUserId()
             .BindAsync(userId => _tripService.UpdateAsync(id, userId, update))
-            .ToActionResultAsync(ResultType.noContent);
+            .ToActionResultAsync(ResultType.ok);
     }
 }

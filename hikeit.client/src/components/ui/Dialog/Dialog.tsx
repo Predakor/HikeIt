@@ -3,7 +3,7 @@ import { CloseModal } from "./Common/CloseModal";
 import { DialogTitle } from "./Common/DialogTitle";
 
 interface Props extends DialogRootProps {
-  title?: string;
+  title: string;
 }
 
 function Dialog({ children, title, ...rest }: Props) {
