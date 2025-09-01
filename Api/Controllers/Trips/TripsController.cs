@@ -1,7 +1,7 @@
 ﻿using Api.Commons.Extentions;
 using Application.Commons.Files;
 using Application.Commons.Services.Auth;
-using Application.FileReferences;
+using Application.Trips.Root.Dtos;
 using Application.Trips.Root.Queries;
 using Application.Trips.Root.Services;
 using Application.Trips.Root.ValueObjects;
@@ -18,19 +18,16 @@ namespace Api.Controllers.Trips;
 public class TripsController : ControllerBase {
     readonly IAuthService _authService;
     readonly ITripService _tripService;
-    readonly IGpxFileService _fileService;
     readonly ITripQueryService _queryService;
     readonly ITripAnalyticUnitOfWork _unitOfWork;
 
     public TripsController(
         ITripService service,
         IAuthService authService,
-        IGpxFileService fileService,
         ITripQueryService queryService,
         ITripAnalyticUnitOfWork unitOfWork
     ) {
         _tripService = service;
-        _fileService = fileService;
         _authService = authService;
         _unitOfWork = unitOfWork;
         _queryService = queryService;
@@ -74,6 +71,14 @@ public class TripsController : ControllerBase {
             .WithLoggedUserId()
             .MapAsync(userId => _tripService.DeleteAsync(id, userId))
             .BindAsync(_ => _unitOfWork.SaveChangesAsync())
+            .ToActionResultAsync(ResultType.noContent);
+    }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTripDto update) {
+        return await _authService
+            .WithLoggedUserId()
+            .BindAsync(userId => _tripService.UpdateAsync(id, userId, update))
             .ToActionResultAsync(ResultType.noContent);
     }
 }

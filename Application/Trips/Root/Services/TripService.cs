@@ -3,6 +3,7 @@ using Application.ReachedPeaks;
 using Application.Trips.Analytics.Commands;
 using Application.Trips.Analytics.Interfaces;
 using Application.Trips.GpxFile.Services;
+using Application.Trips.Root.Dtos;
 using Application.Trips.Root.ValueObjects;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Domain.Trips.Root;
@@ -63,6 +64,21 @@ public class TripService : ITripService {
             .Get(tripId, userId)
             .MapAsync(t => t.OnDelete(tripsReachedOnTrip?.Value!))
             .BindAsync(_tripRepository.Remove);
+    }
+
+    public async Task<Result<bool>> UpdateAsync(Guid id, Guid userId, UpdateTripDto update) {
+        return await _tripRepository
+            .GetByIdAsync(id)
+            .TapAsync(t => {
+                if (update.TripDay.HasValue) {
+                    t.SetDate(update.TripDay.Value);
+                }
+
+                if (update.TripName is not null) {
+                    t.Name = update.TripName;
+                }
+            })
+            .BindAsync(_ => _unitOfWork.SaveChangesAsync());
     }
 
     async Task<Result<Trip>> SaveTripChanges(CreateTripContext ctx) {
