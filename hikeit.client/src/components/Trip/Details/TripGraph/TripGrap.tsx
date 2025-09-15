@@ -6,6 +6,7 @@ import type { ResourceUrl } from "@/types/Api/types";
 import PreviewGraphDevOnly from "./Dev_PreviewGraph/PreviewGraphDevOnly";
 import ElevationGraph from "./ElevationGraph";
 import type { ChartData } from "./grap.types";
+import { ResponsiveContainer } from "recharts";
 
 function TripGrap({ data }: { data: ResourceUrl }) {
   const getCurrentUser = useUser();
@@ -15,7 +16,11 @@ function TripGrap({ data }: { data: ResourceUrl }) {
     <FetchWrapper request={getCurrentUser}>
       {(user) => (
         <FetchWrapper request={getElevationData}>
-          {(d) => <Graph data={d} isAdmin={IsAdminUser(user)} />}
+          {(d) => (
+            <ResponsiveContainer width={"100%"} aspect={4}>
+              <Graph data={d} isAdmin={IsAdminUser(user)} />
+            </ResponsiveContainer>
+          )}
         </FetchWrapper>
       )}
     </FetchWrapper>

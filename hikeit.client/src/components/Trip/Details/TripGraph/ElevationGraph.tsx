@@ -1,5 +1,5 @@
 import { LazyLineGraph } from "@/components/Graphs";
-import { Flex, Skeleton } from "@chakra-ui/react";
+import { Skeleton } from "@chakra-ui/react";
 import { Suspense, memo } from "react";
 import { GenerateChartData } from "./GenerateChartData";
 import type { ChartData } from "./grap.types";
@@ -18,18 +18,15 @@ export function ElevationGraph({ data }: Props) {
   };
 
   return (
-    <Flex gapX={8}>
-      <Suspense fallback={<Skeleton {...styles} />}>
-        <LazyLineGraph
-          aspectRatio={"16/9"}
-          config={{
-            data: chartPoints,
-            series: [{ name: "ele", color: "blue" }],
-          }}
-          {...styles}
-        />
-      </Suspense>
-    </Flex>
+    <Suspense fallback={<Skeleton {...styles} />}>
+      <LazyLineGraph
+        aspectRatio={"4"}
+        config={{
+          data: chartPoints,
+          series: [{ name: "ele", color: "blue" }],
+        }}
+      />
+    </Suspense>
   );
 }
 export default memo(ElevationGraph);

@@ -9,7 +9,7 @@ interface Props {
 export default function NavButton({ to, label }: Props) {
   return (
     <LinkBox fontSize={"lg"} asChild>
-      <Link asChild>
+      <Link asChild fontWeight={"bolder"}>
         <NavLink aria-label={label} to={to}>
           {label}
         </NavLink>

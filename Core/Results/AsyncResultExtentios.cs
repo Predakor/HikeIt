@@ -129,6 +129,17 @@ public static class AsyncResultExtentios {
 
     #region tap
     public static async Task<Result<T>> TapAsync<T>(
+        this Result<T> result,
+        Func<T, Task> actionAsync
+    ) {
+        if (result.IsSuccess && result.Value is not null) {
+            await actionAsync(result.Value);
+        }
+
+        return result;
+    }
+
+    public static async Task<Result<T>> TapAsync<T>(
         this Task<Result<T>> resultTask,
         Func<T, Task> actionAsync
     ) {

@@ -51,10 +51,7 @@ public class TripService : ITripService {
     public async Task<Result<Trip>> CreateAsync(Trip trip) {
         return await _unitOfWork
             .TripRepository.Add(trip)
-            .MapAsync(async _ => {
-                await _unitOfWork.SaveChangesAsync();
-                return trip;
-            });
+            .TapAsync(trip => _unitOfWork.SaveChangesAsync());
     }
 
     public async Task<Result<bool>> DeleteAsync(Guid tripId, Guid userId) {

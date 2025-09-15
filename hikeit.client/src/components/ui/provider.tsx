@@ -7,7 +7,7 @@ import { defaultSystem } from "@chakra-ui/react/preset";
 export function Provider(props: ColorModeProviderProps) {
   return (
     <ChakraProvider value={defaultSystem}>
-      <ColorModeProvider {...props} />
+      <ColorModeProvider {...props} forcedTheme="dark" />
     </ChakraProvider>
   );
 }

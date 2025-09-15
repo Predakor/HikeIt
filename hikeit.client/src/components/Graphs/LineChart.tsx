@@ -36,12 +36,14 @@ function ElevationChart({ config, ...rest }: Props) {
           axisLine={false}
           dataKey={chart.key("dist")}
           tickFormatter={formatX}
+          domain={["auto", "auto"]}
           stroke={chart.color("border")}
         />
         <YAxis
           axisLine={false}
           tickLine={false}
           tickMargin={10}
+          domain={["auto", "auto"]}
           dataKey={chart.key("ele")}
         />
         <Tooltip
