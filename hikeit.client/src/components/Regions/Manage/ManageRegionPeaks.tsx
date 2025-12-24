@@ -24,13 +24,15 @@ export default function ManageRegionPeaks({ region }: Props) {
     });
   };
 
+  const peaksWithRegion = region.peaks.map((p) => ({ ...p, regionId: region.region.id }));
+
   return (
     <>
       <SimpleCard
         title="Peaks in the region"
         headerCta={<Button onClick={() => setShowForm(true)}>Add Peak</Button>}
       >
-        <PeaksTable peaks={region.peaks} />
+        <PeaksTable peaks={peaksWithRegion} />
       </SimpleCard>
       <Dialog
         onOpenChange={({ open }) => setShowForm(open)}

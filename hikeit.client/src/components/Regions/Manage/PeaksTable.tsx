@@ -20,7 +20,7 @@ export function PeaksTable({ peaks }: { peaks: PeakWithLocation[] }) {
         <Table.Header>
           <Table.Row>
             <For each={headers}>
-              {(header) => <Table.ColumnHeader>{header}</Table.ColumnHeader>}
+              {(header) => <Table.ColumnHeader key={header}>{header}</Table.ColumnHeader>}
             </For>
           </Table.Row>
         </Table.Header>
@@ -58,9 +58,7 @@ export function PeaksTable({ peaks }: { peaks: PeakWithLocation[] }) {
         <UpdatePeakForm
           peak={peakToUpdate}
           requestState={update as UseMutationResult}
-          onSubmit={(d) =>
-            update.mutate({ peakId: peakToUpdate?.id!, data: d })
-          }
+          onSubmit={(d) => update.mutate({ peakId: peakToUpdate?.id!, data: d })}
         />
       </Dialog>
     </>

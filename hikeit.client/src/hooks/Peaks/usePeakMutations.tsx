@@ -51,9 +51,7 @@ export default function usePeakMutations() {
           return prev;
         }
 
-        const newPeaks = prev.peaks.map((p) =>
-          p.id === peakId ? applyChanges(p, changes) : p
-        );
+        const newPeaks = prev.peaks.map((p) => (p.id === peakId ? applyChanges(p, changes) : p));
 
         return {
           ...prev,

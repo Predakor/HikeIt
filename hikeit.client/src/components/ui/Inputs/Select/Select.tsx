@@ -8,16 +8,11 @@ import type {
   SelectInputConfigEntry,
 } from "../../../Utils/RenderInputs/inputTypes";
 
-interface Props<T extends FieldValues>
-  extends Omit<RenderInputBaseProps<T>, "register"> {
+interface Props<T extends FieldValues> extends Omit<RenderInputBaseProps<T>, "register"> {
   entry: SelectInputConfigEntry;
 }
-
-function Select<T extends FieldValues>({
-  entry,
-  control,
-  displayOptions,
-}: Props<T>) {
+//value must be [value] not value
+function Select<T extends FieldValues>({ entry, control, displayOptions }: Props<T>) {
   const [collection] = useCollection(entry.collection);
 
   if (!collection) {

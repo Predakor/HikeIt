@@ -4,10 +4,7 @@ import type { PeakWithLocation } from "@/types/Api/peak.types";
 import { Button, Stack } from "@chakra-ui/react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import {
-  addPeakFormConfig,
-  type AddPeakConfig,
-} from "../AddPeak/addPeakFormConfig";
+import { addPeakFormConfig, type AddPeakConfig } from "../AddPeak/addPeakFormConfig";
 
 interface Props {
   onSubmit: (data: Partial<AddPeakConfig>) => void;
@@ -17,6 +14,7 @@ interface Props {
 
 export default function UpdatePeakForm(props: Props) {
   const { peak, onSubmit, requestState } = props;
+
   const formHook = useForm<AddPeakConfig>({
     defaultValues: peak,
   });

@@ -1,37 +1,50 @@
+import api from "@/Utils/Api/apiRequest";
 import { createListCollection, type ListCollection } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useMemo } from "react";
 
-export type CollectionType = StaticCollection | AsyncCollection;
+export type CollectionType<T> = StaticCollection | AsyncCollection<T>;
 
 export interface StaticCollection {
   type: "static";
   items: CollectionEntry[];
 }
 
-export interface AsyncCollection {
+export interface AsyncCollection<TItem = any> {
   type: "async";
-  items: () => Promise<CollectionEntry[]>;
+  url: string;
+  mapper?: (item: TItem) => CollectionEntry;
 }
 
 export interface CollectionEntry {
-  value: string;
+  value: string | number;
   label: string;
 }
 
-function useCollection(itemCollection: CollectionType) {
-  const [collection, setCollection] =
-    useState<ListCollection<CollectionEntry>>();
+function useCollection<T>(itemCollection: CollectionType<T>) {
+  const asyncUrl = itemCollection.type === "async" ? itemCollection.url : "";
+  const { data, status } = useQuery({
+    queryKey: [asyncUrl],
+    queryFn: () => api.get<any[]>(asyncUrl),
+    staleTime: 1000 * 5,
+    enabled: !!asyncUrl,
+  });
 
-  useEffect(() => {
-    const { type, items } = itemCollection;
+  const collection = useMemo(() => {
+    if (itemCollection.type === "static") {
+      return mapToCollection(itemCollection.items);
+    }
 
-    if (type === "static") {
-      setCollection(mapToCollection(items));
+    if (itemCollection.type === "async") {
+      if (status === "pending" || !data) {
+        return mapToCollection([]);
+      }
+
+      return mapToCollection(
+        itemCollection.mapper ? data.map(itemCollection.mapper) : (data as CollectionEntry[]),
+      );
     }
-    if (type === "async") {
-      items().then((data) => setCollection(mapToCollection(data)));
-    }
-  }, []);
+  }, [itemCollection, data]);
 
   return [collection];
 }

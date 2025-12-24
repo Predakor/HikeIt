@@ -6,6 +6,7 @@ export interface Peak {
 export interface PeakWithLocation extends Peak {
   lat: number;
   lon: number;
+  regionId: number;
 }
 
 export interface PeakWithReachStatus extends Peak {

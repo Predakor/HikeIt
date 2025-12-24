@@ -1,4 +1,5 @@
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
+import type { Region } from "@/types/Api/region.types";
 
 export type AddPeakConfig = {
   name: string;
@@ -31,7 +32,7 @@ export const addPeakFormConfig: InputsConfig = [
   },
   {
     key: "lat",
-    label: "latitude",
+    label: "Latitude",
     type: "number",
     step: "0.001",
     min: 0,
@@ -40,11 +41,22 @@ export const addPeakFormConfig: InputsConfig = [
   },
   {
     key: "lon",
-    label: "longitude",
+    label: "Longitude",
     type: "number",
     step: "0.001",
     min: 0,
     max: 90,
+    required: true,
+  },
+  {
+    key: "regionId",
+    label: "Region",
+    type: "select",
+    collection: {
+      type: "async",
+      url: "regions",
+      mapper: (r: Region) => ({ label: r.name, value: r.id }),
+    },
     required: true,
   },
 ];

@@ -1,8 +1,4 @@
-import {
-  Select,
-  type ConditionalValue,
-  type ListCollection,
-} from "@chakra-ui/react";
+import { Select, type ConditionalValue, type ListCollection } from "@chakra-ui/react";
 import type { ControllerRenderProps } from "react-hook-form";
 import type { DisplayOptions } from "../../../Utils/RenderInputs/inputTypes";
 
@@ -13,16 +9,13 @@ interface Props {
   displayOptions?: DisplayOptions;
 }
 
-function ControlledSelect({
-  field,
-  collection,
-  placeholder,
-  displayOptions,
-}: Props) {
+function ControlledSelect({ field, collection, placeholder, displayOptions }: Props) {
+  const guardedValue = Array.isArray(field.value) ? field.value : [field.value];
+
   return (
     <Select.Root
       name={field.name}
-      value={field.value}
+      value={guardedValue}
       onValueChange={({ value }) => field.onChange(value)}
       onInteractOutside={() => field.onBlur()}
       collection={collection}
@@ -53,7 +46,7 @@ function ControlledSelect({
 }
 
 const mapToSizes = (
-  displayOptions?: DisplayOptions
+  displayOptions?: DisplayOptions,
 ): ConditionalValue<"sm" | "md" | "lg" | "xs" | undefined> => {
   const size = displayOptions?.size;
 
