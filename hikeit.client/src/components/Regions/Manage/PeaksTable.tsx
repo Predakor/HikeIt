@@ -1,17 +1,18 @@
-import { IconEdit } from "@/Icons/Icons";
+import { IconDelete, IconEdit } from "@/Icons/Icons";
 import UpdatePeakForm from "@/components/Peaks/UpdatePeak/UpdatePeakForm";
+import { DangerButton } from "@/components/ui/Buttons";
 import Dialog from "@/components/ui/Dialog/Dialog";
 import { MutationResult } from "@/components/ui/Results/MutationResult";
 import usePeakMutations from "@/hooks/Peaks/usePeakMutations";
 import type { PeakWithLocation } from "@/types/Api/peak.types";
-import { For, Table } from "@chakra-ui/react";
+import { For, Icon, Table } from "@chakra-ui/react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import { useState } from "react";
 
-const headers = ["Name", "Height", "Latitude", "Longitude", ""];
+const headers = ["Name", "Height", "Latitude", "Longitude", "", ""];
 
 export function PeaksTable({ peaks }: { peaks: PeakWithLocation[] }) {
-  const { update } = usePeakMutations();
+  const { update, remove } = usePeakMutations();
   const [peakToUpdate, setPeakToUpdate] = useState<PeakWithLocation>();
 
   return (
@@ -27,16 +28,23 @@ export function PeaksTable({ peaks }: { peaks: PeakWithLocation[] }) {
         <Table.Body>
           <For each={peaks}>
             {(peak) => (
-              <Table.Row
-                key={peak.id}
-                onClick={() => setPeakToUpdate(peak)}
-                _hover={{ cursor: "pointer" }}
-              >
+              <Table.Row key={peak.id} _hover={{ cursor: "pointer" }}>
                 <Table.Cell>{peak.name}</Table.Cell>
                 <Table.Cell>{peak.height}</Table.Cell>
                 <Table.Cell>{peak.lat}</Table.Cell>
                 <Table.Cell>{peak.lon}</Table.Cell>
-                <Table.Cell>{<IconEdit />}</Table.Cell>
+                <Table.Cell onClick={() => setPeakToUpdate(peak)}>
+                  {<Icon as={IconEdit} color={"fg.info"} />}
+                </Table.Cell>
+                <Table.Cell>
+                  <DangerButton
+                    size={"xs"}
+                    variant={"ghost"}
+                    onConfirm={() => remove.mutate({ peakId: peak.id })}
+                  >
+                    {<Icon as={IconDelete} color={"fg.error"} />}
+                  </DangerButton>
+                </Table.Cell>
               </Table.Row>
             )}
           </For>

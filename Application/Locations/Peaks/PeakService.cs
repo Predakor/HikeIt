@@ -45,7 +45,8 @@ public class PeakService : IPeaksService
     {
         return await _repository
             .GetByIdAsync(peakId)
-            .MapAsync(x => x.Delete(_timeProvider.GetUtcNow()));
+            .MapAsync(x => x.Delete(_timeProvider.GetUtcNow()))
+            .BindAsync(SaveChanges);
     }
 
     private async Task<Result<Peak>> SaveChanges(Peak peak)

@@ -37,7 +37,9 @@ public class PeaksQueryService : IPeaksQueryService
 
     public async Task<Result<IEnumerable<PeakDto.Complete>>> GetAllAsync()
     {
-        var peaks = await Peaks.Include(p => p.Region).ToListAsync();
+        var peaks = await Peaks
+            .Include(p => p.Region)
+            .ToListAsync();
 
         if (peaks.Count == 0)
         {

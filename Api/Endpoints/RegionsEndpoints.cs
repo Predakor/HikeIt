@@ -3,8 +3,10 @@ using Application.Locations.Regions;
 
 namespace Api.Endpoints;
 
-public static class RegionsEndpoints {
-    public static RouteGroupBuilder MapRegionsEndpoints(this WebApplication app) {
+public static class RegionsEndpoints
+{
+    public static RouteGroupBuilder MapRegionsEndpoints(this WebApplication app)
+    {
         var group = app.MapGroup("api/regions");
 
         group.MapGet("/", GetAll);
@@ -12,28 +14,31 @@ public static class RegionsEndpoints {
         group.MapGet("/{id}/peaks", GetAllFromRegion);
         group.MapGet("/{id}/detailed", GetDetailedFromRegion);
 
-
         return group;
     }
 
-    static async Task<IResult> GetAllFromRegion(IRegionQueryService queries, int id) {
+    private static async Task<IResult> GetAllFromRegion(IRegionQueryService queries, int id)
+    {
         return await queries
             .GetById(id)
             .BindAsync(queries.AllPeaksFromRegion)
             .ToApiResultAsync();
     }
-    static async Task<IResult> GetDetailedFromRegion(IRegionQueryService queries, int id) {
+    private static async Task<IResult> GetDetailedFromRegion(IRegionQueryService queries, int id)
+    {
         return await queries
             .GetById(id)
             .BindAsync(queries.AllDetailedPeaksFromRegion)
             .ToApiResultAsync();
     }
 
-    static async Task<IResult> GetAll(IRegionQueryService service) {
+    private static async Task<IResult> GetAll(IRegionQueryService service)
+    {
         return await service.GetAllAsync().ToApiResultAsync();
     }
 
-    static async Task<IResult> GetById(IRegionQueryService service, int id) {
+    private static async Task<IResult> GetById(IRegionQueryService service, int id)
+    {
         return await service.GetById(id).ToApiResultAsync();
     }
 }

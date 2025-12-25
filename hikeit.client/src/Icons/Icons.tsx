@@ -21,6 +21,7 @@ export {
   FaPlus as IconPlus,
   FaEdit as IconEdit,
   FaExternalLinkAlt as IconExternal,
+  FaTrashAlt as IconDelete,
 } from "react-icons/fa";
 
 export {

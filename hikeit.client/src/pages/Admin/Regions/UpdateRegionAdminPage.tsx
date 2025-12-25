@@ -8,7 +8,7 @@ export default function ManageRegionAdminPage() {
   const { regionId } = useParams();
   const regionPeaks = UseDetailedRegionPeaks(Number(regionId));
 
-  const regionName = regionPeaks?.data?.region.name || "";
+  const regionName = regionPeaks?.data?.region?.name || "";
 
   return (
     <AdminPage title={`Manage ${regionName}`}>

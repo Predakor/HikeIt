@@ -25,8 +25,7 @@ export default function usePeakMutations() {
   const keys = detailedConfig.queryKey(regionId!);
 
   const create = useMutation({
-    mutationFn: (data: AddPeakConfig) =>
-      api.post<PostResult>(`${basePath}/add`, data, resolveCreated),
+    mutationFn: (data: AddPeakConfig) => api.post<PostResult>(`${basePath}`, data, resolveCreated),
     onSuccess: (_, newPeak) => {
       queryClient.setQueryData(keys, (prev: RegionWithDetailedPeaks) => {
         return {
@@ -42,9 +41,7 @@ export default function usePeakMutations() {
   });
 
   const update = useMutation({
-    mutationFn: ({ data, peakId }: UpdatePeak) =>
-      api.patch<{}>(`${basePath}/${peakId}/update`, data),
-
+    mutationFn: ({ data, peakId }: UpdatePeak) => api.patch<{}>(`${basePath}/${peakId}`, data),
     onSuccess: (_, { data: changes, peakId }) => {
       queryClient.setQueryData(keys, (prev: RegionWithDetailedPeaks) => {
         if (!prev) {
@@ -63,8 +60,26 @@ export default function usePeakMutations() {
     },
   });
 
+  const remove = useMutation({
+    mutationFn: ({ peakId }: { peakId: number }) => api.deleteR(`${basePath}/${peakId}`),
+    onSuccess: (_, { peakId }) => {
+      queryClient.setQueryData(keys, (prev: RegionWithDetailedPeaks) => {
+        if (!prev) {
+          return prev;
+        }
+
+        const filteredPeaks = prev.peaks.filter((p) => p.id !== peakId);
+
+        return { ...prev, peaks: filteredPeaks };
+      });
+
+      queryClient.invalidateQueries({ queryKey: keys });
+    },
+  });
+
   return {
     create,
     update,
+    remove,
   };
 }
