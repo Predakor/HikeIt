@@ -4,10 +4,12 @@ using Domain.Common.AggregateRoot;
 
 namespace Domain.Tests.DomainEvents;
 
-public class DomainEvenTests {
-    static DummyAggregate GetDummyAggregate => DummyAggregate.Create(Guid.NewGuid(), "");
+public class DomainEvenTests
+{
+    private static DummyAggregate GetDummyAggregate => DummyAggregate.Create(Guid.NewGuid(), "");
     [Fact]
-    public void AddDomainEvent_Should_AddEvent() {
+    public void AddDomainEventShouldAddEvent()
+    {
         var aggregate = DummyAggregate.Create(Guid.NewGuid(), "");
         var domainEvent = new DummyDomainEvent(Guid.NewGuid());
 
@@ -17,7 +19,8 @@ public class DomainEvenTests {
     }
 
     [Fact]
-    public void RemoveDomainEvent_Should_RemoveEvent() {
+    public void RemoveDomainEventShouldRemoveEvent()
+    {
         var aggregate = GetDummyAggregate;
         var domainEvent = new DummyDomainEvent(Guid.NewGuid());
 
@@ -28,7 +31,8 @@ public class DomainEvenTests {
     }
 
     [Fact]
-    public void ClearDomainEvents_Should_EmptyEventList() {
+    public void ClearDomainEventsShouldEmptyEventList()
+    {
         var aggregate = GetDummyAggregate;
         var domainEvent1 = new DummyDomainEvent(Guid.NewGuid());
         var domainEvent2 = new DummyDomainEvent(Guid.NewGuid());
@@ -42,7 +46,8 @@ public class DomainEvenTests {
     }
 
     [Fact]
-    public void Create_ShouldRaise_DomainEvent() {
+    public void CreateShouldRaiseDomainEvent()
+    {
         var postId = Guid.NewGuid();
         var post = DomainEvents.DummyAggregate.Create(postId, "Hello World");
 
@@ -55,12 +60,14 @@ public class DomainEvenTests {
 
 public record DummyDomainEvent(Guid PostId) : IDomainEvent;
 
-class DummyAggregate : AggregateRoot<Guid> {
+internal class DummyAggregate : AggregateRoot<Guid, DummyAggregate>
+{
     public string Title { get; private set; }
 
     private DummyAggregate() { }
 
-    public static DummyAggregate Create(Guid id, string title) {
+    public static DummyAggregate Create(Guid id, string title)
+    {
         var post = new DummyAggregate { Id = id, Title = title };
         post.TestAddDomainEvent(new DummyDomainEvent(id));
         return post;
@@ -71,10 +78,12 @@ class DummyAggregate : AggregateRoot<Guid> {
     public void TestRemoveDomainEvent(IDomainEvent domainEvent) => base.RemoveDomainEvent(domainEvent);
 }
 
-class DummyPostPublishedHandler : IDomainEventHandler<DummyDomainEvent> {
-    public bool WasCalled { get; private set; } = false;
+internal class DummyPostPublishedHandler : IDomainEventHandler<DummyDomainEvent>
+{
+    public bool WasCalled { get; private set; }
 
-    public Task Handle(DummyDomainEvent domainEvent, CancellationToken cancellationToken) {
+    public Task Handle(DummyDomainEvent domainEvent, CancellationToken cancellationToken)
+    {
         WasCalled = true;
         Console.WriteLine($"Handled domain event for PostId: {domainEvent.PostId}");
         return Task.CompletedTask;
