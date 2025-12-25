@@ -14,7 +14,6 @@ interface Props {
 
 export default function ManageRegionPeaks({ region }: Props) {
   const [showForm, setShowForm] = useState(false);
-
   const { create } = usePeakMutations();
 
   const upload = (data: AddPeakConfig) => {
@@ -30,10 +29,15 @@ export default function ManageRegionPeaks({ region }: Props) {
     <>
       <SimpleCard
         title="Peaks in the region"
-        headerCta={<Button onClick={() => setShowForm(true)}>Add Peak</Button>}
+        headerCta={
+          <Button colorPalette={"green"} onClick={() => setShowForm(true)}>
+            Add Peak
+          </Button>
+        }
       >
         <PeaksTable peaks={peaksWithRegion} />
       </SimpleCard>
+
       <Dialog
         onOpenChange={({ open }) => setShowForm(open)}
         title="Add Peak to the region"
