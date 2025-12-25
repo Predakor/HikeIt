@@ -26,6 +26,10 @@ export default function UpdatePeakForm(props: Props) {
 
     const changes = diffObjects(peak, updated);
 
+    if (changes.regionId && Array.isArray(changes.regionId)) {
+      changes.regionId = changes.regionId[0];
+    }
+
     const hasNoChanges = Object.entries(changes).length === 0;
     if (hasNoChanges) {
       alert("no changes detected");
