@@ -1,8 +1,8 @@
 ﻿using Domain.Common.Abstractions;
 using Domain.Common.AggregateRoot;
 using Domain.FileReferences;
-using Domain.Locations.Peaks;
 using Domain.Locations.Regions;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Domain.Trips.Analytics.ElevationProfiles;
 using Domain.Trips.Analytics.Peaks;
@@ -17,11 +17,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Commons.Databases;
 
-public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
+public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+{
     readonly IEventPublisher _eventPublisher;
 
     public TripDbContext(DbContextOptions<TripDbContext> options, IEventPublisher eventPublisher)
-        : base(options) {
+        : base(options)
+    {
         _eventPublisher = eventPublisher;
     }
 
@@ -34,7 +36,8 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
     public DbSet<ElevationProfile> ElevationProfiles { get; set; }
     public DbSet<PeaksAnalytic> PeaksAnalytics { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyAggregatesConfigurations();
@@ -44,18 +47,21 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> {
     public override async Task<int> SaveChangesAsync(
         bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default
-    ) {
+    )
+    {
         var events = GatherEvents();
         var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         await _eventPublisher.PublishAsync(events, cancellationToken);
         return result;
     }
 
-    List<IDomainEvent> GatherEvents() {
+    List<IDomainEvent> GatherEvents()
+    {
         return ChangeTracker
             .Entries<IAggregateRoot>()
             .Select(e => e.Entity)
-            .SelectMany(aggregate => {
+            .SelectMany(aggregate =>
+            {
                 IReadOnlyCollection<IDomainEvent> events = [.. aggregate.Events];
 
                 aggregate.ClearDomainEvents();

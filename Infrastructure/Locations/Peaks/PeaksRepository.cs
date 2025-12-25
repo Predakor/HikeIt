@@ -1,4 +1,5 @@
 ﻿using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Infrastructure.Commons.Databases;
 using Infrastructure.Commons.Repositories;
 

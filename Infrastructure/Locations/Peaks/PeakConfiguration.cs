@@ -1,4 +1,4 @@
-﻿using Domain.Locations.Peaks;
+﻿using Domain.Peaks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

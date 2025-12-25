@@ -1,7 +1,7 @@
 ﻿using Application.Commons.Mappers.Interfaces;
 using Application.Locations.Peaks;
 using Application.Locations.Regions;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 
 namespace Application.Commons.Mappers.Implementations;
 

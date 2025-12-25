@@ -1,5 +1,5 @@
 ﻿using Domain.Common.Geography.ValueObjects;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Domain.Trips.Root;
 using Domain.Users.Root;
 

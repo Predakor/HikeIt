@@ -1,7 +1,7 @@
 ﻿using Application.Locations.Peaks;
 using Application.ReachedPeaks.ValueObjects;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.Builders;
 using Domain.ReachedPeaks.ValueObjects;

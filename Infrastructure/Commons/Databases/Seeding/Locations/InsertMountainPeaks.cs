@@ -1,4 +1,4 @@
-﻿using Domain.Locations.Peaks;
+﻿using Domain.Peaks;
 using System.Collections.Immutable;
 
 namespace Infrastructure.Commons.Databases.Seeding.Locations;

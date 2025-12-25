@@ -1,5 +1,5 @@
 ﻿using Application.ReachedPeaks;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Infrastructure.Commons.Databases;
 using Microsoft.EntityFrameworkCore;

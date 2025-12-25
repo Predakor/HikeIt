@@ -1,6 +1,6 @@
 ﻿using Domain.Common.Abstractions;
 using Domain.Common.Validations.Validators;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Domain.Trips.Analytics.Root.Extentions;
 using Domain.Trips.Root;
 using Domain.Users.Root;

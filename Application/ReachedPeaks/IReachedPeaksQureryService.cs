@@ -1,5 +1,5 @@
 ﻿using Application.Commons.Abstractions.Queries;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 
 namespace Application.ReachedPeaks;

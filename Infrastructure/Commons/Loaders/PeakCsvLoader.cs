@@ -1,19 +1,22 @@
 ﻿using CsvHelper;
 using Domain.Common.Geography.Factories;
-using Domain.Locations.Peaks;
 using Domain.Locations.Regions;
+using Domain.Peaks;
 using Infrastructure.Commons.Databases.Seeding;
 using System.Collections.Immutable;
 using System.Globalization;
 
 namespace Infrastructure.Commons.Loaders;
 
-record PeakCsvEntry(string Name, int Height, string Range, double Lat, double Lon);
+internal record PeakCsvEntry(string Name, int Height, string Range, double Lat, double Lon);
 
-internal class PeakCsvLoader {
-    static T[] ExtractData<T>(string stringStream) {
-        var csvConfig = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture) {
-            PrepareHeaderForMatch = args => args.Header.ToLower(),
+internal class PeakCsvLoader
+{
+    private static T[] ExtractData<T>(string stringStream)
+    {
+        var csvConfig = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            PrepareHeaderForMatch = args => args.Header.ToLower(CultureInfo.CurrentCulture),
         };
 
         using var reader = new StringReader(stringStream);
@@ -22,11 +25,13 @@ internal class PeakCsvLoader {
         return csv.GetRecords<T>().ToArray();
     }
 
-    public static async Task<ImmutableArray<Peak>> LoadFromLink(string link) {
+    public static async Task<ImmutableArray<Peak>> LoadFromLink(string link)
+    {
         HttpClient client = new();
         var response = await client.GetAsync(link);
 
-        if (!response.IsSuccessStatusCode) {
+        if (!response.IsSuccessStatusCode)
+        {
             throw new Exception("failed to fetch data required for seeding terminating app");
         }
 
@@ -38,16 +43,21 @@ internal class PeakCsvLoader {
     }
 }
 
-internal static class CsvExtentions {
+internal static class CsvExtentions
+{
     public static ImmutableArray<Peak> MapToPeaks(
         this IEnumerable<PeakCsvEntry> csvEntries,
         IEnumerable<Region> regions
-    ) {
+    )
+    {
         return [.. csvEntries.Select(r => MapToPeak(r, regions))];
     }
 
-    static Peak MapToPeak(PeakCsvEntry r, IEnumerable<Region> regions) {
-        return new Peak() {
+    private static Peak MapToPeak(PeakCsvEntry r, IEnumerable<Region> regions)
+    {
+        return new Peak()
+        {
+            Id = default,
             Name = r.Name,
             Height = r.Height,
             Location = GeoFactory.CreatePoint(r.Lon, r.Lat),
@@ -55,7 +65,8 @@ internal static class CsvExtentions {
         };
     }
 
-    static int MatchToRegionId(string regionName, IEnumerable<Region> regions) {
+    private static int MatchToRegionId(string regionName, IEnumerable<Region> regions)
+    {
         var foundRegion = regions.FirstOrDefault(r => r.Name == regionName);
 
         return foundRegion != null

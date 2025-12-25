@@ -8,21 +8,31 @@ namespace Api.Controllers.Admin;
 [Authorize(Roles = "Admin")]
 [Route("api/[controller]/")]
 [ApiController]
-public class AdminController : ControllerBase {
+public class AdminController : ControllerBase
+{
     readonly IPeaksService _peakService;
 
-    public AdminController(IPeaksService peakService) {
+    public AdminController(IPeaksService peakService)
+    {
         _peakService = peakService;
     }
 
     [HttpPost("peaks/add")]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> AddPeak(PeakDto.CreateNew request) {
+    public async Task<IActionResult> AddPeak(PeakDto.CreateNew request)
+    {
         return await _peakService.Add(request).MapAsync(p => $"api/peaks/{p.Id}").ToActionResultAsync(ResultType.created);
     }
 
     [HttpPatch("peaks/{peakId}/update")]
-    public async Task<IActionResult> UpdatePeak(int peakId, PeakDto.Update request) {
+    public async Task<IActionResult> UpdatePeak(int peakId, PeakDto.Update request)
+    {
+        return await _peakService.Update(peakId, request).ToActionResultAsync(ResultType.noContent);
+    }
+
+    [HttpDelete("peaks/{peakId}")]
+    public async Task<IActionResult> RemovePeak(int peakId, PeakDto.Update request)
+    {
         return await _peakService.Update(peakId, request).ToActionResultAsync(ResultType.noContent);
     }
 }

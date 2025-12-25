@@ -1,8 +1,8 @@
 ﻿using Application.Commons.Mappers.Implementations;
 using Application.Locations.Peaks;
 using Application.Locations.Regions;
-using Domain.Locations.Peaks;
 using Domain.Locations.Regions;
+using Domain.Peaks;
 using Infrastructure.Commons.Databases;
 using Microsoft.EntityFrameworkCore;
 

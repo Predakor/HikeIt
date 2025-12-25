@@ -1,8 +1,8 @@
 ﻿using Domain.Common.AggregateRoot;
 using Domain.Common.Validations.Validators;
 using Domain.FileReferences;
-using Domain.Locations.Peaks;
 using Domain.Locations.Regions;
+using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.ValueObjects;
 using Domain.Trips.Analytics.Peaks.Events;
@@ -13,7 +13,8 @@ using Domain.Users.Root;
 
 namespace Domain.Trips.Root;
 
-public class Trip : AggregateRoot<Guid> {
+public class Trip : AggregateRoot<Guid, Trip>
+{
     public required string Name { get; set; }
     public DateOnly TripDay { get; private set; }
 
@@ -35,8 +36,10 @@ public class Trip : AggregateRoot<Guid> {
 
     public ICollection<ReachedPeak> Peaks { get; private set; } = [];
 
-    public static Trip Create(Guid tripId, string name, DateOnly tripDay, Guid userId) {
-        var trip = new Trip {
+    public static Trip Create(Guid tripId, string name, DateOnly tripDay, Guid userId)
+    {
+        var trip = new Trip
+        {
             Id = tripId,
             Name = name,
             UserId = userId,
@@ -46,8 +49,10 @@ public class Trip : AggregateRoot<Guid> {
         return trip;
     }
 
-    public Result<Trip> AddAnalytics(TripAnalytic analytic) {
-        if (analytic == null) {
+    public Result<Trip> AddAnalytics(TripAnalytic analytic)
+    {
+        if (analytic == null)
+        {
             return Errors.NotFound("passed null analytics");
         }
         Analytics = analytic;
@@ -55,8 +60,10 @@ public class Trip : AggregateRoot<Guid> {
         return this;
     }
 
-    public Result<Trip> AddReachedPeaks(CreateReachedPeak[] newPeaks) {
-        if (newPeaks.Length == 0) {
+    public Result<Trip> AddReachedPeaks(CreateReachedPeak[] newPeaks)
+    {
+        if (newPeaks.Length == 0)
+        {
             return Errors.EmptyCollection("new peaks");
         }
 
@@ -65,30 +72,37 @@ public class Trip : AggregateRoot<Guid> {
         return this;
     }
 
-    public Result<Trip> AddReachedPeaks(List<ReachedPeak> newPeaks) {
-        if (newPeaks.NullOrEmpty()) {
+    public Result<Trip> AddReachedPeaks(List<ReachedPeak> newPeaks)
+    {
+        if (newPeaks.NullOrEmpty())
+        {
             return Errors.EmptyCollection("new peaks");
         }
 
-        foreach (var newPeak in newPeaks) {
+        foreach (var newPeak in newPeaks)
+        {
             Peaks.Add(newPeak);
         }
 
         return this;
     }
 
-    public void ChangeRegion(int regionID) {
+    public void ChangeRegion(int regionID)
+    {
         RegionId = regionID;
     }
 
-    public void AddPeak(Peak peak) {
+    public void AddPeak(Peak peak)
+    {
         ArgumentNullException.ThrowIfNull(peak);
         PeakId = peak.Id;
     }
 
-    public Result<Trip> SetDate(DateOnly date) {
+    public Result<Trip> SetDate(DateOnly date)
+    {
         var validTripDay = new DateOnlyValidator().NotInTheFuture().Validate(date);
-        if (validTripDay.HasErrors(out var error)) {
+        if (validTripDay.HasErrors(out var error))
+        {
             return error;
         }
 
@@ -97,7 +111,8 @@ public class Trip : AggregateRoot<Guid> {
         return this;
     }
 
-    public Trip AddGpxFile(FileReference gpxFile) {
+    public Trip AddGpxFile(FileReference gpxFile)
+    {
         ArgumentNullException.ThrowIfNull(gpxFile);
         GpxFile = gpxFile;
         GpxFileId = gpxFile.Id;
@@ -105,10 +120,12 @@ public class Trip : AggregateRoot<Guid> {
         return this;
     }
 
-    public Trip OnDelete(IList<ReachedPeak> tripsReached) {
+    public Trip OnDelete(IList<ReachedPeak> tripsReached)
+    {
         Console.WriteLine("Deleting");
 
-        if (tripsReached.NotNullOrEmpty()) {
+        if (tripsReached.NotNullOrEmpty())
+        {
             var peakUpdates = tripsReached
                 .Select(rp => new PeakUpdateData(rp.PeakId, rp.Peak.RegionID))
                 .ToArray();

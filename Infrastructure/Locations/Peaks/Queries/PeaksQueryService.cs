@@ -3,7 +3,7 @@ using Application.Locations.Peaks;
 using Domain.Common.Geography;
 using Domain.Common.Geography.Factories;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks.Builders;
 using Infrastructure.Commons.Databases;
 using Infrastructure.Locations.Peaks.Extentions;
@@ -12,54 +12,64 @@ using System.Collections.Immutable;
 
 namespace Infrastructure.Locations.Peaks.Queries;
 
-public class PeaksQueryService : IPeaksQueryService {
-    readonly TripDbContext _tripDbContext;
-    const float ProximityPeakSerach = 10000f;
-    IQueryable<Peak> Peaks => _tripDbContext.Peaks.AsNoTracking();
+public class PeaksQueryService : IPeaksQueryService
+{
+    private readonly TripDbContext _tripDbContext;
+    private const float ProximityPeakSerach = 10000f;
+    private IQueryable<Peak> Peaks => _tripDbContext.Peaks.AsNoTracking();
 
-    public PeaksQueryService(TripDbContext tripDbContext) {
+    public PeaksQueryService(TripDbContext tripDbContext)
+    {
         _tripDbContext = tripDbContext;
     }
 
-    public async Task<Result<PeakDto.Complete>> GetByIdAsync(int id) {
+    public async Task<Result<PeakDto.Complete>> GetByIdAsync(int id)
+    {
         var peak = await Peaks.Include(x => x.Region).FirstOrDefaultAsync(e => e.Id == id);
 
-        if (peak == null) {
+        if (peak == null)
+        {
             return Errors.NotFound("peak with id: " + id);
         }
 
         return peak.ToComplete();
     }
 
-    public async Task<Result<IEnumerable<PeakDto.Complete>>> GetAllAsync() {
+    public async Task<Result<IEnumerable<PeakDto.Complete>>> GetAllAsync()
+    {
         var peaks = await Peaks.Include(p => p.Region).ToListAsync();
 
-        if (peaks.Count == 0) {
+        if (peaks.Count == 0)
+        {
             return Errors.EmptyCollection(nameof(Peak));
         }
 
         return peaks.ToComplete();
     }
 
-    public async Task<Result<Peak>> GetPeakWithinRadius(GpxPoint point, float radius) {
+    public async Task<Result<Peak>> GetPeakWithinRadius(GpxPoint point, float radius)
+    {
         var matchedPeaks = await Peaks.FirstOrDefaultAsync(p =>
             p.Location.IsWithinDistance(point.ToTopologyPoint(), radius)
         );
 
-        if (matchedPeaks is null) {
+        if (matchedPeaks is null)
+        {
             return Errors.NotFound("Peaks", "radius", radius);
         }
 
         return matchedPeaks;
     }
 
-    async Task<Result<Peak>> GetNearestPeakWithin(GpxPoint point, float radius) {
+    private async Task<Result<Peak>> GetNearestPeakWithin(GpxPoint point, float radius)
+    {
         var query = await Peaks
             .Where(p => p.Location.IsWithinDistance(point.ToTopologyPoint(), radius))
             .OrderBy(p => p.Location.Distance(point.ToTopologyPoint()))
             .FirstOrDefaultAsync();
 
-        if (query is null) {
+        if (query is null)
+        {
             return Errors.NotFound("Peaks", "radius", radius);
         }
         return query;
@@ -68,7 +78,8 @@ public class PeaksQueryService : IPeaksQueryService {
     public async Task<Result<List<Peak>>> GetPeaksWithinRadius(
         IEnumerable<GpxPoint> points,
         float radius
-    ) {
+    )
+    {
         var multipoint = GeoFactory.CreateMultiPoint(points.ToGpxPoints());
 
         var foundPeaks = await Peaks
@@ -76,7 +87,8 @@ public class PeaksQueryService : IPeaksQueryService {
             .Distinct()
             .ToListAsync();
 
-        if (foundPeaks.Count == 0) {
+        if (foundPeaks.Count == 0)
+        {
             return Errors.NotFound("No peak was found within " + radius + " radius");
         }
 
@@ -86,17 +98,21 @@ public class PeaksQueryService : IPeaksQueryService {
     public async Task<Result<List<ReachedPeakDataBuilder>>> GetPeaksWithinRadius(
         IEnumerable<ReachedPeakDataBuilder> points,
         float radius
-    ) {
+    )
+    {
         var potentialPeaks = points.ToImmutableArray();
-        if (potentialPeaks.Length == 0) {
+        if (potentialPeaks.Length == 0)
+        {
             return Errors.NotFound("No peak was found within " + radius + " radius");
         }
 
         List<ReachedPeakDataBuilder> matchedPeaks = [];
-        if (potentialPeaks.Length == 1) {
+        if (potentialPeaks.Length == 1)
+        {
             var point = potentialPeaks[0];
             return await GetNearestPeakWithin(point.Location, radius)
-                .MapAsync(peak => {
+                .MapAsync(peak =>
+                {
                     point.WithPeak(peak);
                     matchedPeaks.Add(point);
                     return matchedPeaks;
@@ -113,23 +129,27 @@ public class PeaksQueryService : IPeaksQueryService {
             .Distinct()
             .ToListAsync();
 
-        if (nearbyPeaks.NullOrEmpty()) {
+        if (nearbyPeaks.NullOrEmpty())
+        {
             return Errors.NotFound("No peak was found within " + radius + " radius");
         }
 
         Console.WriteLine("Detected nearby: " + nearbyPeaks.Count);
         Console.WriteLine("Searching from those with Treshold: " + radius);
 
-        foreach (var potentialPeak in potentialPeaks) {
+        foreach (var potentialPeak in potentialPeaks)
+        {
             Peak? nearestPeak = Helpers.GetNearestPeakWithin(radius, nearbyPeaks, potentialPeak);
 
-            if (nearestPeak is not null) {
+            if (nearestPeak is not null)
+            {
                 potentialPeak.WithPeak(nearestPeak);
                 matchedPeaks.Add(potentialPeak);
             }
         }
 
-        if (matchedPeaks.NullOrEmpty()) {
+        if (matchedPeaks.NullOrEmpty())
+        {
             return Errors.NotFound("No peak was found within " + radius + " radius");
         }
 
@@ -137,12 +157,14 @@ public class PeaksQueryService : IPeaksQueryService {
         return matchedPeaks;
     }
 
-    public async Task<Result<Peak>> GetPeakWithNameFromRegion(string name, int regionId) {
+    public async Task<Result<Peak>> GetPeakWithNameFromRegion(string name, int regionId)
+    {
         var result = await Peaks
             .Where(p => p.RegionID == regionId)
             .FirstOrDefaultAsync(p => p.Name == name);
 
-        if (result is null) {
+        if (result is null)
+        {
             return Errors.NotFound("peak", name);
         }
 
@@ -150,37 +172,45 @@ public class PeaksQueryService : IPeaksQueryService {
     }
 }
 
-static class Mapper {
-    public static PeakDto.Simple ToSimple(this Peak peak) {
+internal static class Mapper
+{
+    public static PeakDto.Simple ToSimple(this Peak peak)
+    {
         return new(peak.Height, peak.Name, peak.RegionID);
     }
 
-    public static List<PeakDto.Simple> ToSimple(this IEnumerable<Peak> foundPeaks) {
+    public static List<PeakDto.Simple> ToSimple(this IEnumerable<Peak> foundPeaks)
+    {
         return [.. foundPeaks.Select(p => p.ToSimple())];
     }
 
-    public static PeakDto.Complete ToComplete(this Peak peak) {
+    public static PeakDto.Complete ToComplete(this Peak peak)
+    {
         return new(peak.Height, peak.Name, RegionMapper.MapToCompleteDto(peak.Region));
     }
 
-    public static List<PeakDto.Complete> ToComplete(this IEnumerable<Peak> foundPeaks) {
+    public static List<PeakDto.Complete> ToComplete(this IEnumerable<Peak> foundPeaks)
+    {
         return [.. foundPeaks.Select(p => p.ToComplete())];
     }
 }
 
-static class Helpers {
+internal static class Helpers
+{
     public static Peak? GetNearestPeakWithin(
         float radius,
         List<Peak> nearbyPeaks,
         ReachedPeakDataBuilder potentialPeak
-    ) {
+    )
+    {
         return nearbyPeaks
             .Where(p => CalculateDistance(potentialPeak, p) <= radius)
             .OrderBy(p => CalculateDistance(potentialPeak, p))
             .FirstOrDefault();
     }
 
-    static double CalculateDistance(ReachedPeakDataBuilder potentialPeak, Peak realPeak) {
+    private static double CalculateDistance(ReachedPeakDataBuilder potentialPeak, Peak realPeak)
+    {
         var distance = DistanceHelpers.Distance2D(
             realPeak.Location.ToGeoPoint(),
             potentialPeak.Location

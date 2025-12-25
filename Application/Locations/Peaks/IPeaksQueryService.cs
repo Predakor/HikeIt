@@ -1,6 +1,6 @@
 ﻿using Application.Commons.Abstractions.Queries;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks.Builders;
 
 namespace Application.Locations.Peaks;

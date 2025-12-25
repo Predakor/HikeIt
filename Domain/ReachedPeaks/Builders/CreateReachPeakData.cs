@@ -1,5 +1,5 @@
 ﻿using Domain.Common.Geography.ValueObjects;
-using Domain.Locations.Peaks;
+using Domain.Peaks;
 using Domain.ReachedPeaks.ValueObjects;
 
 namespace Domain.ReachedPeaks.Builders;
