@@ -25,6 +25,10 @@ jobs:
        id-token: write
        contents: read
     steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+            node-version: '22.20.0'
       - uses: actions/checkout@v3
         with:
           submodules: true
