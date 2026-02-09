@@ -19,7 +19,7 @@ namespace Infrastructure.Commons.Databases;
 
 public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
-    readonly IEventPublisher _eventPublisher;
+    private readonly IEventPublisher _eventPublisher;
 
     public TripDbContext(DbContextOptions<TripDbContext> options, IEventPublisher eventPublisher)
         : base(options)
@@ -36,12 +36,12 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ElevationProfile> ElevationProfiles { get; set; }
     public DbSet<PeaksAnalytic> PeaksAnalytics { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
 
-        modelBuilder.ApplyAggregatesConfigurations();
-        modelBuilder.AllEntitiesToUtcTimes();
+        builder.ApplyAggregatesConfigurations();
+        builder.AllEntitiesToUtcTimes();
     }
 
     public override async Task<int> SaveChangesAsync(
@@ -55,7 +55,7 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
         return result;
     }
 
-    List<IDomainEvent> GatherEvents()
+    private List<IDomainEvent> GatherEvents()
     {
         return ChangeTracker
             .Entries<IAggregateRoot>()
@@ -63,7 +63,6 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
             .SelectMany(aggregate =>
             {
                 IReadOnlyCollection<IDomainEvent> events = [.. aggregate.Events];
-
                 aggregate.ClearDomainEvents();
                 return events;
             })

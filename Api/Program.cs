@@ -23,9 +23,11 @@ await DbHelpers.TryMigrationAndSeeding(app.Services);
 Console.WriteLine($"Current Directory in api: {Directory.GetCurrentDirectory()}");
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
-    app.UseSwaggerUI(c => {
+    app.UseSwaggerUI(c =>
+    {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "HikeIT Api v1");
     });
 }
@@ -34,7 +36,8 @@ var allowedOrigins =
     app.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? throw new Exception("allowed origins are undefined");
 
-app.UseCors(policy => {
+app.UseCors(policy =>
+{
     policy
         .WithOrigins(allowedOrigins)
         .AllowAnyHeader()
@@ -51,4 +54,4 @@ app.UseAuthorization();
 app.MapEndpoints();
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
