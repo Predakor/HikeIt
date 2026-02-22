@@ -1,9 +1,7 @@
-import type {
-  GraphData,
-  ReachedPeak,
-} from "@/components/ui/Inputs/File/trip.types";
+import type { GraphData, ReachedPeak } from "@/components/ui/Inputs/File/trip.types";
 import type { HTMLInputTypeAttribute } from "react";
 import type { BasicAnalytics, TripAnalytic } from "./analytics.types";
+import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 
 export interface TripDto {
   id: string;
@@ -25,6 +23,8 @@ export interface TripSummary {
     id: number;
     name: string;
   };
+  duration?: TimeSpanString;
+  distance: number;
 }
 
 export type TripSummaries = TripSummary[];

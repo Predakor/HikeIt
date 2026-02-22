@@ -18,6 +18,7 @@ export {
   FaRoute as IconJourney,
   FaArrowUp as IconArrowUp,
   FaArrowRight as IconArrowRight,
+  FaArrowLeft as IconArrowLeft,
   FaPlus as IconPlus,
   FaEdit as IconEdit,
   FaExternalLinkAlt as IconExternal,

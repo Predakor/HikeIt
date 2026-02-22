@@ -4,10 +4,7 @@ import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import type { TimeAnalytic } from "@/types/Api/analytics.types";
 import { Flex } from "@chakra-ui/react";
 import type { Duration } from "../../TimeAnalytics";
-import {
-  TimeSpan,
-  type TimeString,
-} from "@/Utils/Formatters/Duration/Duration";
+import { TimeSpan, type TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 import { TimeInDaySlider } from "./TimeInDaySlider";
 
 interface Props {
@@ -22,20 +19,12 @@ export function TimeframeSection({ data }: Props) {
   return (
     <SimpleCard title="Time Frame">
       <Flex>
-        <RowStat
-          label="Start"
-          value={tripStart}
-          addons={{ IconSource: IconPlay }}
-        />
-        <RowStat
-          label="End"
-          value={tripEnd}
-          addons={{ IconSource: IconStop }}
-        />
+        <RowStat label="Start" value={tripStart} addons={{ IconSource: IconPlay }} />
+        <RowStat label="End" value={tripEnd} addons={{ IconSource: IconStop }} />
       </Flex>
       <TimeInDaySlider
-        start={TimeSpan.From(tripStart as TimeString)}
-        end={TimeSpan.From(tripEnd as TimeString)}
+        start={TimeSpan.From(tripStart as TimeSpanString)}
+        end={TimeSpan.From(tripEnd as TimeSpanString)}
       />
     </SimpleCard>
   );

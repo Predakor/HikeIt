@@ -1,9 +1,13 @@
+import { TimeSpan } from "@/Utils/Formatters/Duration/Duration";
+import { arrayUtils } from "@/Utils/arrayUtils";
 import type { TripSummaries } from "@/types/Api/TripDtos";
 
 type YearGroups = Record<number, TripSummaries>;
 type YearGroup = {
   year: number;
   trips: TripSummaries;
+  totalDistance: number;
+  totalDuration: TimeSpan;
 };
 
 export default function sortTrips(trips: TripSummaries): YearGroup[] {
@@ -32,6 +36,10 @@ function SortByYear(yearGroups: YearGroups): YearGroup[] {
     .map(([year, trips]) => ({
       year: Number(year),
       trips: SortTripsByDate(trips),
+      totalDistance: arrayUtils.sum(trips, (t) => t.distance),
+      totalDuration: TimeSpan.FromSeconds(
+        arrayUtils.sum(trips, (t) => (t.duration ? TimeSpan.From(t.duration).toSeconds() : 0)),
+      ),
     }));
 }
 

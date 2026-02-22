@@ -6,9 +6,13 @@ using Domain.Trips.Analytics.Root;
 namespace Application.Trips.Root.Dtos;
 
 public record TripBase(string Name, DateOnly TripDay);
-public abstract record TripDto(TripBase Base) {
-
-    public record Summary(Guid Id, string Name, DateOnly TripDay, Region Region);
+public abstract record TripDto(TripBase Base)
+{
+    public sealed record Summary(Guid Id, string Name, DateOnly TripDay, Region Region)
+    {
+        public required int? Distance { get; init; }
+        public required TimeSpan? Duration { get; init; }
+    };
 
     public record WithBasicAnalytics(Guid Id, string Name, DateOnly TripDay, TripAnalyticsDto.Basic Analytics);
 
@@ -20,8 +24,8 @@ public abstract record TripDto(TripBase Base) {
         TripBase Base
     ) : TripDto(Base);
 
-
-    public record Request(Guid Id, TripBase Base) : TripDto(Base) {
+    public record Request(Guid Id, TripBase Base) : TripDto(Base)
+    {
         public record ResponseBasic(Guid Id, int RegionId, TripBase Base) : Request(Id, Base);
 
         public record Create(int RegionId, TripBase Base) : TripDto(Base);

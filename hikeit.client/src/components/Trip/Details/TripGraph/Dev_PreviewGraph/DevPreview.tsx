@@ -2,7 +2,7 @@ import { copyToClipboard } from "@/Utils/CopyToClipboard";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/Buttons";
-import { Stack } from "@chakra-ui/react";
+import { ButtonGroup, SimpleGrid, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import type { ChartData } from "../grap.types";
@@ -43,16 +43,28 @@ export function DevConfig({ onSubmit }: Props) {
   const send = useChartPreview(tripId, onSubmit);
 
   const copyConfig = () => copyToClipboard(formHook.getValues());
+  const reset = () => {};
+  const getDefault = () => {};
 
   return (
-    <form onSubmit={(e) => formHook.handleSubmit(send)(e)}>
-      <Stack flexGrow={1} gap={4}>
+    <Stack
+      as={"form"}
+      onSubmit={(e) => formHook.handleSubmit(send)(e)}
+      direction={{ lg: "row" }}
+      gap={8}
+    >
+      <SimpleGrid flexGrow={1} minChildWidth={"lg"} gapX={4}>
         <RenderInputs config={elevationDevConfig} formHook={formHook} />
+      </SimpleGrid>
 
+      <SimpleGrid gap={"4"} columns={{ base: undefined, lg: 1 }}>
         <PrimaryButton type={"submit"}>Preview</PrimaryButton>
-
         <SecondaryButton onClick={copyConfig}>Copy Config</SecondaryButton>
-      </Stack>
-    </form>
+        <SecondaryButton colorPalette={"red"} onClick={reset}>
+          Reset
+        </SecondaryButton>
+        <SecondaryButton onClick={getDefault}>Default</SecondaryButton>
+      </SimpleGrid>
+    </Stack>
   );
 }

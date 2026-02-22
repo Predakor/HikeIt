@@ -1,4 +1,4 @@
-import type { TimeString } from "@/Utils/Formatters/Duration/Duration";
+import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 
 export type UserStats = {
   totals: Totals;
@@ -10,9 +10,9 @@ export type Totals = {
   totalDistanceMeters: number;
   totalAscentMeters: number;
   totalDescentMeters: number;
-  totalDuration: TimeString;
-  totalClimbTime: TimeString;
-  totalDescentTime: TimeString;
+  totalDuration: TimeSpanString;
+  totalClimbTime: TimeSpanString;
+  totalDescentTime: TimeSpanString;
   totalPeaks: number;
   totalTrips: number;
 };

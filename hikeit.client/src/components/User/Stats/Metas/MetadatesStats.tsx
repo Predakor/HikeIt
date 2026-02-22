@@ -1,4 +1,4 @@
-import type { TimeString } from "@/Utils/Formatters/Duration/Duration";
+import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 import { ObjectToArray } from "@/Utils/ObjectToArray";
 import RowStat from "@/components/Stats/RowStat";
 import RenderStats from "../RenderStats";
@@ -8,7 +8,7 @@ import type { Metas } from "../Utils/statTypes";
 
 export function MetadatesStats({ metas }: { metas: Metas }) {
   const { longestTripMeters, ...rest } = metas;
-  const __mockupLongestTrip = "00:34:21" as TimeString;
+  const __mockupLongestTrip = "00:34:21" as TimeSpanString;
 
   return (
     <StatsCard title="Trip metadatas" columns={2}>

@@ -1,4 +1,5 @@
 import { toUkDate } from "@/Utils/Formatters/dateFormatter";
+import { formatter } from "@/components/User/Stats/Utils/formatter";
 import type { TripSummary } from "@/types/Api/TripDtos";
 import { Badge, Card, CardTitle, Flex, Span, Stack } from "@chakra-ui/react";
 import type { UtilityValues } from "node_modules/@chakra-ui/react/dist/types/styled-system/generated/prop-types.gen";
@@ -15,13 +16,15 @@ interface Props {
 }
 
 function TripCard({ data }: Props) {
-  const { id, name, tripDay, region } = data;
+  const { id, name, tripDay, region, duration, distance } = data;
   const formatedDate = toUkDate(tripDay);
 
   const baseInfo = [
     { label: "Region", value: region?.name },
     { label: "Date", value: formatedDate },
-  ] as const;
+    { label: "Distance", value: `${formatter.toKm(distance)} km` },
+    { label: "Duration", value: duration ? formatter.toDuration(duration) : "" },
+  ];
 
   const badges: BadgeMeta[] = [
     { name: "Analytics", color: "blue" },
@@ -40,12 +43,7 @@ function TripCard({ data }: Props) {
           <Stack fontSize={"lg"}>
             <Card.Description fontSize={"md"}>
               {baseInfo.map((item) => (
-                <Span
-                  display={"flex"}
-                  justifyItems={"start"}
-                  gap={2}
-                  key={item.label}
-                >
+                <Span display={"flex"} justifyItems={"start"} gap={2} key={item.label}>
                   {item.label}:
                   <Span fontSize={"lg"} color={"HighlightText"}>
                     {item.value}

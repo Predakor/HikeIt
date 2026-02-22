@@ -1,4 +1,4 @@
-import type { TimeString } from "@/Utils/Formatters/Duration/Duration";
+import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 import type { ReachedPeak } from "@/components/ui/Inputs/File/trip.types";
 
 export interface TripAnalytic {
@@ -29,14 +29,14 @@ export interface RouteAnalytic {
 }
 
 export interface TimeAnalytic {
-  duration: TimeString; // actually iso stirng
-  startTime: TimeString; //actually iso stirng
-  endTime: TimeString; //actually iso stirng
+  duration: TimeSpanString; // actually iso stirng
+  startTime: TimeSpanString; //actually iso stirng
+  endTime: TimeSpanString; //actually iso stirng
 
-  activeTime: TimeString;
-  idleTime: TimeString;
-  ascentTime: TimeString;
-  descentTime: TimeString;
+  activeTime: TimeSpanString;
+  idleTime: TimeSpanString;
+  ascentTime: TimeSpanString;
+  descentTime: TimeSpanString;
 
   averageSpeedKph: number;
   averageAscentKph: number;

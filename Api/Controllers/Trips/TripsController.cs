@@ -15,18 +15,20 @@ namespace Api.Controllers.Trips;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TripsController : ControllerBase {
-    readonly IAuthService _authService;
-    readonly ITripService _tripService;
-    readonly ITripQueryService _queryService;
-    readonly ITripAnalyticUnitOfWork _unitOfWork;
+public class TripsController : ControllerBase
+{
+    private readonly IAuthService _authService;
+    private readonly ITripService _tripService;
+    private readonly ITripQueryService _queryService;
+    private readonly ITripAnalyticUnitOfWork _unitOfWork;
 
     public TripsController(
         ITripService service,
         IAuthService authService,
         ITripQueryService queryService,
         ITripAnalyticUnitOfWork unitOfWork
-    ) {
+    )
+    {
         _tripService = service;
         _authService = authService;
         _unitOfWork = unitOfWork;
@@ -34,7 +36,8 @@ public class TripsController : ControllerBase {
     }
 
     [HttpGet("{tripId}")]
-    public async Task<IActionResult> Get(Guid tripId) {
+    public async Task<IActionResult> Get(Guid tripId)
+    {
         return await _authService
             .WithLoggedUserId()
             .BindAsync(userId => _queryService.GetWithBasicAnalytics(tripId, userId))
@@ -42,7 +45,8 @@ public class TripsController : ControllerBase {
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Create newTrip) {
+    public async Task<IActionResult> Create([FromBody] Create newTrip)
+    {
         var ctx = CreateTripContext.Create().WithRequest(newTrip);
         return await _authService
             .WithLoggedUser()
@@ -52,7 +56,8 @@ public class TripsController : ControllerBase {
     }
 
     [HttpPost("form")]
-    public async Task<IActionResult> CreateWithFile([FromForm] Create newTrip, IFormFile file) {
+    public async Task<IActionResult> CreateWithFile([FromForm] Create newTrip, IFormFile file)
+    {
         var ctx = CreateTripContext.Create().WithRequest(newTrip);
         return await _authService
             .WithLoggedUser()
@@ -66,7 +71,8 @@ public class TripsController : ControllerBase {
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id) {
+    public async Task<IActionResult> Delete(Guid id)
+    {
         return await _authService
             .WithLoggedUserId()
             .MapAsync(userId => _tripService.DeleteAsync(id, userId))
@@ -75,7 +81,8 @@ public class TripsController : ControllerBase {
     }
 
     [HttpPatch("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTripDto update) {
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTripDto update)
+    {
         return await _authService
             .WithLoggedUserId()
             .BindAsync(userId => _tripService.UpdateAsync(id, userId, update))

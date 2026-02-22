@@ -37,11 +37,7 @@ function TripsPage() {
         columns={{ base: 1, lg: 4 }}
         gap={8}
       >
-        <FetchWrapper
-          request={getTrips}
-          LoadingComponent={SkeletonGrid}
-          NoDataComponent={NoTrips}
-        >
+        <FetchWrapper request={getTrips} LoadingComponent={SkeletonGrid} NoDataComponent={NoTrips}>
           {(tripsData) => <RenderTripCards trips={tripsData} />}
         </FetchWrapper>
       </SimpleGrid>

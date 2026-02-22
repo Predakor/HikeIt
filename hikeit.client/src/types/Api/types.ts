@@ -7,5 +7,7 @@ export interface Trip {
 
   regionID: number; // Required int
 }
+export type DateTimeString = string & { __brand: "dateTimeBrand" };
+export type TimeSpanString = string & { __brand: "TimeSpanBrand" };
 
 export type ResourceUrl = string;

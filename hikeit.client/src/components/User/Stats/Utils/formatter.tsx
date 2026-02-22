@@ -1,15 +1,15 @@
-import type { TimeString } from "@/Utils/Formatters/Duration/Duration";
+import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 
 export const formatter = {
   toKm: (v: number) => (v / 1000).toFixed(1),
   toHours: (v: number) => (v / 60).toFixed(2),
-  toRawDuration: (timeString: TimeString) => {
+  toRawDuration: (timeString: TimeSpanString) => {
     const [hours, minutes, seconds] = extractTimeUnits(timeString);
     const hoursToSeconds = hours * 60 * 60;
     const minutesToSeconds = minutes * 60;
     return hoursToSeconds + minutesToSeconds + seconds;
   },
-  toDuration: (stringDate: TimeString) => {
+  toDuration: (stringDate: TimeSpanString) => {
     const [hours, minutes] = extractTimeUnits(stringDate);
 
     const parts = [];
@@ -36,7 +36,7 @@ export const timeConverter = {
     return parts.join(" ");
   },
 
-  toRawDuration: (timeString: TimeString) => {
+  toRawDuration: (timeString: TimeSpanString) => {
     const [hours, minutes, seconds] = extractTimeUnits(timeString);
     const hoursToSeconds = hours * 60 * 60;
     const minutesToSeconds = minutes * 60;
@@ -44,7 +44,7 @@ export const timeConverter = {
   },
 };
 
-const extractTimeUnits = (time: TimeString) => {
+const extractTimeUnits = (time: TimeSpanString) => {
   const [rawHours, rawMinutes, rawSeconds] = time.split(":");
 
   return [parseInt(rawHours), parseInt(rawMinutes), parseInt(rawSeconds)];

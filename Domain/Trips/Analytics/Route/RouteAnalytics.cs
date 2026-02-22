@@ -1,7 +1,8 @@
 ﻿namespace Domain.Trips.Analytics.Route;
 
 //Owned Type
-public class RouteAnalytic {
+public sealed class RouteAnalytic
+{
     public required double TotalDistanceMeters { get; init; }
     public required double TotalAscentMeters { get; init; }
     public required double TotalDescentMeters { get; init; }

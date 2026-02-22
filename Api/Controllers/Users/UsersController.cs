@@ -61,7 +61,7 @@ public class UsersController : ControllerBase {
     public async Task<IActionResult> GetAll() {
         return await _authService
             .WithLoggedUser()
-            .BindAsync(user => _tripQueries.GetAllAsync(user.Id))
+            .BindAsync(user => _tripQueries.GetSummariesAsync(user.Id))
             .ToActionResultAsync();
     }
 

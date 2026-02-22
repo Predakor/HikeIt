@@ -1,8 +1,9 @@
 import { arrayUtils } from "@/Utils/arrayUtils";
 
-export type TimeString = string & { __brand: "timeString" };
+export type TimeSpanString = string & { __brand: "timeString" };
+export type DateTimeString = string & { __brand: "dateTimeString" };
 
-type CastableTimes = TimeString | number | TimeSpan;
+type CastableTimes = TimeSpanString | number | TimeSpan;
 
 export class TimeSpan {
   private seconds: number;
@@ -19,7 +20,7 @@ export class TimeSpan {
     return new TimeSpan(seconds);
   }
 
-  static FromTimeString(timeString: TimeString) {
+  static FromTimeString(timeString: TimeSpanString) {
     return new TimeSpan(toTotalSeconds(timeString));
   }
 
@@ -34,7 +35,7 @@ export class TimeSpan {
     return new TimeSpan(Math.abs(start - end));
   }
 
-  subtract(time: TimeString | number | TimeSpan) {
+  subtract(time: TimeSpanString | number | TimeSpan) {
     this.seconds -= castToSeconds(time);
     return this;
   }
@@ -58,13 +59,13 @@ export class TimeSpan {
   }
 }
 
-const extractTimeUnits = (time: TimeString) => {
+const extractTimeUnits = (time: TimeSpanString) => {
   const [rawHours, rawMinutes, rawSeconds] = time.split(":");
 
   return [parseInt(rawHours), parseInt(rawMinutes), parseInt(rawSeconds)];
 };
 
-const toTotalSeconds = (time: TimeString) => {
+const toTotalSeconds = (time: TimeSpanString) => {
   const [hours, minutes, seconds] = extractTimeUnits(time);
   const hoursToSeconds = hours * 60 * 60;
   const minutesToSeconds = minutes * 60;
@@ -77,7 +78,9 @@ const castToSeconds = (time: CastableTimes) => {
       return toTotalSeconds(time);
     case "object":
       return time.toSeconds();
-    default:
+    case "number":
       return time;
+    default:
+      return time satisfies never;
   }
 };

@@ -17,12 +17,12 @@ function PreviewGraphDevOnly({ data }: Props) {
   const chartPoints = GenerateChartDataWithPreview(gains, start, preview);
 
   const styles = {
-    minWidth: "85vw",
+    // minWidth: "85vw",
     height: "60vh",
   };
 
   return (
-    <Stack direction={{ base: "column", lg: "row" }} gapX={8}>
+    <Stack direction={{ base: "column" }} gapX={8}>
       <Suspense fallback={<Skeleton {...styles} />}>
         <LazyLineGraph
           {...styles}

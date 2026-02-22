@@ -10,13 +10,14 @@ using Domain.Trips.Root;
 
 namespace Application.Trips.Root.Services;
 
-public class TripService : ITripService {
-    readonly IGpxService _gpxService;
-    readonly IGpxFileService _fileService;
-    readonly ITripRepository _tripRepository;
-    readonly ITripAnalyticUnitOfWork _unitOfWork;
-    readonly ITripAnalyticService _analyticsService;
-    readonly IReachedPeaksQureryService _reachedPeaksQureryService;
+public class TripService : ITripService
+{
+    private readonly IGpxService _gpxService;
+    private readonly IGpxFileService _fileService;
+    private readonly ITripRepository _tripRepository;
+    private readonly ITripAnalyticUnitOfWork _unitOfWork;
+    private readonly ITripAnalyticService _analyticsService;
+    private readonly IReachedPeaksQureryService _reachedPeaksQureryService;
 
     public TripService(
         IGpxService gpxService,
@@ -25,7 +26,8 @@ public class TripService : ITripService {
         ITripAnalyticUnitOfWork unitOfWork,
         ITripAnalyticService analyticsService,
         IReachedPeaksQureryService reachedPeaksQureryService
-    ) {
+    )
+    {
         _gpxService = gpxService;
         _fileService = fileService;
         _tripRepository = tripRepository;
@@ -34,13 +36,15 @@ public class TripService : ITripService {
         _reachedPeaksQureryService = reachedPeaksQureryService;
     }
 
-    public async Task<Result<Guid>> CreateSimpleAsync(CreateTripContext context) {
-        return await CreateTrip(context)
+    public async Task<Result<Guid>> CreateSimpleAsync(CreateTripContext ctx)
+    {
+        return await CreateTrip(ctx)
             .BindAsync(SaveTripChanges)
             .MapAsync(createdTrip => createdTrip.Id);
     }
 
-    public async Task<Result<Trip>> CreateAsync(CreateTripContext ctx) {
+    public async Task<Result<Trip>> CreateAsync(CreateTripContext ctx)
+    {
         return await CreateTrip(ctx)
             .BindAsync(ProccesGpxFile)
             .BindAsync(CreateAnalytics)
@@ -48,48 +52,57 @@ public class TripService : ITripService {
             .BindAsync(SaveTripChanges);
     }
 
-    public async Task<Result<Trip>> CreateAsync(Trip trip) {
+    public async Task<Result<Trip>> CreateAsync(Trip trip)
+    {
         return await _unitOfWork
             .TripRepository.Add(trip)
             .TapAsync(trip => _unitOfWork.SaveChangesAsync());
     }
 
-    public async Task<Result<bool>> DeleteAsync(Guid tripId, Guid userId) {
-        var tripsReachedOnTrip = await _reachedPeaksQureryService.ReachedOnTrip(tripId);
+    public async Task<Result<bool>> DeleteAsync(Guid id, Guid userId)
+    {
+        var tripsReachedOnTrip = await _reachedPeaksQureryService.ReachedOnTrip(id);
 
         return await _tripRepository
-            .Get(tripId, userId)
+            .Get(id, userId)
             .MapAsync(t => t.OnDelete(tripsReachedOnTrip?.Value!))
             .BindAsync(_tripRepository.Remove);
     }
 
-    public async Task<Result<bool>> UpdateAsync(Guid id, Guid userId, UpdateTripDto update) {
+    public async Task<Result<bool>> UpdateAsync(Guid id, Guid userId, UpdateTripDto update)
+    {
         return await _tripRepository
             .GetByIdAsync(id)
-            .TapAsync(t => {
-                if (update.TripDay.HasValue) {
+            .TapAsync(t =>
+            {
+                if (update.TripDay.HasValue)
+                {
                     t.SetDate(update.TripDay.Value);
                 }
 
-                if (update.TripName is not null) {
+                if (update.TripName is not null)
+                {
                     t.Name = update.TripName;
                 }
             })
             .BindAsync(_ => _unitOfWork.SaveChangesAsync());
     }
 
-    async Task<Result<Trip>> SaveTripChanges(CreateTripContext ctx) {
+    private async Task<Result<Trip>> SaveTripChanges(CreateTripContext ctx)
+    {
         return await _unitOfWork.SaveChangesAsync().MapAsync(_ => ctx.Trip);
     }
 
-    async Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx) {
+    private async Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx)
+    {
         return await _gpxService
             .ExtractGpxData(ctx.File)
             .BindAsync(data => ProccesGpxDataCommand.Create(data).Execute())
             .MapAsync(ctx.WithAnalyticData);
     }
 
-    async Task<Result<CreateTripContext>> CreateAnalytics(CreateTripContext ctx) {
+    private async Task<Result<CreateTripContext>> CreateAnalytics(CreateTripContext ctx)
+    {
         return await _analyticsService
             .GenerateAnalytic(ctx)
             .MapAsync(_unitOfWork.TripAnalytics.Add)
@@ -97,18 +110,21 @@ public class TripService : ITripService {
             .MapAsync(_ => ctx);
     }
 
-    async Task<Result<CreateTripContext>> CreateGpxFile(CreateTripContext ctx) {
+    private async Task<Result<CreateTripContext>> CreateGpxFile(CreateTripContext ctx)
+    {
         return await _fileService
             .CreateTemporrary(ctx.File, ctx.User.Id, ctx.Id)
             .MapAsync(ctx.Trip.AddGpxFile)
             .MapAsync(_ => ctx);
     }
 
-    Result<CreateTripContext> CreateTrip(CreateTripContext ctx) {
+    private Result<CreateTripContext> CreateTrip(CreateTripContext ctx)
+    {
         var (name, tripDay) = ctx.Request.Base;
         var trip = Trip.Create(ctx.Id, name, tripDay, ctx.User.Id);
 
-        if (ctx?.Request.RegionId != null) {
+        if (ctx?.Request.RegionId != null)
+        {
             trip.ChangeRegion(ctx.Request.RegionId);
         }
 

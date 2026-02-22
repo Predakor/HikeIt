@@ -6,14 +6,14 @@ using Domain.Trips.Analytics.Time;
 
 namespace Domain.Trips.Analytics.Root;
 
-public class TripAnalytic : IEntity<Guid> {
+public class TripAnalytic : IEntity<Guid>
+{
     public Guid Id { get; init; }
 
     #region Owned Types
     public RouteAnalytic? RouteAnalytics { get; private set; }
     public TimeAnalytic? TimeAnalytics { get; private set; }
     #endregion
-
 
     public Guid PeaksAnalyticsId { get; private set; }
     public Guid ElevationProfileId { get; private set; }
@@ -28,45 +28,52 @@ public class TripAnalytic : IEntity<Guid> {
         TimeAnalytic? timeAnalytics,
         PeaksAnalytic? peaksAnalytics,
         ElevationProfile? elevationProfile
-    ) {
-        var analytics = new TripAnalytic() {
+    )
+    {
+        var analytics = new TripAnalytic()
+        {
             Id = id,
             RouteAnalytics = routeAnalytics,
             TimeAnalytics = timeAnalytics,
         };
 
-        if (peaksAnalytics is not null) {
+        if (peaksAnalytics is not null)
+        {
             analytics.AddPeaksAnalytic(peaksAnalytics);
         }
 
-        if (elevationProfile is not null) {
+        if (elevationProfile is not null)
+        {
             analytics.AddElevationProfile(elevationProfile);
         }
 
         return analytics;
     }
 
-    public void AddPeaksAnalytic(PeaksAnalytic analytics) {
+    public void AddPeaksAnalytic(PeaksAnalytic analytics)
+    {
         ArgumentNullException.ThrowIfNull(analytics);
         PeaksAnalytic = analytics;
         PeaksAnalyticsId = Id;
     }
 
-    public void AddElevationProfile(ElevationProfile profile) {
+    public void AddElevationProfile(ElevationProfile profile)
+    {
         ArgumentNullException.ThrowIfNull(profile);
         ElevationProfile = profile;
         ElevationProfileId = Id;
     }
 
-    public void AddTimeAnalytics(TimeAnalytic analytics) {
+    public void AddTimeAnalytics(TimeAnalytic analytics)
+    {
         ArgumentNullException.ThrowIfNull(analytics);
         TimeAnalytics = analytics;
     }
 
-    public void AddRouteAnalytics(RouteAnalytic analytics) {
+    public void AddRouteAnalytics(RouteAnalytic analytics)
+    {
         ArgumentNullException.ThrowIfNull(analytics);
         RouteAnalytics = analytics;
     }
-
 
 }
