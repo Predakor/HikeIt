@@ -49,7 +49,7 @@ export class TimeSpan {
   }
 
   toHours() {
-    return this.seconds / 3600;
+    return Math.floor(this.seconds / 3600);
   }
 
   toString() {
