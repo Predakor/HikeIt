@@ -5,16 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Trips.Root;
 
-public class TripRepository : CrudResultRepository<Trip, Guid>, ITripRepository {
+public class TripRepository : CrudResultRepository<Trip, Guid>, ITripRepository
+{
     public TripRepository(TripDbContext context)
         : base(context) { }
 
-    public Result<Trip> Add(Trip trip) {
+    public Result<Trip> Add(Trip trip)
+    {
         DbSet.Add(trip);
         return trip;
     }
 
-    public async Task<Result<Trip>> Get(Guid tripId, Guid userId) {
+    public async Task<Result<Trip>> Get(Guid tripId, Guid userId)
+    {
         var trip = await DbSet
             .Include(x => x.Region)
             .Include(x => x.GpxFile)
@@ -23,14 +26,16 @@ public class TripRepository : CrudResultRepository<Trip, Guid>, ITripRepository 
             .Where(x => x.UserId == userId)
             .FirstOrDefaultAsync(x => x.Id == tripId);
 
-        if (trip == null) {
+        if (trip == null)
+        {
             return Errors.NotFound($"trip with id:{tripId}");
         }
 
         return trip;
     }
 
-    public async Task<Result<IEnumerable<Trip>>> GetAll(Guid userId) {
+    public async Task<Result<IEnumerable<Trip>>> GetAll(Guid userId)
+    {
         return await DbSet
             .Include(x => x.Region)
             .Include(x => x.Analytics)
@@ -38,21 +43,29 @@ public class TripRepository : CrudResultRepository<Trip, Guid>, ITripRepository 
             .ToListAsync();
     }
 
-    public async Task<Result<Trip>> GetWithFile(Guid tripId) {
+    public async Task<Result<Trip>> GetWithFile(Guid tripId)
+    {
         var trip = await DbSet
             .Include(t => t.GpxFile)
             .Where(t => t.Id == tripId)
             .FirstOrDefaultAsync();
 
-        if (trip is null) {
+        if (trip is null)
+        {
             return Errors.NotFound("trip", tripId);
         }
 
         return trip;
     }
 
-    public Result<bool> Remove(Trip trip) {
+    public Result<bool> Remove(Trip trip)
+    {
         DbSet.Remove(trip);
         return true;
+    }
+
+    public Task<Result<bool>> SaveChangesAsync()
+    {
+        throw new NotImplementedException();
     }
 }

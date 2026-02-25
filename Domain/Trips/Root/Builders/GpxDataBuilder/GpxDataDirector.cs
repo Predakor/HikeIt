@@ -5,8 +5,20 @@ namespace Domain.Trips.Root.Builders.GpxDataBuilder;
 
 public record ElevationDataWithConfig(AnalyticData Data, DataProccesConfig Config);
 
-internal static class GpxDataDirector {
-    public static AnalyticData AnalyticData(List<GpxPoint> points) {
+internal static class GpxDataDirector
+{
+    public static AnalyticData AnalyticData(List<GpxPoint> points)
+    {
+        var config = GpxDataConfigs.GpxFile;
+        return new GpxDataBuilder(points)
+            .ClampElevationSpikes(config.MaxElevationSpike)
+            .ApplyMedianFilter(config.MedianFilterWindowSize)
+            .ApplyEmaSmoothing(config.EmaSmoothingAlpha)
+            .RoundElevation(config.RoundingDecimalsCount)
+            .Build();
+    }
+    public static AnalyticData AnalyticData(List<GpxPoint> points, DataProccesConfig dataCleanupSettings)
+    {
         var config = GpxDataConfigs.GpxFile;
         return new GpxDataBuilder(points)
             .ClampElevationSpikes(config.MaxElevationSpike)
@@ -16,7 +28,8 @@ internal static class GpxDataDirector {
             .Build();
     }
 
-    public static AnalyticData ElevationProfile(AnalyticData data) {
+    public static AnalyticData ElevationProfile(AnalyticData data)
+    {
         var config = GpxDataConfigs.ElevationProfile;
 
         return new GpxDataBuilder(data.Points)
@@ -24,7 +37,8 @@ internal static class GpxDataDirector {
             .Build();
     }
 
-    public static AnalyticData FromConfig(AnalyticData data, DataProccesConfig.Partial config) {
+    public static AnalyticData FromConfig(AnalyticData data, DataProccesConfig.Partial config)
+    {
         var builder = new GpxDataBuilder(data.Points);
         var (
             MaxElevationSpike,
@@ -34,19 +48,24 @@ internal static class GpxDataDirector {
             DownsamplingFactor
         ) = config;
 
-        if (MaxElevationSpike != null) {
+        if (MaxElevationSpike != null)
+        {
             builder.ClampElevationSpikes((double)MaxElevationSpike);
         }
-        if (MedianFilterWindowSize.HasValue) {
+        if (MedianFilterWindowSize.HasValue)
+        {
             builder.ApplyMedianFilter(MedianFilterWindowSize.Value);
         }
-        if (EmaSmoothingAlpha.HasValue) {
+        if (EmaSmoothingAlpha.HasValue)
+        {
             builder.ApplyEmaSmoothing(EmaSmoothingAlpha.Value);
         }
-        if (DownsamplingFactor.HasValue) {
+        if (DownsamplingFactor.HasValue)
+        {
             builder.DownSample(DownsamplingFactor.Value);
         }
-        if (RoundingDecimalsCount.HasValue) {
+        if (RoundingDecimalsCount.HasValue)
+        {
             builder.RoundElevation(RoundingDecimalsCount.Value);
         }
         return builder.Build();

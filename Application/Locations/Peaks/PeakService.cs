@@ -51,7 +51,7 @@ public class PeakService : IPeaksService
 
     private async Task<Result<Peak>> SaveChanges(Peak peak)
     {
-        return await _repository.SaveChangesAsync().MapAsync(_ => peak);
+        return await _repository.SaveChangesAsync(CancellationToken.None).MapAsync(_ => peak);
     }
 }
 

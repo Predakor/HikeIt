@@ -1,12 +1,21 @@
 ﻿namespace Domain.Trips.Root.Builders.Config;
 
-public abstract record DataProccesConfig {
+public interface IGpxDataProcessingSettings
+{
+    float MaxElevationSpike { get; }
+    float EmaSmoothingAlpha { get; }
+    int MedianFilterWindowSize { get; }
+    int RoundingDecimalsCount { get; }
+}
+
+public abstract record DataProccesConfig
+{
     public sealed record GpxFile(
         float MaxElevationSpike = 8f,
         float EmaSmoothingAlpha = 0.88f,
         int MedianFilterWindowSize = 6,
         int RoundingDecimalsCount = 1
-    ) : DataProccesConfig;
+    ) : DataProccesConfig, IGpxDataProcessingSettings;
 
     public sealed record ElevationProfile(
         float MaxElevationSpike = 8f,
@@ -14,7 +23,7 @@ public abstract record DataProccesConfig {
         int MedianFilterWindowSize = 6,
         int RoundingDecimalsCount = 1,
         int DownsamplingFactor = 10
-    ) : DataProccesConfig;
+    ) : DataProccesConfig, IGpxDataProcessingSettings;
 
     public sealed record Partial(
         float? MaxElevationSpike = null,
@@ -25,7 +34,8 @@ public abstract record DataProccesConfig {
     ) : DataProccesConfig;
 }
 
-public static class GpxDataConfigs {
+public static class GpxDataConfigs
+{
     public static DataProccesConfig.GpxFile GpxFile => new();
     public static DataProccesConfig.ElevationProfile ElevationProfile => new();
     public static DataProccesConfig.Partial Partial => new();

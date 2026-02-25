@@ -9,14 +9,16 @@ using System.Collections.Immutable;
 
 namespace Application.Users.RegionProgressions.EventHandlers;
 
-internal class ReachedNewPeak_UpdateStatsHandler : IDomainEventHandler<ReachedNewPeak> {
-    readonly IUserRepository _userRepository;
-    readonly IRegionQueryService _regionQueries;
+internal class ReachedNewPeak_UpdateStatsHandler : IDomainEventHandler<ReachedNewPeak>
+{
+    private readonly IUserRepository _userRepository;
+    private readonly IRegionQueryService _regionQueries;
 
     public ReachedNewPeak_UpdateStatsHandler(
         IUserRepository userRepository,
         IRegionQueryService regionQueries
-    ) {
+    )
+    {
         _userRepository = userRepository;
         _regionQueries = regionQueries;
     }
@@ -24,27 +26,31 @@ internal class ReachedNewPeak_UpdateStatsHandler : IDomainEventHandler<ReachedNe
     public async Task Handle(
         ReachedNewPeak domainEvent,
         CancellationToken cancellationToken = default
-    ) {
+    )
+    {
         var (UserId, _, NewPeaks) = domainEvent.Data;
 
         await _userRepository
             .GetWithRegionProgresses(UserId)
             .MapAsync(user => UpdateRegionProgresses(user, NewPeaks))
-            .BindAsync(_ => _userRepository.SaveChangesAsync());
+            .BindAsync(_ => _userRepository.SaveChangesAsync(CancellationToken.None));
     }
 
-    internal async Task<bool> UpdateRegionProgresses(User user, CreateReachedPeak[] NewPeaks) {
+    internal async Task<bool> UpdateRegionProgresses(User user, CreateReachedPeak[] NewPeaks)
+    {
         var regionUpdates = NewPeaks
             .GroupBy(p => p.RegionID)
             .Select(g => new UpdateRegionProgress(g.Key, g.Select(p => p.PeakId)))
             .ToImmutableArray();
 
-        foreach (var item in regionUpdates) {
+        foreach (var item in regionUpdates)
+        {
             var regionProgress = user.RegionProgresses.FirstOrDefault(rp =>
                 rp.RegionId == item.RegionId
             );
 
-            if (regionProgress is null) {
+            if (regionProgress is null)
+            {
                 await CreateNewRegionProgress(user, item);
 
                 continue;
@@ -56,7 +62,8 @@ internal class ReachedNewPeak_UpdateStatsHandler : IDomainEventHandler<ReachedNe
         return true;
     }
 
-    async Task CreateNewRegionProgress(User user, UpdateRegionProgress progressUpdate) {
+    private async Task CreateNewRegionProgress(User user, UpdateRegionProgress progressUpdate)
+    {
         await _regionQueries
             .GetPeakCount(progressUpdate.RegionId)
             .MapAsync(peaksInRegionCount =>

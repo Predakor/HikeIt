@@ -21,6 +21,6 @@ internal sealed class TripDateUpdated_UpdateStatsHandler : IDomainEventHandler<T
         await _userRepository
             .GetUserStats(domainEvent.Trip.UserId)
             .TapAsync(stats => stats.UpdateFirstLastTripDate(domainEvent.Trip.TripDay))
-            .TapAsync(_ => _userRepository.SaveChangesAsync());
+            .TapAsync(_ => _userRepository.SaveChangesAsync(CancellationToken.None));
     }
 }

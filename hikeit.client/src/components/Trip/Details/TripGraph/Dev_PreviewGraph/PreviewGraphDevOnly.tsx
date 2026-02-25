@@ -17,7 +17,6 @@ function PreviewGraphDevOnly({ data }: Props) {
   const chartPoints = GenerateChartDataWithPreview(gains, start, preview);
 
   const styles = {
-    // minWidth: "85vw",
     height: "60vh",
   };
 

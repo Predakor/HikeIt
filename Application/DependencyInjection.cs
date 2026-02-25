@@ -1,16 +1,21 @@
-﻿using Application.Commons.Abstractions;
+﻿using Application.AppSettings;
+using Application.AppSettings.Decorators;
+using Application.Commons.Abstractions;
 using Application.Commons.Abstractions.Queries;
 using Application.Commons.Drafts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
 
-public static class DependencyInjection {
-    public static IServiceCollection AddAplication(this IServiceCollection services) {
-        return services.AddDomainEvents().AddQueries().AddDrafts();
+public static class DependencyInjection
+{
+    public static IServiceCollection AddAplication(this IServiceCollection services)
+    {
+        return services.AddDomainEvents().AddQueries().AddDrafts().DecorateAppSettings();
     }
 
-    static IServiceCollection AddDomainEvents(this IServiceCollection services) {
+    private static IServiceCollection AddDomainEvents(this IServiceCollection services)
+    {
         return services.Scan(scan =>
             scan.FromAssembliesOf(typeof(DependencyInjection))
                 .AddClasses(
@@ -22,7 +27,8 @@ public static class DependencyInjection {
         );
     }
 
-    static IServiceCollection AddQueries(this IServiceCollection services) {
+    private static IServiceCollection AddQueries(this IServiceCollection services)
+    {
         return services.Scan(scan =>
             scan.FromAssembliesOf(typeof(DependencyInjection))
                 .AddClasses(
@@ -34,7 +40,14 @@ public static class DependencyInjection {
         );
     }
 
-    static IServiceCollection AddDrafts(this IServiceCollection services) {
+    private static IServiceCollection AddDrafts(this IServiceCollection services)
+    {
         return services.AddSingleton(typeof(IDraftService<>), typeof(MemoryDraftService<>));
     }
+
+    private static IServiceCollection DecorateAppSettings(this IServiceCollection services)
+    {
+        return services.Decorate<IAppSettingsService, CachedAppSettingsServiceDecorator>();
+    }
+
 }

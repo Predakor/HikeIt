@@ -5,22 +5,26 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Users.Avatar;
 
-internal class UserAvatarFileService : IUserAvatarFileService {
-    const BlobContainer Container = BlobContainer.Avatar;
+internal class UserAvatarFileService : IUserAvatarFileService
+{
+    private const BlobContainer Container = BlobContainer.Avatar;
 
-    readonly IFileStorage _fileStorage;
-    readonly IUserRepository _userRepository;
+    private readonly IFileStorage _fileStorage;
+    private readonly IUserRepository _userRepository;
 
-    public UserAvatarFileService(IFileStorage fileStorage, IUserRepository userRepository) {
+    public UserAvatarFileService(IFileStorage fileStorage, IUserRepository userRepository)
+    {
         _fileStorage = fileStorage;
         _userRepository = userRepository;
     }
 
-    public Task<Result<bool>> Delete(User user) {
+    public Task<Result<bool>> Delete(User user)
+    {
         return _fileStorage.DeleteAsync(user.Id.ToString(), Container);
     }
 
-    public async Task<Result<string>> Upload(IFormFile file, User user) {
+    public async Task<Result<string>> Upload(IFormFile file, User user)
+    {
         string path = user.Id.ToString();
         var fileContent = await file.ToFileContent();
 
@@ -28,7 +32,7 @@ internal class UserAvatarFileService : IUserAvatarFileService {
             .ValidateAvatar(file)
             .BindAsync(_ => _fileStorage.UploadAsync(fileContent, path, Container))
             .MapAsync(f => user.SetAvatar(f.Url))
-            .TapAsync(_ => _userRepository.SaveChangesAsync())
+            .TapAsync(_ => _userRepository.SaveChangesAsync(CancellationToken.None))
             .MapAsync(u => u.Avatar!);
     }
 }

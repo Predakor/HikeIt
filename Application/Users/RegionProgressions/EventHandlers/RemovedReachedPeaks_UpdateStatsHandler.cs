@@ -5,33 +5,39 @@ using Domain.Users.Root;
 
 namespace Application.Users.RegionProgressions.EventHandlers;
 
-internal class RemovedReachedPeaks_UpdateStatsHandler : IDomainEventHandler<RemovedReachedPeaksEvent> {
-    readonly IUserRepository _userRepository;
+internal class RemovedReachedPeaks_UpdateStatsHandler : IDomainEventHandler<RemovedReachedPeaksEvent>
+{
+    private readonly IUserRepository _userRepository;
 
-    public RemovedReachedPeaks_UpdateStatsHandler(IUserRepository userRepository) {
+    public RemovedReachedPeaks_UpdateStatsHandler(IUserRepository userRepository)
+    {
         _userRepository = userRepository;
     }
 
     public async Task Handle(
         RemovedReachedPeaksEvent domainEvent,
         CancellationToken cancellationToken = default
-    ) {
+    )
+    {
         await _userRepository
             .GetWithRegionProgresses(domainEvent.UserId)
             .MapAsync(ProgressionsContext.FromUser)
             .MapAsync(ctx => ctx.AddRegionUpdates(domainEvent.RemovedPeaks))
             .MapAsync(UpdateUserRegionsSummaries)
             .MapAsync(RemoveEmptyRegionProgressions)
-            .MapAsync(_ => _userRepository.SaveChangesAsync());
+            .MapAsync(_ => _userRepository.SaveChangesAsync(CancellationToken.None));
     }
 
-    internal static ProgressionsContext UpdateUserRegionsSummaries(ProgressionsContext ctx) {
-        foreach (var regionUpdate in ctx.RegionUpdates) {
+    internal static ProgressionsContext UpdateUserRegionsSummaries(ProgressionsContext ctx)
+    {
+        foreach (var regionUpdate in ctx.RegionUpdates)
+        {
             var regionToUpdate = ctx.RegionProgressions.FirstOrDefault(p =>
                 p.RegionId == regionUpdate.Key
             );
 
-            if (regionToUpdate is null) {
+            if (regionToUpdate is null)
+            {
                 continue;
             }
 
@@ -40,12 +46,14 @@ internal class RemovedReachedPeaks_UpdateStatsHandler : IDomainEventHandler<Remo
         return ctx;
     }
 
-    internal static ProgressionsContext RemoveEmptyRegionProgressions(ProgressionsContext ctx) {
+    internal static ProgressionsContext RemoveEmptyRegionProgressions(ProgressionsContext ctx)
+    {
         var emptyProgressions = ctx
             .User.RegionProgresses.Where(rp => rp.TotalReachedPeaks == 0)
             .ToList();
 
-        foreach (var emptyProgress in emptyProgressions) {
+        foreach (var emptyProgress in emptyProgressions)
+        {
             ctx.User.RegionProgresses.Remove(emptyProgress);
         }
 
@@ -53,26 +61,31 @@ internal class RemovedReachedPeaks_UpdateStatsHandler : IDomainEventHandler<Remo
     }
 }
 
-class ProgressionsContext {
+internal class ProgressionsContext
+{
     public User User { get; init; }
     public List<RegionProgress> RegionProgressions;
     public Dictionary<int, PeakUpdateData[]> RegionUpdates { get; private set; } = [];
 
-    ProgressionsContext(User user) {
+    private ProgressionsContext(User user)
+    {
         User = user;
         RegionProgressions = user.RegionProgresses.ToList();
     }
 
-    public ProgressionsContext AddRegionUpdates(PeakUpdateData[] removedPeaks) {
+    public ProgressionsContext AddRegionUpdates(PeakUpdateData[] removedPeaks)
+    {
         RegionUpdates = MergeRegionUpdates(removedPeaks);
         return this;
     }
 
-    public static ProgressionsContext FromUser(User user) {
+    public static ProgressionsContext FromUser(User user)
+    {
         return new ProgressionsContext(user);
     }
 
-    static Dictionary<int, PeakUpdateData[]> MergeRegionUpdates(PeakUpdateData[] removedPeaks) {
+    private static Dictionary<int, PeakUpdateData[]> MergeRegionUpdates(PeakUpdateData[] removedPeaks)
+    {
         return removedPeaks.GroupBy(ru => ru.RegionId).ToDictionary(g => g.Key, g => g.ToArray());
     }
 }

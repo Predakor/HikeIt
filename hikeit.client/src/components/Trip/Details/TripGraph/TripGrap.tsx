@@ -3,7 +3,6 @@ import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import useResourceLink from "@/hooks/Api/useResourceLink";
 import useUser from "@/hooks/Auth/useUser";
 import type { ResourceUrl } from "@/types/Api/types";
-import { Box } from "@chakra-ui/react";
 import PreviewGraphDevOnly from "./Dev_PreviewGraph/PreviewGraphDevOnly";
 import ElevationGraph from "./ElevationGraph";
 import type { ChartData } from "./grap.types";

@@ -14,7 +14,7 @@ export type GpxGainsData = Array<GpxGainPointWithPreview>;
 export function GenerateChartDataWithPreview(
   gains: GainDto[],
   start: GpxEntry,
-  preview?: GainDto[]
+  preview?: GainDto[],
 ) {
   const chartPoints = GenerateChartData(gains, start);
   const previewPoints = preview ? GenerateChartData(preview, start) : [];

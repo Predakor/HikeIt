@@ -2,7 +2,8 @@
 
 namespace Core.Results;
 
-public static class Errors {
+public static class Errors
+{
     public static ResultError Unknown(string? message = "") => new ResultError.Unknown(message);
 
     public static ResultError DbError(string message) => new ResultError.DbError(message);
@@ -12,12 +13,16 @@ public static class Errors {
     public static ResultError NotFound<T>(string resourceName, string filterName, T filterValue) =>
         new ResultError.NotFound($"{resourceName} with {filterName}: {filterValue}");
 
-    public static ResultError NotFound<T>(string resourceName, T filterValue, string filterName = "id") =>
-        new ResultError.NotFound($"{resourceName} with {filterName}: {filterValue}");
+    public static ResultError NotFound<T>(
+        string resourceName,
+        T filterValue,
+        string filterName = "id"
+    ) => new ResultError.NotFound($"{resourceName} with {filterName}: {filterValue}");
 
     public static ResultError BadRequest(string message) => new ResultError.BadRequest(message);
 
-    public static ResultError EmptyCollection(string message) => new ResultError.EmptyCollection(message);
+    public static ResultError EmptyCollection(string message) =>
+        new ResultError.EmptyCollection(message);
 
     public static ResultError RuleViolation(IRuleBase rule) => new ResultError.RuleViolation(rule);
 
@@ -28,9 +33,13 @@ public static class Errors {
     public static ResultError InvalidCredentials() => new ResultError.InvalidCredentials();
 
     public static ResultError NotUnique(string ItemName) => new ResultError.NotUnique(ItemName);
+
+    public static ResultError ParsingError<TTarget>(string source) =>
+        new(ErrorCode.parsing, $"Failed to parse {source} to target:{typeof(TTarget).Name}");
 }
 
-public enum ErrorCode {
+public enum ErrorCode
+{
     not_found,
     bad_request,
     db_error,
@@ -42,9 +51,11 @@ public enum ErrorCode {
     invalid_credentials,
     not_unique,
     empty_collection,
+    parsing,
 }
 
-public abstract record ResultError(ErrorCode Code, string Message) {
+public record ResultError(ErrorCode Code, string Message)
+{
     public sealed record NotFound(string Target)
         : ResultError(ErrorCode.not_found, $"{Target} was not found.");
 
@@ -63,7 +74,10 @@ public abstract record ResultError(ErrorCode Code, string Message) {
         : ResultError(ErrorCode.file, Detail ?? "Something went wrong while processing your file.");
 
     public sealed record RuleViolation(IRuleBase Rule)
-        : ResultError(ErrorCode.rule_violation, $"{Rule.Name}: {Rule.Message}" ?? "Rule Violation error.");
+        : ResultError(
+            ErrorCode.rule_violation,
+            $"{Rule.Name}: {Rule.Message}" ?? "Rule Violation error."
+        );
 
     public sealed record NotAuthorized()
         : ResultError(ErrorCode.not_authorized, "You're not authorized to do this. Please log in.");

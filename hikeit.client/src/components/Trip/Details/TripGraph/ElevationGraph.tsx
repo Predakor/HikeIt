@@ -20,7 +20,6 @@ export function ElevationGraph({ data }: Props) {
   return (
     <Suspense fallback={<Skeleton {...styles} />}>
       <LazyLineGraph
-        // aspectRatio={"4"}
         config={{
           data: chartPoints,
           series: [{ name: "ele", color: "blue" }],
