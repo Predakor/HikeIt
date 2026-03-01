@@ -28,19 +28,24 @@ public class AppSetting : AggregateRoot<int, AppSetting>
             return Errors.Unknown("setting type doesn't match");
         }
         JsonValue = JsonSerializer.SerializeToDocument(setting, SerializerOptions);
-        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(Id));
+        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(setting.SettingFor));
         return this;
     }
 
     public Result<AppSetting> SetSetting(object? setting, Type type)
     {
-        if (setting is null && setting is not IAppSetting)
+        if (setting is null)
         {
-            return Errors.Unknown("setting type doesn't match");
+            return Errors.Unknown("setting is null");
+        }
+
+        if (setting is not IAppSetting st)
+        {
+            return Errors.BadRequest("setting type doesn't match");
         }
 
         JsonValue = JsonSerializer.SerializeToDocument(setting, type, SerializerOptions);
-        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(Id));
+        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(st.SettingFor));
         return this;
     }
 

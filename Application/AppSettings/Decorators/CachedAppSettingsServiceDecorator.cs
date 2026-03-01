@@ -11,8 +11,8 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
     private readonly IAppSettingsService inner;
     private readonly ICache cache;
 
-    private static string GetPrefix(AppSettingType settingType) =>
-        $"{nameof(AppSetting)}-{settingType}";
+    public const string GetAllKey = $"{nameof(CachedAppSettingsServiceDecorator)}-All";
+    public static string GetKey(AppSettingType settingType) => $"{nameof(AppSetting)}-{settingType}";
 
     public CachedAppSettingsServiceDecorator(IAppSettingsService inner, ICache cache)
     {
@@ -22,7 +22,7 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
     public Task<Result<IList<AppSettingDto>>> GetAllAsync(CancellationToken ct)
     {
         return cache.GetOrCreateAsync(
-            "All",
+            GetAllKey,
             () => inner.GetAllAsync(ct),
             ct: ct
         );
@@ -31,7 +31,7 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
         where TSetting : IAppSetting
     {
         return cache.GetOrCreateAsync(
-            GetPrefix(setting.SettingFor),
+            GetKey(setting.SettingFor),
             () => inner.GetSetting(setting, ct),
             ct: ct
         );
@@ -44,7 +44,7 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
         where TSetting : IAppSetting
     {
         return cache.GetOrCreateAsync(
-            GetPrefix(setting.SettingFor),
+            GetKey(setting.SettingFor),
             () => inner.SetSetting(setting, ct),
             ct: ct
         );
