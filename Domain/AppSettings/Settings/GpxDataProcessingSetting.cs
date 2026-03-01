@@ -11,5 +11,7 @@ public sealed record GpxDataProcessingSetting(
     int RoundingDecimalsCount
 ) : IAppSetting, IGpxDataProcessingSettings
 {
+    public string Name => nameof(GpxDataProcessingSetting);
     public AppSettingType SettingFor => AppSettingType.GpxDataProcessing;
+
 }

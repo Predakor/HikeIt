@@ -7,15 +7,22 @@ namespace Infrastructure.FileReferences;
 
 internal class FileReferencesRepository
     : ResultRepository<FileReference, Guid>,
-        IFileReferenceRepository {
-    readonly ICache _cache;
+        IFileReferenceRepository
+{
+    private readonly ICache _cache;
 
     public FileReferencesRepository(TripDbContext context, ICache cache)
-        : base(context) {
+        : base(context)
+    {
         _cache = cache;
     }
 
-    public override Task<Result<FileReference>> GetByIdAsync(Guid id) {
-        return _cache.GetOrCreateAsync($"file-{id}", () => base.GetByIdAsync(id));
+    public override Task<Result<FileReference>> GetByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        return _cache.GetOrCreateAsync(
+            $"file-{id}",
+            () => base.GetByIdAsync(id),
+            ct: ct
+        );
     }
 }

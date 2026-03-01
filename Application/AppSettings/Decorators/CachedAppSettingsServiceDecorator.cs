@@ -9,7 +9,7 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
     private readonly IAppSettingsService inner;
     private readonly ICache cache;
 
-    private static string GetPrefix(AppSettingType settingType) => nameof(AppSetting) + settingType;
+    private static string GetPrefix(AppSettingType settingType) => $"{nameof(AppSetting)}-{settingType}";
 
     public CachedAppSettingsServiceDecorator(IAppSettingsService inner, ICache cache)
     {
@@ -35,5 +35,10 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
             () => inner.SetSetting(setting, ct),
             ct: ct
         );
+    }
+
+    public Task<Result<AppSetting>> DeleteSettingAsync(int id, CancellationToken ct)
+    {
+        return inner.DeleteSettingAsync(id, ct);
     }
 }

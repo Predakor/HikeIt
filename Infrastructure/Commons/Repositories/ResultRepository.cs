@@ -18,9 +18,9 @@ public abstract class ResultRepository<T, TKey>
 
     private static bool NotNullOrDefaul(T? t) => validator.Validate(t!).IsSuccess;
 
-    public virtual async Task<Result<IEnumerable<T>>> GetAllAsync()
+    public virtual async Task<Result<IEnumerable<T>>> GetAllAsync(CancellationToken ct = default)
     {
-        var query = await DbSet.ToListAsync();
+        var query = await DbSet.ToListAsync(ct);
         if (query.Count == 0)
         {
             return Errors.EmptyCollection(DbSet.ToQueryString());
@@ -28,9 +28,9 @@ public abstract class ResultRepository<T, TKey>
         return query;
     }
 
-    public virtual async Task<Result<T>> GetByIdAsync(TKey id)
+    public virtual async Task<Result<T>> GetByIdAsync(TKey id, CancellationToken ct = default)
     {
-        var res = await DbSet.FindAsync(id);
+        var res = await DbSet.FindAsync([id], ct);
 
         if (!NotNullOrDefaul(res))
         {
@@ -39,6 +39,7 @@ public abstract class ResultRepository<T, TKey>
 
         return res!;
     }
+
 }
 
 public class CrudResultRepository<T, TKey>

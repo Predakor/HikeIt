@@ -1,5 +1,7 @@
 ﻿using Application.Commons.Options;
+using Domain.AppSettings.Interfaces;
 using Domain.Users.Root;
+using Infrastructure.Commons.Databases.Seeding.AppSettings;
 using Infrastructure.Commons.Databases.Seeding.Locations;
 using Infrastructure.Commons.Databases.Seeding.Users;
 using Infrastructure.Commons.Loaders;
@@ -10,28 +12,35 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Commons.Databases.Seeding;
 
-internal class DataSeeder {
-    readonly SeedingOptions _options;
-    readonly UserManager<User> _userManager;
-    readonly RoleManager<IdentityRole<Guid>> _roleManager;
+internal class DataSeeder
+{
+    private readonly SeedingOptions _options;
+    private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    private readonly IAppSettingsRepository _appSettingRepository;
 
-    public DataSeeder(IServiceProvider services) {
+    public DataSeeder(IServiceProvider services)
+    {
         _options =
             services.GetRequiredService<IOptions<SeedingOptions>>().Value
             ?? throw new Exception("Seeding options are null");
         _userManager = services.GetRequiredService<UserManager<User>>();
         _roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+        _appSettingRepository = services.GetRequiredService<IAppSettingsRepository>();
     }
 
-    public async Task Seed(TripDbContext context) {
+    public async Task Seed(TripDbContext context)
+    {
         bool hasNoRegionsInDb = !await context.Regions.AnyAsync();
-        if (hasNoRegionsInDb) {
+        if (hasNoRegionsInDb)
+        {
             Console.WriteLine("Seeding regions");
             await new InsertRegionsAsync(DataSeed.Regions).Seed(context);
         }
 
         var hasNoPeaksInDb = !await context.Peaks.AnyAsync();
-        if (hasNoPeaksInDb) {
+        if (hasNoPeaksInDb)
+        {
             Console.WriteLine("Seeding Peaks");
 
             var resourcePath = _options.PeaksUrl;
@@ -45,5 +54,6 @@ internal class DataSeeder {
         await new InsertRoles(_roleManager).Seed(context);
         await new InsertBaseUser(_userManager).Seed(context);
         await new InsertAdminUser(_userManager, _options).Seed(context);
+        await new SeedAppSettings(_appSettingRepository).Seed(context);
     }
 }

@@ -29,5 +29,11 @@ export const adminRoutes: RouteGroup = {
       label: "manage regions",
       Page: AdminPages.UpdateRegion,
     },
+    {
+      type: "item",
+      path: "appSettings",
+      label: "Manage App settings",
+      Page: AdminPages.AppSettings,
+    },
   ],
 };

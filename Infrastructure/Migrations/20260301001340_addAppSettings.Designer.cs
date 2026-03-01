@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Commons.Databases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    partial class TripDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301001340_addAppSettings")]
+    partial class addAppSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SettingType")
                         .IsUnique();
 
-                    b.ToTable("AppSettings", (string)null);
+                    b.ToTable("AppSettings");
                 });
 
             modelBuilder.Entity("Domain.FileReferences.FileReference", b =>
@@ -84,7 +87,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FileReferences", (string)null);
+                    b.ToTable("FileReferences");
                 });
 
             modelBuilder.Entity("Domain.Locations.Regions.Region", b =>
@@ -102,7 +105,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Regions", (string)null);
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("Domain.Peaks.Peak", b =>
@@ -137,7 +140,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RegionID");
 
-                    b.ToTable("Peaks", (string)null);
+                    b.ToTable("Peaks");
                 });
 
             modelBuilder.Entity("Domain.Ranks.Rank", b =>
@@ -164,7 +167,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Rank", (string)null);
+                    b.ToTable("Rank");
                 });
 
             modelBuilder.Entity("Domain.ReachedPeaks.ReachedPeak", b =>
@@ -199,7 +202,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ReachedPeaks", (string)null);
+                    b.ToTable("ReachedPeaks");
                 });
 
             modelBuilder.Entity("Domain.Trips.Analytics.ElevationProfiles.ElevationProfile", b =>
@@ -213,7 +216,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ElevationProfiles", (string)null);
+                    b.ToTable("ElevationProfiles");
                 });
 
             modelBuilder.Entity("Domain.Trips.Analytics.Peaks.PeaksAnalytic", b =>
@@ -232,7 +235,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PeaksAnalytics", (string)null);
+                    b.ToTable("PeaksAnalytics");
                 });
 
             modelBuilder.Entity("Domain.Trips.Analytics.Root.TripAnalytic", b =>
@@ -248,7 +251,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TripAnalytics", (string)null);
+                    b.ToTable("TripAnalytics");
                 });
 
             modelBuilder.Entity("Domain.Trips.Root.Trip", b =>
@@ -290,7 +293,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Trips", (string)null);
+                    b.ToTable("Trips");
                 });
 
             modelBuilder.Entity("Domain.Users.RegionProgressions.RegionProgress", b =>
@@ -324,7 +327,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RegionProgress", (string)null);
+                    b.ToTable("RegionProgress");
                 });
 
             modelBuilder.Entity("Domain.Users.Root.User", b =>
@@ -464,7 +467,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserStats", (string)null);
+                    b.ToTable("UserStats");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -670,7 +673,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ElevationProfileId");
 
-                            b1.ToTable("ElevationProfiles", (string)null);
+                            b1.ToTable("ElevationProfiles");
 
                             b1.WithOwner()
                                 .HasForeignKey("ElevationProfileId");
@@ -727,7 +730,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("TripAnalyticId");
 
-                            b1.ToTable("TripAnalytics", (string)null);
+                            b1.ToTable("TripAnalytics");
 
                             b1.WithOwner()
                                 .HasForeignKey("TripAnalyticId");
@@ -770,7 +773,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("TripAnalyticId");
 
-                            b1.ToTable("TripAnalytics", (string)null);
+                            b1.ToTable("TripAnalytics");
 
                             b1.WithOwner()
                                 .HasForeignKey("TripAnalyticId");

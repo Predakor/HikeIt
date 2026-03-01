@@ -43,6 +43,11 @@ public class TripRepository : CrudResultRepository<Trip, Guid>, ITripRepository
             .ToListAsync();
     }
 
+    public Task<Result<Trip>> GetByIdAsync(Guid tripId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Result<Trip>> GetWithFile(Guid tripId)
     {
         var trip = await DbSet

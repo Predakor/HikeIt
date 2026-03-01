@@ -1,4 +1,5 @@
-﻿using Domain.Common.Abstractions;
+﻿using Domain.AppSettings.Root;
+using Domain.Common.Abstractions;
 using Domain.Common.AggregateRoot;
 using Domain.FileReferences;
 using Domain.Locations.Regions;
@@ -35,7 +36,7 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<TripAnalytic> TripAnalytics { get; set; }
     public DbSet<ElevationProfile> ElevationProfiles { get; set; }
     public DbSet<PeaksAnalytic> PeaksAnalytics { get; set; }
-
+    public DbSet<AppSetting> AppSettings { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

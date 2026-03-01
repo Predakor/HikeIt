@@ -3,14 +3,17 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Commons.Databases.Seeding.Users;
 
-internal class InsertBaseUser : ISeeder {
-    readonly UserManager<User> _userManager;
-    readonly User _user;
+internal class InsertBaseUser : ISeeder
+{
+    private readonly UserManager<User> _userManager;
+    private readonly User _user;
 
-    public InsertBaseUser(UserManager<User> manager) {
+    public InsertBaseUser(UserManager<User> manager)
+    {
         _userManager = manager;
 
-        _user = new User() {
+        _user = new User()
+        {
             Id = User.DemoUser.Id,
             Email = User.DemoUser.Email,
             UserName = User.DemoUser.UserName,
@@ -20,13 +23,16 @@ internal class InsertBaseUser : ISeeder {
         };
     }
 
-    public async Task Seed(TripDbContext dbContext) {
-        if (_user is null) {
+    public async Task Seed(TripDbContext dbContext)
+    {
+        if (_user is null)
+        {
             throw new Exception("default user can't be null");
         }
 
         var hasNoDemoUser = await _userManager.FindByNameAsync(_user.UserName!) == null;
-        if (hasNoDemoUser) {
+        if (hasNoDemoUser)
+        {
             Console.WriteLine("Seeding default users");
             await _userManager.CreateAsync(_user, "Default123!");
         }

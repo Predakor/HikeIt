@@ -6,20 +6,22 @@ namespace Application.AppSettings;
 internal sealed class AppSettingsService : IAppSettingsService
 {
     private readonly IAppSettingsRepository repository;
+    private readonly TimeProvider dateTimeProvider;
 
-    public AppSettingsService(IAppSettingsRepository repository)
+    public AppSettingsService(IAppSettingsRepository repository, TimeProvider dateTimeProvider)
     {
         this.repository = repository;
+        this.dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<Result<AppSetting>> SetSetting<TSetting>(
+    public Task<Result<AppSetting>> SetSetting<TSetting>(
         TSetting setting,
         CancellationToken ct
     )
         where TSetting : IAppSetting
     {
-        return await repository
-            .GetBySettingType(setting.SettingFor, ct)
+        return repository
+            .GetBySettingTypeAsync(setting.SettingFor, ct)
             .MatchAsync(
                 found => found.SetSetting(setting),
                 notFound => repository.AddAsync(AppSetting.Create(setting))
@@ -27,11 +29,20 @@ internal sealed class AppSettingsService : IAppSettingsService
             .TapAsync(_ => repository.SaveChangesAsync(ct));
     }
 
-    public async Task<Result<TSetting>> GetSetting<TSetting>(TSetting setting, CancellationToken ct)
+    public Task<Result<TSetting>> GetSetting<TSetting>(TSetting setting, CancellationToken ct)
         where TSetting : IAppSetting
     {
-        return await repository
-            .GetBySettingType(setting.SettingFor, ct)
+        return repository
+            .GetBySettingTypeAsync(setting.SettingFor, ct)
             .BindAsync(r => r.GetSetting<TSetting>());
+    }
+
+    public Task<Result<AppSetting>> DeleteSettingAsync(int id, CancellationToken ct)
+    {
+        return repository
+            .GetByIdAsync(id, ct)
+            .TapAsync(e => e.Delete(dateTimeProvider.GetUtcNow()))
+            .TapAsync(_ => repository.SaveChangesAsync(ct));
+
     }
 }

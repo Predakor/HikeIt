@@ -12,7 +12,7 @@ public enum AppSettingType
 public class AppSetting : AggregateRoot<int, AppSetting>
 {
     public string Name { get; protected set; } = string.Empty;
-    public string JsonValue { get; protected set; } = string.Empty;
+    public JsonDocument? JsonValue { get; protected set; }
     public AppSettingType SettingType { get; protected set; }
 
     public Result<AppSetting> SetSetting<TSetting>(TSetting setting)
@@ -23,25 +23,28 @@ public class AppSetting : AggregateRoot<int, AppSetting>
             return Errors.Unknown("setting type doesn't match");
         }
 
+        JsonValue = JsonSerializer.SerializeToDocument(setting);
         AddDomainEvent(new AppSettingEvents.JsonValueUpdated(Id));
         return this;
     }
 
     public Result<TSetting> GetSetting<TSetting>()
+        where TSetting : IAppSetting
     {
-        var parsedSetting = JsonSerializer.Deserialize<TSetting>(JsonValue);
+        var parsedSetting = JsonSerializer.Deserialize<TSetting>(JsonValue.RootElement.GetRawText());
 
-        return parsedSetting is null ? Errors.ParsingError<TSetting>(JsonValue) : parsedSetting;
+        return parsedSetting is null ? Errors.ParsingError<TSetting>(JsonValue.RootElement.GetRawText()) : parsedSetting;
     }
 
-    public static AppSetting Create(IAppSetting setting)
+    public static AppSetting Create<TSetting>(TSetting setting)
+        where TSetting : IAppSetting
     {
         return new AppSetting()
         {
             Id = 0,
-            Name = nameof(setting),
-            JsonValue = JsonSerializer.Serialize(setting),
-            SettingType = setting.SettingFor
+            Name = setting.Name,
+            JsonValue = JsonSerializer.SerializeToDocument(setting),
+            SettingType = setting.SettingFor,
         };
     }
 }

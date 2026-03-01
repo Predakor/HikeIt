@@ -2,8 +2,8 @@
 public interface IReadResultRepository<TEntity, TKey> : IRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey>
 {
-    Task<Result<TEntity>> GetByIdAsync(TKey id);
-    Task<Result<IEnumerable<TEntity>>> GetAllAsync();
+    Task<Result<TEntity>> GetByIdAsync(TKey id, CancellationToken ct = default);
+    Task<Result<IEnumerable<TEntity>>> GetAllAsync(CancellationToken ct = default);
 }
 
 public interface IWriteResultRepository<TEntity, TKey> : IRepository<TEntity, TKey>
