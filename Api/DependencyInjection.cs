@@ -12,4 +12,14 @@ internal static class DependencyInjection
             .InjectServices()
             .AddSingleton(TimeProvider.System);
     }
+
+    public static WebApplicationBuilder AddLogger(this WebApplicationBuilder builder)
+    {
+        builder.Logging
+            .ClearProviders()
+            .AddConsole()
+            .AddDebug();
+
+        return builder;
+    }
 }

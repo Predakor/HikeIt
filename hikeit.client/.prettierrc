@@ -1,4 +1,5 @@
 {
   "experimentalTernaries": true,
+  "experimentalOperatorPosition": "end",
   "printWidth": 100
 }

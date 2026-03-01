@@ -36,6 +36,9 @@ public static class Errors
 
     public static ResultError ParsingError<TTarget>(string source) =>
         new(ErrorCode.parsing, $"Failed to parse {source} to target:{typeof(TTarget).Name}");
+
+    public static ResultError ParsingError(string source, Type targetType) =>
+        new(ErrorCode.parsing, $"Failed to parse {source} to target:{targetType.Name}");
 }
 
 public enum ErrorCode

@@ -1,6 +1,7 @@
 ﻿using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Domain.Trips.Root.Builders.Config;
+using System.Text.Json.Serialization;
 
 namespace Domain.AppSettings.Settings;
 
@@ -11,7 +12,7 @@ public sealed record GpxDataProcessingSetting(
     int RoundingDecimalsCount
 ) : IAppSetting, IGpxDataProcessingSettings
 {
-    public string Name => nameof(GpxDataProcessingSetting);
-    public AppSettingType SettingFor => AppSettingType.GpxDataProcessing;
+    [JsonIgnore] public string Name => nameof(GpxDataProcessingSetting);
+    [JsonIgnore] public AppSettingType SettingFor => AppSettingType.GpxDataProcessing;
 
 }

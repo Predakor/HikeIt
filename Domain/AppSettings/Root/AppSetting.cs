@@ -11,6 +11,11 @@ public enum AppSettingType
 
 public class AppSetting : AggregateRoot<int, AppSetting>
 {
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
+
     public string Name { get; protected set; } = string.Empty;
     public JsonDocument? JsonValue { get; protected set; }
     public AppSettingType SettingType { get; protected set; }
@@ -22,8 +27,19 @@ public class AppSetting : AggregateRoot<int, AppSetting>
         {
             return Errors.Unknown("setting type doesn't match");
         }
+        JsonValue = JsonSerializer.SerializeToDocument(setting, SerializerOptions);
+        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(Id));
+        return this;
+    }
 
-        JsonValue = JsonSerializer.SerializeToDocument(setting);
+    public Result<AppSetting> SetSetting(object? setting, Type type)
+    {
+        if (setting is null && setting is not IAppSetting)
+        {
+            return Errors.Unknown("setting type doesn't match");
+        }
+
+        JsonValue = JsonSerializer.SerializeToDocument(setting, type, SerializerOptions);
         AddDomainEvent(new AppSettingEvents.JsonValueUpdated(Id));
         return this;
     }
@@ -31,9 +47,11 @@ public class AppSetting : AggregateRoot<int, AppSetting>
     public Result<TSetting> GetSetting<TSetting>()
         where TSetting : IAppSetting
     {
-        var parsedSetting = JsonSerializer.Deserialize<TSetting>(JsonValue.RootElement.GetRawText());
+        var parsedSetting = JsonSerializer.Deserialize<TSetting>(JsonValue.RootElement.GetRawText(), SerializerOptions);
 
-        return parsedSetting is null ? Errors.ParsingError<TSetting>(JsonValue.RootElement.GetRawText()) : parsedSetting;
+        return parsedSetting is null
+            ? Errors.ParsingError<TSetting>(JsonValue.RootElement.GetRawText())
+            : parsedSetting;
     }
 
     public static AppSetting Create<TSetting>(TSetting setting)
@@ -43,7 +61,7 @@ public class AppSetting : AggregateRoot<int, AppSetting>
         {
             Id = 0,
             Name = setting.Name,
-            JsonValue = JsonSerializer.SerializeToDocument(setting),
+            JsonValue = JsonSerializer.SerializeToDocument(setting, SerializerOptions),
             SettingType = setting.SettingFor,
         };
     }

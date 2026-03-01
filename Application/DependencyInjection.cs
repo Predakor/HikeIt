@@ -11,7 +11,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAplication(this IServiceCollection services)
     {
-        return services.AddDomainEvents().AddQueries().AddDrafts().DecorateAppSettings();
+        return services
+            .AddDomainEvents()
+            .AddQueries()
+            .AddDrafts()
+            .DecorateAppSettings();
     }
 
     private static IServiceCollection AddDomainEvents(this IServiceCollection services)

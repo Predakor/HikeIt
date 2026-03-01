@@ -16,73 +16,70 @@ async function apiRequest(path: string, options: RequestInit = {}) {
 const post = async <T>(
   path: string,
   body: any,
-  responseResolver?: ResponseResolver<T>
+  responseResolver?: ResponseResolver<T>,
 ): Promise<T> => {
   const isFormData = body instanceof FormData;
 
   const request = await apiRequest(path, {
     method: "POST",
     body: isFormData ? body : JSON.stringify(body),
-    headers: isFormData
-      ? undefined // Let the browser set multipart/form-data with boundary
+    headers:
+      isFormData ?
+        undefined // Let the browser set multipart/form-data with boundary
       : { "Content-Type": "application/json" },
   });
 
-  return responseResolver
-    ? responseResolver(request)
-    : resolveApiResponse(request);
+  return responseResolver ? responseResolver(request) : resolveApiResponse(request);
 };
 
 const get = async <T>(
   path: string,
   params?: Record<string, any>,
-  responseResolver?: ResponseResolver<T>
+  responseResolver?: ResponseResolver<T>,
 ): Promise<T> => {
   const query = params ? `?${toQueryString(params)}` : "";
   const request = await apiRequest(path + query, { method: "GET" });
 
-  return responseResolver
-    ? responseResolver(request)
-    : resolveApiResponse(request);
+  return responseResolver ? responseResolver(request) : resolveApiResponse(request);
 };
 
 const patch = async <T>(
   path: string,
   params?: Record<string, any>,
-  responseResolver?: ResponseResolver<T>
+  responseResolver?: ResponseResolver<T>,
 ): Promise<T> => {
   const body = JSON.stringify({ ...params });
   const request = await apiRequest(path, { method: "PATCH", body });
 
-  return responseResolver
-    ? responseResolver(request)
-    : resolveApiResponse(request);
+  return responseResolver ? responseResolver(request) : resolveApiResponse(request);
 };
 
 const put = async <T>(
   path: string,
-  params?: Record<string, any>,
-  responseResolver?: ResponseResolver<T>
+  options: {
+    params?: Record<string, any>;
+    body: any;
+    responseResolver?: ResponseResolver<T>;
+  },
 ): Promise<T> => {
-  const query = params ? `?${toQueryString(params)}` : "";
-  const request = await apiRequest(path + query, { method: "PUT" });
+  const query = options.params ? `?${toQueryString(options.params)}` : "";
+  const request = await apiRequest(path + query, {
+    method: "PUT",
+    body: options.body,
+  });
 
-  return responseResolver
-    ? responseResolver(request)
-    : resolveApiResponse(request);
+  return options.responseResolver ? options.responseResolver(request) : resolveApiResponse(request);
 };
 
 const deleteR = async <T>(
   path: string,
   params?: Record<string, any>,
-  responseResolver?: ResponseResolver<T>
+  responseResolver?: ResponseResolver<T>,
 ): Promise<T> => {
   const query = params ? `?${toQueryString(params)}` : "";
   const request = await apiRequest(path + query, { method: "DELETE" });
 
-  return responseResolver
-    ? responseResolver(request)
-    : resolveApiResponse(request);
+  return responseResolver ? responseResolver(request) : resolveApiResponse(request);
 };
 
 const api = {

@@ -4,6 +4,7 @@ using Application;
 using Infrastructure;
 using Infrastructure.Commons.Databases.Utils;
 
+Console.WriteLine("test");
 var builder = WebApplication.CreateBuilder(args);
 
 var isDevelopment = builder.Environment.IsDevelopment();
@@ -15,6 +16,8 @@ builder.Services
     .AddInfrastructure(builder.Configuration, isDevelopment)
     .AddAplication()
     .AddControllers();
+
+builder.AddLogger();
 
 var app = builder.Build();
 

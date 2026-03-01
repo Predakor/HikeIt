@@ -1,9 +1,10 @@
 ﻿using Domain.AppSettings.Root;
+using System.Text.Json.Serialization;
 
 namespace Domain.AppSettings.Interfaces;
 
 public interface IAppSetting
 {
-    string Name { get; }
-    AppSettingType SettingFor { get; }
+    [JsonIgnore] string Name { get; }
+    [JsonIgnore] AppSettingType SettingFor { get; }
 };
