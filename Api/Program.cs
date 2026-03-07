@@ -21,7 +21,7 @@ builder.AddLogger();
 
 var app = builder.Build();
 
-await DbHelpers.TryMigrationAndSeeding(app.Services);
+await DbHelpers.TryMigrationAndSeeding(app.Services, app.Configuration);
 
 Console.WriteLine($"Current Directory in api: {Directory.GetCurrentDirectory()}");
 
