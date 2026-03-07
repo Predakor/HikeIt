@@ -42,7 +42,7 @@ if (app.Environment.IsDevelopment())
 }
 
 var allowedOrigins =
-    app.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    app.Configuration.GetSection("Cors:AllowedOrigins").Get<string>().Split(",").ToArray()
     ?? throw new Exception("allowed origins are undefined");
 Console.WriteLine($"Allowed Origins: {string.Join(",", allowedOrigins)}");
 
