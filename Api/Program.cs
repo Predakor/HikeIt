@@ -44,6 +44,9 @@ if (app.Environment.IsDevelopment())
 var allowedOrigins =
     app.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? throw new Exception("allowed origins are undefined");
+Console.WriteLine($"Allowed Origins: {string.Join(",", allowedOrigins)}");
+
+app.UseHttpsRedirection();
 
 app.UseCors(policy =>
 {
@@ -54,8 +57,6 @@ app.UseCors(policy =>
         .AllowCredentials()
         .WithExposedHeaders("Location");
 });
-
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
