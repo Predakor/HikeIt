@@ -7,6 +7,8 @@ import RenderRoutes from "./components/Utils/RenderRoutes/RenderRoutes";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
+const baseName = (import.meta.env.VITE_BASE_PATH as string).replace(/\/$/, "");
+
 export default function App() {
   const queryClient = new QueryClient();
 
@@ -16,7 +18,7 @@ export default function App() {
 
   return (
     <StrictMode>
-      <BrowserRouter>
+      <BrowserRouter basename={baseName}>
         <Provider>
           <PersistQueryClientProvider
             client={queryClient}
