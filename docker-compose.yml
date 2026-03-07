@@ -6,3 +6,5 @@ services:
     build:
       context: .
       dockerfile: Api/Dockerfile
+    expose:
+    - "8080"

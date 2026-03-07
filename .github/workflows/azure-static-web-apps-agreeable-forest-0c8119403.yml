@@ -1,69 +1,31 @@
-name: Azure Static Web Apps CI/CD
+name: Deploy Frontend to Pages
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      - hikeit.client/**
-      - '.github/workflows/**'
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - master
-    paths:
-      - hikeit.client/**
-      - '.github/workflows/**'
-
+    branches: ["master"]
+    paths: ["Frontend/**"] # Only run when client code changes
 
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    permissions:
-       id-token: write
-       contents: read
     steps:
+      - uses: actions/checkout@v4
+      
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-            node-version: '22.20.0'
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
-      - name: Install OIDC Client from Core Package
-        run: npm install @actions/core@1.6.0 @actions/http-client
-      - name: Get Id Token
-        uses: actions/github-script@v6
-        id: idtoken
-        with:
-           script: |
-               const coredemo = require('@actions/core')
-               return await coredemo.getIDToken()
-           result-encoding: string
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_FOREST_0C8119403 }}
-          action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./hikeit.client" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "dist" # Built app content directory - optional
-          github_id_token: ${{ steps.idtoken.outputs.result }}
-          ###### End of Repository/Build Configurations ######
+          node-version: '22.20.0'
+          cache: 'npm'
+          cache-dependency-path: Frontend/package-lock.json
 
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
+      - name: Install and Build
+        run: |
+          cd Frontend
+          npm install
+          npm run build 
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          action: "close"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./Frontend/dist # Ensure this matches your Vite/Webpack output folder
