@@ -7,4 +7,4 @@ services:
       - "8080"
     build:
       context: .
-      dockerfile: Api/Dockerfileso
+      dockerfile: Api/Dockerfile
