@@ -2,8 +2,11 @@
 
 namespace Api.DI;
 
-internal static partial class DIextentions {
-    public static void InjectAppConfig(this WebApplicationBuilder builder) {
+internal static partial class DIextentions
+{
+    public static void InjectAppConfig(this WebApplicationBuilder builder)
+    {
+        Console.WriteLine($"Directory: {Directory.GetCurrentDirectory()}");
         builder
             .Configuration.SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", true)
@@ -17,7 +20,8 @@ internal static partial class DIextentions {
             builder.Configuration.GetSection(StorageOptions.Path)
         );
 
-        if (builder.Environment.IsDevelopment()) {
+        if (builder.Environment.IsDevelopment())
+        {
             builder.Configuration.AddUserSecrets<Program>();
         }
     }
