@@ -3,6 +3,7 @@ using Api.DI;
 using Application;
 using Infrastructure;
 using Infrastructure.Commons.Databases.Utils;
+using Microsoft.AspNetCore.HttpOverrides;
 
 Console.WriteLine("test");
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,11 @@ builder.Services
 builder.AddLogger();
 
 var app = builder.Build();
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 await DbHelpers.TryMigrationAndSeeding(app.Services, app.Configuration);
 
