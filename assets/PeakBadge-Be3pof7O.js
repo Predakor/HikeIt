@@ -1,1 +1,0 @@
-import{j as t}from"./index-CSuc3--6.js";import{B as a}from"./grid-item-Bh8-Z3D3.js";function i({text:e,color:r}){return t.jsx(a,{size:{base:"xs",lg:"lg"},colorPalette:r||"blue",truncate:!0,children:e})}export{i as P};

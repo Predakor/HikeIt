@@ -1,1 +1,0 @@
-import{j as e,r as o}from"./index-CSuc3--6.js";import{as as s,aF as n}from"./App-CEXOgktl.js";function p({amount:r=8,height:t=200}){return e.jsx(e.Fragment,{children:Array.from({length:r}).map((i,a)=>e.jsx(s,{height:`${t}px`},a))})}function u(r){o.useEffect(()=>{n(r)},[r])}export{p as S,u};
