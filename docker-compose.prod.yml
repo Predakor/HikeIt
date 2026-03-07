@@ -1,0 +1,6 @@
+services:
+  api:
+    env_file:
+      - .env
+    expose:
+      - "8080"
