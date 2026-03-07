@@ -21,7 +21,6 @@ export function AppSetting({ setting }: { setting: AppSettingsEntry<any> }) {
       .map(([key]) => key)
       .forEach((key) => (mappedData[key] = Number(mappedData[key])));
 
-    //test worklow
     //move to react query hook and update the cache
     return api.put(`AppSettings/${setting.id}`, { body: JSON.stringify(mappedData) });
   });
