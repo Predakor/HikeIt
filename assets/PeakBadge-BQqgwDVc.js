@@ -1,0 +1,1 @@
+import{j as t}from"./index-_7WMkc_7.js";import{B as a}from"./grid-item-DQ_s9Ki_.js";function i({text:e,color:r}){return t.jsx(a,{size:{base:"xs",lg:"lg"},colorPalette:r||"blue",truncate:!0,children:e})}export{i as P};
