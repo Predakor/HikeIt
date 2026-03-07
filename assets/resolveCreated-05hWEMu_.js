@@ -1,0 +1,1 @@
+const n=async t=>{if(!t.ok)throw await r(t);const o={location:""};if(t.status===201){const a=t.headers.get("Location");a&&(o.location=a)}return o};async function r(t){const o=await t.text(),a=JSON.parse(o);return new Error(a.message)}export{n as r};
