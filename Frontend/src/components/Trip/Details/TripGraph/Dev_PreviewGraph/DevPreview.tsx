@@ -2,7 +2,7 @@ import { copyToClipboard } from "@/Utils/CopyToClipboard";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/Buttons";
-import { ButtonGroup, SimpleGrid, Stack } from "@chakra-ui/react";
+import { SimpleGrid, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import type { ChartData } from "../grap.types";

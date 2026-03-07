@@ -6,7 +6,7 @@ import type { InputConfigEntry, InputsConfig } from "@/components/Utils/RenderIn
 import { PrimaryButton } from "@/components/ui/Buttons";
 import { For, Stack } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 type PropertyType = "number" | "string" | "integer";
 
