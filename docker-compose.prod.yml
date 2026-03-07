@@ -1,6 +1,10 @@
 services:
   api:
+    image: ${DOCKER_REGISTRY-}api
     env_file:
       - .env
     expose:
       - "8080"
+    build:
+      context: .
+      dockerfile: Api/Dockerfileso
