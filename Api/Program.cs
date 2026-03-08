@@ -22,10 +22,6 @@ builder.AddLogger();
 
 var app = builder.Build();
 
-var basePath = app.Configuration.GetSection("Cors:BasePath").Get<string>() ?? "/";
-Console.WriteLine($"basePath:{basePath}");
-app.UsePathBase(basePath);
-
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto

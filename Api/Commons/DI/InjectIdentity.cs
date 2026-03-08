@@ -8,7 +8,6 @@ internal static partial class DIextentions
 {
     public static IServiceCollection InjectIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-        var basePath = configuration.GetSection("Cors").GetValue<string>("BasePath") ?? "/";
 
         services
             .AddIdentity<User, IdentityRole<Guid>>(options =>
@@ -22,8 +21,7 @@ internal static partial class DIextentions
 
         services.ConfigureApplicationCookie(options =>
         {
-            options.LoginPath = Path.Combine(basePath, "auth/login");
-            Console.WriteLine(Path.Combine(basePath, "auth/login"));
+            options.LoginPath = "/auth/login";
             options.Cookie.Name = "HikeItAuth";
 
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
