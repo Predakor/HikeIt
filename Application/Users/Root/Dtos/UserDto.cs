@@ -3,7 +3,8 @@ using static Application.Users.Root.Dtos.UserDataDto;
 
 namespace Application.Users.Root.Dtos;
 
-public abstract record UserDto(string UserName) {
+public abstract record UserDto(string UserName)
+{
     public sealed record Basic(string UserName, string[] Roles, string Avatar);
 
     public sealed record Profile(
@@ -29,11 +30,15 @@ public abstract record UserDto(string UserName) {
     ) : UserDto(UserName);
 
     public sealed record Login(string UserName, string Password);
+    public sealed record ResetPassword(string UserName, string Token, string Password);
 }
 
-public static class UsersDtoExtentions {
-    public static PublicProfile ToPublicProfile(this User user) {
-        return new() {
+public static class UsersDtoExtentions
+{
+    public static PublicProfile ToPublicProfile(this User user)
+    {
+        return new()
+        {
             UserName = user.UserName!,
             Avatar = user.Avatar,
             Rank = user?.Rank?.Name ?? "Novice Hiker",
@@ -43,8 +48,10 @@ public static class UsersDtoExtentions {
         };
     }
 
-    public static Personal ToPersonal(this User user) {
-        return new() {
+    public static Personal ToPersonal(this User user)
+    {
+        return new()
+        {
             BirthDay = user.BirthDay,
             Country = user.Country ?? "",
             Email = user.Email ?? "",
@@ -54,21 +61,26 @@ public static class UsersDtoExtentions {
         };
     }
 
-    public static AccountState ToAccountState(this User user) {
-        return new() {
+    public static AccountState ToAccountState(this User user)
+    {
+        return new()
+        {
             CreatedAt = user.CreatedAt,
             Role = "user",
             Status = "active",
         };
     }
 
-    public static UserDto.Basic ToBasic(this User user, string[] roles) {
+    public static UserDto.Basic ToBasic(this User user, string[] roles)
+    {
         return new(UserName: user.UserName!, Roles: roles, Avatar: user.Avatar);
     }
 }
 
-public static class UserDtoFactory {
-    public static UserDto.Complete ToComplete(this User user) {
+public static class UserDtoFactory
+{
+    public static UserDto.Complete ToComplete(this User user)
+    {
         return new(
             user.FirstName,
             user.LastName,
