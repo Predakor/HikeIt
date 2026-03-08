@@ -22,7 +22,8 @@ internal static partial class DIextentions
 
         services.ConfigureApplicationCookie(options =>
         {
-            options.LoginPath = "/auth/login";
+            options.LoginPath = Path.Combine(basePath, "auth/login");
+            Console.WriteLine(Path.Combine(basePath, "auth/login"));
             options.Cookie.Name = "HikeItAuth";
 
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -41,8 +42,9 @@ internal static partial class DIextentions
                     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return Task.CompletedTask;
                 }
-                var redirect = Path.Combine(basePath, options.LoginPath);
-                ctx.Response.Redirect(redirect);
+
+                ctx.Response.Redirect(ctx.RedirectUri);
+                Console.WriteLine(ctx.RedirectUri);
                 return Task.CompletedTask;
             };
         });
