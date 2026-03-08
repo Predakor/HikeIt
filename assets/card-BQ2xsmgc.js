@@ -1,0 +1,1 @@
+import{d as t}from"./App-Bl0PmIZf.js";const{withProvider:e,withContext:o}=t({key:"card"}),d=e("div","root"),a=o("div","body"),s=o("div","header"),i=o("div","footer"),c=o("h3","title"),n=o("p","description");export{d as C,s as a,a as b,i as c,c as d,n as e};

@@ -1,1 +1,0 @@
-import{j as t}from"./index-JxWr2Veq.js";import{B as a}from"./grid-item-CE0Gduw4.js";function i({text:e,color:r}){return t.jsx(a,{size:{base:"xs",lg:"lg"},colorPalette:r||"blue",truncate:!0,children:e})}export{i as P};
