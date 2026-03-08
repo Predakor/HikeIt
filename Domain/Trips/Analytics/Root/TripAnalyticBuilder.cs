@@ -6,63 +6,86 @@ using Domain.Trips.Analytics.Time;
 
 namespace Domain.Trips.Analytics.Root;
 
-public class TripAnalyticBuilder {
+public class TripAnalyticBuilder
+{
     #region mutable
-    Guid _id;
-    RouteAnalytic? _routeAnalytic;
-    TimeAnalytic? _timeAnalytic;
-    PeaksAnalytic? _peakAnalytic;
-    ElevationProfile? _elevationProfile;
+    private Guid _id;
+    private RouteAnalytic? _routeAnalytic;
+    private TimeAnalytic? _timeAnalytic;
+    private PeaksAnalytic? _peakAnalytic;
+    private ElevationProfile? _elevationProfile;
+    private RoutePath? _visualisation;
 
     #endregion
 
-    public TripAnalyticBuilder WithId(Guid id) {
+    public TripAnalyticBuilder WithId(Guid id)
+    {
         ArgumentException.ThrowIfNullOrEmpty(nameof(id));
 
         _id = id;
         return this;
     }
 
-    public TripAnalyticBuilder WithRouteAnalytic(RouteAnalytic analytic) {
-        ArgumentException.ThrowIfNullOrEmpty(nameof(analytic));
+    public TripAnalyticBuilder WithRouteAnalytic(RouteAnalytic analytic)
+    {
+        ArgumentNullException.ThrowIfNull(analytic);
 
         _routeAnalytic = analytic;
         return this;
     }
 
-    public TripAnalyticBuilder WithTimeAnalytic(TimeAnalytic analytic) {
-        ArgumentException.ThrowIfNullOrEmpty(nameof(analytic));
-
+    public TripAnalyticBuilder WithTimeAnalytic(TimeAnalytic analytic)
+    {
+        ArgumentNullException.ThrowIfNull(analytic);
         _timeAnalytic = analytic;
         return this;
     }
 
-    public TripAnalyticBuilder WithPeaksAnalytic(PeaksAnalytic analytic) {
-        ArgumentException.ThrowIfNullOrEmpty(nameof(analytic));
-
+    public TripAnalyticBuilder WithPeaksAnalytic(PeaksAnalytic analytic)
+    {
+        ArgumentNullException.ThrowIfNull(analytic);
         _peakAnalytic = analytic;
         return this;
     }
 
-    public TripAnalyticBuilder WithElevationProfile(ElevationProfile profile) {
-        ArgumentException.ThrowIfNullOrEmpty(nameof(profile));
+    public TripAnalyticBuilder WithElevationProfile(ElevationProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
         _elevationProfile = profile;
         return this;
     }
 
-    public TripAnalytic Build() {
-        return TripAnalytic.Create(_id, _routeAnalytic, _timeAnalytic, _peakAnalytic, _elevationProfile);
+    public TripAnalyticBuilder WithVisualisation(RoutePath visualisation)
+    {
+        ArgumentNullException.ThrowIfNull(visualisation);
+        _visualisation = visualisation;
+        return this;
+    }
+
+    public TripAnalytic Build()
+    {
+        return TripAnalytic.Create(
+            id: _id,
+            routeAnalytics: _routeAnalytic,
+            timeAnalytics: _timeAnalytic,
+            peaksAnalytics: _peakAnalytic,
+            elevationProfile: _elevationProfile,
+            visualisationPath: _visualisation
+        );
     }
 }
 
-internal class TripAnalyticDataValidator(AnalyticData data) {
-    readonly List<GpxPoint> _data = data.Points;
+internal class TripAnalyticDataValidator(AnalyticData data)
+{
+    private readonly List<GpxPoint> _data = data.Points;
 
-    public bool Validate() {
+    public bool Validate()
+    {
         return _data.Count > 2;
     }
 
-    public static bool ValidateData(AnalyticData data) {
+    public static bool ValidateData(AnalyticData data)
+    {
         return new TripAnalyticDataValidator(data).Validate();
     }
 }

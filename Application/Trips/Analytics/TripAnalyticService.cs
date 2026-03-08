@@ -14,26 +14,30 @@ using Domain.Trips.Analytics.Time;
 
 namespace Application.Trips.Analytics;
 
-public class TripAnalyticService : ITripAnalyticService {
-    readonly ITripAnalyticUnitOfWork _unitOfWork;
-    readonly IReachedPeakService _reachedPeakService;
-    readonly IElevationProfileService _elevationProfileService;
+public class TripAnalyticService : ITripAnalyticService
+{
+    private readonly ITripAnalyticUnitOfWork _unitOfWork;
+    private readonly IReachedPeakService _reachedPeakService;
+    private readonly IElevationProfileService _elevationProfileService;
 
     public TripAnalyticService(
         ITripAnalyticUnitOfWork unitOfWork,
         IReachedPeakService reachedPeakService,
         IElevationProfileService elevationProfileService
-    ) {
+    )
+    {
         _unitOfWork = unitOfWork;
         _reachedPeakService = reachedPeakService;
         _elevationProfileService = elevationProfileService;
     }
 
-    public async Task<Result<TripAnalytic>> GenerateAnalytic(CreateTripContext ctx) {
+    public async Task<Result<TripAnalytic>> GenerateAnalytic(CreateTripContext ctx)
+    {
         var points = ctx.AnalyticData.Points;
         var gains = ctx.AnalyticData.Gains ?? points.ToGains();
 
-        if (points is null || points.Count == 0) {
+        if (points is null || points.Count == 0)
+        {
             return Errors.EmptyCollection("points");
         }
 
@@ -41,43 +45,50 @@ public class TripAnalyticService : ITripAnalyticService {
 
         GenerateRouteAndTimeAnalytics(points, gains, builder);
 
-        await GeneratePeaksAnalytics(ctx).MapAsync(builder.WithPeaksAnalytic);
-        await GenerateElevationProfile(ctx).MapAsync(builder.WithElevationProfile);
+        await GeneratePeaksAnalytics(ctx).TapAsync(t => builder.WithPeaksAnalytic(t));
+        await GenerateElevationProfile(ctx).TapAsync(t => builder.WithElevationProfile(t));
 
+        builder.WithVisualisation(new RoutePath(points.ToList()));
         return builder.Build();
     }
 
-    static TripAnalyticBuilder GenerateRouteAndTimeAnalytics(
+    private static TripAnalyticBuilder GenerateRouteAndTimeAnalytics(
         List<GpxPoint> points,
         List<GpxGain> gains,
         TripAnalyticBuilder builder
-    ) {
+    )
+    {
         var routeAnalytics = RouteAnalyticFactory.Create(points, gains);
-        if (routeAnalytics is null) {
+        if (routeAnalytics is null)
+        {
             return builder;
         }
 
         builder.WithRouteAnalytic(routeAnalytics);
 
         var timeAnalytics = TimeAnalyticFactory.CreateAnalytics(new(routeAnalytics, points));
-        if (timeAnalytics is not null) {
+        if (timeAnalytics is not null)
+        {
             builder.WithTimeAnalytic(timeAnalytics);
         }
 
         return builder;
     }
 
-    Task<Result<ElevationProfile>> GenerateElevationProfile(CreateTripContext ctx) {
+    private Task<Result<ElevationProfile>> GenerateElevationProfile(CreateTripContext ctx)
+    {
         return _elevationProfileService.Create(ctx).BindAsync(_unitOfWork.Elevations.AddAsync);
     }
 
-    Task<Result<List<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx) {
+    private Task<Result<List<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx)
+    {
         return _reachedPeakService
             .CreateReachedPeaks(ctx.AnalyticData, ctx.Trip)
             .TapAsync(peaks => ctx.Trip.AddReachedPeaks(peaks));
     }
 
-    Task<Result<PeaksAnalytic>> GeneratePeaksAnalytics(CreateTripContext ctx) {
+    private Task<Result<PeaksAnalytic>> GeneratePeaksAnalytics(CreateTripContext ctx)
+    {
         return GenerateReachedPeaks(ctx)
             .BindAsync(rp => CreatePeakAnalyticsCommand.Create(ctx.Trip.Id, rp).Execute())
             .BindAsync(_unitOfWork.PeakAnalytics.AddAsync);

@@ -1,4 +1,5 @@
 ﻿using Domain.Common.Abstractions;
+using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.ElevationProfiles;
 using Domain.Trips.Analytics.Peaks;
 using Domain.Trips.Analytics.Route;
@@ -14,6 +15,7 @@ public class TripAnalytic : IEntity<Guid>
     public RouteAnalytic? RouteAnalytics { get; private set; }
     public TimeAnalytic? TimeAnalytics { get; private set; }
     #endregion
+    public RoutePath? VisualisationPath { get; private set; }
 
     public Guid PeaksAnalyticsId { get; private set; }
     public Guid ElevationProfileId { get; private set; }
@@ -27,7 +29,9 @@ public class TripAnalytic : IEntity<Guid>
         RouteAnalytic? routeAnalytics,
         TimeAnalytic? timeAnalytics,
         PeaksAnalytic? peaksAnalytics,
-        ElevationProfile? elevationProfile
+        ElevationProfile? elevationProfile,
+        RoutePath? visualisationPath
+
     )
     {
         var analytics = new TripAnalytic()
@@ -45,6 +49,11 @@ public class TripAnalytic : IEntity<Guid>
         if (elevationProfile is not null)
         {
             analytics.AddElevationProfile(elevationProfile);
+        }
+
+        if (visualisationPath is not null)
+        {
+            analytics.AddVisualisation(visualisationPath);
         }
 
         return analytics;
@@ -76,4 +85,12 @@ public class TripAnalytic : IEntity<Guid>
         RouteAnalytics = analytics;
     }
 
+    public void AddVisualisation(RoutePath visualisation)
+    {
+        ArgumentNullException.ThrowIfNull(visualisation);
+        VisualisationPath = visualisation;
+    }
+
 }
+
+public sealed record RoutePath(IReadOnlyList<IGeoPoint> Points);
