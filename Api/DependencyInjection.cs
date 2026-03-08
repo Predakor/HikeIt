@@ -4,10 +4,10 @@ namespace Api;
 
 internal static class DependencyInjection
 {
-    public static IServiceCollection AddApi(this IServiceCollection services)
+    public static IServiceCollection AddApi(this IServiceCollection services, IConfiguration configuration)
     {
         return services
-            .InjectIdentity()
+            .InjectIdentity(configuration)
             .InjectSwagger()
             .InjectServices()
             .AddSingleton(TimeProvider.System);

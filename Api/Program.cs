@@ -13,7 +13,7 @@ var isDevelopment = builder.Environment.IsDevelopment();
 builder.InjectAppConfig();
 
 builder.Services
-    .AddApi()
+    .AddApi(builder.Configuration)
     .AddInfrastructure(builder.Configuration, isDevelopment)
     .AddAplication()
     .AddControllers();
@@ -21,6 +21,10 @@ builder.Services
 builder.AddLogger();
 
 var app = builder.Build();
+
+//var basePath = app.Configuration.GetSection("Cors:BasePath").Get<string>() ?? "/";
+//Console.WriteLine($"basePath:{basePath}");
+//app.UsePathBase(basePath);
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

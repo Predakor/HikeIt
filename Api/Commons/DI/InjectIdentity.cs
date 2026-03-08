@@ -4,10 +4,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Api.DI;
 
-internal static partial class DIextentions {
-    public static IServiceCollection InjectIdentity(this IServiceCollection services) {
+internal static partial class DIextentions
+{
+    public static IServiceCollection InjectIdentity(this IServiceCollection services, IConfiguration configuration)
+    {
+        var basePath = configuration.GetSection("Cors").GetValue<string>("BasePath") ?? "/";
+
         services
-            .AddIdentity<User, IdentityRole<Guid>>(options => {
+            .AddIdentity<User, IdentityRole<Guid>>(options =>
+            {
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
                 options.SignIn.RequireConfirmedAccount = false;
@@ -15,7 +20,8 @@ internal static partial class DIextentions {
             .AddEntityFrameworkStores<TripDbContext>()
             .AddDefaultTokenProviders();
 
-        services.ConfigureApplicationCookie(options => {
+        services.ConfigureApplicationCookie(options =>
+        {
             options.LoginPath = "/auth/login";
             options.Cookie.Name = "HikeItAuth";
 
@@ -25,16 +31,18 @@ internal static partial class DIextentions {
 
             options.ExpireTimeSpan = TimeSpan.FromDays(1);
 
-            options.Events.OnRedirectToLogin = ctx => {
+            options.Events.OnRedirectToLogin = ctx =>
+            {
                 if (
                     ctx.Request.Path.StartsWithSegments("/api")
                     && ctx.Response.StatusCode == StatusCodes.Status200OK
-                ) {
+                )
+                {
                     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return Task.CompletedTask;
                 }
-
-                ctx.Response.Redirect(ctx.RedirectUri);
+                var redirect = Path.Combine(basePath, options.LoginPath);
+                ctx.Response.Redirect(redirect);
                 return Task.CompletedTask;
             };
         });
