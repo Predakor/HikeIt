@@ -13,6 +13,7 @@ export interface BasicAnalytics {
   time?: TimeAnalytic;
   peaks: string | null;
   elevation: string | null;
+  visualisation: {};
 }
 
 export interface RouteAnalytic {

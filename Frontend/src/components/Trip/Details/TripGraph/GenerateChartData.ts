@@ -1,7 +1,7 @@
-import type { GpxEntry } from "@/types/Api/gpx.types";
+import type { GpxEntryWithTime } from "@/types/Api/gpx.types";
 import type { GainDto, GpxGainPoint } from "./grap.types";
 
-export function GenerateChartData(gains: GainDto[], start: GpxEntry) {
+export function GenerateChartData(gains: GainDto[], start: GpxEntryWithTime) {
   if (!gains || !start) {
     console.error("passing empty chart data");
     return [];

@@ -9,4 +9,18 @@ export default defineConfig({
   server: {
     port: 54840,
   },
+
+  optimizeDeps: {
+    include: ["maplibre-gl"],
+    esbuildOptions: {
+      target: "es2022",
+    },
+  },
+
+  build: {
+    target: "es2022",
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
 });

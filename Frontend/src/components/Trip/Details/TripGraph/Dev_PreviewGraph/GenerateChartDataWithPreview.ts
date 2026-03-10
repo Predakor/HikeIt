@@ -1,4 +1,4 @@
-import type { GpxEntry } from "@/types/Api/gpx.types";
+import type { GpxEntryWithTime } from "@/types/Api/gpx.types";
 import { GenerateChartData } from "../GenerateChartData";
 import type { GainDto, GpxGainPoint } from "../grap.types";
 
@@ -13,7 +13,7 @@ export type GpxGainsData = Array<GpxGainPointWithPreview>;
 
 export function GenerateChartDataWithPreview(
   gains: GainDto[],
-  start: GpxEntry,
+  start: GpxEntryWithTime,
   preview?: GainDto[],
 ) {
   const chartPoints = GenerateChartData(gains, start);

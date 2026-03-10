@@ -9,7 +9,8 @@ namespace Application.Trips.Analytics.Dtos;
 
 public record AnalyticsPresence(Uri? HasPeakAnalytics, Uri? HasElevationProfile);
 
-public abstract record TripAnalyticsDto {
+public abstract record TripAnalyticsDto
+{
     public record Linked(
         Uri? RouteAnalytics,
         Uri? TimeAnalytics,
@@ -17,7 +18,7 @@ public abstract record TripAnalyticsDto {
         Uri? ElevationProfile
     ) : TripAnalyticsDto;
 
-    public record Basic(RouteAnalytic Route, TimeAnalytic? Time, Uri? Peaks, Uri? Elevation)
+    public record Basic(RouteAnalytic Route, TimeAnalytic? Time, Uri? Peaks, Uri? Elevation, Uri? Visualisation)
         : TripAnalyticsDto;
 
     public record Full(
@@ -29,13 +30,16 @@ public abstract record TripAnalyticsDto {
     ) : TripAnalyticsDto;
 }
 
-public static class Extentions {
-    public static TripAnalyticsDto.Basic ToBasicDto(this TripAnalytic analytics) {
+public static class Extentions
+{
+    public static TripAnalyticsDto.Basic ToBasicDto(this TripAnalytic analytics)
+    {
         return new(
             analytics.RouteAnalytics,
             analytics.TimeAnalytics,
             analytics.PeaksAnalyticsId.ToResoutceUrl(id => $"trips/{id}/analytics/peaks"),
-            analytics.ElevationProfileId.ToResoutceUrl(id => $"trips/{id}/analytics/elevation")
+            analytics.ElevationProfileId.ToResoutceUrl(id => $"trips/{id}/analytics/elevation"),
+            analytics.VisualisationPath.ToResoutceUrl(_ => $"trips/{analytics.Id}/analytics/visualisation")
         );
     }
 }
