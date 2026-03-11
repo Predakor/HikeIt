@@ -19,7 +19,6 @@ export default defineConfig({
 
   build: {
     target: "es2022",
-    rollupOptions: { input: "index.html" },
     commonjsOptions: {
       transformMixedEsModules: true,
     },
