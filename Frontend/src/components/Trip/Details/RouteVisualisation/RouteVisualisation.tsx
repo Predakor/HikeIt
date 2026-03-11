@@ -21,7 +21,7 @@ export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
         };
 
         const coordinates = points.map((p) => [p.lon, p.lat]);
-        const geoDate: Feature<LineString> = {
+        const geoDatA: Feature<LineString> = {
           type: "Feature",
           geometry: {
             type: "LineString",
@@ -38,8 +38,17 @@ export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
             style={{ width: 1200, height: 800 }}
             mapStyle="https://tiles.openfreemap.org/styles/bright"
           >
-            <RSource key="hike-path" id="hike-path" type="geojson" data={geoDate} />
-            <RLayer type="line" source="hike-path" id="hike-line" />
+            <RSource key="hike-path" id="hike-path" type="geojson" data={geoDatA} />
+            <RLayer
+              type="line"
+              source="hike-path"
+              id="hike-line"
+              paint={{
+                "line-color": "#FF0000", // Change this hex code to your preferred color
+                "line-width": 4, // Thickness in pixels
+                "line-opacity": 0.8, // 0 to 1 (transparency)
+              }}
+            />
 
             <RSource type="raster-dem" id="terrarium" tiles={rasterDemTiles} tileSize={256} />
             <RLayer id="hillshade" type="hillshade" source="terrarium" />
