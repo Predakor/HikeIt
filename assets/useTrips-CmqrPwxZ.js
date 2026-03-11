@@ -1,1 +1,0 @@
-import{u as r,aI as t}from"./App-Ya5bck8I.js";const i=1e3*60*30,e="users/me/trips",a={baseKey:e,queryKey:s=>[e,s],fetchTrip:s=>t(`trips/${s}/analytics`),fetchTrips:()=>t(`${e}/`)};function n(){return r({queryKey:[e],queryFn:a.fetchTrips,staleTime:i})}export{e as b,a as t,n as u};

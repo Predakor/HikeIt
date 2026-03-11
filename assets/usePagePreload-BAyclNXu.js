@@ -1,0 +1,1 @@
+import{j as e,r as o}from"./index-DCbI1TAu.js";import{ay as s,aM as n}from"./App-C22p_Coc.js";function p({amount:r=8,height:t=200}){return e.jsx(e.Fragment,{children:Array.from({length:r}).map((i,a)=>e.jsx(s,{height:`${t}px`},a))})}function u(r){o.useEffect(()=>{n(r)},[r])}export{p as S,u};
