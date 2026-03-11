@@ -15,13 +15,14 @@ namespace Api.Controllers.Trips;
 [Authorize]
 [Route("api/trips/{id}/")]
 [ApiController]
-public class AnalyticsController : ControllerBase {
-    readonly IFileReferenceRepository _fileReferenceRepository;
-    readonly IElevationProfileQueryService _elevationQueries;
-    readonly ITripAnalyticsQueryService _queryService;
-    readonly IGpxFileService _fileService;
-    readonly IAuthService _authService;
-    readonly IGpxService _gpxService;
+public class AnalyticsController : ControllerBase
+{
+    private readonly IFileReferenceRepository _fileReferenceRepository;
+    private readonly IElevationProfileQueryService _elevationQueries;
+    private readonly ITripAnalyticsQueryService _analyticsQueryies;
+    private readonly IGpxFileService _fileService;
+    private readonly IAuthService _authService;
+    private readonly IGpxService _gpxService;
 
     public AnalyticsController(
         IFileReferenceRepository fileReferenceRepository,
@@ -30,25 +31,28 @@ public class AnalyticsController : ControllerBase {
         IGpxFileService fileService,
         IAuthService authService,
         IGpxService gpxService
-    ) {
+    )
+    {
         _fileReferenceRepository = fileReferenceRepository;
         _elevationQueries = elevationQueries;
-        _queryService = queryService;
+        _analyticsQueryies = queryService;
         _fileService = fileService;
         _authService = authService;
         _gpxService = gpxService;
     }
 
     [HttpGet("analytics")]
-    public async Task<IActionResult> GetAnalytics(Guid id) {
+    public async Task<IActionResult> GetAnalytics(Guid id)
+    {
         return await _authService
             .WithLoggedUser()
-            .BindAsync(_ => _queryService.GetCompleteAnalytics(id))
+            .BindAsync(_ => _analyticsQueryies.GetCompleteAnalytics(id))
             .ToActionResultAsync();
     }
 
     [HttpGet("analytics/elevation")]
-    public async Task<IActionResult> GetElevationProfile(Guid id) {
+    public async Task<IActionResult> GetElevationProfile(Guid id)
+    {
         return await _authService
             .WithLoggedUser()
             .BindAsync(_ => _elevationQueries.GetElevationProfile(id))
@@ -56,10 +60,20 @@ public class AnalyticsController : ControllerBase {
     }
 
     [HttpGet("analytics/peaks")]
-    public async Task<IActionResult> GetPeakAnalytics(Guid id) {
+    public async Task<IActionResult> GetPeakAnalytics(Guid id)
+    {
         return await _authService
             .WithLoggedUser()
-            .BindAsync(_ => _queryService.GetPeakAnalytics(id))
+            .BindAsync(_ => _analyticsQueryies.GetPeakAnalytics(id))
+            .ToActionResultAsync();
+    }
+
+    [HttpGet("analytics/visualisation")]
+    public Task<IActionResult> GetVisualisationPath(Guid id)
+    {
+        return _authService
+            .WithLoggedUser()
+            .BindAsync(_ => _analyticsQueryies.GetRouteVisualisation(id))
             .ToActionResultAsync();
     }
 
@@ -69,7 +83,8 @@ public class AnalyticsController : ControllerBase {
     public async Task<IActionResult> DevAnalyticPreview(
         Guid id,
         [FromBody] DataProccesConfig.Partial config
-    ) {
+    )
+    {
         return await _fileReferenceRepository
             .GetByIdAsync(id)
             .BindAsync(_fileService.GetAsync)

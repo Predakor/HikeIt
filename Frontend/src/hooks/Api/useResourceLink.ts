@@ -7,6 +7,6 @@ export default function useResourceLink<T>(resourceLink: ResourceUrl) {
   return useQuery({
     queryKey: ["resource", resourceLink],
     queryFn: () => api.get<T>(resourceLink),
-    staleTime: cacheTimes.hour,
+    staleTime: 1 || cacheTimes.hour,
   });
 }

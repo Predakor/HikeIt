@@ -1,13 +1,17 @@
 ﻿using Domain.Trips.Analytics.ElevationProfiles;
 using Domain.Trips.Analytics.Peaks;
 using Domain.Trips.Analytics.Root;
+using Infrastructure.Locations.Peaks.Extentions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NetTopologySuite.Geometries;
 
 namespace Infrastructure.Trips.Analytics;
 
-public class TripAnalyticConfiguration : IEntityTypeConfiguration<TripAnalytic> {
-    public void Configure(EntityTypeBuilder<TripAnalytic> builder) {
+public class TripAnalyticConfiguration : IEntityTypeConfiguration<TripAnalytic>
+{
+    public void Configure(EntityTypeBuilder<TripAnalytic> builder)
+    {
         builder.OwnsOne(a => a.RouteAnalytics).WithOwner();
         builder.OwnsOne(a => a.TimeAnalytics).WithOwner();
 
@@ -22,5 +26,11 @@ public class TripAnalyticConfiguration : IEntityTypeConfiguration<TripAnalytic> 
                .HasForeignKey<PeaksAnalytic>(t => t.Id)
                .IsRequired(false)
                .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(a => a.VisualisationPath)
+            .HasConversion(
+                routePath => new GeometryFactory().CreateLineString(routePath.Points.ToCoordinates().ToArray()),
+                lineString => new RoutePath(lineString.Coordinates.ToGeoPoints().AsReadOnly())
+            ).HasColumnType("geography(LineStringZ, 4326)");
     }
 }

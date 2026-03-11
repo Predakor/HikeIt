@@ -10,16 +10,16 @@ export type GpxEntry = {
   lat: number;
   lon: number;
   ele: number;
+};
+
+export type GpxEntryWithTime = GpxEntry & {
   time?: string;
 };
 
-type GpxEntryWithGains = {
-  lat: number;
-  lon: number;
-  ele: number;
+type GpxEntryWithGains = GpxEntry & {
   time?: string;
   gains: Gain;
 };
 
-export type GpxArray = Array<GpxEntry>;
+export type GpxArray = Array<GpxEntryWithTime>;
 export type GpxArrayWithGains = GpxEntryWithGains[];

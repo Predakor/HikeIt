@@ -1,7 +1,7 @@
-import type { GpxEntry } from "@/types/Api/gpx.types";
+import type { GpxEntryWithTime } from "@/types/Api/gpx.types";
 
 export interface ChartData {
-  start: GpxEntry;
+  start: GpxEntryWithTime;
   gains: GainDto[];
 }
 

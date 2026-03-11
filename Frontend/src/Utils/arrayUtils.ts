@@ -2,25 +2,35 @@ import type { GpxArrayWithGains } from "@/types/Api/gpx.types";
 import type { Func } from "@/types/Utils/func.types";
 
 export const arrayUtils = {
+  min,
+  max,
   sum,
   average,
 };
 
 function sum<T>(items: T[], getValue: Func<T, number>, initValue = 0) {
-  return items.reduce(
-    (accumulator, current) => (accumulator += getValue(current)),
-    initValue
-  );
+  return items.reduce((accumulator, current) => (accumulator += getValue(current)), initValue);
 }
 
 function average<T>(items: T[], getValue: Func<T, number>) {
   return sum(items, getValue) / items.length;
 }
 
-export function downsampleToMaxSize<T>(
-  gpxArray: T[],
-  maxSize: number = 500
-): T[] {
+function min<T>(items: T[], getValue: Func<T, number>): number {
+  return items.reduce(
+    (accumulator, current) => Math.min(accumulator, getValue(current)),
+    getValue(items[0]),
+  );
+}
+
+function max<T>(items: T[], getValue: Func<T, number>): number {
+  return items.reduce(
+    (accumulator, current) => Math.max(accumulator, getValue(current)),
+    getValue(items[0]),
+  );
+}
+
+export function downsampleToMaxSize<T>(gpxArray: T[], maxSize: number = 500): T[] {
   if (gpxArray.length <= maxSize) return gpxArray;
   const factor = Math.ceil(gpxArray.length / maxSize);
   return gpxArray.filter((_, index) => index % factor === 0);
