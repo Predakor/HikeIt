@@ -35,7 +35,7 @@ export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
             initialPitch={60}
             initialBearing={-20}
             initialCenter={[center.Lon, center.Lat]}
-            style={{ width: 1200, height: 800 }}
+            style={{ width: "100%", height: "700px" }}
             mapStyle="https://tiles.openfreemap.org/styles/bright"
           >
             <RSource key="hike-path" id="hike-path" type="geojson" data={geoDatA} />
@@ -50,9 +50,23 @@ export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
               }}
             />
 
-            <RSource type="raster-dem" id="terrarium" tiles={rasterDemTiles} tileSize={256} />
-            <RLayer id="hillshade" type="hillshade" source="terrarium" />
-            <RTerrain source="terrarium" exaggeration={1.5} />
+            <RSource
+              type="raster-dem"
+              id="hillshade-data"
+              tiles={rasterDemTiles}
+              tileSize={512}
+              maxzoom={14}
+            />
+            <RLayer id="hillshade" type="hillshade" source="hillshade-data" />
+
+            <RSource
+              type="raster-dem"
+              id="terrain-mesh-data"
+              tiles={rasterDemTiles}
+              tileSize={512}
+              maxzoom={12}
+            />
+            <RTerrain source="terrain-mesh-data" exaggeration={1.3} />
           </RMap>
         );
       }}
