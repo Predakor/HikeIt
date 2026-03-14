@@ -9,7 +9,7 @@ public interface IAppSettingsService
 {
     Task<Result<IList<AppSettingDto>>> GetAllAsync(CancellationToken ct);
     Task<Result<AppSettingDto>> Update(int id, JsonDocument jsonSetting, CancellationToken ct);
-    Task<Result<TSetting>> GetSetting<TSetting>(TSetting setting, CancellationToken ct) where TSetting : IAppSetting;
+    Task<Result<TSetting>> GetSettingAsync<TSetting>(AppSettingType settingType, CancellationToken ct) where TSetting : IAppSetting;
 
     Task<Result<AppSetting>> SetSetting<TSetting>(TSetting setting, CancellationToken ct) where TSetting : IAppSetting;
     Task<Result<AppSetting>> DeleteSettingAsync(int id, CancellationToken ct);

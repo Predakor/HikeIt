@@ -1,10 +1,13 @@
 ﻿using Api.Commons.Extentions;
+using Application.Commons.Abstractions;
 using Application.Commons.Services.Auth;
 using Application.FileReferences;
 using Application.Trips.Analytics.ElevationProfiles;
 using Application.Trips.Analytics.Queries;
+using Application.Trips.Analytics.RouteVisualizations;
 using Application.Trips.GpxFile.Services;
 using Domain.FileReferences;
+using Domain.Trips.Analytics.Root;
 using Domain.Trips.Root.Builders.Config;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 using Microsoft.AspNetCore.Authorization;
@@ -13,10 +16,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.Trips;
 
 [Authorize]
-[Route("api/trips/{id}/")]
+[Route("api/trips/{id}/analytics/")]
 [ApiController]
 public class AnalyticsController : ControllerBase
 {
+    private readonly IRouteVisualizationService _routeVisualizationService;
     private readonly IFileReferenceRepository _fileReferenceRepository;
     private readonly IElevationProfileQueryService _elevationQueries;
     private readonly ITripAnalyticsQueryService _analyticsQueryies;
@@ -25,6 +29,7 @@ public class AnalyticsController : ControllerBase
     private readonly IGpxService _gpxService;
 
     public AnalyticsController(
+        IRouteVisualizationService routeVisualizationService,
         IFileReferenceRepository fileReferenceRepository,
         IElevationProfileQueryService elevationQueries,
         ITripAnalyticsQueryService queryService,
@@ -33,6 +38,7 @@ public class AnalyticsController : ControllerBase
         IGpxService gpxService
     )
     {
+        _routeVisualizationService = routeVisualizationService;
         _fileReferenceRepository = fileReferenceRepository;
         _elevationQueries = elevationQueries;
         _analyticsQueryies = queryService;
@@ -41,7 +47,7 @@ public class AnalyticsController : ControllerBase
         _gpxService = gpxService;
     }
 
-    [HttpGet("analytics")]
+    [HttpGet("")]
     public async Task<IActionResult> GetAnalytics(Guid id)
     {
         return await _authService
@@ -50,7 +56,7 @@ public class AnalyticsController : ControllerBase
             .ToActionResultAsync();
     }
 
-    [HttpGet("analytics/elevation")]
+    [HttpGet("elevation")]
     public async Task<IActionResult> GetElevationProfile(Guid id)
     {
         return await _authService
@@ -59,7 +65,7 @@ public class AnalyticsController : ControllerBase
             .ToActionResultAsync();
     }
 
-    [HttpGet("analytics/peaks")]
+    [HttpGet("peaks")]
     public async Task<IActionResult> GetPeakAnalytics(Guid id)
     {
         return await _authService
@@ -68,7 +74,7 @@ public class AnalyticsController : ControllerBase
             .ToActionResultAsync();
     }
 
-    [HttpGet("analytics/visualisation")]
+    [HttpGet("visualisation")]
     public Task<IActionResult> GetVisualisationPath(Guid id)
     {
         return _authService
@@ -78,7 +84,7 @@ public class AnalyticsController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost("analytics/elevations/preview")]
+    [HttpPost("elevations/preview")]
     [ProducesResponseType(typeof(ElevationProfileDto), 200)]
     public async Task<IActionResult> DevAnalyticPreview(
         Guid id,
@@ -93,5 +99,19 @@ public class AnalyticsController : ControllerBase
             .MapAsync(GpxDataFactory.CreateFromConfig)
             .MapAsync(x => x.ToElevationProfileDto())
             .ToActionResultAsync();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("visualizations/preview")]
+    [ProducesResponseType(typeof(RoutePath), 200)]
+    public async Task<IActionResult> DevAnalyticPreview(Guid id, [FromBody] IEnumerable<IFilterConfig> configs)
+    {
+        return await _fileReferenceRepository
+            .GetByIdAsync(id)
+            .BindAsync(_fileService.GetAsync)
+            .BindAsync(_gpxService.ExtractGpxData)
+            .MapAsync(d => _routeVisualizationService.GetRouteVisualization(d.Points, configs))
+            .ToActionResultAsync();
+
     }
 }

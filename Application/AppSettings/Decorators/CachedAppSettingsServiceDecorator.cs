@@ -27,12 +27,12 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
             ct: ct
         );
     }
-    public Task<Result<TSetting>> GetSetting<TSetting>(TSetting setting, CancellationToken ct)
+    public Task<Result<TSetting>> GetSettingAsync<TSetting>(AppSettingType settingType, CancellationToken ct)
         where TSetting : IAppSetting
     {
         return cache.GetOrCreateAsync(
-            GetKey(setting.SettingFor),
-            () => inner.GetSetting(setting, ct),
+            GetKey(settingType),
+            () => inner.GetSettingAsync<TSetting>(settingType, ct),
             ct: ct
         );
     }

@@ -7,6 +7,7 @@ namespace Domain.AppSettings.Root;
 public enum AppSettingType
 {
     GpxDataProcessing = 1,
+    RouteVisualization = 2,
 }
 
 public class AppSetting : AggregateRoot<int, AppSetting>
