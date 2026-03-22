@@ -36,11 +36,11 @@ internal sealed class AppSettingsService : IAppSettingsService
             .TapAsync(_ => repository.SaveChangesAsync(ct));
     }
 
-    public Task<Result<TSetting>> GetSetting<TSetting>(TSetting setting, CancellationToken ct)
+    public Task<Result<TSetting>> GetSettingAsync<TSetting>(AppSettingType settingType, CancellationToken ct)
         where TSetting : IAppSetting
     {
         return repository
-            .GetBySettingTypeAsync(setting.SettingFor, ct)
+            .GetBySettingTypeAsync(settingType, ct)
             .BindAsync(r => r.GetSetting<TSetting>());
     }
 

@@ -29,4 +29,5 @@ export {
   FiTrendingDown as IconTrendDown,
   FiTrendingUp as IconTrendUp,
   FiDownload as IconDownload,
+  FiSettings as IconSettings,
 } from "react-icons/fi";
