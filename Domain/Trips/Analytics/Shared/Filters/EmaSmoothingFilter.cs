@@ -16,7 +16,6 @@ public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
 
     public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
-        var prevEma = values[0].Ele;
         var prev = values[0];
 
         foreach (var point in values.Skip(1))
@@ -29,6 +28,8 @@ public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
             point.Ele = prev.Ele;
             point.Lon = prev.Lon;
             point.Lat = prev.Lat;
+
+            prev = point;
         }
 
         return values;
