@@ -16,7 +16,6 @@ public interface IFilter<TValue>
 
 public interface IFilterConfig
 {
-    string Name { get; }
     Type FilterType { get; }
     object GetValue();
 }

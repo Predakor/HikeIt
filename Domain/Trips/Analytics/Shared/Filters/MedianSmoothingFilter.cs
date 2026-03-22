@@ -6,7 +6,7 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 
 public sealed class MedianSmoothingFilter : IFilter<MutableGpxPoint>
 {
-    public sealed record Config(int WindowSize) : FilterConfigBase<int>(nameof(MedianSmoothingFilter), WindowSize);
+    public sealed record Config(int WindowSize) : FilterConfigBase<Config>(default!);
 
     private readonly int _windowSize;
     public MedianSmoothingFilter(Config config)
@@ -28,11 +28,14 @@ public sealed class MedianSmoothingFilter : IFilter<MutableGpxPoint>
 
             sortedWindow.Insert(insertIdx, currentEle);
 
-            if (i >= _windowSize)
+            if (sortedWindow.Count > _windowSize)
             {
                 var oldEle = values[i - _windowSize].Ele;
                 int removeIdx = sortedWindow.BinarySearch(oldEle);
-                sortedWindow.RemoveAt(removeIdx);
+                if (removeIdx > 0)
+                {
+                    sortedWindow.RemoveAt(removeIdx);
+                }
             }
 
             values[i].Ele = sortedWindow[sortedWindow.Count / 2];

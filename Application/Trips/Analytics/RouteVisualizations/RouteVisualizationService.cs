@@ -53,10 +53,10 @@ internal sealed class RouteVisualizationService : IRouteVisualizationService
         {
             return config switch
             {
-                MedianSmoothingFilter.Config c => new MedianSmoothingFilter(c),
-                MaxSpikeFilter.Config c => new MaxSpikeFilter(c),
-                EmaSmoothingFilter.Config c => new EmaSmoothingFilter(c),
-                RoundingPrecisionFilter.Config c => new RoundingPrecisionFilter(c),
+                MedianSmoothingFilter.Config c => new MedianSmoothingFilter(c.Value),
+                MaxSpikeFilter.Config c => new MaxSpikeFilter(c.Value),
+                EmaSmoothingFilter.Config c => new EmaSmoothingFilter(c.Value),
+                RoundingPrecisionFilter.Config c => new RoundingPrecisionFilter(c.Value),
                 _ => throw new NotSupportedException($"Filter type {config.GetType().Name} is not supported.")
             };
         }

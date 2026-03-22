@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Domain.AppSettings.Settings;
 
-public record FilterConfigBase<T>(string Name, T Value) : IFilterConfig<T>
+public record FilterConfigBase<T>(T Value) : IFilterConfig
 {
     public Type FilterType => typeof(T);
     public object GetValue() => Value!;

@@ -110,7 +110,7 @@ public class AnalyticsController : ControllerBase
             .GetByIdAsync(id)
             .BindAsync(_fileService.GetAsync)
             .BindAsync(_gpxService.ExtractGpxData)
-            .MapAsync(d => _routeVisualizationService.GetRouteVisualization(d.Points, configs))
+            .BindAsync(d => _routeVisualizationService.GetRouteVisualization(d.Points, configs))
             .ToActionResultAsync();
 
     }
