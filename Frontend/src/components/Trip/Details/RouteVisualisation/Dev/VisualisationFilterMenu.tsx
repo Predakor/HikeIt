@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { useVisualisationPreview } from "./useRouteVisualizationMutations";
-import type { FilterTypes } from "./RouteVisualization.types";
+import type { FilterTypes } from "./routeVisualization.types";
 
 export const filterTypeToFieldConfigMap: Record<FilterTypes, InputConfigEntry> = {
   medianSmoothingFilter: {

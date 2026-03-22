@@ -1,8 +1,8 @@
+import api from "@/Utils/Api/apiRequest";
 import { useMutation } from "@tanstack/react-query";
 import type { Feature, LineString } from "geojson";
-import api from "@/Utils/Api/apiRequest";
 import type { RoutePath } from "./DEV_RouteVisualisationt";
-import type { GpxFilter } from "./VisualisationFilterMenu";
+import type { GpxFilter } from "./routeVisualization.types";
 
 interface UsePreviewOptions {
   tripId?: string;
