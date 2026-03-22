@@ -1,0 +1,1 @@
+import{j as t}from"./index-CQGmRKj9.js";import{B as a}from"./grid-item-CEOLa2P-.js";function i({text:e,color:r}){return t.jsx(a,{size:{base:"xs",lg:"lg"},colorPalette:r||"blue",truncate:!0,children:e})}export{i as P};
