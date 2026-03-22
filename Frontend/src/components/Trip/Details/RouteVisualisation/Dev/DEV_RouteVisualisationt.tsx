@@ -1,6 +1,7 @@
+import { IconSettings } from "@/Icons/Icons";
 import { arrayUtils } from "@/Utils/arrayUtils";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
-import { PrimaryButton, SecondaryButton } from "@/components/ui/Buttons";
+import { SecondaryButton } from "@/components/ui/Buttons";
 import useResourceLink from "@/hooks/Api/useResourceLink";
 import type { GpxEntry } from "@/types/Api/gpx.types";
 import type { ResourceUrl } from "@/types/Api/types";
@@ -10,7 +11,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 import { useState } from "react";
 import { VisualisationFilterMenu } from "./VisualisationFilterMenu";
-import { IconSettings } from "@/Icons/Icons";
 
 const rasterDemTiles = [
   "https://api.maptiler.com/tiles/terrain-rgb-v2/{z}/{x}/{y}.webp?key=ujaK4vTFjQkSEF2NqowK",
