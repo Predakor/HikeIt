@@ -46,7 +46,10 @@ var allowedOrigins =
     ?? throw new Exception("allowed origins are undefined");
 Console.WriteLine($"Allowed Origins: {string.Join(",", allowedOrigins)}");
 
-app.UseHttpsRedirection();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 app.UseCors(policy =>
 {
@@ -57,6 +60,8 @@ app.UseCors(policy =>
         .AllowCredentials()
         .WithExposedHeaders("Location");
 });
+
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
