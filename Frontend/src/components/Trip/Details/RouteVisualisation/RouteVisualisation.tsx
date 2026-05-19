@@ -8,7 +8,7 @@ import type { Feature, LineString } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css"; // See notes below
 import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 
-const rasterDemTiles = [
+export const rasterDemTiles = [
   "https://api.maptiler.com/tiles/terrain-rgb-v2/{z}/{x}/{y}.webp?key=ujaK4vTFjQkSEF2NqowK",
 ];
 type RoutePath = { points: GpxEntry[] };
