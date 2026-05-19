@@ -19,6 +19,7 @@ export function TripDetailsMenu({ data }: { data: BasicAnalytics }) {
         <Tabs.Indicator bg={"bg.emphasized"} rounded="12" />
       </Tabs.List>
 
+
       <Tabs.ContentGroup asChild gap={8} padding={0}>
         <Stack w={"full"} paddingX={4} justifyItems={"center"} gap={8}>
           <For each={config}>

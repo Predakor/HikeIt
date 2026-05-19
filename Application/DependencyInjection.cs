@@ -33,15 +33,17 @@ public static class DependencyInjection
 
     private static IServiceCollection AddQueries(this IServiceCollection services)
     {
-        return services.Scan(scan =>
-            scan.FromAssembliesOf(typeof(DependencyInjection))
-                .AddClasses(
-                    classes => classes.AssignableTo(typeof(IQueryHandler<,>)),
-                    publicOnly: false
-                )
-                .AsImplementedInterfaces()
-                .WithScopedLifetime()
-        );
+        return services
+            .AddScoped<IQueryDispatcher, QueryDispatcher>()
+            .Scan(scan =>
+                scan.FromAssembliesOf(typeof(DependencyInjection))
+                    .AddClasses(
+                        classes => classes.AssignableTo(typeof(IQueryHandler<,>)),
+                        publicOnly: false
+                    )
+                    .AsImplementedInterfaces()
+                    .WithScopedLifetime()
+            );
     }
 
     private static IServiceCollection AddDrafts(this IServiceCollection services)

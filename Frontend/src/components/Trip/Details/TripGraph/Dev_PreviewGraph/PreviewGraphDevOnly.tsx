@@ -11,6 +11,7 @@ interface Props {
 
 function PreviewGraphDevOnly({ data }: Props) {
   const { gains, start } = data;
+  console.log({ count: gains.length });
 
   const [preview, setPreview] = useState<GainDto[]>();
 

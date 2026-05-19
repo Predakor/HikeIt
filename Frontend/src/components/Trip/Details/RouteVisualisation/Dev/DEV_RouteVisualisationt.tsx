@@ -54,7 +54,7 @@ export default function DevRouteVisualisation({ data }: { data: ResourceUrl }) {
                     <IconSettings />
                   </SecondaryButton>
                 </Popover.Trigger>
-                <RSource key="hike-path" id="hike-path" type="geojson" data={geoDatA} />
+                <RSource key="hike-path" id="hike-path" type="geojson" data={previewRoute!} />
                 <RLayer
                   type="line"
                   source="hike-path"
@@ -66,7 +66,7 @@ export default function DevRouteVisualisation({ data }: { data: ResourceUrl }) {
                   }}
                 />
 
-                <Show when={previewRoute}>
+                {/* <Show when={previewRoute}>
                   <RSource
                     key="hike-path-preview"
                     id="hike-path-preview"
@@ -83,7 +83,7 @@ export default function DevRouteVisualisation({ data }: { data: ResourceUrl }) {
                       "line-opacity": 0.8,
                     }}
                   />
-                </Show>
+                </Show> */}
 
                 <RSource
                   type="raster-dem"

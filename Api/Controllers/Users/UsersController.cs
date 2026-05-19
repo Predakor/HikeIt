@@ -13,14 +13,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.Users;
 
 [Authorize]
-[Route("api/[controller]/me/")]
+[Route(RouteBase)]
 [ApiController]
-public class UsersController : ControllerBase {
-    readonly IUserService _userService;
-    readonly IAuthService _authService;
-    readonly IUserQueryService _userQueries;
-    readonly ITripQueryService _tripQueries;
-    readonly IUserAvatarFileService _userAvatarFileService;
+public class UsersController : UserControllerBase
+{
+
+    private readonly IUserQueryService _userQueries;
+    private readonly ITripQueryService _tripQueries;
+    private readonly IUserAvatarFileService _userAvatarFileService;
+    private readonly IUserService _userService;
+    private readonly IAuthService _authService;
 
     public UsersController(
         IUserService service,
@@ -28,7 +30,8 @@ public class UsersController : ControllerBase {
         IUserQueryService userQueries,
         ITripQueryService tripQueries,
         IUserAvatarFileService userAvatarFileService
-    ) {
+    )
+    {
         _userService = service;
         _authService = authService;
         _userQueries = userQueries;
@@ -41,7 +44,8 @@ public class UsersController : ControllerBase {
 
     [HttpGet("profile")]
     [ProducesResponseType(typeof(UserDto.Profile), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetUserProfile() {
+    public async Task<IActionResult> GetUserProfile()
+    {
         return await _authService
             .WithLoggedUserId()
             .BindAsync(_userQueries.GetProfile)
@@ -49,7 +53,8 @@ public class UsersController : ControllerBase {
     }
 
     [HttpGet("stats")]
-    public async Task<IActionResult> GetProfileStats() {
+    public async Task<IActionResult> GetProfileStats()
+    {
         return await _authService
             .WithLoggedUser()
             .BindAsync(user => _userQueries.GetStats(user.Id))
@@ -58,7 +63,8 @@ public class UsersController : ControllerBase {
 
     [HttpGet("trips")]
     [ProducesResponseType(typeof(List<TripDto.Summary>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll() {
+    public async Task<IActionResult> GetAll()
+    {
         return await _authService
             .WithLoggedUser()
             .BindAsync(user => _tripQueries.GetSummariesAsync(user.Id))
@@ -67,31 +73,17 @@ public class UsersController : ControllerBase {
 
     [HttpGet("trips/{id}")]
     [ProducesResponseType(typeof(TripDto.WithBasicAnalytics), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetById(Guid id) {
+    public async Task<IActionResult> GetById(Guid id)
+    {
         return await _authService
             .WithLoggedUser()
             .BindAsync(user => _tripQueries.GetByIdAsync(id, user.Id))
             .ToActionResultAsync();
     }
 
-    [HttpGet("regions")]
-    public async Task<IActionResult> GetRegionsSummary() {
-        return await _authService
-            .WithLoggedUser()
-            .BindAsync(u => _userQueries.GetRegionsSummaries(u.Id))
-            .ToActionResultAsync();
-    }
-
-    [HttpGet("regions/{regionId}")]
-    public async Task<IActionResult> GetRegionProgress(int regionId) {
-        return await _authService
-            .WithLoggedUser()
-            .BindAsync(u => _userQueries.GetRegionProgess(u.Id, regionId))
-            .ToActionResultAsync();
-    }
-
     [HttpPost("data/avatar")]
-    public async Task<IActionResult> UploadAvatar(IFormFile file) {
+    public async Task<IActionResult> UploadAvatar(IFormFile file)
+    {
         return await _authService
             .WithLoggedUser()
             .BindAsync(user => _userAvatarFileService.Upload(file, user))
@@ -99,7 +91,8 @@ public class UsersController : ControllerBase {
     }
 
     [HttpDelete("data/avatar")]
-    public async Task<IActionResult> DeleteAvatar() {
+    public async Task<IActionResult> DeleteAvatar()
+    {
         return await _authService
             .WithLoggedUser()
             .BindAsync(_userAvatarFileService.Delete)
@@ -107,7 +100,8 @@ public class UsersController : ControllerBase {
     }
 
     [HttpPatch("data/personal")]
-    public async Task<IActionResult> UpdatePersonalData(PersonalInfoUpdate update) {
+    public async Task<IActionResult> UpdatePersonalData(PersonalInfoUpdate update)
+    {
         return await _authService
             .WithLoggedUser()
             .MapAsync(user => _userService.UpdatePersonalInfo(user, update))

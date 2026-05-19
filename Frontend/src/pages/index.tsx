@@ -25,7 +25,7 @@ export const RegionsSummaries = lazyWithPreload(
   () => import("@/pages/Regions/RegionSummariesPage")
 );
 export const RegionProgression = lazyWithPreload(
-  () => import("@pages/Regions/RegionProgression")
+  () => import("@/pages/Regions/RegionProgressionPage")
 );
 
 export const UserProfilePage = lazyWithPreload(
