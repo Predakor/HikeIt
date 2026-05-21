@@ -4,7 +4,7 @@ import RegionProgress from "@/components/UserRegions/Progression/RegionProgress"
 import RegionTrips from "@/components/UserRegions/Trips/RegionTrips";
 import RegionRoutesVisualization from "@/components/UserRegions/Visualizations/RegionRoutesVisualization";
 import FetchWrapper from "@/components/Utils/Fetching";
-import useUserRegion from "@/hooks/Regions/useRegionProgress";
+import useUserRegion from "@/hooks/Regions/UseRegionProgress";
 import type { UserRegionData } from "@/types/Api/region.types";
 import type { TabConfig } from "@/types/Utils/order.types";
 import { For, Stack, Tabs } from "@chakra-ui/react";

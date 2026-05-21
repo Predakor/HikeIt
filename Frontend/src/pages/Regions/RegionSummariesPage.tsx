@@ -4,7 +4,7 @@ import UnprogressedRegion from "@/components/Regions/Card/UnprogressedRegion";
 import PageTitle from "@/components/ui/Titles/PageTitle";
 import SubTitle from "@/components/ui/Titles/SubTitle";
 import FetchWrapper from "@/components/Utils/Fetching";
-import useRegionsProgressions from "@/hooks/Regions/useRegionsProgressions";
+import useRegionsProgressions from "@/hooks/Regions/UseRegionsProgressions";
 import usePagePreload from "@/hooks/Utils/usePagePreload";
 import type { Region, RegionProgressSummary } from "@/types/Api/region.types";
 import { For, GridItem, Show, SimpleGrid, Stack } from "@chakra-ui/react";
