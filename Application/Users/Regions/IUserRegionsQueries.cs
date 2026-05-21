@@ -10,6 +10,6 @@ public interface IUserRegionsQueries : IQueryService
     Task<Result<RoutePath[]>> GetRouteVisualizations(Guid userId, int regionId, CancellationToken ct);
     Task<Result<RegionData>> GetRegionProgess(Guid userId, int RegionId, CancellationToken ct);
 
-    sealed record RegionTrip(Guid Id, string TripName, DateOnly TripDay, int? Distance, TimeSpan? Duration);
+    sealed record RegionTrip(Guid Id, string Name, DateOnly TripDay, int? Distance, TimeSpan? Duration);
     sealed record RegionData(RegionProgressDto.Full Progress, bool HasTrips, bool HasVisualizations);
 }

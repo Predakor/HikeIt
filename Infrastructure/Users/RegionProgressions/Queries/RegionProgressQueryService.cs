@@ -10,7 +10,7 @@ using static Application.Users.Regions.IUserRegionsQueries;
 
 namespace Infrastructure.Users.RegionProgressions.Queries;
 
-internal class RegionProgressQueryService(TripDbContext dbContext, IRegionQueryService regionQueries) : IUserRegionsQueries
+internal class RegionProgressQueryService(TripDbContext dbContext) : IUserRegionsQueries
 {
     public Task<Result<RoutePath[]>> GetRouteVisualizations(Guid userId, int regionId, CancellationToken ct)
     {

@@ -33,7 +33,7 @@ export const timeConverter = {
     if (seconds > 0 && hours === 0) parts.push(`${seconds}s`);
     // optional: hide seconds if there are hours
 
-    return parts.join(" ");
+    return parts.join(":") as TimeSpanString;
   },
 
   toRawDuration: (timeString: TimeSpanString) => {

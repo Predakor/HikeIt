@@ -66,6 +66,7 @@ public sealed class UserRegionsController : UserControllerBase
     }
 
     [HttpGet("{regionId}/trips")]
+    [Produces(typeof(IUserRegionsQueries.RegionTrip))]
     public async Task<IActionResult> GetRegionTrips(int regionId, CancellationToken ct)
     {
         return await _authService

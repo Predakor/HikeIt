@@ -14,7 +14,18 @@ export interface TripDto {
     name: string;
   };
 }
-
+export interface OptionalTripDto {
+  id: string;
+  name: string;
+  tripDay: string;
+  region?: {
+    id: number;
+    name: string;
+  };
+  duration?: TimeSpanString;
+  distance: number;
+}
+export type RegionTrip = Omit<TripSummary, "region">;
 export interface TripSummary {
   id: string;
   name: string;
