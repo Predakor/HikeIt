@@ -8,6 +8,8 @@ import useUserRegion from "@/hooks/Regions/useRegionProgress";
 import type { UserRegionData } from "@/types/Api/region.types";
 import type { TabConfig } from "@/types/Utils/order.types";
 import { For, Stack, Tabs } from "@chakra-ui/react";
+import { useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router";
 
 const tripAnalyticTabs: TabConfig<UserRegionData> = [
   { key: "progress", label: "", Component: RegionProgress },
@@ -15,13 +17,37 @@ const tripAnalyticTabs: TabConfig<UserRegionData> = [
   { key: "visualizations", label: "", Component: RegionRoutesVisualization },
 ];
 
-function RegionProgressionsPage() {
-  const getRegionProgress = useUserRegion();
+const tabMap = new Map(tripAnalyticTabs.map((x) => [x.key, x]));
+const tabParamName = "tab";
+
+export default function RegionProgressionsPage() {
   const config = tripAnalyticTabs;
+  const getRegionProgress = useUserRegion();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeTab = useMemo(() => {
+    const tabParam = searchParams.get(tabParamName) as keyof UserRegionData | undefined;
+    return tabParam && tabMap.has(tabParam) ? tabParam : "progress";
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (searchParams.get(tabParamName) !== activeTab) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.set(tabParamName, activeTab);
+      setSearchParams(nextSearchParams, { replace: true });
+    }
+  }, [activeTab, searchParams, setSearchParams]);
+
+  const setTab = (tab: Tabs.TabsValueChangeDetails) => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set(tabParamName, tab.value);
+    setSearchParams(nextSearchParams);
+  };
+
   return (
     <FetchWrapper request={getRegionProgress}>
       {(data) => (
-        <Tabs.Root lazyMount={true} defaultValue={"progress"}>
+        <Tabs.Root lazyMount={true} value={activeTab} onValueChange={setTab}>
           <Tabs.List display={"flex"} maxW={"100vw"} overflowX={{ base: "scroll", lg: "clip" }}>
             <For each={config}>
               {({ key, label }) => (
@@ -51,5 +77,3 @@ function RegionProgressionsPage() {
     </FetchWrapper>
   );
 }
-
-export default RegionProgressionsPage;
