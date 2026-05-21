@@ -41,7 +41,7 @@ public sealed class UserRegionsController : UserControllerBase
     {
         return await _authService
             .WithLoggedUserId()
-            .BindAsync(userId => _userRegionQueries.GetRegionProgess(userId, regionId, ct))
+            .BindAsync(userId => _userRegionQueries.GetRegionProgress(userId, regionId, ct))
             .MapAsync(d =>
                 new RegionProgressDto.TabDataLinked(
                     d.Progress,

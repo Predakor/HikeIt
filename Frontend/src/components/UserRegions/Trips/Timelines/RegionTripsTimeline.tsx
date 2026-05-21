@@ -6,7 +6,7 @@ import { Link } from "react-router";
 
 export default function RegionTripsTimeline({ trips }: { trips: RegionTrip[] }) {
   const sortedTrips = trips.sort(
-    (a, b) => new Date(a.tripDay).getSeconds() - new Date(b.tripDay).getSeconds(),
+    (a, b) => new Date(a.tripDay).getTime() - new Date(b.tripDay).getTime(),
   );
 
   return (

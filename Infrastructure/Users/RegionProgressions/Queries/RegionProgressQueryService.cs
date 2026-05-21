@@ -40,7 +40,7 @@ internal class RegionProgressQueryService(TripDbContext dbContext) : IUserRegion
             .ToResultArrayAsync("trips", ct);
     }
 
-    public async Task<Result<RegionData>> GetRegionProgess(Guid userId, int RegionId, CancellationToken ct)
+    public async Task<Result<RegionData>> GetRegionProgress(Guid userId, int RegionId, CancellationToken ct)
     {
         var region = await dbContext.Regions
             .AsNoTracking()

@@ -1,7 +1,6 @@
 ﻿using Application.AppSettings;
 using Application.AppSettings.Decorators;
 using Application.Commons.Abstractions;
-using Application.Commons.Abstractions.Queries;
 using Application.Commons.Drafts;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +12,6 @@ public static class DependencyInjection
     {
         return services
             .AddDomainEvents()
-            .AddQueries()
             .AddDrafts()
             .DecorateAppSettings();
     }
@@ -29,21 +27,6 @@ public static class DependencyInjection
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
-    }
-
-    private static IServiceCollection AddQueries(this IServiceCollection services)
-    {
-        return services
-            .AddScoped<IQueryDispatcher, QueryDispatcher>()
-            .Scan(scan =>
-                scan.FromAssembliesOf(typeof(DependencyInjection))
-                    .AddClasses(
-                        classes => classes.AssignableTo(typeof(IQueryHandler<,>)),
-                        publicOnly: false
-                    )
-                    .AsImplementedInterfaces()
-                    .WithScopedLifetime()
-            );
     }
 
     private static IServiceCollection AddDrafts(this IServiceCollection services)
