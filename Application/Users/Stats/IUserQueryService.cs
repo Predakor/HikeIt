@@ -5,10 +5,10 @@ using Application.Users.Stats.Dtos;
 
 namespace Application.Users.Stats;
 
-public interface IUserQueryService : IQueryService {
+public interface IUserQueryService : IQueryService
+{
     Task<Result<UserStatsDto.All>> GetStats(Guid userId);
     Task<Result<UserDto.Profile>> GetProfile(Guid userId);
 
     Task<Result<RegionProgressDto.Summary[]>> GetRegionsSummaries(Guid userId);
-    Task<Result<RegionProgressDto.Full>> GetRegionProgess(Guid userId, int RegionId);
 }

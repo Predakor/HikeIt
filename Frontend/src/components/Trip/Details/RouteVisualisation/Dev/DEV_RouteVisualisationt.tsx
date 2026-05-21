@@ -5,7 +5,7 @@ import { SecondaryButton } from "@/components/ui/Buttons";
 import useResourceLink from "@/hooks/Api/useResourceLink";
 import type { GpxEntry } from "@/types/Api/gpx.types";
 import type { ResourceUrl } from "@/types/Api/types";
-import { Popover, Portal, Show, Stack } from "@chakra-ui/react";
+import { Popover, Portal, Stack } from "@chakra-ui/react";
 import type { Feature, LineString } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
@@ -32,14 +32,6 @@ export default function DevRouteVisualisation({ data }: { data: ResourceUrl }) {
               Lat: arrayUtils.average(points, (p) => p.lat),
             };
 
-            const geoDatA: Feature<LineString> = {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates: points.map((p) => [p.lon, p.lat]),
-              },
-              properties: null,
-            };
             return (
               <RMap
                 minZoom={12}
@@ -54,7 +46,7 @@ export default function DevRouteVisualisation({ data }: { data: ResourceUrl }) {
                     <IconSettings />
                   </SecondaryButton>
                 </Popover.Trigger>
-                <RSource key="hike-path" id="hike-path" type="geojson" data={geoDatA} />
+                <RSource key="hike-path" id="hike-path" type="geojson" data={previewRoute!} />
                 <RLayer
                   type="line"
                   source="hike-path"
@@ -65,25 +57,6 @@ export default function DevRouteVisualisation({ data }: { data: ResourceUrl }) {
                     "line-opacity": 0.8,
                   }}
                 />
-
-                <Show when={previewRoute}>
-                  <RSource
-                    key="hike-path-preview"
-                    id="hike-path-preview"
-                    type="geojson"
-                    data={previewRoute!}
-                  />
-                  <RLayer
-                    type="line"
-                    source="hike-path-preview"
-                    id="hike-line-preview"
-                    paint={{
-                      "line-color": "#FF0000",
-                      "line-width": 2,
-                      "line-opacity": 0.8,
-                    }}
-                  />
-                </Show>
 
                 <RSource
                   type="raster-dem"

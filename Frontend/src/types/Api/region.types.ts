@@ -1,4 +1,5 @@
 import type { Peak, PeakWithLocation, PeakWithReachStatus } from "./peak.types";
+import type { ResourceUrl } from "./types";
 
 export interface Region {
   id: number;
@@ -28,4 +29,10 @@ export interface RegionProgressFull {
   uniqueReachedPeaks: number;
   highestPeak: Peak;
   peaks: PeakWithReachStatus[];
+}
+
+export interface UserRegionData {
+  progress: RegionProgressFull;
+  trips?: ResourceUrl;
+  visualizations?: ResourceUrl;
 }

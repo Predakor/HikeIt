@@ -4,7 +4,7 @@ import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 const staleTime = 3600 * 24 * 30;
 
-function UseRegionsProgressions() {
+function useRegionsProgressions() {
   const regionsQuery = useQuery<Region[]>({
     queryKey: ["regions"],
     queryFn: () => apiClient<Region[]>("regions"),
@@ -21,9 +21,7 @@ function UseRegionsProgressions() {
 
   const allRequestsLoaded = regionsLoaded && summariesLoaded;
 
-  const unprogressedRegions = allRequestsLoaded
-    ? MergeDuplicates(regions!, summaries!)
-    : [];
+  const unprogressedRegions = allRequestsLoaded ? MergeDuplicates(regions!, summaries!) : [];
 
   return {
     data: [summaries ?? [], unprogressedRegions],
@@ -34,13 +32,8 @@ function UseRegionsProgressions() {
   } as UseQueryResult<[RegionProgressSummary[], Region[]]>;
 }
 
-function MergeDuplicates(
-  regions: Region[],
-  summaries: RegionProgressSummary[]
-) {
-  return regions.filter(
-    (region) => !summaries.some((summary) => summary.region.id === region.id)
-  );
+function MergeDuplicates(regions: Region[], summaries: RegionProgressSummary[]) {
+  return regions.filter((region) => !summaries.some((summary) => summary.region.id === region.id));
 }
 
-export default UseRegionsProgressions;
+export default useRegionsProgressions;

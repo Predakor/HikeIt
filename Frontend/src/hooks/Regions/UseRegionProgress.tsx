@@ -1,14 +1,14 @@
 import api from "@/Utils/Api/apiRequest";
-import type { RegionProgressFull } from "@/types/Api/region.types";
+import type { UserRegionData } from "@/types/Api/region.types";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 
-export default function UseRegionProgress() {
+export default function useUserRegion() {
   const { regionId } = useParams();
 
-  const request = useQuery<RegionProgressFull>({
+  const request = useQuery<UserRegionData>({
     queryKey: ["regionProgress", regionId],
-    queryFn: () => api.get<RegionProgressFull>(`users/me/regions/${regionId}`),
+    queryFn: () => api.get<UserRegionData>(`users/me/regions/${regionId}`),
     enabled: !!regionId,
   });
 
