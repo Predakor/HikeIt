@@ -8,7 +8,7 @@ namespace Application.Users.Stats;
 public interface IUserQueryService : IQueryService
 {
     Task<Result<UserStatsDto.All>> GetStats(Guid userId);
-    Task<Result<UserDto.Profile>> GetProfile(Guid userId);
+    Task<Result<UserDto.Profile>> GetProfile(Guid userId, CancellationToken ct);
 
     Task<Result<RegionProgressDto.Summary[]>> GetRegionsSummaries(Guid userId);
 }

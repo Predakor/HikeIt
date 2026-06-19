@@ -12,6 +12,8 @@ import { formatter } from "../Utils/formatter";
 import type { Totals } from "../Utils/statTypes";
 
 export function TotalsStats({ stats }: { stats: Totals }) {
+  const totalDescentDuration = stats.totalDescentDuration;
+
   const distanceAddons = {
     unit: "km",
     formatt: formatter.toKm,
@@ -56,7 +58,7 @@ export function TotalsStats({ stats }: { stats: Totals }) {
       />
       <TimeRowStat
         label="Descent Time"
-        value={stats.totalDescentDuration}
+        value={totalDescentDuration}
         addons={{ IconSource: IconTrendDown }}
       />
     </StatsCard>

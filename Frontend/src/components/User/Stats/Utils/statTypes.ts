@@ -1,4 +1,4 @@
-import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
+import type { TimeSpanString } from "@/types/Api/types";
 
 export type UserStats = {
   totals: Totals;
@@ -11,8 +11,8 @@ export type Totals = {
   totalAscentMeters: number;
   totalDescentMeters: number;
   totalDuration: TimeSpanString;
-  totalClimbTime: TimeSpanString;
-  totalDescentTime: TimeSpanString;
+  totalClimbDuration: TimeSpanString;
+  totalDescentDuration: TimeSpanString;
   totalPeaks: number;
   totalTrips: number;
 };
@@ -25,5 +25,6 @@ export type Locations = {
 export type Metas = {
   firstHikeDate: string | null; // ISO date string e.g. '2025-01-01'
   lastHikeDate: string | null;
-  longestTripMeters: number;
+  longestTripDistanceMeters: number;
+  longestTripDuration: TimeSpanString;
 };

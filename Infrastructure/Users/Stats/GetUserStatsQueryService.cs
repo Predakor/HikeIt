@@ -1,5 +1,4 @@
-﻿using Application.Locations.Peaks;
-using Application.Locations.Regions;
+﻿using Application.Locations.Regions;
 using Application.Users.RegionProgressions.Dtos;
 using Application.Users.Root.Dtos;
 using Application.Users.Stats;
@@ -7,104 +6,87 @@ using Application.Users.Stats.Dtos;
 using Domain.Users.RegionProgressions;
 using Domain.Users.Root;
 using Infrastructure.Commons.Databases;
+using Infrastructure.Commons.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Users.Stats;
 
-internal class UserQueryService : IUserQueryService
+internal sealed class UserQueryService(TripDbContext _dbContext) : IUserQueryService
 {
-    private readonly TripDbContext _dbContext;
-    private readonly IRegionQueryService _regionQueries;
     private IQueryable<User> Users => _dbContext.Users.AsNoTracking();
     private IQueryable<RegionProgress> RegionProgresses => _dbContext.Set<RegionProgress>().AsNoTracking();
 
-    public UserQueryService(TripDbContext ctx, IRegionQueryService regionQueries)
+    public Task<Result<UserStatsDto.All>> GetStats(Guid userId)
     {
-        _dbContext = ctx;
-        _regionQueries = regionQueries;
-    }
-
-    public async Task<Result<UserStatsDto.All>> GetStats(Guid userId)
-    {
-        var query = await Users
+        return Users
             .Where(u => u.Id == userId)
-            .Select(u => u.Stats.ToUserStatsDto())
-            .FirstOrDefaultAsync();
+            .Select(u => new UserStatsDto.All(
+                new UserStatsDto.Totals(
+                    TotalDistanceMeters: u.Stats.TotalDistanceMeters,
+                    TotalAscentMeters: u.Stats.TotalAscentMeters,
+                    TotalDescentMeters: u.Stats.TotalDescentMeters,
+                    TotalDuration: u.Stats.TotalDuration,
+                    TotalClimbDuration: u.Stats.TotalClimbDuration,
+                    TotalDescentDuration: u.Stats.TotalDescentDuration,
+                    TotalPeaks: u.Stats.TotalPeaks,
+                    TotalTrips: u.Stats.TotalTrips
+                ),
+                new UserStatsDto.Locations(u.Stats.UniquePeaks, u.Stats.RegionsVisited),
+                new UserStatsDto.Metas(
+                    u.Stats.FirstHikeDate,
+                    u.Stats.LastHikeDate,
+                    u.Stats.LongestTripMeters,
+                    u.Stats.LongestTripMinutes
+                )
+            ))
+            .FirstOrFailureAsync(userId, nameof(User), CancellationToken.None);
 
-        if (query is null)
-        {
-            return Errors.NotFound("user", "id", userId);
-        }
-
-        return query;
     }
 
-    public async Task<Result<UserDto.Profile>> GetProfile(Guid userId)
+    public Task<Result<UserDto.Profile>> GetProfile(Guid userId, CancellationToken ct)
     {
-        var query = await Users
-            .Include(u => u.Stats)
-            .Include(u => u.Rank)
+        return Users
             .Where(u => u.Id == userId)
-            .Select(u => u.ToProfile())
-            .FirstOrDefaultAsync();
-
-        if (query is null)
-        {
-            return Errors.NotFound("user", userId);
-        }
-
-        return query;
+            .Select(u => new UserDto.Profile(
+                new UserDataDto.PublicProfile
+                {
+                    UserName = u.UserName!,
+                    Avatar = u.Avatar,
+                    Rank = u.Rank != null ? u.Rank.Name : "Novice Hiker",
+                    Peaks = u.Stats.TotalPeaks,
+                    Trips = u.Stats.TotalTrips,
+                    Traveled = u.Stats.TotalDistanceMeters,
+                },
+                new UserDataDto.Personal
+                {
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Email = u.Email ?? "",
+                    BirthDay = u.BirthDay,
+                    Country = u.Country ?? "",
+                    Gender = u.Gender.ToString(),
+                },
+                new UserDataDto.AccountState
+                {
+                    Role = "user",
+                    CreatedAt = u.CreatedAt,
+                    Status = "Active",
+                }
+            ))
+            .FirstOrFailureAsync(userId, nameof(User), "id", ct);
     }
 
-    public async Task<Result<RegionProgressDto.Summary[]>> GetRegionsSummaries(Guid userId)
+    public Task<Result<RegionProgressDto.Summary[]>> GetRegionsSummaries(Guid userId)
     {
-        var query = await RegionProgresses
-            .Include(rp => rp.Region)
+        return RegionProgresses
             .Where(rp => rp.UserId == userId)
-            .Select(rp => rp.ToRegionSummary())
-            .ToArrayAsync();
+            .Select(rp => new RegionProgressDto.Summary(
+                new RegionDto.Complete(rp.Region.Id, rp.Region.Name),
+                rp.UniqueReachedPeaks,
+                rp.TotalPeaksInRegion
+            ))
+            .ToResultArrayAsync("region progresses", CancellationToken.None);
 
-        if (query.NullOrEmpty())
-        {
-            return Errors.EmptyCollection("region progresses");
-        }
-
-        return query;
-    }
-
-}
-
-internal static class Extentions
-{
-    public static UserDto.Profile ToProfile(this User user)
-    {
-        return new(user.ToPublicProfile(), user.ToPersonal(), user.ToAccountState());
-    }
-
-    public static RegionProgressDto.Summary ToRegionSummary(this RegionProgress progress)
-    {
-        return new RegionProgressDto.Summary(
-            new(progress.Region.Id, progress.Region.Name),
-            progress.UniqueReachedPeaks,
-            progress.TotalPeaksInRegion
-        );
-    }
-
-    public static bool WasReached(this PeakDto.Base peak, RegionProgress? regionSummary)
-    {
-        if (regionSummary is null)
-        {
-            return false;
-        }
-
-        return regionSummary.PeakVisits.ContainsKey(peak.Id);
-    }
-
-    public static PeakDto.WithReachStatus ToPeakDtoWithReachStatus(
-        this PeakDto.Base peak,
-        bool reached
-    )
-    {
-        return new(peak.Id, peak.Name, peak.Height, reached);
     }
 }
+

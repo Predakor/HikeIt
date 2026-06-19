@@ -1,6 +1,7 @@
 ﻿namespace Domain.Users.Stats.ValueObjects;
 
-public static class UserStatsUpdates {
+public static class UserStatsUpdates
+{
     public record All(Totals Totals, Locations Locations, Metas Metas);
 
     public record Totals(
@@ -8,7 +9,9 @@ public static class UserStatsUpdates {
         uint AscentMeters,
         uint DescentMeters,
         uint Peaks,
-        TimeSpan Duration
+        TimeSpan Duration,
+        TimeSpan ClimbDuration,
+        TimeSpan DescentDuration
     );
 
     public record Locations(uint UniquePeaks, uint NewRegions);

@@ -1,11 +1,12 @@
 import { IconPlay, IconStop } from "@/Icons/Icons";
+import { TimeSpan } from "@/Utils/Formatters/Duration/Duration";
 import RowStat from "@/components/Stats/RowStat";
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import type { TimeAnalytic } from "@/types/Api/analytics.types";
 import { Flex } from "@chakra-ui/react";
 import type { Duration } from "../../TimeAnalytics";
-import { TimeSpan, type TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 import { TimeInDaySlider } from "./TimeInDaySlider";
+import type { TimeSpanString } from "@/types/Api/types";
 
 interface Props {
   data: TimeAnalytic;

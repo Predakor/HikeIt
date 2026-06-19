@@ -1,5 +1,5 @@
-import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 import type { ReachedPeak } from "@/components/ui/Inputs/File/trip.types";
+import type { TimeSpanString } from "./types";
 
 export interface TripAnalytic {
   routeAnalytics: RouteAnalytic;
