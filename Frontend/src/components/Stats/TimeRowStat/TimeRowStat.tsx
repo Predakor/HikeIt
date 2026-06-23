@@ -18,7 +18,7 @@ export function TimeRowStat({
   const hasAtleast1Hour = totalHours > 0;
   const hasMoreThan3Days = totalHours > 72;
 
-  let unit: TimeUnit = "s";
+  let unit: TimeUnit = "min";
   let timeValue = value.toMinutes();
 
   if (hasAtleast1Hour) {

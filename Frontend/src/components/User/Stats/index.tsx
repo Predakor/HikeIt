@@ -1,7 +1,7 @@
 import { AverageTrip } from "./Average/AverageTrip";
 import { LocationStats } from "./Locations/LocationStats";
 import { MetadatesStats } from "./Metas/MetadatesStats";
-import { TotalsStats } from "./Totals/TotalsStats.1";
+import { TotalsStats } from "./Totals/TotalsStats";
 
 export default {
   Average: AverageTrip,
