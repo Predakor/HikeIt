@@ -1,21 +1,17 @@
 import {
   IconArrowDown,
   IconArrowUp,
+  IconClock,
   IconJourney,
   IconTrendDown,
   IconTrendUp,
 } from "@/Icons/Icons";
-import { TimeSpan } from "@/Utils/Formatters/Duration/Duration";
-import { RowStat } from "@/components/Stats";
+import { RowStat, TimeRowStat } from "@/components/Stats";
 import StatsCard from "../Shared/StatsCard";
 import { formatter } from "../Utils/formatter";
 import type { Totals } from "../Utils/statTypes";
 
 export function TotalsStats({ stats }: { stats: Totals }) {
-  const totalActiveDuration = TimeSpan.From(stats.totalDuration);
-  const totalAscentDuration = TimeSpan.From(stats.totalDuration);
-  const totalDescentDuration = TimeSpan.From(stats.totalDuration);
-
   const distanceAddons = {
     unit: "km",
     formatt: formatter.toKm,
@@ -48,20 +44,20 @@ export function TotalsStats({ stats }: { stats: Totals }) {
         }}
       />
 
-      <RowStat
+      <TimeRowStat
         label="Total Hiking Time"
-        value={totalActiveDuration}
-        addons={{ formatt: (t) => t.toString(), IconSource: IconJourney }}
+        value={stats.totalDuration}
+        addons={{ IconSource: IconClock }}
       />
-      <RowStat
+      <TimeRowStat
         label="Climb Time"
-        value={totalAscentDuration}
-        addons={{ formatt: (t) => t.toString(), IconSource: IconTrendUp }}
+        value={stats.totalClimbDuration}
+        addons={{ IconSource: IconTrendUp }}
       />
-      <RowStat
+      <TimeRowStat
         label="Descent Time"
-        value={totalDescentDuration}
-        addons={{ formatt: (t) => t.toString(), IconSource: IconTrendDown }}
+        value={stats.totalDescentDuration}
+        addons={{ IconSource: IconTrendDown }}
       />
     </StatsCard>
   );

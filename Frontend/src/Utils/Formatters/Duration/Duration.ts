@@ -1,7 +1,5 @@
 import { arrayUtils } from "@/Utils/arrayUtils";
-
-export type TimeSpanString = string & { __brand: "timeString" };
-export type DateTimeString = string & { __brand: "dateTimeString" };
+import type { TimeSpanString } from "@/types/Api/types";
 
 type CastableTimes = TimeSpanString | number | TimeSpan;
 
@@ -53,23 +51,46 @@ export class TimeSpan {
   }
 
   toString() {
-    const h = Math.floor(this.seconds / 3600);
+    const d = Math.floor(this.seconds / 86400);
+    const h = Math.floor((this.seconds % 86400) / 3600);
     const m = Math.floor((this.seconds % 3600) / 60);
-    return h > 0 ? `${h}h ${m}min` : `${m}min`;
+
+    const parts = [];
+    if (d > 0) parts.push(`${d}d`);
+    if (h > 0) parts.push(`${h}h`);
+    if (m > 0 || (d === 0 && h === 0)) parts.push(`${m}min`);
+
+    return parts.join(" ");
   }
 }
 
-const extractTimeUnits = (time: TimeSpanString) => {
-  const [rawHours, rawMinutes, rawSeconds] = time.split(":");
+type TimeUnits = {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+};
 
-  return [parseInt(rawHours), parseInt(rawMinutes), parseInt(rawSeconds)];
+const extractTimeUnits = (time: TimeSpanString): TimeUnits => {
+  const [, rawDays, rawHours, rawMinutes, rawSeconds] =
+    time.match(/^(?:(\d+)\.)?(\d+):(\d+):(\d+)/) ?? [];
+
+  return {
+    days: parseInt(rawDays ?? "0", 10),
+    hours: parseInt(rawHours ?? "0", 10),
+    minutes: parseInt(rawMinutes ?? "0", 10),
+    seconds: parseInt(rawSeconds ?? "0", 10),
+  };
 };
 
 const toTotalSeconds = (time: TimeSpanString) => {
-  const [hours, minutes, seconds] = extractTimeUnits(time);
+  const { days, hours, minutes, seconds } = extractTimeUnits(time);
+
+  const daysToSeconds = days * 24 * 60 * 60;
   const hoursToSeconds = hours * 60 * 60;
   const minutesToSeconds = minutes * 60;
-  return hoursToSeconds + minutesToSeconds + seconds;
+
+  return daysToSeconds + hoursToSeconds + minutesToSeconds + seconds;
 };
 
 const castToSeconds = (time: CastableTimes) => {

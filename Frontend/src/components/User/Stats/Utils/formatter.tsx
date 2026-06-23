@@ -1,4 +1,4 @@
-import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
+import type { TimeSpanString } from "@/types/Api/types";
 
 export const formatter = {
   toKm: (v: number) => (v / 1000).toFixed(1),

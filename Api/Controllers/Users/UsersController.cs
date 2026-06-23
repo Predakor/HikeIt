@@ -44,11 +44,11 @@ public class UsersController : UserControllerBase
 
     [HttpGet("profile")]
     [ProducesResponseType(typeof(UserDto.Profile), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetUserProfile()
+    public async Task<IActionResult> GetUserProfile(CancellationToken ct)
     {
         return await _authService
             .WithLoggedUserId()
-            .BindAsync(_userQueries.GetProfile)
+            .BindAsync(user => _userQueries.GetProfile(user, ct))
             .ToActionResultAsync();
     }
 

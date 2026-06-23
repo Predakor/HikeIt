@@ -4,7 +4,8 @@ using Domain.Users.Stats.ValueObjects;
 
 namespace Domain.Users.Stats;
 
-public class UserStats : IEntity<Guid> {
+public class UserStats : IEntity<Guid>
+{
     public Guid Id { get; init; }
 
     //Totals
@@ -13,6 +14,8 @@ public class UserStats : IEntity<Guid> {
     public uint TotalAscentMeters { get; private set; }
     public uint TotalDescentMeters { get; private set; }
     public TimeSpan TotalDuration { get; private set; }
+    public TimeSpan TotalClimbDuration { get; private set; }
+    public TimeSpan TotalDescentDuration { get; private set; }
 
     //Locations
     public uint TotalPeaks { get; private set; }
@@ -25,10 +28,12 @@ public class UserStats : IEntity<Guid> {
     public uint LongestTripMeters { get; private set; }
     public TimeSpan LongestTripMinutes { get; private set; }
 
-    public void UpdateStats(UserStatsUpdates.All update, UpdateMode mode) {
+    public void UpdateStats(UserStatsUpdates.All update, UpdateMode mode)
+    {
         //safeguard if some stats woulnd't zero out
         bool isLastTripToDelete = TotalTrips == 1 && mode == UpdateMode.Decrease;
-        if (isLastTripToDelete) {
+        if (isLastTripToDelete)
+        {
             Clear();
             return;
         }
@@ -39,49 +44,61 @@ public class UserStats : IEntity<Guid> {
         UpdateMetas(update.Metas);
     }
 
-    public void UpdateTotals(UserStatsUpdates.Totals update, UpdateMode mode) {
+    public void UpdateTotals(UserStatsUpdates.Totals update, UpdateMode mode)
+    {
         TotalDistanceMeters = TotalDistanceMeters.SafeUpdate(update.DistanceMeters, mode);
         TotalAscentMeters = TotalAscentMeters.SafeUpdate(update.AscentMeters, mode);
         TotalDescentMeters = TotalDescentMeters.SafeUpdate(update.DescentMeters, mode);
         TotalPeaks = TotalPeaks.SafeUpdate(update.Peaks, mode);
         TotalDuration = TotalDuration.SafeUpdate(update.Duration, mode);
+        TotalClimbDuration = TotalClimbDuration.SafeUpdate(update.ClimbDuration, mode);
+        TotalDescentDuration = TotalDescentDuration.SafeUpdate(update.DescentDuration, mode);
     }
 
-    public void UpdateFirstLastTripDate(DateOnly date) {
-        if (FirstHikeDate is null) {
+    public void UpdateFirstLastTripDate(DateOnly date)
+    {
+        if (FirstHikeDate is null)
+        {
             FirstHikeDate = date;
             LastHikeDate = date;
             return;
         }
 
-        if (date < FirstHikeDate) {
+        if (date < FirstHikeDate)
+        {
             FirstHikeDate = date;
             return;
         }
 
-        if (date > LastHikeDate) {
-            FirstHikeDate = date;
-            return;
+        if (date > LastHikeDate)
+        {
+            LastHikeDate = date;
         }
     }
 
-    public void UpdateMetas(UserStatsUpdates.Metas update) {
-        if (update.Duration is not null && update.Duration > LongestTripMinutes) {
+    public void UpdateMetas(UserStatsUpdates.Metas update)
+    {
+        if (update.Duration is not null && update.Duration > LongestTripMinutes)
+        {
             LongestTripMinutes = update.Duration.Value;
         }
 
-        if (update.DistanceMeters > LongestTripMeters) {
+        if (update.DistanceMeters > LongestTripMeters)
+        {
             LongestTripMeters = update.DistanceMeters;
         }
     }
 
-    public void UpdateLocations(UserStatsUpdates.Locations update, UpdateMode mode) {
+    public void UpdateLocations(UserStatsUpdates.Locations update, UpdateMode mode)
+    {
         UniquePeaks = UniquePeaks.SafeUpdate(update.UniquePeaks, mode);
         RegionsVisited = RegionsVisited.SafeUpdate(update.NewRegions, mode);
     }
 
-    public void UpdateTripCount(UpdateMode mode, uint delta = 1) {
-        TotalTrips = mode switch {
+    public void UpdateTripCount(UpdateMode mode, uint delta = 1)
+    {
+        TotalTrips = mode switch
+        {
             UpdateMode.Increase => TotalTrips + delta,
             UpdateMode.Decrease => Math.Max(TotalTrips - delta, 0),
             UpdateMode.Set => delta,
@@ -89,13 +106,16 @@ public class UserStats : IEntity<Guid> {
         };
     }
 
-    void Clear() {
+    private void Clear()
+    {
         TotalTrips = 0;
         TotalDistanceMeters = 0;
         TotalAscentMeters = 0;
         TotalDescentMeters = 0;
         TotalPeaks = 0;
         TotalDuration = TimeSpan.Zero;
+        TotalClimbDuration = TimeSpan.Zero;
+        TotalDescentDuration = TimeSpan.Zero;
 
         UniquePeaks = 0;
         RegionsVisited = 0;
@@ -103,5 +123,7 @@ public class UserStats : IEntity<Guid> {
         FirstHikeDate = null;
         LastHikeDate = null;
         LongestTripMeters = 0;
+        LongestTripMinutes = TimeSpan.Zero;
+
     }
 }

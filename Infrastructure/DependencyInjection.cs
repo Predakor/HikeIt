@@ -20,12 +20,14 @@ using System.Reflection;
 
 namespace Infrastructure;
 
-public static class DependencyInjection {
+public static class DependencyInjection
+{
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration,
         bool isDevelopment
-    ) {
+    )
+    {
         ImmutableArray<Assembly> assemblies = [typeof(DependencyInjection).Assembly];
 
         return services
@@ -36,7 +38,8 @@ public static class DependencyInjection {
             .AddRepositories(assemblies);
     }
 
-    static IServiceCollection AddEvents(this IServiceCollection services) {
+    private static IServiceCollection AddEvents(this IServiceCollection services)
+    {
         services.AddSingleton<IBackgroundQueue, InMemoryBackgroundQueue>();
         services.AddSingleton<IEventPublisher, EventPublisher>();
 
@@ -47,20 +50,23 @@ public static class DependencyInjection {
         return services;
     }
 
-    static IServiceCollection AddCache(this IServiceCollection services) {
+    private static IServiceCollection AddCache(this IServiceCollection services)
+    {
         return services.AddMemoryCache().AddSingleton<ICache, InMemoryCache>();
     }
 
-    static IServiceCollection AddStorages(this IServiceCollection services) {
+    private static IServiceCollection AddStorages(this IServiceCollection services)
+    {
         return services
             .AddSingleton<IFileStorage, AzureBlobStorage>()
             .Decorate<IFileStorage, CachedFileStorageDecorator>();
     }
 
-    static IServiceCollection AddRepositories(
+    private static IServiceCollection AddRepositories(
         this IServiceCollection services,
         ImmutableArray<Assembly> assemblies
-    ) {
+    )
+    {
         return services
             .AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>()
             .Scan(scan =>
@@ -74,19 +80,28 @@ public static class DependencyInjection {
             );
     }
 
-    static IServiceCollection AddDatabase(
+    private static IServiceCollection AddDatabase(
         this IServiceCollection services,
         IConfiguration configuration,
         bool isDevelopment
-    ) {
+    )
+    {
         string connectionString =
             configuration.GetConnectionString("TripDbCS")
             ?? throw new Exception("DbConnectionString is empty or null");
 
-        services.AddDbContext<TripDbContext>(options => {
-            options.UseNpgsql(connectionString, x => x.UseNetTopologySuite());
+        services.AddDbContext<TripDbContext>(options =>
+        {
+            options.UseNpgsql(connectionString,
+                builder =>
+                {
+                    builder.UseNetTopologySuite();
+                    builder.MigrationsAssembly(typeof(TripDbContext).Assembly.FullName);
+                }
+            );
 
-            if (isDevelopment) {
+            if (isDevelopment)
+            {
                 options.EnableSensitiveDataLogging().EnableDetailedErrors();
             }
         });

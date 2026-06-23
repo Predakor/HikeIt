@@ -1,4 +1,3 @@
-import type { TimeSpanString } from "@/Utils/Formatters/Duration/Duration";
 import { ObjectToArray } from "@/Utils/ObjectToArray";
 import RowStat from "@/components/Stats/RowStat";
 import RenderStats from "../RenderStats";
@@ -7,8 +6,7 @@ import { formatter } from "../Utils/formatter";
 import type { Metas } from "../Utils/statTypes";
 
 export function MetadatesStats({ metas }: { metas: Metas }) {
-  const { longestTripMeters, ...rest } = metas;
-  const __mockupLongestTrip = "00:34:21" as TimeSpanString;
+  const { longestTripDistanceMeters, longestTripDuration, ...rest } = metas;
 
   return (
     <StatsCard title="Trip metadatas" columns={2}>
@@ -16,13 +14,13 @@ export function MetadatesStats({ metas }: { metas: Metas }) {
 
       <RowStat
         label="Furthest Trip"
-        value={longestTripMeters}
+        value={longestTripDistanceMeters}
         addons={{ formatt: formatter.toKm, unit: "km" }}
       />
 
       <RowStat
         label="Longest Trip"
-        value={__mockupLongestTrip}
+        value={longestTripDuration}
         addons={{ formatt: formatter.toDuration }}
       />
     </StatsCard>
