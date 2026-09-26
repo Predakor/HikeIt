@@ -1,10 +1,10 @@
+import toLineStringFeature from "@/Utils/Maps/toLineString";
 import { arrayUtils } from "@/Utils/arrayUtils";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import useResourceLink from "@/hooks/Api/useResourceLink";
 import type { GpxEntry } from "@/types/Api/gpx.types";
 import type { ResourceUrl } from "@/types/Api/types";
 import { Stack } from "@chakra-ui/react";
-import type { Feature, LineString } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css"; // See notes below
 import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 
@@ -25,14 +25,6 @@ export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
             Lat: arrayUtils.average(points, (p) => p.lat),
           };
 
-          const geoDatA: Feature<LineString> = {
-            type: "Feature",
-            geometry: {
-              type: "LineString",
-              coordinates: points.map((p) => [p.lon, p.lat]),
-            },
-            properties: null,
-          };
           return (
             <RMap
               minZoom={12}
@@ -42,7 +34,12 @@ export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
               style={{ width: "100%", height: "700px" }}
               mapStyle="https://tiles.openfreemap.org/styles/bright"
             >
-              <RSource key="hike-path" id="hike-path" type="geojson" data={geoDatA} />
+              <RSource
+                key="hike-path"
+                id="hike-path"
+                type="geojson"
+                data={toLineStringFeature(points)}
+              />
               <RLayer
                 type="line"
                 source="hike-path"

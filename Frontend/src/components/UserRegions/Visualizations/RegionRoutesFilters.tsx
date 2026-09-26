@@ -1,44 +1,13 @@
-import { debounce } from "@/Utils/debounce";
+import type { MapDataState } from "@/components/MapVisualisations/UseMapData";
 import { PrimaryButton } from "@/components/ui/Buttons";
 import { For, GridItem, Input, SimpleGrid, Stack } from "@chakra-ui/react";
-import { type ChangeEvent } from "react";
-import type { RouteData } from "./RegionRoutesVisualization";
 
 interface Props {
-  routes: RouteData[];
-  setRoutes: (data: RouteData[]) => void;
-  exageration: number;
-  setExageration: (number: number) => void;
+  mapData: MapDataState;
 }
 
-export default function RegionRoutesFilters({
-  routes,
-  setRoutes,
-  exageration,
-  setExageration,
-}: Props) {
-  const handleVisibilityChange = (route: RouteData) => {
-    const newData = routes.map((d) => {
-      return d.index === route.index ? { ...d, visible: !d.visible } : d;
-    });
-
-    setRoutes(newData);
-  };
-
-  const handleExagerationChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setExageration(e.target.valueAsNumber);
-  };
-
-  const handleColorChange = debounce((e: ChangeEvent<HTMLInputElement>, index: number) => {
-    const newColor = e.target.value;
-
-    const newData = routes.map((d) => {
-      return d.index === index ? { ...d, color: newColor } : d;
-    });
-
-    setRoutes(newData);
-  }, 50);
-
+export default function RegionRoutesFilters({ mapData: map }: Props) {
+  const { routes, actions } = map;
   return (
     <Stack
       direction={{
@@ -46,6 +15,12 @@ export default function RegionRoutesFilters({
       }}
     >
       <SimpleGrid columns={2} gap={"4"} maxWidth={"sm"} alignContent={"start"}>
+        <GridItem colSpan={2}>
+          <PrimaryButton onClick={() => actions.toogleGlobalGradient()}>
+            {true ? "Slope coloring: On" : "Slope coloring: Off"}
+          </PrimaryButton>
+        </GridItem>
+
         <GridItem colSpan={2} asChild>
           <Stack>
             <For each={routes}>
@@ -59,10 +34,11 @@ export default function RegionRoutesFilters({
                     margin={0}
                     border={0}
                     type="color"
+                    // disabled={slopeColoringEnabled}
                     defaultValue={route.color}
-                    onChange={(e) => handleColorChange(e, route.index)}
+                    onChange={(e) => actions.setColor(route.index, e.target.value)}
                   />
-                  <PrimaryButton onClick={() => handleVisibilityChange(route)}>
+                  <PrimaryButton onClick={() => actions.setVisibility(route.index, !route.visible)}>
                     {route.visible ? "Hide" : "Show"}
                   </PrimaryButton>
                 </Stack>
@@ -71,14 +47,7 @@ export default function RegionRoutesFilters({
           </Stack>
         </GridItem>
 
-        <Input
-          type="range"
-          value={exageration}
-          onChange={handleExagerationChange}
-          min={0.1}
-          max={2}
-          step={0.01}
-        />
+        <Input type="range" value={1} onChange={() => {}} min={0.1} max={2} step={0.01} />
       </SimpleGrid>
     </Stack>
   );
