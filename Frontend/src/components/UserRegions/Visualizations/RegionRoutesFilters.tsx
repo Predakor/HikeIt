@@ -1,13 +1,27 @@
-import type { MapDataState } from "@/components/MapVisualisations/UseMapData";
+import { IconHidden, IconLocate, IconVisible } from "@/Icons/Icons";
+import { getRouteBoundsAndCenter } from "@/Utils/Maps/routeBounds";
+import { RegionRoutesMapId } from "@/components/MapVisualisations/MapVisualisation";
+import type { MapDataState, RouteData } from "@/components/MapVisualisations/UseMapData";
 import { PrimaryButton } from "@/components/ui/Buttons";
-import { For, GridItem, Input, SimpleGrid, Stack } from "@chakra-ui/react";
+import { For, GridItem, IconButton, Input, SimpleGrid, Stack } from "@chakra-ui/react";
+import { useMap } from "maplibre-react-components";
 
 interface Props {
   mapData: MapDataState;
 }
 
 export default function RegionRoutesFilters({ mapData: map }: Props) {
-  const { routes, actions } = map;
+  const { routes, globals, actions } = map;
+  const mapHook = useMap(RegionRoutesMapId);
+
+  const locateHandler = (route: RouteData) => {
+    const { bounds } = getRouteBoundsAndCenter([route]);
+    mapHook?.fitBounds(bounds, {
+      linear: true,
+      duration: 700,
+    });
+  };
+
   return (
     <Stack
       direction={{
@@ -17,7 +31,7 @@ export default function RegionRoutesFilters({ mapData: map }: Props) {
       <SimpleGrid columns={2} gap={"4"} maxWidth={"sm"} alignContent={"start"}>
         <GridItem colSpan={2}>
           <PrimaryButton onClick={() => actions.toogleGlobalGradient()}>
-            {true ? "Slope coloring: On" : "Slope coloring: Off"}
+            {globals.isGradientEnabled ? "Slope coloring: On" : "Slope coloring: Off"}
           </PrimaryButton>
         </GridItem>
 
@@ -25,7 +39,12 @@ export default function RegionRoutesFilters({ mapData: map }: Props) {
           <Stack>
             <For each={routes}>
               {(route) => (
-                <Stack direction={"row"} key={route.index}>
+                <Stack
+                  direction={"row"}
+                  onMouseEnter={() => actions.setHovered(route.index, true)}
+                  onMouseLeave={() => actions.setHovered(route.index, false)}
+                  key={route.index}
+                >
                   <Input
                     height={"full"}
                     width={"auto"}
@@ -38,9 +57,23 @@ export default function RegionRoutesFilters({ mapData: map }: Props) {
                     defaultValue={route.color}
                     onChange={(e) => actions.setColor(route.index, e.target.value)}
                   />
-                  <PrimaryButton onClick={() => actions.setVisibility(route.index, !route.visible)}>
-                    {route.visible ? "Hide" : "Show"}
-                  </PrimaryButton>
+                  <IconButton
+                    aria-label="Show/Hide route"
+                    onClick={() => actions.setVisibility(route.index, !route.visible)}
+                  >
+                    {route.visible ?
+                      <IconVisible />
+                    : <IconHidden />}
+                  </IconButton>
+
+                  <IconButton
+                    aria-label="Locate route "
+                    onClick={() => {
+                      locateHandler(route);
+                    }}
+                  >
+                    <IconLocate />
+                  </IconButton>
                 </Stack>
               )}
             </For>

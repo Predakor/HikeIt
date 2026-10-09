@@ -4,19 +4,22 @@ import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 import { rasterDemTiles } from "../Trip/Details/RouteVisualisation/RouteVisualisation";
 import { SecondaryButton } from "../ui/Buttons";
 import { type CameraOptions } from "./CameraControls/useCameraControls";
-import { type MapDataState } from "./UseMapData";
+import { DefaultWidth, type MapDataState } from "./UseMapData";
 
 interface Props {
   data: MapDataState;
   cameraOptions: CameraOptions;
 }
+export const RegionRoutesMapId = "region-routes-map";
+
 export default function MapVisualisation({ data, cameraOptions }: Props) {
   return (
     <RMap
+      id={RegionRoutesMapId}
       minZoom={cameraOptions.minZoom}
       initialPitch={cameraOptions.maxPitch - cameraOptions.minZoom}
       initialBearing={-20}
-      initialCenter={data.center}
+      initialCenter={data.globals.center}
       style={{ width: "100%", height: "700px" }}
       mapStyle="https://tiles.openfreemap.org/styles/bright"
     >
@@ -27,35 +30,42 @@ export default function MapVisualisation({ data, cameraOptions }: Props) {
       </Popover.Trigger>
 
       <For each={data.routes}>
-        {(route) => (
-          <>
-            <RSource
-              key={route.index}
-              id={`hike-path-${route.index}`}
-              type="geojson"
-              data={route.data}
-              lineMetrics
-            />
-            <RLayer
-              type="line"
-              source={`hike-path-${route.index}`}
-              id={`hike-line-${route.index}`}
-              paint={
-                route.gradientEnabled ?
-                  {
-                    "line-gradient": route.gradient,
-                    "line-width": 4,
-                    "line-opacity": route.visible ? 1 : 0, // replace with visible when added
-                  }
-                : {
-                    "line-color": route.color,
-                    "line-width": 4,
-                    "line-opacity": route.visible ? 1 : 0, //replace with visible when added
-                  }
-              }
-            />
-          </>
-        )}
+        {(route) => {
+          const { hoveredIndex } = data.globals;
+          const { index } = route;
+          let opacity = 1;
+          let width = DefaultWidth;
+          if (hoveredIndex) {
+            const widthMultiplier = route.index == hoveredIndex ? 2 : 0.5;
+            width *= widthMultiplier;
+          }
+
+          if (!route.visible) {
+            opacity = 0;
+          }
+
+          return (
+            <>
+              <RSource
+                key={index}
+                id={`hike-path-${index}`}
+                type="geojson"
+                data={route.data}
+                lineMetrics
+              />
+              <RLayer
+                type="line"
+                source={`hike-path-${index}`}
+                id={`hike-line-${index}`}
+                paint={{
+                  "line-gradient": route.gradientEnabled ? (route.gradient as any) : route.color,
+                  "line-width": width,
+                  "line-opacity": opacity,
+                }}
+              />
+            </>
+          );
+        }}
       </For>
 
       <RSource
@@ -71,7 +81,7 @@ export default function MapVisualisation({ data, cameraOptions }: Props) {
         id="terrain-mesh-data"
         tiles={rasterDemTiles}
         tileSize={512}
-        maxzoom={12}
+        maxzoom={14}
       />
       <RTerrain source="terrain-mesh-data" exaggeration={1} />
     </RMap>

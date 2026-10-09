@@ -11,6 +11,7 @@ import { Portal } from "@chakra-ui/react/portal";
 import type { Feature, LineString } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
 import RegionRoutesFilters from "./RegionRoutesFilters";
+import { RMapContextProvider } from "maplibre-react-components";
 
 export interface RouteData {
   data: Feature<LineString>;
@@ -36,16 +37,18 @@ function RegionRoutesMap({ paths: routes }: { paths: RoutePath[] }) {
   return (
     <>
       <Popover.Root>
-        <MapVisualisation data={mapData} cameraOptions={cameraOptions} />
-        <Portal>
-          <Popover.Positioner>
-            <Popover.Content width={{ base: "90vw", md: "auto" }}>
-              <Popover.Body>
-                <RegionRoutesFilters mapData={mapData} />
-              </Popover.Body>
-            </Popover.Content>
-          </Popover.Positioner>
-        </Portal>
+        <RMapContextProvider>
+          <MapVisualisation data={mapData} cameraOptions={cameraOptions} />
+          <Portal>
+            <Popover.Positioner>
+              <Popover.Content width={{ base: "90vw", md: "auto" }}>
+                <Popover.Body>
+                  <RegionRoutesFilters mapData={mapData} />
+                </Popover.Body>
+              </Popover.Content>
+            </Popover.Positioner>
+          </Portal>
+        </RMapContextProvider>
       </Popover.Root>
     </>
   );

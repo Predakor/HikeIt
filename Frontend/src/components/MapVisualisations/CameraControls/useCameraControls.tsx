@@ -16,7 +16,7 @@ export interface CameraActions {
 
 const DEFAULT_CAMERA_OPTIONS: CameraOptions = {
   minZoom: 12,
-  maxZoom: 18,
+  maxZoom: 24,
   minPitch: 0,
   maxPitch: 60,
 };
