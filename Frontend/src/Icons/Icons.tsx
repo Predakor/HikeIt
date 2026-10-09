@@ -30,4 +30,7 @@ export {
   FiTrendingUp as IconTrendUp,
   FiDownload as IconDownload,
   FiSettings as IconSettings,
+  FiMapPin as IconLocate,
+  FiEye as IconVisible,
+  FiEyeOff as IconHidden,
 } from "react-icons/fi";
