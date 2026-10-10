@@ -9,7 +9,7 @@ import {
 } from "@/components/MapVisualisations/useMapData";
 import { IconButton, Input, Stack } from "@chakra-ui/react";
 import { useMap } from "maplibre-react-components";
-import { useMemo } from "react";
+import { useMemo, type MouseEvent } from "react";
 
 interface Props {
   route: RouteData;
@@ -17,7 +17,6 @@ interface Props {
 }
 
 export default function RouteFilter({ route, actions }: Props) {
-  // the native picker fires onChange continuously while dragging
   const mapHook = useMap(RegionRoutesMapId);
 
   const setColorDebounced = useMemo(
@@ -25,7 +24,7 @@ export default function RouteFilter({ route, actions }: Props) {
     [actions],
   );
 
-  const locateHandler = (route: RouteData) => {
+  const locateHandler = () => {
     const { bounds } = getRouteBoundsAndCenter([route]);
     mapHook?.fitBounds(bounds, {
       linear: true,
@@ -33,7 +32,14 @@ export default function RouteFilter({ route, actions }: Props) {
     });
   };
 
-  const handleRowClick = () => {
+  const setRouteVisibility = () => {
+    actions.setVisibility(route.index, !route.visible);
+  };
+
+  const handleRowClick = (e: MouseEvent<HTMLElement>) => {
+    // only the row itself, not the buttons inside it
+    if (e.target !== e.currentTarget) return;
+
     const calculatedWidth = route.width > DefaultWidth ? DefaultWidth : DefaultWidth * 2;
     actions.setWidth(route.index, calculatedWidth);
   };
@@ -52,14 +58,13 @@ export default function RouteFilter({ route, actions }: Props) {
       onClick={handleRowClick}
       onMouseEnter={() => actions.setHovered(route.index, true)}
       onMouseLeave={() => actions.setHovered(route.index, false)}
-      key={route.index}
     >
       <IconButton
         size={"sm"}
         variant={"subtle"}
         colorPalette={"green"}
         aria-label="Show/Hide route"
-        onClick={() => actions.setVisibility(route.index, !route.visible)}
+        onClick={setRouteVisibility}
       >
         {route.visible ?
           <IconVisible />
@@ -71,9 +76,7 @@ export default function RouteFilter({ route, actions }: Props) {
         variant={"subtle"}
         colorPalette={"green"}
         aria-label="Locate route"
-        onClick={() => {
-          locateHandler(route);
-        }}
+        onClick={locateHandler}
       >
         <IconLocate />
       </IconButton>

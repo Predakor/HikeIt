@@ -30,7 +30,9 @@ export default function RegionRoutesFilters({ mapData: map, controlButton }: Pro
 
         <GridItem colSpan={2} asChild>
           <Stack>
-            <For each={routes}>{(route) => <RouteFilter route={route} actions={actions} />}</For>
+            <For each={routes}>
+              {(route) => <RouteFilter route={route} actions={actions} key={route.index} />}
+            </For>
           </Stack>
         </GridItem>
 
