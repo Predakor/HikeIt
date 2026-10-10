@@ -1,26 +1,16 @@
+import { IconClose } from "@/Icons/Icons";
 import useCameraControls from "@/components/MapVisualisations/CameraControls/useCameraControls";
 import MapVisualisation from "@/components/MapVisualisations/MapVisualisation";
-import useMapData from "@/components/MapVisualisations/UseMapData";
+import useMapData from "@/components/MapVisualisations/useMapData";
 import type { RoutePath } from "@/components/Trip/Details/RouteVisualisation/Dev/DEV_RouteVisualisationt";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
+import { SecondaryButton } from "@/components/ui/Buttons";
 import useResourceLink from "@/hooks/Api/useResourceLink";
-import type { GpxEntry } from "@/types/Api/gpx.types";
 import type { ResourceUrl } from "@/types/Api/types";
-import { Popover } from "@chakra-ui/react";
-import { Portal } from "@chakra-ui/react/portal";
-import type { Feature, LineString } from "geojson";
+import { Box, Drawer } from "@chakra-ui/react";
 import "maplibre-gl/dist/maplibre-gl.css";
-import RegionRoutesFilters from "./RegionRoutesFilters";
 import { RMapContextProvider } from "maplibre-react-components";
-
-export interface RouteData {
-  data: Feature<LineString>;
-  points: GpxEntry[];
-  gradient: unknown[];
-  color: string;
-  visible: boolean;
-  index: number;
-}
+import RegionRoutesFilters from "./RegionRoutesFilters";
 
 export default function RegionRoutesVisualization({ data }: { data: ResourceUrl }) {
   const request = useResourceLink<RoutePath[]>(data);
@@ -35,21 +25,45 @@ function RegionRoutesMap({ paths: routes }: { paths: RoutePath[] }) {
   const [cameraOptions, cameraControls] = useCameraControls();
 
   return (
-    <>
-      <Popover.Root>
-        <RMapContextProvider>
+    <Drawer.Root
+      modal={false}
+      trapFocus={false}
+      preventScroll={false}
+      closeOnInteractOutside={false}
+      placement="end"
+    >
+      <RMapContextProvider>
+        <Box position="relative" overflow="hidden">
           <MapVisualisation data={mapData} cameraOptions={cameraOptions} />
-          <Portal>
-            <Popover.Positioner>
-              <Popover.Content width={{ base: "90vw", md: "auto" }}>
-                <Popover.Body>
-                  <RegionRoutesFilters mapData={mapData} />
-                </Popover.Body>
-              </Popover.Content>
-            </Popover.Positioner>
-          </Portal>
-        </RMapContextProvider>
-      </Popover.Root>
-    </>
+          <Drawer.Positioner
+            pos={"absolute"}
+            inset="0"
+            width="full"
+            height="full"
+            pointerEvents="none"
+          >
+            <Drawer.Content
+              padding={2}
+              bg="blackAlpha.700"
+              backdropFilter="blur(4px) saturate(160%)"
+              boxShadow="lg"
+            >
+              <Drawer.Body asChild>
+                <RegionRoutesFilters
+                  mapData={mapData}
+                  controlButton={
+                    <Drawer.CloseTrigger asChild position="static">
+                      <SecondaryButton size={"sm"} variant={"subtle"}>
+                        <IconClose />
+                      </SecondaryButton>
+                    </Drawer.CloseTrigger>
+                  }
+                />
+              </Drawer.Body>
+            </Drawer.Content>
+          </Drawer.Positioner>
+        </Box>
+      </RMapContextProvider>
+    </Drawer.Root>
   );
 }

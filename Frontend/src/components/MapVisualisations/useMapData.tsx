@@ -24,7 +24,7 @@ export interface RouteData {
   index: number;
 }
 
-type MapDataActions = {
+export type MapDataActions = {
   setVisibility: (index: number, visible: boolean) => void;
   setColor: (index: number, color: string) => void;
   setGradient: (index: number, enabled: boolean) => void;

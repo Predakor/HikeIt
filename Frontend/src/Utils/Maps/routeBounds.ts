@@ -1,4 +1,4 @@
-import type { RouteData } from "@/components/MapVisualisations/UseMapData";
+import type { RouteData } from "@/components/MapVisualisations/useMapData";
 import { arrayUtils } from "../arrayUtils";
 
 export type Bounds = [FlatPosition, FlatPosition]; // [[minLon, minLat], [maxLon, maxLat]]

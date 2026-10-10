@@ -1,10 +1,10 @@
 import { IconSettings } from "@/Icons/Icons";
-import { For, Popover } from "@chakra-ui/react";
+import { Drawer, For } from "@chakra-ui/react";
 import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 import { rasterDemTiles } from "../Trip/Details/RouteVisualisation/RouteVisualisation";
 import { SecondaryButton } from "../ui/Buttons";
 import { type CameraOptions } from "./CameraControls/useCameraControls";
-import { DefaultWidth, type MapDataState } from "./UseMapData";
+import type { MapDataState } from "./useMapData";
 
 interface Props {
   data: MapDataState;
@@ -18,24 +18,24 @@ export default function MapVisualisation({ data, cameraOptions }: Props) {
       id={RegionRoutesMapId}
       minZoom={cameraOptions.minZoom}
       initialPitch={cameraOptions.maxPitch - cameraOptions.minZoom}
-      initialBearing={-20}
+      initialBearing={-15}
       initialCenter={data.globals.center}
       style={{ width: "100%", height: "700px" }}
       mapStyle="https://tiles.openfreemap.org/styles/bright"
     >
-      <Popover.Trigger position={"absolute"} margin={"2"} right={0} asChild>
+      <Drawer.Trigger position={"absolute"} margin={"2"} right={0} asChild>
         <SecondaryButton variant={"subtle"}>
           <IconSettings />
         </SecondaryButton>
-      </Popover.Trigger>
+      </Drawer.Trigger>
 
       <For each={data.routes}>
         {(route) => {
           const { hoveredIndex } = data.globals;
           const { index } = route;
           let opacity = 1;
-          let width = DefaultWidth;
-          if (hoveredIndex) {
+          let width = route.width;
+          if (hoveredIndex !== undefined) {
             const widthMultiplier = route.index == hoveredIndex ? 2 : 0.5;
             width *= widthMultiplier;
           }
@@ -43,6 +43,12 @@ export default function MapVisualisation({ data, cameraOptions }: Props) {
           if (!route.visible) {
             opacity = 0;
           }
+
+          const paint = {
+            "line-gradient": route.gradientEnabled ? (route.gradient as any) : route.color,
+            "line-width": width,
+            "line-opacity": opacity,
+          };
 
           return (
             <>
@@ -57,12 +63,17 @@ export default function MapVisualisation({ data, cameraOptions }: Props) {
                 type="line"
                 source={`hike-path-${index}`}
                 id={`hike-line-${index}`}
-                paint={{
-                  "line-gradient": route.gradientEnabled ? (route.gradient as any) : route.color,
-                  "line-width": width,
-                  "line-opacity": opacity,
-                }}
+                paint={paint}
               />
+              {/* layers stack in the order they were added, so a copy mounted on hover draws above every route */}
+              {hoveredIndex === index && route.visible && (
+                <RLayer
+                  type="line"
+                  source={`hike-path-${index}`}
+                  id={`hike-line-top-${index}`}
+                  paint={paint}
+                />
+              )}
             </>
           );
         }}

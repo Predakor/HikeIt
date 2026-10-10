@@ -31,6 +31,7 @@ export {
   FiDownload as IconDownload,
   FiSettings as IconSettings,
   FiMapPin as IconLocate,
+  FiDroplet as IconColor,
   FiEye as IconVisible,
   FiEyeOff as IconHidden,
 } from "react-icons/fi";
