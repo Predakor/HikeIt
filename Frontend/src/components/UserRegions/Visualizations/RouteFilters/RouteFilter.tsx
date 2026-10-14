@@ -2,22 +2,20 @@ import { IconColor, IconHidden, IconLocate, IconVisible } from "@/Icons/Icons";
 import { getRouteBoundsAndCenter } from "@/Utils/Maps/routeBounds";
 import { debounce } from "@/Utils/debounce";
 import { RegionRoutesMapId } from "@/components/MapVisualisations/MapVisualisation";
-import {
-  DefaultWidth,
-  type MapDataActions,
-  type RouteData,
-} from "@/components/MapVisualisations/useMapData";
+import { useMapActions, useSetHovered } from "@/components/MapVisualisations/MapData/hooks";
+import { DefaultWidth, type RouteData } from "@/components/MapVisualisations/MapData/mapData.types";
 import { IconButton, Input, Stack } from "@chakra-ui/react";
 import { useMap } from "maplibre-react-components";
 import { memo, useMemo, type MouseEvent } from "react";
 
 interface Props {
   route: RouteData;
-  actions: MapDataActions;
 }
 
-function RouteFilter({ route, actions }: Props) {
+function RouteFilter({ route }: Props) {
   const mapHook = useMap(RegionRoutesMapId);
+  const actions = useMapActions();
+  const setHovered = useSetHovered();
 
   const setColorDebounced = useMemo(
     () => debounce((index: number, color: string) => actions.setColor(index, color), 50),
@@ -44,14 +42,20 @@ function RouteFilter({ route, actions }: Props) {
 
   const handleRowClick = (e: MouseEvent<HTMLElement>) => {
     // only the row itself, not the buttons inside it
-    if (e.target !== e.currentTarget) return;
+    const isChildClick = e.target !== e.currentTarget;
+    if (isChildClick) {
+      return;
+    }
 
     const calculatedWidth = route.width > DefaultWidth ? DefaultWidth : DefaultWidth * 2;
     actions.setWidth(route.index, calculatedWidth);
   };
 
   const handleRowDoubleClick = (e: MouseEvent<HTMLElement>) => {
-    if (e.target !== e.currentTarget) return;
+    const isChildClick = e.target !== e.currentTarget;
+    if (isChildClick) {
+      return;
+    }
 
     locateHandler();
   };
@@ -69,8 +73,8 @@ function RouteFilter({ route, actions }: Props) {
       _hover={{ bgSize: "100% 100%" }}
       onClick={handleRowClick}
       onDoubleClick={handleRowDoubleClick}
-      onMouseEnter={() => actions.setHovered(route.index, true)}
-      onMouseLeave={() => actions.setHovered(route.index, false)}
+      onMouseEnter={() => setHovered({ kind: "route", id: route.index })}
+      onMouseLeave={() => setHovered(undefined)}
     >
       <IconButton
         size={"sm"}

@@ -1,16 +1,21 @@
-import { type MapDataState } from "@/components/MapVisualisations/useMapData";
+import {
+  useMapActions,
+  useMapGlobals,
+  useMapRoutes,
+} from "@/components/MapVisualisations/MapData/hooks";
 import { PrimaryButton } from "@/components/ui/Buttons";
 import { Flex, For, GridItem, Input, SimpleGrid, Stack } from "@chakra-ui/react";
 import { type ReactElement } from "react";
 import RouteFilter from "./RouteFilter";
 
 interface Props {
-  mapData: MapDataState;
   controlButton?: ReactElement;
 }
 
-export default function MapRouteFilters({ mapData: map, controlButton }: Props) {
-  const { routes, globals, actions } = map;
+export default function MapRouteFilters({ controlButton }: Props) {
+  const routes = useMapRoutes();
+  const globals = useMapGlobals();
+  const actions = useMapActions();
 
   return (
     <Stack
@@ -31,7 +36,7 @@ export default function MapRouteFilters({ mapData: map, controlButton }: Props) 
         <GridItem colSpan={2} asChild>
           <Stack>
             <For each={routes}>
-              {(route) => <RouteFilter route={route} actions={actions} key={route.index} />}
+              {(route) => <RouteFilter route={route} key={route.index} />}
             </For>
           </Stack>
         </GridItem>
