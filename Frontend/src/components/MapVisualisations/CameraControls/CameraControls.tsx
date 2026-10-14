@@ -3,16 +3,12 @@ import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import { Stack } from "@chakra-ui/react";
 import { useMap } from "maplibre-react-components";
 import { memo, useEffect } from "react";
-import type { UseFormReturn } from "react-hook-form";
+import { useCameraSettings } from "../MapSettings/hooks";
 import { RegionRoutesMapId } from "../MapVisualisation";
-import { cameraConfig, type CameraOptions } from "./useCameraControls";
+import { cameraConfig } from "./useCameraControls";
 
-interface Props {
-  form: UseFormReturn<CameraOptions>;
-  options: CameraOptions;
-}
-
-function CameraControls({ form, options }: Props) {
+function CameraControls() {
+  const { form, options } = useCameraSettings();
   const map = useMap(RegionRoutesMapId);
 
   useEffect(() => {
@@ -20,6 +16,7 @@ function CameraControls({ form, options }: Props) {
       return;
     }
     applyCameraLimits(map, options);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, options.minZoom, options.maxZoom, options.minPitch, options.maxPitch]);
 
   return (

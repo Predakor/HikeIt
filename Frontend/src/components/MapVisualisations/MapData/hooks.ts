@@ -1,3 +1,4 @@
+import { requireContext } from "@/Utils/requireContext";
 import { createContext, useContext, useSyncExternalStore } from "react";
 import type { HoverStore } from "./hoverStore";
 import type { HoverTarget, MapDataActions, MapDataGlobals, RouteData } from "./mapData.types";
@@ -8,27 +9,22 @@ export const MapGlobalsContext = createContext<MapDataGlobals | undefined>(undef
 export const MapActionsContext = createContext<MapDataActions | undefined>(undefined);
 export const HoverStoreContext = createContext<HoverStore | undefined>(undefined);
 
-function requireContext<T>(value: T | undefined, hookName: string): T {
-  if (value === undefined) {
-    throw new Error(`${hookName} must be used within MapDataProvider`);
-  }
-  return value;
-}
+const providerName = "MapDataProvider";
 
 export function useMapRoutes(): RouteData[] {
-  return requireContext(useContext(MapRoutesContext), "useMapRoutes");
+  return requireContext(useContext(MapRoutesContext), "useMapRoutes", providerName);
 }
 
 export function useMapGlobals(): MapDataGlobals {
-  return requireContext(useContext(MapGlobalsContext), "useMapGlobals");
+  return requireContext(useContext(MapGlobalsContext), "useMapGlobals", providerName);
 }
 
 export function useMapActions(): MapDataActions {
-  return requireContext(useContext(MapActionsContext), "useMapActions");
+  return requireContext(useContext(MapActionsContext), "useMapActions", providerName);
 }
 
 function useHoverStore(): HoverStore {
-  return requireContext(useContext(HoverStoreContext), "useHoverStore");
+  return requireContext(useContext(HoverStoreContext), "useHoverStore", providerName);
 }
 
 export function useIsHovered(kind: HoverTarget["kind"], id: number): boolean {

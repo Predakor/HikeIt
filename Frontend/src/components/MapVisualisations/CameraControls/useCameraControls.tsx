@@ -10,7 +10,7 @@ export interface CameraOptions {
   maxPitch: number;
 }
 
-const DEFAULT_CAMERA_OPTIONS: CameraOptions = {
+export const DEFAULT_CAMERA_OPTIONS: CameraOptions = {
   minZoom: 12,
   maxZoom: 24,
   minPitch: 0,

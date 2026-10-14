@@ -1,10 +1,12 @@
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import { Stack } from "@chakra-ui/react";
 import { memo } from "react";
-import type { UseFormReturn } from "react-hook-form";
-import { layerConfig, type LayerOptions } from "./useLayerControls";
+import { useLayerForm } from "../MapSettings/hooks";
+import { layerConfig } from "./useLayerControls";
 
-function LayerControls({ form }: { form: UseFormReturn<LayerOptions> }) {
+function LayerControls() {
+  const form = useLayerForm();
+
   return (
     <Stack gap={4} paddingY={3}>
       <RenderInputs config={layerConfig} formHook={form} />

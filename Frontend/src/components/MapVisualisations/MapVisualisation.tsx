@@ -4,26 +4,23 @@ import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 import { memo } from "react";
 import { rasterDemTiles } from "../Trip/Details/RouteVisualisation/RouteVisualisation";
 import { SecondaryButton } from "../ui/Buttons";
-import { type CameraOptions } from "./CameraControls/useCameraControls";
-import type { LayerOptions } from "./LayerControls/useLayerControls";
+import { DEFAULT_CAMERA_OPTIONS } from "./CameraControls/useCameraControls";
 import { useHasHover, useIsHovered, useMapGlobals, useMapRoutes } from "./MapData/hooks";
 import type { RouteData } from "./MapData/mapData.types";
+import { useLayerOptions } from "./MapSettings/hooks";
 
-interface Props {
-  cameraOptions: CameraOptions;
-  layerOptions: LayerOptions;
-}
 export const RegionRoutesMapId = "region-routes-map";
 
-export default function MapVisualisation({ cameraOptions, layerOptions }: Props) {
+export default function MapVisualisation() {
   const routes = useMapRoutes();
   const globals = useMapGlobals();
+  const layerOptions = useLayerOptions();
 
   return (
     <RMap
       id={RegionRoutesMapId}
-      initialPitch={cameraOptions.maxPitch - cameraOptions.minZoom}
-      initialZoom={cameraOptions.minZoom}
+      initialPitch={DEFAULT_CAMERA_OPTIONS.maxPitch - DEFAULT_CAMERA_OPTIONS.minZoom}
+      initialZoom={DEFAULT_CAMERA_OPTIONS.minZoom}
       initialBearing={-15}
       initialCenter={globals.center}
       style={{ width: "100%", height: "700px" }}
