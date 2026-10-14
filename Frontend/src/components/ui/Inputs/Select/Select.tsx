@@ -1,7 +1,7 @@
 import ControlledSelect from "@/components/ui/Inputs/Select/ControlledSelect";
 import useCollection from "@/components/ui/Inputs/Select/useCollection";
 import { Input } from "@chakra-ui/react";
-import { Controller, type FieldValues } from "react-hook-form";
+import { Controller, type FieldValues, type Path } from "react-hook-form";
 import InputLabel from "../../../Utils/RenderInputs/MapEntry/FieldWrapper/InputLabel";
 import type {
   RenderInputBaseProps,
@@ -26,7 +26,7 @@ function Select<T extends FieldValues>({ entry, control, displayOptions }: Props
       <InputLabel label={entry.label} option={displayOptions?.label} />
       <Controller
         control={control}
-        name={entry.key}
+        name={entry.key as Path<T>}
         render={({ field }) => (
           <ControlledSelect
             field={field}

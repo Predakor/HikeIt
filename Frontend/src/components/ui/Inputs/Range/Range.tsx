@@ -1,19 +1,19 @@
 import { Field, HStack, Slider } from "@chakra-ui/react";
-import { Controller } from "react-hook-form";
+import { Controller, type FieldValues, type Path } from "react-hook-form";
 import type {
   RangeInputConfigEntry,
   RenderInputBaseProps,
 } from "../../../Utils/RenderInputs/inputTypes";
 
-interface RangeProps<T> extends Omit<RenderInputBaseProps<T>, "register"> {
+interface RangeProps<T extends FieldValues> extends Omit<RenderInputBaseProps<T>, "register"> {
   entry: RangeInputConfigEntry;
 }
 
-export function Range<T>({ entry, control }: RangeProps<T>) {
+export function Range<T extends FieldValues>({ entry, control }: RangeProps<T>) {
   const { key, label } = entry;
   return (
     <Controller
-      name={key}
+      name={key as Path<T>}
       control={control}
       render={({ field }) => (
         <>
@@ -22,6 +22,7 @@ export function Range<T>({ entry, control }: RangeProps<T>) {
             {field.value && field.value}
           </HStack>
           <Slider.Root
+            value={[field.value ?? entry.min]}
             onValueChange={({ value }) => field.onChange(value[0])}
             width={"full"}
             max={entry.max}

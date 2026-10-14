@@ -8,7 +8,7 @@ import useUserRegion from "@/hooks/Regions/UseRegionProgress";
 import type { UserRegionData } from "@/types/Api/region.types";
 import type { TabConfig } from "@/types/Utils/order.types";
 import { For, Stack, Tabs } from "@chakra-ui/react";
-import { useMemo, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router";
 
 const tripAnalyticTabs: TabConfig<UserRegionData> = [

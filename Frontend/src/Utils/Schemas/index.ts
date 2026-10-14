@@ -19,6 +19,7 @@ export type AllowedInputTypes =
   | "number"
   | "date"
   | "range"
+  | "interval"
   | "checkbox"
   | "select";
 
