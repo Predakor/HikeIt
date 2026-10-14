@@ -1,17 +1,13 @@
-import { useRef, useState } from "react";
+import type { InputEffectForm, InputsConfigFor } from "@/components/Utils/RenderInputs/inputTypes";
+import { normalizeCamera } from "@/Utils/Maps/cameraLimits";
+import { useMemo } from "react";
+import { useForm, useWatch } from "react-hook-form";
 
 export interface CameraOptions {
   minZoom: number;
   maxZoom: number;
   minPitch: number;
   maxPitch: number;
-}
-
-export interface CameraActions {
-  setMinZoom: (value: number) => void;
-  setMaxZoom: (value: number) => void;
-  setMinPitch: (value: number) => void;
-  setMaxPitch: (value: number) => void;
 }
 
 const DEFAULT_CAMERA_OPTIONS: CameraOptions = {
@@ -21,20 +17,68 @@ const DEFAULT_CAMERA_OPTIONS: CameraOptions = {
   maxPitch: 60,
 };
 
+/** Pulls the partner field along when min/max would cross. */
+const pullMax =
+  (maxKey: keyof CameraOptions) => (value: number, form: InputEffectForm<CameraOptions>) => {
+    if (value > form.getValues(maxKey)) {
+      form.setValue(maxKey, value);
+    }
+  };
+const pullMin =
+  (minKey: keyof CameraOptions) => (value: number, form: InputEffectForm<CameraOptions>) => {
+    if (value < form.getValues(minKey)) {
+      form.setValue(minKey, value);
+    }
+  };
+
+export const cameraConfig: InputsConfigFor<CameraOptions> = {
+  minZoom: {
+    key: "minZoom",
+    label: "Min zoom",
+    type: "range",
+    min: 0,
+    max: 24,
+    step: 0.5,
+    effect: pullMax("maxZoom"),
+  },
+  maxZoom: {
+    key: "maxZoom",
+    label: "Max zoom",
+    type: "range",
+    min: 0,
+    max: 24,
+    step: 0.5,
+    effect: pullMin("minZoom"),
+  },
+  minPitch: {
+    key: "minPitch",
+    label: "Min pitch",
+    type: "range",
+    min: 0,
+    max: 85,
+    step: 1,
+    effect: pullMax("maxPitch"),
+  },
+  maxPitch: {
+    key: "maxPitch",
+    label: "Max pitch",
+    type: "range",
+    min: 0,
+    max: 85,
+    step: 1,
+    effect: pullMin("minPitch"),
+  },
+};
+
 export default function useCameraControls(defaults: CameraOptions = DEFAULT_CAMERA_OPTIONS) {
-  const [options, setOptions] = useState<CameraOptions>(defaults);
+  const form = useForm<CameraOptions>({ defaultValues: defaults });
+  const raw = useWatch({ control: form.control });
 
-  const setMinZoom = (value: number) => setOptions((prev) => ({ ...prev, minZoom: value }));
-  const setMaxZoom = (value: number) => setOptions((prev) => ({ ...prev, maxZoom: value }));
-  const setMinPitch = (value: number) => setOptions((prev) => ({ ...prev, minPitch: value }));
-  const setMaxPitch = (value: number) => setOptions((prev) => ({ ...prev, maxPitch: value }));
+  // the form keeps whatever the user dragged, everything downstream gets valid values
+  const options = useMemo(
+    () => normalizeCamera({ ...defaults, ...raw }),
+    [raw.minZoom, raw.maxZoom, raw.minPitch, raw.maxPitch],
+  );
 
-  const actions = useRef<CameraActions>({
-    setMinZoom,
-    setMaxZoom,
-    setMinPitch,
-    setMaxPitch,
-  });
-
-  return [options, actions.current] as const;
+  return { form, options };
 }

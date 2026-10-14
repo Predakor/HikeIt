@@ -1,4 +1,5 @@
 import { IconClose } from "@/Icons/Icons";
+import CameraControls from "@/components/MapVisualisations/CameraControls/CameraControls";
 import useCameraControls from "@/components/MapVisualisations/CameraControls/useCameraControls";
 import MapVisualisation from "@/components/MapVisualisations/MapVisualisation";
 import useMapData from "@/components/MapVisualisations/useMapData";
@@ -10,7 +11,7 @@ import type { ResourceUrl } from "@/types/Api/types";
 import { Box, Drawer } from "@chakra-ui/react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { RMapContextProvider } from "maplibre-react-components";
-import RegionRoutesFilters from "./RegionRoutesFilters";
+import MapRouteFilters from "./RouteFilters/MapRouteFilters";
 
 export default function RegionRoutesVisualization({ data }: { data: ResourceUrl }) {
   const request = useResourceLink<RoutePath[]>(data);
@@ -22,7 +23,7 @@ export default function RegionRoutesVisualization({ data }: { data: ResourceUrl 
 
 function RegionRoutesMap({ paths: routes }: { paths: RoutePath[] }) {
   const mapData = useMapData(routes);
-  const [cameraOptions, cameraControls] = useCameraControls();
+  const { form, options } = useCameraControls();
 
   return (
     <Drawer.Root
@@ -34,7 +35,7 @@ function RegionRoutesMap({ paths: routes }: { paths: RoutePath[] }) {
     >
       <RMapContextProvider>
         <Box position="relative" overflow="hidden">
-          <MapVisualisation data={mapData} cameraOptions={cameraOptions} />
+          <MapVisualisation data={mapData} cameraOptions={options} />
           <Drawer.Positioner
             pos={"absolute"}
             inset="0"
@@ -48,17 +49,14 @@ function RegionRoutesMap({ paths: routes }: { paths: RoutePath[] }) {
               backdropFilter="blur(4px) saturate(160%)"
               boxShadow="lg"
             >
-              <Drawer.Body asChild>
-                <RegionRoutesFilters
-                  mapData={mapData}
-                  controlButton={
-                    <Drawer.CloseTrigger asChild position="static">
-                      <SecondaryButton size={"sm"} variant={"subtle"}>
-                        <IconClose />
-                      </SecondaryButton>
-                    </Drawer.CloseTrigger>
-                  }
-                />
+              <Drawer.Body padding={0}>
+                <Drawer.CloseTrigger asChild position="static">
+                  <SecondaryButton size={"sm"} variant={"subtle"}>
+                    <IconClose />
+                  </SecondaryButton>
+                </Drawer.CloseTrigger>
+                <MapRouteFilters mapData={mapData} />
+                <CameraControls form={form} options={options} />
               </Drawer.Body>
             </Drawer.Content>
           </Drawer.Positioner>

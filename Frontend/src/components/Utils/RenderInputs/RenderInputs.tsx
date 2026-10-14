@@ -31,6 +31,7 @@ function RenderInputs<T extends FieldValues>(props: Props<T>) {
         entry={entry}
         key={entry.key}
         control={control}
+        form={formHook}
         register={register}
         displayOptions={options}
         error={errors[entry.key] as any}

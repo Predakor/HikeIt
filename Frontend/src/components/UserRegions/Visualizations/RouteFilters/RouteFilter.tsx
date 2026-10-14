@@ -9,14 +9,14 @@ import {
 } from "@/components/MapVisualisations/useMapData";
 import { IconButton, Input, Stack } from "@chakra-ui/react";
 import { useMap } from "maplibre-react-components";
-import { useMemo, type MouseEvent } from "react";
+import { memo, useMemo, type MouseEvent } from "react";
 
 interface Props {
   route: RouteData;
   actions: MapDataActions;
 }
 
-export default function RouteFilter({ route, actions }: Props) {
+function RouteFilter({ route, actions }: Props) {
   const mapHook = useMap(RegionRoutesMapId);
 
   const setColorDebounced = useMemo(
@@ -109,3 +109,4 @@ export default function RouteFilter({ route, actions }: Props) {
     </Stack>
   );
 }
+export default memo(RouteFilter);

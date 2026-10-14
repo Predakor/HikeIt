@@ -2,14 +2,14 @@ import { type MapDataState } from "@/components/MapVisualisations/useMapData";
 import { PrimaryButton } from "@/components/ui/Buttons";
 import { Flex, For, GridItem, Input, SimpleGrid, Stack } from "@chakra-ui/react";
 import { type ReactElement } from "react";
-import RouteFilter from "./RouteFilter/RouteFilter";
+import RouteFilter from "./RouteFilter";
 
 interface Props {
   mapData: MapDataState;
   controlButton?: ReactElement;
 }
 
-export default function RegionRoutesFilters({ mapData: map, controlButton }: Props) {
+export default function MapRouteFilters({ mapData: map, controlButton }: Props) {
   const { routes, globals, actions } = map;
 
   return (

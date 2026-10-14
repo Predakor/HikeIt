@@ -16,7 +16,6 @@ export default function MapVisualisation({ data, cameraOptions }: Props) {
   return (
     <RMap
       id={RegionRoutesMapId}
-      minZoom={cameraOptions.minZoom}
       initialPitch={cameraOptions.maxPitch - cameraOptions.minZoom}
       initialBearing={-15}
       initialCenter={data.globals.center}

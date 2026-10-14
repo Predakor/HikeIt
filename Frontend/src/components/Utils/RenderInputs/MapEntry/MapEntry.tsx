@@ -14,6 +14,7 @@ interface FieldWrapper<T extends FieldValues> extends RenderInputBaseProps<T> {
 export default function MapEntry<TFor extends FieldValues>({
   entry,
   control,
+  form,
   register,
   displayOptions: options,
   error,
@@ -41,7 +42,7 @@ export default function MapEntry<TFor extends FieldValues>({
 
   switch (type) {
     case "range":
-      return <Range entry={entry} control={control} />;
+      return <Range entry={entry} control={control} form={form} />;
 
     case "select":
       return <Select entry={entry} control={control} />;

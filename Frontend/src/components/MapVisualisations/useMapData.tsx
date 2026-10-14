@@ -86,7 +86,6 @@ export default function useMapData(routes: RoutePath[]) {
       widthOverrides,
       gradientsOverrides,
       globalGradientEnabled,
-      hoveredIndex,
     ],
   );
 
