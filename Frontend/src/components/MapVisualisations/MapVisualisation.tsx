@@ -8,6 +8,7 @@ import { DEFAULT_CAMERA_OPTIONS } from "./CameraControls/useCameraControls";
 import { useHasHover, useIsHovered, useMapGlobals, useMapRoutes } from "./MapData/hooks";
 import type { RouteData } from "./MapData/mapData.types";
 import { useLayerOptions } from "./MapSettings/hooks";
+import PeakMarkers from "./Peaks/PeakMarkers";
 
 export const RegionRoutesMapId = "region-routes-map";
 
@@ -33,6 +34,8 @@ export default function MapVisualisation() {
       </Drawer.Trigger>
 
       <For each={routes}>{(route) => <RouteLayers key={route.index} route={route} />}</For>
+
+      <PeakMarkers />
 
       <RSource
         type="raster-dem"
@@ -65,7 +68,7 @@ export default function MapVisualisation() {
 const RouteLayers = memo(function RouteLayers({ route }: { route: RouteData }) {
   const { index } = route;
   const isHovered = useIsHovered("route", index);
-  const hasHover = useHasHover();
+  const hasHover = useHasHover("route");
 
   let opacity = 1;
   let width = route.width;

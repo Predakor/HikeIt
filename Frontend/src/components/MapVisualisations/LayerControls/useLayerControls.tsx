@@ -5,12 +5,16 @@ export interface LayerOptions {
   hillshade: boolean;
   terrain: boolean;
   exaggeration: number;
+  peaks: boolean;
+  allPeaks: boolean;
 }
 
 const DEFAULT_LAYER_OPTIONS: LayerOptions = {
   hillshade: true,
   terrain: true,
   exaggeration: 1,
+  peaks: true,
+  allPeaks: false,
 };
 
 export const layerConfig: InputsLayout = [
@@ -21,6 +25,8 @@ export const layerConfig: InputsLayout = [
     items: [
       { key: "hillshade", label: "Hillshade", type: "checkbox" },
       { key: "terrain", label: "3D terrain", type: "checkbox" },
+      { key: "peaks", label: "Peaks", type: "checkbox" },
+      { key: "allPeaks", label: "All region peaks", type: "checkbox" },
     ],
   },
   {

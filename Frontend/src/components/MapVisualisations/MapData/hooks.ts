@@ -35,9 +35,15 @@ export function useIsHovered(kind: HoverTarget["kind"], id: number): boolean {
   });
 }
 
-export function useHasHover(): boolean {
+// pass a kind to ignore hovers of other kinds (e.g. a hovered peak must not dim the routes)
+export function useHasHover(kind?: HoverTarget["kind"]): boolean {
   const store = useHoverStore();
-  return useSyncExternalStore(store.subscribe, () => store.get() !== undefined);
+  return useSyncExternalStore(store.subscribe, () => {
+    const hovered = store.get();
+    const isMatchingKind = kind === undefined || hovered?.kind === kind;
+
+    return hovered !== undefined && isMatchingKind;
+  });
 }
 
 export function useSetHovered(): (target: HoverTarget | undefined) => void {
