@@ -1,0 +1,1 @@
+function q(s,c,n,o){const t=r=>r*Math.PI/180,h=t(s),M=t(n),e=t(n-s),i=t(o-c),a=Math.sin(e/2)**2+Math.cos(h)*Math.cos(M)*Math.sin(i/2)**2;return 6371e3*(2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)))}export{q as h};

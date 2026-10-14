@@ -1,0 +1,1 @@
+import{G as o}from"./index-BiidOBTR.js";function e(t){return o({attr:{viewBox:"0 0 24 24"},child:[{tag:"path",attr:{fill:"none",strokeWidth:"2",d:"M3,3 L21,21 M3,21 L21,3"},child:[]}]})(t)}export{e as G};

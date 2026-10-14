@@ -1,0 +1,1 @@
+import{u as a,a as t}from"./App-BKKuCbos.js";const r={queryFn:e=>t.get(`regions/${e}/detailed`),queryKey:e=>["region",e.toString(),"detailed"]};function u(e){return a({queryKey:r.queryKey(e),queryFn:()=>r.queryFn(e),enabled:!!e})}export{u as U,r as d};
