@@ -1,6 +1,8 @@
 import { IconClose } from "@/Icons/Icons";
 import CameraControls from "@/components/MapVisualisations/CameraControls/CameraControls";
 import useCameraControls from "@/components/MapVisualisations/CameraControls/useCameraControls";
+import LayerControls from "@/components/MapVisualisations/LayerControls/LayerControls";
+import useLayerControls from "@/components/MapVisualisations/LayerControls/useLayerControls";
 import MapVisualisation from "@/components/MapVisualisations/MapVisualisation";
 import useMapData from "@/components/MapVisualisations/useMapData";
 import type { RoutePath } from "@/components/Trip/Details/RouteVisualisation/Dev/DEV_RouteVisualisationt";
@@ -24,6 +26,7 @@ export default function RegionRoutesVisualization({ data }: { data: ResourceUrl 
 function RegionRoutesMap({ paths: routes }: { paths: RoutePath[] }) {
   const mapData = useMapData(routes);
   const { form, options } = useCameraControls();
+  const { form: layerForm, options: layerOptions } = useLayerControls();
 
   return (
     <Drawer.Root
@@ -35,7 +38,7 @@ function RegionRoutesMap({ paths: routes }: { paths: RoutePath[] }) {
     >
       <RMapContextProvider>
         <Box position="relative" overflow="hidden">
-          <MapVisualisation data={mapData} cameraOptions={options} />
+          <MapVisualisation data={mapData} cameraOptions={options} layerOptions={layerOptions} />
           <Drawer.Positioner
             pos={"absolute"}
             inset="0"
@@ -57,6 +60,7 @@ function RegionRoutesMap({ paths: routes }: { paths: RoutePath[] }) {
                 </Drawer.CloseTrigger>
                 <MapRouteFilters mapData={mapData} />
                 <CameraControls form={form} options={options} />
+                <LayerControls form={layerForm} />
               </Drawer.Body>
             </Drawer.Content>
           </Drawer.Positioner>

@@ -3,7 +3,7 @@ import type { ControllerRenderProps } from "react-hook-form";
 import type { DisplayOptions } from "../../../Utils/RenderInputs/inputTypes";
 
 interface Props {
-  field: ControllerRenderProps;
+  field: ControllerRenderProps<any, any>;
   collection: ListCollection;
   placeholder?: string;
   displayOptions?: DisplayOptions;

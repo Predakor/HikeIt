@@ -26,7 +26,13 @@ function RouteFilter({ route, actions }: Props) {
 
   const locateHandler = () => {
     const { bounds } = getRouteBoundsAndCenter([route]);
-    mapHook?.fitBounds(bounds, {
+    if (!mapHook) {
+      return;
+    }
+
+    mapHook.fitBounds(bounds, {
+      bearing: mapHook.getBearing(),
+      pitch: mapHook.getPitch(),
       linear: true,
       duration: 700,
     });
@@ -44,6 +50,12 @@ function RouteFilter({ route, actions }: Props) {
     actions.setWidth(route.index, calculatedWidth);
   };
 
+  const handleRowDoubleClick = (e: MouseEvent<HTMLElement>) => {
+    if (e.target !== e.currentTarget) return;
+
+    locateHandler();
+  };
+
   return (
     <Stack
       direction={"row"}
@@ -56,6 +68,7 @@ function RouteFilter({ route, actions }: Props) {
       transition={"background-size 0.3s ease"}
       _hover={{ bgSize: "100% 100%" }}
       onClick={handleRowClick}
+      onDoubleClick={handleRowDoubleClick}
       onMouseEnter={() => actions.setHovered(route.index, true)}
       onMouseLeave={() => actions.setHovered(route.index, false)}
     >

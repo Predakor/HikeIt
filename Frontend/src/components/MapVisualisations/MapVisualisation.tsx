@@ -4,19 +4,22 @@ import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 import { rasterDemTiles } from "../Trip/Details/RouteVisualisation/RouteVisualisation";
 import { SecondaryButton } from "../ui/Buttons";
 import { type CameraOptions } from "./CameraControls/useCameraControls";
+import type { LayerOptions } from "./LayerControls/useLayerControls";
 import type { MapDataState } from "./useMapData";
 
 interface Props {
   data: MapDataState;
   cameraOptions: CameraOptions;
+  layerOptions: LayerOptions;
 }
 export const RegionRoutesMapId = "region-routes-map";
 
-export default function MapVisualisation({ data, cameraOptions }: Props) {
+export default function MapVisualisation({ data, cameraOptions, layerOptions }: Props) {
   return (
     <RMap
       id={RegionRoutesMapId}
       initialPitch={cameraOptions.maxPitch - cameraOptions.minZoom}
+      initialZoom={cameraOptions.minZoom}
       initialBearing={-15}
       initialCenter={data.globals.center}
       style={{ width: "100%", height: "700px" }}
@@ -85,7 +88,12 @@ export default function MapVisualisation({ data, cameraOptions }: Props) {
         tileSize={512}
         maxzoom={14}
       />
-      <RLayer id="hillshade" type="hillshade" source="hillshade-data" />
+      <RLayer
+        id="hillshade"
+        type="hillshade"
+        source="hillshade-data"
+        layout={{ visibility: layerOptions.hillshade ? "visible" : "none" }}
+      />
       <RSource
         type="raster-dem"
         id="terrain-mesh-data"
@@ -93,7 +101,9 @@ export default function MapVisualisation({ data, cameraOptions }: Props) {
         tileSize={512}
         maxzoom={14}
       />
-      <RTerrain source="terrain-mesh-data" exaggeration={1} />
+      {layerOptions.terrain && (
+        <RTerrain source="terrain-mesh-data" exaggeration={layerOptions.exaggeration} />
+      )}
     </RMap>
   );
 }
