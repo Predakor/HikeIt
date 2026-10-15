@@ -57,6 +57,7 @@ internal sealed class RouteVisualizationService : IRouteVisualizationService
             [typeof(RoundingPrecisionFilter.Config)] = Create<RoundingPrecisionFilter.Config>(value => new RoundingPrecisionFilter(value)),
             [typeof(PinLocalMaximaFilter.Config)] = Create<PinLocalMaximaFilter.Config>(value => new PinLocalMaximaFilter(value)),
             [typeof(SimplifyFilter.Config)] = Create<SimplifyFilter.Config>(value => new SimplifyFilter(value)),
+            [typeof(CoordinateSmoothingFilter.Config)] = Create<CoordinateSmoothingFilter.Config>(value => new CoordinateSmoothingFilter(value)),
         };
 
         public static IFilter<MutableGpxPoint> CreateFilter(IFilterConfig config)
