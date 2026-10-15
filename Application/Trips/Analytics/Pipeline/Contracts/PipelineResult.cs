@@ -11,6 +11,7 @@ public abstract record StageData
 
     public sealed record Analytics(RouteAnalytic Route, TimeAnalytic? Time) : StageData;
 
+    // DistanceM is the distance in metres from the candidate (local maximum) to the matched peak's location.
     public sealed record MatchedPeak(int PeakId, string Name, double DistanceM, double Elevation);
 
     public sealed record PeakMatching(int CandidateCount, IReadOnlyList<MatchedPeak> Matched) : StageData;
