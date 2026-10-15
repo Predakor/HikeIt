@@ -1,5 +1,6 @@
 ﻿using Application.Locations.Peaks;
 using Application.ReachedPeaks.ValueObjects;
+using Application.Trips.Analytics.Pipeline;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Peaks;
 using Domain.ReachedPeaks;
@@ -12,7 +13,6 @@ using Domain.Users.Root;
 namespace Application.ReachedPeaks;
 
 public class ReachedPeakService : IReachedPeakService {
-    const float PeakProximityTreshold = 100f;
     readonly IPeaksQueryService _peaksQueries;
     readonly IReachedPeaksQureryService _reachedPeaksQueries;
 
@@ -36,8 +36,8 @@ public class ReachedPeakService : IReachedPeakService {
     }
 
     static Result<List<ReachedPeakDataBuilder>> ExtractPotentialPeaks(AnalyticData data) {
-        return data.ToLocalMaximaWithDistance()
-            .WithProximityMerge()
+        return PeakFilterFactory
+            .Apply(data.ToLocalMaximaWithDistance(), PipelineDefaults.PeakFilters)
             .Select(ReachedPeakDataFactory.FromPointWithDistance)
             .ToList();
     }
@@ -45,7 +45,7 @@ public class ReachedPeakService : IReachedPeakService {
     Task<Result<List<ReachedPeakDataBuilder>>> FindMatchingPeaks(
         List<ReachedPeakDataBuilder> peaksCandidates
     ) {
-        return _peaksQueries.GetPeaksWithinRadius(peaksCandidates, PeakProximityTreshold);
+        return _peaksQueries.GetPeaksWithinRadius(peaksCandidates, PipelineDefaults.PeakProximityRadiusM);
     }
 
     async Task<Result<List<ReachedPeakDataBuilder>>> MarkNewPeaks(
