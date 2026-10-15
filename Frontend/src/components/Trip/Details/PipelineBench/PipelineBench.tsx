@@ -1,4 +1,4 @@
-import type { StageId, StageResults } from "@/types/Api/pipelinePreview.types";
+import type { PointFilterConfig, StageId, StageResults } from "@/types/Api/pipelinePreview.types";
 import {
   Box,
   Button,
@@ -20,6 +20,7 @@ import { PeaksBlock } from "./blocks/PeaksBlock";
 import { ProfileBlock } from "./blocks/ProfileBlock";
 import { RouteBlock } from "./blocks/RouteBlock";
 import { StatsTable } from "./results/StatsTable";
+import { suggestedPointFilters } from "./state/defaults";
 import { usePipelineBench } from "./state/usePipelineBench";
 import ElevationOverlayGraph from "./views/ElevationOverlayGraph";
 import PeaksList from "./views/PeaksList";
@@ -39,6 +40,11 @@ interface StageCardProps {
   baseline: StageResults;
   preview: StageResults;
   children: ReactNode;
+}
+
+// Customize seed for a stage: its real default, or the suggested pin + simplify pair when the default is no filters.
+function startingFilters(defaultFilters: PointFilterConfig[]): PointFilterConfig[] {
+  return defaultFilters.length > 0 ? defaultFilters : suggestedPointFilters;
 }
 
 // Stages whose rows sit in the results column next to their configs.
@@ -148,7 +154,7 @@ export default function PipelineBench() {
             status={status.elevationProfile}
             result={results.elevationProfile}
             filters={config.elevationProfile?.filters}
-            defaultFilters={defaults.elevationProfile}
+            defaultFilters={startingFilters(defaults.elevationProfile)}
             onFiltersChange={(filters) => updateConfig("elevationProfile", { filters })}
             onRun={() => run("elevationProfile")}
           />
@@ -159,7 +165,7 @@ export default function PipelineBench() {
             status={status.route}
             result={results.route}
             filters={config.route?.filters}
-            defaultFilters={defaults.route}
+            defaultFilters={startingFilters(defaults.route)}
             onFiltersChange={(filters) => updateConfig("route", { filters })}
             onRun={() => run("route")}
           />

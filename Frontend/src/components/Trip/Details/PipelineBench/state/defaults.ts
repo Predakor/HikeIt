@@ -19,5 +19,12 @@ export const defaultPeakFilters: PeakFilterConfig[] = [
 
 export const defaultPeakProximityRadiusM = 100;
 
+// Starting point for Customize on stages whose production default is "no filters" (elevation profile, route):
+// pin the summits, then simplify. Only seeds the editor; the request stays null (production) until the user edits.
+export const suggestedPointFilters: PointFilterConfig[] = [
+  { FilterType: "PinLocalMaximaFilter", value: { Enabled: true } },
+  { FilterType: "SimplifyFilter", value: { ToleranceM: 3 } },
+];
+
 // Route filters are empty: the route stage then uses the server setting.
 export const defaultRouteFilters: PointFilterConfig[] = [];
