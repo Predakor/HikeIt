@@ -18,7 +18,16 @@ interface Props {
 
 type DeltaTone = "neutral" | "good" | "bad" | "unknown";
 
-const headers = ["Metric", "Baseline", "Preview", "Delta"];
+// Fixed column widths plus no line breaks keep every row the same height, so the table never shifts when values change.
+// The metric column takes the remaining width and truncates; delta is the widest because it carries "+12.3 m (+4.5%)".
+const columns = [
+  { label: "Metric", width: undefined },
+  { label: "Baseline", width: "32" },
+  { label: "Preview", width: "32" },
+  { label: "Delta", width: "56" },
+];
+
+const noWrapCell = { whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" } as const;
 
 // "unknown" = the value changed but the row has no good/bad direction, so it gets the neutral "changed" colour.
 const deltaColors: Record<DeltaTone, string> = {
@@ -31,11 +40,15 @@ const deltaColors: Record<DeltaTone, string> = {
 // Memoised: it only depends on the results, so editing a config must not re-render every row.
 export const StatsTable = memo(function StatsTable({ baseline, preview }: Props) {
   return (
-    <Table.Root variant={"outline"} size="sm">
+    <Table.Root variant={"outline"} size="sm" tableLayout={"fixed"} w={"full"}>
       <Table.Header>
         <Table.Row>
-          <For each={headers}>
-            {(header) => <Table.ColumnHeader key={header}>{header}</Table.ColumnHeader>}
+          <For each={columns}>
+            {(column) => (
+              <Table.ColumnHeader key={column.label} w={column.width} {...noWrapCell}>
+                {column.label}
+              </Table.ColumnHeader>
+            )}
           </For>
         </Table.Row>
       </Table.Header>
@@ -62,14 +75,21 @@ function StatsTableRow({ row, baseline, preview }: RowProps) {
 
   return (
     <Table.Row bg={isChanged ? "bg.muted" : undefined}>
-      <Table.Cell fontWeight={isChanged ? "semibold" : undefined}>{row.label}</Table.Cell>
-      <Table.Cell>
+      <Table.Cell
+        fontWeight={isChanged ? "semibold" : undefined}
+        title={row.label}
+        truncate
+        {...noWrapCell}
+      >
+        {row.label}
+      </Table.Cell>
+      <Table.Cell truncate {...noWrapCell}>
         <ValueText row={row} value={baselineValue} error={stageErrorOf(baseline, row.stage)} />
       </Table.Cell>
-      <Table.Cell>
+      <Table.Cell truncate {...noWrapCell}>
         <ValueText row={row} value={previewValue} error={stageErrorOf(preview, row.stage)} />
       </Table.Cell>
-      <Table.Cell>
+      <Table.Cell truncate {...noWrapCell}>
         <DeltaText row={row} delta={delta} />
       </Table.Cell>
     </Table.Row>
