@@ -6,7 +6,7 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 
 public sealed class RoundingPrecisionFilter : IFilter<MutableGpxPoint>
 {
-    public sealed record Config(int Decimals) : FilterConfigBase<Config>(default!);
+    public sealed record Config(int Decimals) : FilterConfigBase<Config>(default!), IPointFilterConfig;
     private readonly int _decimals;
     public RoundingPrecisionFilter(Config config)
     {

@@ -9,6 +9,9 @@ public sealed class MutableGpxPoint(double lat, double lon, double ele, DateTime
     public double Ele { get; set; } = ele;
     public DateTime? Time = time;
 
+    // Pinned points (e.g. local maxima) must survive point-removing filters such as SimplifyFilter.
+    public bool Pinned { get; set; }
+
 }
 
 internal class GpxDataBuilder(List<GpxPoint> points)

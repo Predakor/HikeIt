@@ -6,7 +6,7 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 
 public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
 {
-    public sealed record Config(double Alpha) : FilterConfigBase<Config>(default!);
+    public sealed record Config(double Alpha) : FilterConfigBase<Config>(default!), IPointFilterConfig;
 
     private readonly double _alpha;
     public EmaSmoothingFilter(Config config)

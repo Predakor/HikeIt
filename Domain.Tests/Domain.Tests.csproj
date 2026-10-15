@@ -34,6 +34,9 @@
 		<None Update="data\trip_big.gpx">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Include="..\docs\pipeline-preview-bench\fixture.response.json" Link="data\fixture.response.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>

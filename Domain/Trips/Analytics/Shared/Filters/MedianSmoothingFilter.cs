@@ -6,7 +6,7 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 
 public sealed class MedianSmoothingFilter : IFilter<MutableGpxPoint>
 {
-    public sealed record Config(int WindowSize) : FilterConfigBase<Config>(default!);
+    public sealed record Config(int WindowSize) : FilterConfigBase<Config>(default!), IPointFilterConfig;
 
     private readonly int _windowSize;
     public MedianSmoothingFilter(Config config)
