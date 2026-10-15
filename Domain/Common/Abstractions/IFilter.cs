@@ -17,6 +17,7 @@ public interface IFilter<TValue>
 [JsonDerivedType(typeof(SimplifyFilter.Config), typeDiscriminator: nameof(SimplifyFilter))]
 [JsonDerivedType(typeof(MergeNearbyByDistanceFilter.Config), typeDiscriminator: nameof(MergeNearbyByDistanceFilter))]
 [JsonDerivedType(typeof(MergeNearbyByElevationFilter.Config), typeDiscriminator: nameof(MergeNearbyByElevationFilter))]
+[JsonDerivedType(typeof(CoordinateSmoothingFilter.Config), typeDiscriminator: nameof(CoordinateSmoothingFilter))]
 public interface IFilterConfig
 {
     Type FilterType { get; }
@@ -36,6 +37,7 @@ public interface IFilterConfig<out T> : IFilterConfig
 [JsonDerivedType(typeof(RoundingPrecisionFilter.Config), typeDiscriminator: nameof(RoundingPrecisionFilter))]
 [JsonDerivedType(typeof(PinLocalMaximaFilter.Config), typeDiscriminator: nameof(PinLocalMaximaFilter))]
 [JsonDerivedType(typeof(SimplifyFilter.Config), typeDiscriminator: nameof(SimplifyFilter))]
+[JsonDerivedType(typeof(CoordinateSmoothingFilter.Config), typeDiscriminator: nameof(CoordinateSmoothingFilter))]
 public interface IPointFilterConfig : IFilterConfig;
 
 // Configs of filters that work on candidate peaks (peak matching only).
