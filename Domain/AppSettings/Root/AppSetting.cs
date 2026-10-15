@@ -8,6 +8,7 @@ public enum AppSettingType
 {
     GpxDataProcessing = 1,
     RouteVisualization = 2,
+    PeakMatching = 3,
 }
 
 public class AppSetting : AggregateRoot<int, AppSetting>
@@ -28,6 +29,13 @@ public class AppSetting : AggregateRoot<int, AppSetting>
         {
             return Errors.Unknown("setting type doesn't match");
         }
+
+        var validationErrors = setting.Validate().ToList();
+        if (validationErrors.Count > 0)
+        {
+            return Errors.BadRequest(string.Join(" ", validationErrors));
+        }
+
         JsonValue = JsonSerializer.SerializeToDocument(setting, SerializerOptions);
         AddDomainEvent(new AppSettingEvents.JsonValueUpdated(setting.SettingFor));
         return this;
@@ -43,6 +51,12 @@ public class AppSetting : AggregateRoot<int, AppSetting>
         if (setting is not IAppSetting st)
         {
             return Errors.BadRequest("setting type doesn't match");
+        }
+
+        var validationErrors = st.Validate().ToList();
+        if (validationErrors.Count > 0)
+        {
+            return Errors.BadRequest(string.Join(" ", validationErrors));
         }
 
         JsonValue = JsonSerializer.SerializeToDocument(setting, type, SerializerOptions);

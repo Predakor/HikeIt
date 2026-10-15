@@ -12,6 +12,7 @@ public static class AppSettingsRegistry
     private static readonly Dictionary<AppSettingType, Type> map = new()
     {
         { AppSettingType.GpxDataProcessing, typeof(GpxDataProcessingSetting) },
+        { AppSettingType.PeakMatching, typeof(PeakMatchingSetting) },
     };
 
     private static readonly JsonSerializerOptions options = new(JsonSerializerOptions.Default)

@@ -1,5 +1,6 @@
 using System.Globalization;
 using Application.Commons.Abstractions;
+using Domain.AppSettings.Settings;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Root.Builders.Config;
@@ -39,6 +40,19 @@ public static class PipelineDefaults
         new MergeNearbyByDistanceFilter.Config(50) with { Value = new MergeNearbyByDistanceFilter.Config(50) },
         new MergeNearbyByElevationFilter.Config(50) with { Value = new MergeNearbyByElevationFilter.Config(50) },
     ];
+
+    // Peak filters built from the peak matching setting (DB row); the lookup radius is read from the same setting.
+    public static IReadOnlyList<IPeakFilterConfig> PeakFiltersFrom(PeakMatchingSetting setting)
+    {
+        var distance = AsDouble(setting.MergeDistanceM);
+        var elevation = AsDouble(setting.MergeElevationM);
+
+        return
+        [
+            new MergeNearbyByDistanceFilter.Config(distance) with { Value = new MergeNearbyByDistanceFilter.Config(distance) },
+            new MergeNearbyByElevationFilter.Config(elevation) with { Value = new MergeNearbyByElevationFilter.Config(elevation) },
+        ];
+    }
 
     // Lookup radius for matching candidate peaks in the database. Scalar, because the lookup is not a filter.
     public const float PeakProximityRadiusM = 100f;

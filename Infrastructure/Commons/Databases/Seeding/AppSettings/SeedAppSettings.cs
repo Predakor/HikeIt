@@ -1,4 +1,4 @@
-﻿using Domain.AppSettings.Interfaces;
+using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
 
@@ -15,9 +15,15 @@ internal class SeedAppSettings : ISeeder
 
     public async Task Seed(TripDbContext dbContext)
     {
-        await repository
-           .GetBySettingTypeAsync(AppSettingType.GpxDataProcessing, CancellationToken.None)
-           .MatchAsync(found => found, error => AddDefaultProcessingSetting())
+        await SeedIfMissing(AppSettingType.GpxDataProcessing, AddDefaultProcessingSetting);
+        await SeedIfMissing(AppSettingType.PeakMatching, AddDefaultPeakMatchingSetting);
+    }
+
+    private Task SeedIfMissing(AppSettingType type, Func<Task<Result<AppSetting>>> addDefault)
+    {
+        return repository
+           .GetBySettingTypeAsync(type, CancellationToken.None)
+           .MatchAsync(found => found, error => addDefault())
            .TapAsync(_ => repository.SaveChangesAsync(CancellationToken.None));
     }
 
@@ -31,6 +37,16 @@ internal class SeedAppSettings : ISeeder
                     MedianFilterWindowSize: 6,
                     RoundingDecimalsCount: 1
                 )
+            )
+        );
+    }
+
+    // Same values as the former hard-coded peak matching constants.
+    private Task<Result<AppSetting>> AddDefaultPeakMatchingSetting()
+    {
+        return repository.AddAsync(
+            AppSetting.Create(
+                new PeakMatchingSetting(ProximityRadiusM: 100f, MergeDistanceM: 50f, MergeElevationM: 50f)
             )
         );
     }

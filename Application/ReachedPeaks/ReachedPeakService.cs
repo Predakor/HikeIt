@@ -1,4 +1,6 @@
-﻿using Application.Locations.Peaks;
+﻿using Application.AppSettings;
+using Application.Commons.Abstractions;
+using Application.Locations.Peaks;
 using Application.ReachedPeaks.ValueObjects;
 using Application.Trips.Analytics.Pipeline;
 using Domain.Common.Geography.ValueObjects;
@@ -15,13 +17,16 @@ namespace Application.ReachedPeaks;
 public class ReachedPeakService : IReachedPeakService {
     readonly IPeaksQueryService _peaksQueries;
     readonly IReachedPeaksQureryService _reachedPeaksQueries;
+    readonly IAppSettingsService _appSettings;
 
     public ReachedPeakService(
         IPeaksQueryService peaksQueryService,
-        IReachedPeaksQureryService reachedPeaksQueries
+        IReachedPeaksQureryService reachedPeaksQueries,
+        IAppSettingsService appSettings
     ) {
         _peaksQueries = peaksQueryService;
         _reachedPeaksQueries = reachedPeaksQueries;
+        _appSettings = appSettings;
     }
 
     public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user) {
@@ -29,23 +34,32 @@ public class ReachedPeakService : IReachedPeakService {
     }
 
     public async Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip) {
-        return await ExtractPotentialPeaks(data)
-            .BindAsync(FindMatchingPeaks)
+        // Read once per trip; a missing or unreadable row falls back to the code constants.
+        var setting = await PipelineSettings.PeakMatchingAsync(_appSettings, CancellationToken.None);
+        var filters = setting is null ? PipelineDefaults.PeakFilters : PipelineDefaults.PeakFiltersFrom(setting);
+        var radius = setting?.ProximityRadiusM ?? PipelineDefaults.PeakProximityRadiusM;
+
+        return await ExtractPotentialPeaks(data, filters)
+            .BindAsync(candidates => FindMatchingPeaks(candidates, radius))
             .BindAsync(peaks => MarkNewPeaks(trip.UserId, peaks))
             .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, trip));
     }
 
-    static Result<List<ReachedPeakDataBuilder>> ExtractPotentialPeaks(AnalyticData data) {
+    static Result<List<ReachedPeakDataBuilder>> ExtractPotentialPeaks(
+        AnalyticData data,
+        IReadOnlyList<IPeakFilterConfig> filters
+    ) {
         return PeakFilterFactory
-            .Apply(data.ToLocalMaximaWithDistance(), PipelineDefaults.PeakFilters)
+            .Apply(data.ToLocalMaximaWithDistance(), filters)
             .Select(ReachedPeakDataFactory.FromPointWithDistance)
             .ToList();
     }
 
     Task<Result<List<ReachedPeakDataBuilder>>> FindMatchingPeaks(
-        List<ReachedPeakDataBuilder> peaksCandidates
+        List<ReachedPeakDataBuilder> peaksCandidates,
+        float radius
     ) {
-        return _peaksQueries.GetPeaksWithinRadius(peaksCandidates, PipelineDefaults.PeakProximityRadiusM);
+        return _peaksQueries.GetPeaksWithinRadius(peaksCandidates, radius);
     }
 
     async Task<Result<List<ReachedPeakDataBuilder>>> MarkNewPeaks(
