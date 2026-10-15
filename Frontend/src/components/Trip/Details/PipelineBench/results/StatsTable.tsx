@@ -1,7 +1,7 @@
 import type { StageResults } from "@/types/Api/pipelinePreview.types";
 import { formatValue } from "@/Utils/Formatters";
-import { For, Table, Text } from "@chakra-ui/react";
-import { Fragment, memo } from "react";
+import { Flex, For, SegmentGroup, Stack, Table, Text } from "@chakra-ui/react";
+import { Fragment, memo, useState } from "react";
 import {
   computeDelta,
   isChangedDelta,
@@ -12,19 +12,33 @@ import {
 } from "./statsRows";
 
 interface Props {
+  raw: StageResults;
   baseline: StageResults;
   preview: StageResults;
 }
 
+type SourceId = "raw" | "baseline" | "preview";
 type DeltaTone = "neutral" | "good" | "bad" | "unknown";
 
+const sourceIds: SourceId[] = ["raw", "baseline", "preview"];
+
+const sourceLabels: Record<SourceId, string> = {
+  raw: "Raw",
+  baseline: "Baseline",
+  preview: "Preview",
+};
+
+// The reference is the column every other value is compared against. Raw is the default.
+const referenceItems: { value: SourceId; label: string }[] = [
+  { value: "raw", label: sourceLabels.raw },
+  { value: "baseline", label: sourceLabels.baseline },
+];
+
 // Fixed column widths plus no line breaks keep every row the same height, so the table never shifts when values change.
-// The metric column takes the remaining width and truncates; delta is the widest because it carries "+12.3 m (+4.5%)".
+// The metric column takes the remaining width and truncates; value columns carry "1,234.5 m +4.5%".
 const columns = [
   { label: "Metric", width: undefined },
-  { label: "Baseline", width: "32" },
-  { label: "Preview", width: "32" },
-  { label: "Delta", width: "56" },
+  ...sourceIds.map((source) => ({ label: sourceLabels[source], width: "44" })),
 ];
 
 const noWrapCell = { whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" } as const;
@@ -37,59 +51,103 @@ const deltaColors: Record<DeltaTone, string> = {
   unknown: "fg.info",
 };
 
-// Memoised: it only depends on the results, so editing a config must not re-render every row.
-export const StatsTable = memo(function StatsTable({ baseline, preview }: Props) {
+// Memoised: it only depends on the results and the local reference choice, so editing a config must not re-render every row.
+export const StatsTable = memo(function StatsTable({ raw, baseline, preview }: Props) {
+  const [reference, setReference] = useState<SourceId>("raw");
+  const sources: Record<SourceId, StageResults> = { raw, baseline, preview };
+
   return (
-    <Table.Root variant={"outline"} size="sm" tableLayout={"fixed"} w={"full"}>
-      <Table.Header>
-        <Table.Row>
-          <For each={columns}>
-            {(column) => (
-              <Table.ColumnHeader key={column.label} w={column.width} {...noWrapCell}>
-                {column.label}
-              </Table.ColumnHeader>
+    <Stack gap={2}>
+      <Flex align={"center"} gap={3} wrap={"wrap"}>
+        <Text as="span" fontSize={"sm"} color={"fg.muted"}>
+          Compare against:
+        </Text>
+        <SegmentGroup.Root
+          size={"sm"}
+          value={reference}
+          onValueChange={(details) => {
+            if (details.value === null) {
+              return;
+            }
+
+            setReference(details.value as SourceId);
+          }}
+        >
+          <SegmentGroup.Indicator />
+          <SegmentGroup.Items items={referenceItems} />
+        </SegmentGroup.Root>
+      </Flex>
+
+      <Table.Root variant={"outline"} size="sm" tableLayout={"fixed"} w={"full"}>
+        <Table.Header>
+          <Table.Row>
+            <For each={columns}>
+              {(column) => (
+                <Table.ColumnHeader key={column.label} w={column.width} {...noWrapCell}>
+                  {column.label}
+                </Table.ColumnHeader>
+              )}
+            </For>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          <For each={statsGroups}>
+            {(group) => (
+              <Fragment key={group.stage}>
+                <Table.Row bg={"bg.subtle"}>
+                  <Table.Cell colSpan={columns.length} fontWeight={"semibold"} fontSize={"xs"} textTransform={"uppercase"}>
+                    {group.label}
+                  </Table.Cell>
+                </Table.Row>
+                <For each={group.rows}>
+                  {(row) => (
+                    <StatsTableRow
+                      key={`${group.stage}-${row.label}`}
+                      row={row}
+                      reference={reference}
+                      sources={sources}
+                    />
+                  )}
+                </For>
+              </Fragment>
             )}
           </For>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        <For each={statsGroups}>
-          {(group) => (
-            <Fragment key={group.stage}>
-              <Table.Row bg={"bg.subtle"}>
-                <Table.Cell colSpan={columns.length} fontWeight={"semibold"} fontSize={"xs"} textTransform={"uppercase"}>
-                  {group.label}
-                </Table.Cell>
-              </Table.Row>
-              <For each={group.rows}>
-                {(row) => (
-                  <StatsTableRow
-                    key={`${group.stage}-${row.label}`}
-                    row={row}
-                    baseline={baseline}
-                    preview={preview}
-                  />
-                )}
-              </For>
-            </Fragment>
-          )}
-        </For>
-      </Table.Body>
-    </Table.Root>
+        </Table.Body>
+      </Table.Root>
+    </Stack>
   );
 });
 
 interface RowProps {
   row: StatsRow;
-  baseline: StageResults;
-  preview: StageResults;
+  reference: SourceId;
+  sources: Record<SourceId, StageResults>;
 }
 
-function StatsTableRow({ row, baseline, preview }: RowProps) {
-  const baselineValue = row.get(baseline);
-  const previewValue = row.get(preview);
-  const delta = computeDelta(baselineValue, previewValue);
-  const isChanged = isChangedDelta(delta);
+interface CellData {
+  source: SourceId;
+  value: number | undefined;
+  // null for the reference column, and when either side is missing (the cell then shows only its value).
+  delta: StatDelta | null;
+  error: string | null;
+}
+
+function StatsTableRow({ row, reference, sources }: RowProps) {
+  const referenceValue = row.get(sources[reference]);
+  const cells: CellData[] = sourceIds.map((source) => {
+    const value = row.get(sources[source]);
+    const isReference = source === reference;
+
+    return {
+      source,
+      value,
+      delta: isReference ? null : computeDelta(referenceValue, value),
+      error: stageErrorOf(sources[source], row.stage),
+    };
+  });
+
+  // A row is changed when any non-reference column moved away from the reference.
+  const isChanged = cells.some((cell) => cell.delta !== null && isChangedDelta(cell.delta));
 
   return (
     <Table.Row bg={isChanged ? "bg.muted" : undefined}>
@@ -101,16 +159,44 @@ function StatsTableRow({ row, baseline, preview }: RowProps) {
       >
         {row.label}
       </Table.Cell>
-      <Table.Cell truncate {...noWrapCell}>
-        <ValueText row={row} value={baselineValue} error={stageErrorOf(baseline, row.stage)} />
-      </Table.Cell>
-      <Table.Cell truncate {...noWrapCell}>
-        <ValueText row={row} value={previewValue} error={stageErrorOf(preview, row.stage)} />
-      </Table.Cell>
-      <Table.Cell truncate {...noWrapCell}>
-        <DeltaText row={row} delta={delta} />
-      </Table.Cell>
+      <For each={cells}>
+        {(cell) => (
+          <StatCell
+            key={cell.source}
+            row={row}
+            value={cell.value}
+            error={cell.error}
+            delta={cell.delta}
+            isReference={cell.source === reference}
+          />
+        )}
+      </For>
     </Table.Row>
+  );
+}
+
+interface StatCellProps {
+  row: StatsRow;
+  value: number | undefined;
+  error: string | null;
+  delta: StatDelta | null;
+  isReference: boolean;
+}
+
+function StatCell({ row, value, error, delta, isReference }: StatCellProps) {
+  // The hover title always carries the full absolute delta, even when the visible text shows a percent.
+  const title = delta === null ? undefined : formatAbsoluteDelta(row, delta);
+
+  return (
+    <Table.Cell truncate title={title} {...noWrapCell}>
+      <ValueText row={row} value={value} error={error} />
+      {isReference ? (
+        <Text as="span" color={"fg.muted"} fontSize={"xs"} ms={2}>
+          {"ref"}
+        </Text>
+      ) : null}
+      {delta === null || value === undefined ? null : <DeltaText row={row} delta={delta} />}
+    </Table.Cell>
   );
 }
 
@@ -139,18 +225,16 @@ function ValueText({ row, value, error }: ValueTextProps) {
 
 interface DeltaTextProps {
   row: StatsRow;
-  delta: StatDelta | null;
+  delta: StatDelta;
 }
 
 function DeltaText({ row, delta }: DeltaTextProps) {
-  if (delta === null) {
-    return <Text as="span" color={"fg.muted"}>{"—"}</Text>;
-  }
-
   const tone = deltaTone(delta, row.higherIsBetter);
+  const text = delta.percent === null ? formatAbsoluteDelta(row, delta) : formatPercentDelta(delta.percent);
+
   return (
-    <Text as="span" color={deltaColors[tone]} fontWeight={isChangedDelta(delta) ? "semibold" : undefined}>
-      {formatDelta(row, delta)}
+    <Text as="span" color={deltaColors[tone]} fontWeight={isChangedDelta(delta) ? "semibold" : undefined} ms={2}>
+      {text}
     </Text>
   );
 }
@@ -183,15 +267,13 @@ function signOf(value: number): string {
   return "";
 }
 
-function formatDelta(row: StatsRow, delta: StatDelta): string {
-  const absoluteText = `${signOf(delta.absolute)}${formatRowValue(row, Math.abs(delta.absolute))}`;
-  const percent = delta.percent;
-  if (percent === null) {
-    return withUnit(absoluteText, row.unit);
-  }
+function formatAbsoluteDelta(row: StatsRow, delta: StatDelta): string {
+  const text = `${signOf(delta.absolute)}${formatRowValue(row, Math.abs(delta.absolute))}`;
+  return withUnit(text, row.unit);
+}
 
-  const percentText = ` (${signOf(percent)}${Math.abs(percent).toFixed(1)}%)`;
-  return withUnit(absoluteText, row.unit) + percentText;
+function formatPercentDelta(percent: number): string {
+  return `${signOf(percent)}${Math.abs(percent).toFixed(1)}%`;
 }
 
 function deltaTone(delta: StatDelta, higherIsBetter: boolean | null | undefined): DeltaTone {
