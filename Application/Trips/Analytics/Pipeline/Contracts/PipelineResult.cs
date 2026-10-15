@@ -35,8 +35,10 @@ public sealed record PipelinePreviewResponse(
 
 public interface IPipelinePreviewService
 {
-    // Read-only: must never persist or mutate anything.
-    Task<PipelinePreviewResponse> PreviewAsync(
+    // Read-only: must never persist or mutate anything. Returns null when the trip file does not exist.
+    // Stages a requested stage depends on are always computed but only requested stages appear in the response.
+    // A failing stage yields Ok = false with Error; stages that depend on it fail without running.
+    Task<PipelinePreviewResponse?> PreviewAsync(
         Guid tripId,
         PipelinePreviewRequest request,
         CancellationToken cancellationToken

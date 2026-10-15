@@ -31,7 +31,8 @@ export type PointFilterConfig =
   | { FilterType: "MaxSpikeFilter"; value: { MaxSpike: number } }
   | { FilterType: "RoundingPrecisionFilter"; value: { Decimals: number } }
   | { FilterType: "PinLocalMaximaFilter"; value: { Enabled: boolean } }
-  | { FilterType: "SimplifyFilter"; value: { ToleranceM: number } };
+  | { FilterType: "SimplifyFilter"; value: { ToleranceM: number } }
+  | { FilterType: "CoordinateSmoothingFilter"; value: { Alpha: number } };
 
 // Peak filters work on candidate peaks (local maxima) in peak matching only.
 export type PeakFilterConfig =
