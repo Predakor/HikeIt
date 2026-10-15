@@ -9,9 +9,11 @@ import { type AppSettingsEntry, SchemaInputMap } from "@pages/Admin/AppSettings/
 export function AppSetting({ setting }: { setting: AppSettingsEntry<any> }) {
   const formHook = useForm({ defaultValues: setting.value });
   const propertiesMap = Object.entries(setting.schema.properties);
+  // A number input defaults to step 1 and rejects fractions (0.88); "any" lets float settings take any decimal.
   const config = propertiesMap.map(([key, rules]) => ({
     key,
     type: SchemaInputMap[rules.type],
+    step: rules.type === "number" ? "any" : undefined,
   })) as InputsConfig;
 
   const sendRequest = formHook.handleSubmit((d) => {
