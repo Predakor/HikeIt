@@ -1,4 +1,4 @@
-﻿using Application.Commons.Abstractions;
+using Application.Commons.Abstractions;
 using Domain.AppSettings.Settings;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
@@ -6,7 +6,7 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 
 public sealed class MaxSpikeFilter(MaxSpikeFilter.Config config) : IFilter<MutableGpxPoint>
 {
-    public sealed record Config(int MaxSpike) : FilterConfigBase<Config>(default!), IPointFilterConfig;
+    public sealed record Config(double MaxSpike) : FilterConfigBase<Config>(default!), IPointFilterConfig;
 
     public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {

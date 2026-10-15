@@ -1,4 +1,4 @@
-﻿using Application.Commons.Abstractions;
+using Application.Commons.Abstractions;
 using Domain.AppSettings.Settings;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
@@ -16,8 +16,6 @@ public sealed class RoundingPrecisionFilter : IFilter<MutableGpxPoint>
     {
         foreach (var point in values)
         {
-            point.Lat = Math.Round(point.Lat, _decimals);
-            point.Lon = Math.Round(point.Lon, _decimals);
             point.Ele = Math.Round(point.Ele, _decimals);
         }
 

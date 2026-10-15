@@ -1,4 +1,5 @@
 ﻿using Domain.Common.Geography.ValueObjects;
+using Domain.Trips.Analytics.Shared.Filters;
 
 namespace Domain.Trips.Root.Builders.GpxDataBuilder;
 
@@ -38,11 +39,7 @@ internal class GpxDataBuilder(List<GpxPoint> points)
 
     public GpxDataBuilder RoundElevation(int decimals = 1)
     {
-        foreach (var point in _gpxPoints)
-        {
-            point.Ele = Math.Round(point.Ele, decimals);
-        }
-
+        new RoundingPrecisionFilter(new RoundingPrecisionFilter.Config(decimals)).Apply(_gpxPoints);
         return this;
     }
 
