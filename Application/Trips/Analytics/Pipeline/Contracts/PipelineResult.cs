@@ -29,9 +29,12 @@ public sealed record StageResult(
 );
 
 // Dictionaries are keyed by StageIds.Key(stage), e.g. "elevationProfile".
+// Baseline = the current production settings (cleanup values come from the GpxDataProcessing app setting).
+// Raw = the same stages on the untouched file (cleanup with no filters); only present when the request asked for it.
 public sealed record PipelinePreviewResponse(
     IReadOnlyDictionary<string, StageResult> Results,
-    IReadOnlyDictionary<string, StageResult> Baseline
+    IReadOnlyDictionary<string, StageResult> Baseline,
+    IReadOnlyDictionary<string, StageResult>? Raw = null
 );
 
 public interface IPipelinePreviewService

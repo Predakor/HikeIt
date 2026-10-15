@@ -69,6 +69,7 @@ export interface PipelineConfig {
 export interface PipelinePreviewRequest {
   config: PipelineConfig;
   stages?: StageId[] | null; // null = all stages
+  includeRaw?: boolean; // ask for the raw run (untouched file); clients need it once per file
 }
 
 // Response
@@ -126,5 +127,6 @@ export type StageResults = { [S in StageId]?: StageResult<S> };
 
 export interface PipelinePreviewResponse {
   results: StageResults;
-  baseline: StageResults;
+  baseline: StageResults; // current production settings (cleanup values come from the GpxDataProcessing app setting)
+  raw?: StageResults | null; // same stages on the untouched file; only present when includeRaw was requested
 }

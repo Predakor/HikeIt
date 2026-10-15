@@ -28,6 +28,10 @@ public interface IPipelineStage
     // The part of the config this stage depends on; serialised to JSON for the cache key. null = defaults.
     object? SelectConfig(PipelineConfig config);
 
+    // Extra text for the cache key when a stage's output also depends on something outside the request config,
+    // e.g. cleanup's default filters come from a database setting. Must change whenever that input changes.
+    Task<string> CacheDiscriminatorAsync(CancellationToken cancellationToken) => Task.FromResult(string.Empty);
+
     Task<StageOutput> RunAsync(
         StageContext context,
         PipelineConfig config,

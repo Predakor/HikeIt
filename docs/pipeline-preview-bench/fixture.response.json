@@ -97,5 +97,55 @@
         ]
       }
     }
+  },
+  "raw": {
+    "cleanup": {
+      "stage": "cleanup", "ok": true, "error": null, "cacheHit": false, "durationMs": 1, "pointCount": 4,
+      "payloadBytes": 40, "data": { "pointCountIn": 4, "pointCountOut": 4 }
+    },
+    "analytics": {
+      "stage": "analytics", "ok": true, "error": null, "cacheHit": false, "durationMs": 6, "pointCount": 4,
+      "payloadBytes": 420,
+      "data": {
+        "route": {
+          "totalDistanceMeters": 3214.0, "totalAscentMeters": 561.3, "totalDescentMeters": 271.9,
+          "highestElevationMeters": 1556.0, "lowestElevationMeters": 1254.0,
+          "averageSlopePercent": 11.2, "averageAscentSlopePercent": 15.4, "averageDescentSlopePercent": -9.8
+        },
+        "time": null
+      }
+    },
+    "elevationProfile": {
+      "stage": "elevationProfile", "ok": true, "error": null, "cacheHit": false, "durationMs": 5, "pointCount": 3,
+      "payloadBytes": 180,
+      "data": {
+        "start": { "lat": 49.2, "lon": 19.9, "ele": 1254.0, "time": "2026-05-01T07:00:00Z" },
+        "gains": [
+          { "dist": 800.0, "ele": 170.0, "time": 1500 },
+          { "dist": 900.0, "ele": 132.0, "time": 1800 },
+          { "dist": 1514.0, "ele": -131.0, "time": 2100 }
+        ]
+      }
+    },
+    "peakMatching": {
+      "stage": "peakMatching", "ok": true, "error": null, "cacheHit": false, "durationMs": 21, "pointCount": 1,
+      "payloadBytes": 120,
+      "data": {
+        "candidateCount": 5,
+        "matched": [{ "peakId": 101, "name": "Giewont", "distanceM": 61.0, "elevation": 1894 }]
+      }
+    },
+    "route": {
+      "stage": "route", "ok": true, "error": null, "cacheHit": false, "durationMs": 4, "pointCount": 4,
+      "payloadBytes": 200,
+      "data": {
+        "points": [
+          { "lat": 49.2, "lon": 19.9, "ele": 1254.0 },
+          { "lat": 49.203, "lon": 19.903, "ele": 1411.0 },
+          { "lat": 49.205, "lon": 19.905, "ele": 1556.0 },
+          { "lat": 49.21, "lon": 19.91, "ele": 1425.0 }
+        ]
+      }
+    }
   }
 }

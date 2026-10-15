@@ -30,4 +30,9 @@ public sealed record PipelineConfig(
     PipeConfig.Route? Route = null
 );
 
-public sealed record PipelinePreviewRequest(PipelineConfig Config, IReadOnlyList<StageId>? Stages = null);
+// IncludeRaw adds the raw run (untouched file) to the response; clients ask for it once per file.
+public sealed record PipelinePreviewRequest(
+    PipelineConfig Config,
+    IReadOnlyList<StageId>? Stages = null,
+    bool IncludeRaw = false
+);
