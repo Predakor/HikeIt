@@ -28,7 +28,7 @@ public static class AnalyticDataExtentions {
         return points.MergeNearbyPeakByDistance().MergeNearbyPeaksByElevation();
     }
 
-    internal static List<T> MergeNearbyPeaksByElevation<T>(this List<T> peaks, int minDistance = 50)
+    internal static List<T> MergeNearbyPeaksByElevation<T>(this List<T> peaks, double minDistance = 50)
         where T : IGeoPoint {
         bool minElevationTreshold(T curr, T prev) {
             var eleDelta = Math.Abs(curr.Ele - prev.Ele);
@@ -38,7 +38,7 @@ public static class AnalyticDataExtentions {
         return peaks.GroupByDynamicWindow(minElevationTreshold, Select.Highest);
     }
 
-    internal static List<T> MergeNearbyPeakByDistance<T>(this List<T> peaks, int minDistance = 50)
+    internal static List<T> MergeNearbyPeakByDistance<T>(this List<T> peaks, double minDistance = 50)
         where T : IGeoPoint {
         bool minDistanceDelta(T curr, T prev) {
             var distDelta = Math.Abs(DistanceHelpers.Distance3D(curr, prev));

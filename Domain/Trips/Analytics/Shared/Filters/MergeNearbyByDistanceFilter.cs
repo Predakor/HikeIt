@@ -1,6 +1,7 @@
 using Application.Commons.Abstractions;
 using Domain.AppSettings.Settings;
 using Domain.Common.Geography.ValueObjects;
+using Domain.Trips.Analytics.ElevationProfiles.Commands;
 
 namespace Domain.Trips.Analytics.Shared.Filters;
 
@@ -12,7 +13,6 @@ public sealed class MergeNearbyByDistanceFilter(MergeNearbyByDistanceFilter.Conf
 
     public IList<GpxPointWithDistance> Apply(IList<GpxPointWithDistance> values)
     {
-        // STUB (Phase 0): implemented by BE-1, wrapping MergeNearbyPeakByDistance.
-        throw new NotImplementedException();
+        return values.ToList().MergeNearbyPeakByDistance(config.DistanceM);
     }
 }
