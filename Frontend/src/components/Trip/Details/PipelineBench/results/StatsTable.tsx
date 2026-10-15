@@ -12,8 +12,9 @@ import {
 } from "./statsRows";
 
 interface Props {
-  // When set, only this stage's rows are shown (no group header); otherwise every stage, grouped.
-  stage?: StageId;
+  // When set, only these stages' rows are shown (group headers only when there are several); otherwise every stage.
+  // Pass a stable array (module constant) so the memoised table does not re-render for nothing.
+  stages?: StageId[];
   // The baseline is whichever run the user picked (current config or raw file); the preview is compared against it.
   baseline: StageResults;
   preview: StageResults;
@@ -49,11 +50,13 @@ const deltaColors: Record<DeltaTone, string> = {
 };
 
 // Memoised: it only depends on the results and the local reference choice, so editing a config must not re-render every row.
-export const StatsTable = memo(function StatsTable({ stage, baseline, preview }: Props) {
+export const StatsTable = memo(function StatsTable({ stages, baseline, preview }: Props) {
   const sources: Record<SourceId, StageResults> = { baseline, preview };
   const groups =
-    stage === undefined ? statsGroups : statsGroups.filter((group) => group.stage === stage);
-  const showGroupHeaders = stage === undefined;
+    stages === undefined ? statsGroups : (
+      statsGroups.filter((group) => stages.includes(group.stage))
+    );
+  const showGroupHeaders = stages === undefined || stages.length > 1;
 
   return (
     <Stack gap={2}>
