@@ -1,4 +1,14 @@
-import { Button, Flex, Heading, SegmentGroup, Stack, Tabs, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  SegmentGroup,
+  SimpleGrid,
+  Stack,
+  Tabs,
+  Text,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { useParams } from "react-router";
 import { AnalyticsBlock } from "./blocks/AnalyticsBlock";
@@ -54,26 +64,6 @@ export default function PipelineBench() {
             onRun={() => run("analytics")}
           />
 
-          <ProfileBlock
-            status={status.elevationProfile}
-            result={results.elevationProfile}
-            filters={config.elevationProfile?.filters}
-            onFiltersChange={(filters) => updateConfig("elevationProfile", { filters })}
-            onRun={() => run("elevationProfile")}
-          />
-
-          <PeaksBlock
-            status={status.peakMatching}
-            result={results.peakMatching}
-            filters={config.peakMatching?.filters}
-            proximityRadiusM={config.peakMatching?.proximityRadiusM}
-            onFiltersChange={(filters) => updateConfig("peakMatching", { filters })}
-            onProximityRadiusChange={(proximityRadiusM) =>
-              updateConfig("peakMatching", { proximityRadiusM })
-            }
-            onRun={() => run("peakMatching")}
-          />
-
           <RouteBlock
             status={status.route}
             result={results.route}
@@ -108,35 +98,59 @@ export default function PipelineBench() {
         </Stack>
       </Stack>
 
-      {/* Previews take the full width below the two columns. */}
-      <Tabs.Root defaultValue={"elevation"} lazyMount={true}>
-        <Tabs.List>
-          <Tabs.Trigger value={"elevation"}>Elevation</Tabs.Trigger>
-          <Tabs.Trigger value={"route"}>Route</Tabs.Trigger>
-          <Tabs.Trigger value={"peaks"}>Peaks</Tabs.Trigger>
-        </Tabs.List>
+      {/* 2x2 grid: elevation profile and peak matching configs side by side, the previews span both columns below. */}
+      <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6} alignItems={"start"}>
+        <ProfileBlock
+          status={status.elevationProfile}
+          result={results.elevationProfile}
+          filters={config.elevationProfile?.filters}
+          onFiltersChange={(filters) => updateConfig("elevationProfile", { filters })}
+          onRun={() => run("elevationProfile")}
+        />
 
-        <Tabs.Content value={"elevation"}>
-          <ElevationOverlayGraph
-            preview={results.elevationProfile?.data ?? null}
-            baseline={baseline.elevationProfile?.data ?? null}
-          />
-        </Tabs.Content>
+        <PeaksBlock
+          status={status.peakMatching}
+          result={results.peakMatching}
+          filters={config.peakMatching?.filters}
+          proximityRadiusM={config.peakMatching?.proximityRadiusM}
+          onFiltersChange={(filters) => updateConfig("peakMatching", { filters })}
+          onProximityRadiusChange={(proximityRadiusM) =>
+            updateConfig("peakMatching", { proximityRadiusM })
+          }
+          onRun={() => run("peakMatching")}
+        />
 
-        <Tabs.Content value={"route"}>
-          <RoutePreviewMap
-            preview={results.route?.data ?? null}
-            baseline={baseline.route?.data ?? null}
-          />
-        </Tabs.Content>
+        <Box gridColumn={"1 / -1"} minW={0}>
+          <Tabs.Root defaultValue={"elevation"} lazyMount={true}>
+            <Tabs.List>
+              <Tabs.Trigger value={"elevation"}>Elevation</Tabs.Trigger>
+              <Tabs.Trigger value={"route"}>Route</Tabs.Trigger>
+              <Tabs.Trigger value={"peaks"}>Peaks</Tabs.Trigger>
+            </Tabs.List>
 
-        <Tabs.Content value={"peaks"}>
-          <PeaksList
-            preview={results.peakMatching?.data ?? null}
-            baseline={baseline.peakMatching?.data ?? null}
-          />
-        </Tabs.Content>
-      </Tabs.Root>
+            <Tabs.Content value={"elevation"}>
+              <ElevationOverlayGraph
+                preview={results.elevationProfile?.data ?? null}
+                baseline={baseline.elevationProfile?.data ?? null}
+              />
+            </Tabs.Content>
+
+            <Tabs.Content value={"route"}>
+              <RoutePreviewMap
+                preview={results.route?.data ?? null}
+                baseline={baseline.route?.data ?? null}
+              />
+            </Tabs.Content>
+
+            <Tabs.Content value={"peaks"}>
+              <PeaksList
+                preview={results.peakMatching?.data ?? null}
+                baseline={baseline.peakMatching?.data ?? null}
+              />
+            </Tabs.Content>
+          </Tabs.Root>
+        </Box>
+      </SimpleGrid>
     </Stack>
   );
 }
