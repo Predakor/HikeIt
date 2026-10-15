@@ -1,16 +1,32 @@
-import { Button, Flex, For, Input, Menu, Portal, Stack, Switch, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  For,
+  IconButton,
+  Input,
+  Menu,
+  NativeSelect,
+  Portal,
+  Slider,
+  Stack,
+  Switch,
+  Text,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { IconArrowDown, IconArrowUp } from "@/Icons/Icons";
 import {
   createFilterItem,
-  fieldOf,
+  fieldsOf,
   filterTypesOf,
   hasSimplifyBeforePinLocalMaxima,
   readFieldValue,
   withFieldValue,
   type FilterField,
+  type FilterFieldValue,
   type FilterItem,
   type FilterKind,
   type NumberField,
+  type SelectField,
 } from "./filterCatalog";
 
 interface FilterListEditorProps<F extends FilterItem> {
@@ -43,7 +59,7 @@ export function FilterListEditor<F extends FilterItem>({
   const hasOrderWarning = hasSimplifyBeforePinLocalMaxima(filters);
 
   const addFilter = (filterType: string) => {
-    const created = createFilterItem(filterType, fieldOf(kind, filterType)) as F;
+    const created = createFilterItem(filterType, fieldsOf(kind, filterType)) as F;
     onChange([...filters, created]);
   };
 
@@ -64,10 +80,10 @@ export function FilterListEditor<F extends FilterItem>({
     onChange(filters.filter((_, position) => position !== index));
   };
 
-  const changeValue = (index: number, value: number | boolean) => {
+  const changeValue = (index: number, name: string, value: FilterFieldValue) => {
     const filter = filters[index];
     const next = [...filters];
-    next[index] = withFieldValue(filter, fieldOf(kind, filter.FilterType), value) as F;
+    next[index] = withFieldValue(filter, name, value) as F;
     onChange(next);
   };
 
@@ -75,8 +91,8 @@ export function FilterListEditor<F extends FilterItem>({
     <Stack gap={2}>
       {hasOrderWarning ?
         <Text fontSize={"xs"} color={"fg.warning"}>
-          SimplifyFilter runs before PinLocalMaximaFilter, so summits can be simplified away before they are
-          pinned.
+          SimplifyFilter runs before PinLocalMaximaFilter, so summits can be simplified away before
+          they are pinned.
         </Text>
       : null}
 
@@ -96,7 +112,7 @@ export function FilterListEditor<F extends FilterItem>({
             count={filters.length}
             onMove={(delta) => moveFilter(index, delta)}
             onRemove={() => removeFilter(index)}
-            onValueChange={(value) => changeValue(index, value)}
+            onValueChange={(name, value) => changeValue(index, name, value)}
           />
         )}
       </For>
@@ -138,28 +154,65 @@ interface FilterRowProps {
   count: number;
   onMove: (delta: number) => void;
   onRemove: () => void;
-  onValueChange: (value: number | boolean) => void;
+  onValueChange: (name: string, value: FilterFieldValue) => void;
 }
 
-function FilterRow({ kind, filter, index, count, onMove, onRemove, onValueChange }: FilterRowProps) {
-  const field = fieldOf(kind, filter.FilterType);
+function FilterRow({
+  kind,
+  filter,
+  index,
+  count,
+  onMove,
+  onRemove,
+  onValueChange,
+}: FilterRowProps) {
+  const fields = fieldsOf(kind, filter.FilterType);
   const isFirst = index === 0;
   const isLast = index === count - 1;
 
   return (
-    <Flex align={"center"} gap={2} wrap={"wrap"} borderWidth={"1px"} borderRadius={"md"} px={3} py={2}>
+    <Flex
+      align={"center"}
+      gap={2}
+      wrap={"wrap"}
+      borderWidth={"1px"}
+      borderRadius={"md"}
+      px={3}
+      py={2}
+    >
       <Text fontSize={"sm"} fontWeight={"medium"} flex={1} minW={0}>
         {index + 1}. {filter.FilterType}
       </Text>
 
-      <FieldInput field={field} value={readFieldValue(filter)} onValueChange={onValueChange} />
+      <For each={fields}>
+        {(field) => (
+          <FieldInput
+            key={field.name}
+            field={field}
+            value={readFieldValue(filter, field.name)}
+            onValueChange={(value) => onValueChange(field.name, value)}
+          />
+        )}
+      </For>
 
-      <Button size={"xs"} variant={"ghost"} disabled={isFirst} onClick={() => onMove(-1)}>
-        Up
-      </Button>
-      <Button size={"xs"} variant={"ghost"} disabled={isLast} onClick={() => onMove(1)}>
-        Down
-      </Button>
+      <IconButton
+        size={"xs"}
+        variant={"ghost"}
+        aria-label={"Move filter up"}
+        disabled={isFirst}
+        onClick={() => onMove(-1)}
+      >
+        <IconArrowUp />
+      </IconButton>
+      <IconButton
+        size={"xs"}
+        variant={"ghost"}
+        aria-label={"Move filter down"}
+        disabled={isLast}
+        onClick={() => onMove(1)}
+      >
+        <IconArrowDown />
+      </IconButton>
       <Button size={"xs"} variant={"ghost"} colorPalette={"red"} onClick={onRemove}>
         Remove
       </Button>
@@ -169,8 +222,8 @@ function FilterRow({ kind, filter, index, count, onMove, onRemove, onValueChange
 
 interface FieldInputProps {
   field: FilterField;
-  value: number | boolean | undefined;
-  onValueChange: (value: number | boolean) => void;
+  value: FilterFieldValue | undefined;
+  onValueChange: (value: FilterFieldValue) => void;
 }
 
 function FieldInput({ field, value, onValueChange }: FieldInputProps) {
@@ -188,7 +241,82 @@ function FieldInput({ field, value, onValueChange }: FieldInputProps) {
     );
   }
 
+  if (field.kind === "select") {
+    return (
+      <SelectValueInput
+        field={field}
+        value={String(value ?? field.defaultValue)}
+        onValueChange={onValueChange}
+      />
+    );
+  }
+
+  if (field.control === "range") {
+    return <RangeValueInput field={field} value={Number(value)} onValueChange={onValueChange} />;
+  }
+
   return <NumberValueInput field={field} value={Number(value)} onValueChange={onValueChange} />;
+}
+
+interface SelectValueInputProps {
+  field: SelectField;
+  value: string;
+  onValueChange: (value: string) => void;
+}
+
+function SelectValueInput({ field, value, onValueChange }: SelectValueInputProps) {
+  return (
+    <Flex align={"center"} gap={1}>
+      <Text fontSize={"xs"} color={"fg.muted"}>
+        {field.name}
+      </Text>
+      <NativeSelect.Root size={"xs"} width={"28"}>
+        <NativeSelect.Field value={value} onChange={(event) => onValueChange(event.target.value)}>
+          {field.options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </NativeSelect.Field>
+        <NativeSelect.Indicator />
+      </NativeSelect.Root>
+    </Flex>
+  );
+}
+
+interface RangeValueInputProps {
+  field: NumberField;
+  value: number;
+  onValueChange: (value: number) => void;
+}
+
+// Same Chakra slider parts as the shared Range input, driven by value/onChange since this editor is not a react-hook-form.
+function RangeValueInput({ field, value, onValueChange }: RangeValueInputProps) {
+  return (
+    <Flex align={"center"} gap={2}>
+      <Text fontSize={"xs"} color={"fg.muted"}>
+        {field.name}
+      </Text>
+      <Slider.Root
+        width={"28"}
+        min={field.min}
+        max={field.max}
+        step={field.step}
+        value={[value]}
+        onValueChange={({ value: next }) => onValueChange(next[0])}
+      >
+        <Slider.Control>
+          <Slider.Track>
+            <Slider.Range />
+          </Slider.Track>
+          <Slider.Thumbs />
+        </Slider.Control>
+      </Slider.Root>
+      <Text fontSize={"xs"} minW={"10"} textAlign={"right"}>
+        {value}
+      </Text>
+    </Flex>
+  );
 }
 
 interface NumberValueInputProps {
