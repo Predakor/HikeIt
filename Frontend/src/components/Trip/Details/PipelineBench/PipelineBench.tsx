@@ -1,4 +1,5 @@
-import { Button, Flex, Heading, Stack, Tabs } from "@chakra-ui/react";
+import { Button, Flex, Heading, SegmentGroup, Stack, Tabs, Text } from "@chakra-ui/react";
+import { useState } from "react";
 import { useParams } from "react-router";
 import { AnalyticsBlock } from "./blocks/AnalyticsBlock";
 import { CleanupBlock } from "./blocks/CleanupBlock";
@@ -11,11 +12,21 @@ import ElevationOverlayGraph from "./views/ElevationOverlayGraph";
 import PeaksList from "./views/PeaksList";
 import RoutePreviewMap from "./views/RoutePreviewMap";
 
+type BaselineSource = "config" | "raw";
+
+const baselineItems: { value: BaselineSource; label: string }[] = [
+  { value: "config", label: "Current config" },
+  { value: "raw", label: "Raw file" },
+];
+
 // Admin-only pipeline bench: one block per stage on the left, baseline vs preview results on the right.
 export default function PipelineBench() {
   const { tripId } = useParams();
   const { state, updateConfig, run } = usePipelineBench(tripId);
-  const { config, status, results, baseline, raw } = state;
+  const { config, status, results, raw } = state;
+  const [baselineSource, setBaselineSource] = useState<BaselineSource>("config");
+  // What the preview is compared against: the current (DB) config run, or the untouched file.
+  const baseline = baselineSource === "raw" ? raw : state.baseline;
 
   return (
     <Stack direction={{ base: "column", lg: "row" }} gap={6} align={"start"}>
@@ -69,7 +80,27 @@ export default function PipelineBench() {
       </Stack>
 
       <Stack flex={1} minW={0} gap={4} w={"full"}>
-        <StatsTable raw={raw} baseline={baseline} preview={results} />
+        <Flex align={"center"} gap={3} wrap={"wrap"}>
+          <Text as="span" fontSize={"sm"} color={"fg.muted"}>
+            Baseline:
+          </Text>
+          <SegmentGroup.Root
+            size={"sm"}
+            value={baselineSource}
+            onValueChange={(details) => {
+              if (details.value === null) {
+                return;
+              }
+
+              setBaselineSource(details.value as BaselineSource);
+            }}
+          >
+            <SegmentGroup.Indicator />
+            <SegmentGroup.Items items={baselineItems} />
+          </SegmentGroup.Root>
+        </Flex>
+
+        <StatsTable baseline={baseline} preview={results} />
 
         <Tabs.Root defaultValue={"elevation"} lazyMount={true}>
           <Tabs.List>

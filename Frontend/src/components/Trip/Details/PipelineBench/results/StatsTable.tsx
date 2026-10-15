@@ -1,7 +1,7 @@
 import type { StageResults } from "@/types/Api/pipelinePreview.types";
 import { formatValue } from "@/Utils/Formatters";
-import { Flex, For, SegmentGroup, Stack, Table, Text } from "@chakra-ui/react";
-import { Fragment, memo, useState } from "react";
+import { For, Stack, Table, Text } from "@chakra-ui/react";
+import { Fragment, memo } from "react";
 import {
   computeDelta,
   isChangedDelta,
@@ -12,33 +12,28 @@ import {
 } from "./statsRows";
 
 interface Props {
-  raw: StageResults;
+  // The baseline is whichever run the user picked (current config or raw file); the preview is compared against it.
   baseline: StageResults;
   preview: StageResults;
 }
 
-type SourceId = "raw" | "baseline" | "preview";
+type SourceId = "baseline" | "preview";
 type DeltaTone = "neutral" | "good" | "bad" | "unknown";
 
-const sourceIds: SourceId[] = ["raw", "baseline", "preview"];
+const sourceIds: SourceId[] = ["baseline", "preview"];
 
 const sourceLabels: Record<SourceId, string> = {
-  raw: "Raw",
   baseline: "Baseline",
   preview: "Preview",
 };
 
-// The reference is the column every other value is compared against. Raw is the default.
-const referenceItems: { value: SourceId; label: string }[] = [
-  { value: "raw", label: sourceLabels.raw },
-  { value: "baseline", label: sourceLabels.baseline },
-];
+const reference: SourceId = "baseline";
 
 // Fixed column widths plus no line breaks keep every row the same height, so the table never shifts when values change.
 // The metric column takes the remaining width and truncates; value columns carry "1,234.5 m +4.5%".
 const columns = [
   { label: "Metric", width: undefined },
-  ...sourceIds.map((source) => ({ label: sourceLabels[source], width: "44" })),
+  ...sourceIds.map((source) => ({ label: sourceLabels[source], width: "48" })),
 ];
 
 const noWrapCell = { whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" } as const;
@@ -52,32 +47,11 @@ const deltaColors: Record<DeltaTone, string> = {
 };
 
 // Memoised: it only depends on the results and the local reference choice, so editing a config must not re-render every row.
-export const StatsTable = memo(function StatsTable({ raw, baseline, preview }: Props) {
-  const [reference, setReference] = useState<SourceId>("raw");
-  const sources: Record<SourceId, StageResults> = { raw, baseline, preview };
+export const StatsTable = memo(function StatsTable({ baseline, preview }: Props) {
+  const sources: Record<SourceId, StageResults> = { baseline, preview };
 
   return (
     <Stack gap={2}>
-      <Flex align={"center"} gap={3} wrap={"wrap"}>
-        <Text as="span" fontSize={"sm"} color={"fg.muted"}>
-          Compare against:
-        </Text>
-        <SegmentGroup.Root
-          size={"sm"}
-          value={reference}
-          onValueChange={(details) => {
-            if (details.value === null) {
-              return;
-            }
-
-            setReference(details.value as SourceId);
-          }}
-        >
-          <SegmentGroup.Indicator />
-          <SegmentGroup.Items items={referenceItems} />
-        </SegmentGroup.Root>
-      </Flex>
-
       <Table.Root variant={"outline"} size="sm" tableLayout={"fixed"} w={"full"}>
         <Table.Header>
           <Table.Row>
@@ -104,7 +78,6 @@ export const StatsTable = memo(function StatsTable({ raw, baseline, preview }: P
                     <StatsTableRow
                       key={`${group.stage}-${row.label}`}
                       row={row}
-                      reference={reference}
                       sources={sources}
                     />
                   )}
@@ -120,7 +93,6 @@ export const StatsTable = memo(function StatsTable({ raw, baseline, preview }: P
 
 interface RowProps {
   row: StatsRow;
-  reference: SourceId;
   sources: Record<SourceId, StageResults>;
 }
 
@@ -132,7 +104,7 @@ interface CellData {
   error: string | null;
 }
 
-function StatsTableRow({ row, reference, sources }: RowProps) {
+function StatsTableRow({ row, sources }: RowProps) {
   const referenceValue = row.get(sources[reference]);
   const cells: CellData[] = sourceIds.map((source) => {
     const value = row.get(sources[source]);
@@ -167,7 +139,6 @@ function StatsTableRow({ row, reference, sources }: RowProps) {
             value={cell.value}
             error={cell.error}
             delta={cell.delta}
-            isReference={cell.source === reference}
           />
         )}
       </For>
@@ -180,21 +151,15 @@ interface StatCellProps {
   value: number | undefined;
   error: string | null;
   delta: StatDelta | null;
-  isReference: boolean;
 }
 
-function StatCell({ row, value, error, delta, isReference }: StatCellProps) {
+function StatCell({ row, value, error, delta }: StatCellProps) {
   // The hover title always carries the full absolute delta, even when the visible text shows a percent.
   const title = delta === null ? undefined : formatAbsoluteDelta(row, delta);
 
   return (
     <Table.Cell truncate title={title} {...noWrapCell}>
       <ValueText row={row} value={value} error={error} />
-      {isReference ? (
-        <Text as="span" color={"fg.muted"} fontSize={"xs"} ms={2}>
-          {"ref"}
-        </Text>
-      ) : null}
       {delta === null || value === undefined ? null : <DeltaText row={row} delta={delta} />}
     </Table.Cell>
   );
