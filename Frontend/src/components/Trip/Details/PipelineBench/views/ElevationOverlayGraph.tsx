@@ -19,7 +19,7 @@ export default function ElevationOverlayGraph({ baseline, preview }: ElevationOv
   }
 
   const series = [
-    ...(hasBaseline ? [{ name: "baselineEle", color: "gray.subtle" }] : []),
+    ...(hasBaseline ? [{ name: "baselineEle", color: "gray.solid" }] : []),
     ...(hasPreview ? [{ name: "previewEle", color: "red" }] : []),
   ];
 
