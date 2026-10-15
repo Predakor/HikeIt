@@ -15,7 +15,7 @@ public class DefaultsEqualOldOutputTests
     // Known divergence, not fixed here (see the BE-1 report): MedianSmoothingFilter uses a different window
     // than GpxBuilderMethods.MedianSmooth, and EmaSmoothingFilter writes each result one index early.
     // Clamp alone matches exactly. Remove the Skip once the filters are made equivalent.
-    [Theory(Skip = "Filter cleanup chain differs from GpxDataDirector (median window, EMA index shift)")]
+    [Theory]
     [MemberData(nameof(GpxFiles))]
     public async Task CleanupDefaults_MatchGpxDataDirector_Elevations(string path)
     {

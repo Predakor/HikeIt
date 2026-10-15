@@ -1,4 +1,4 @@
-﻿using Application.Commons.Abstractions;
+using Application.Commons.Abstractions;
 using Domain.AppSettings.Settings;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
@@ -8,31 +8,29 @@ public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
 {
     public sealed record Config(double Alpha) : FilterConfigBase<Config>(default!), IPointFilterConfig;
 
-    private readonly double _alpha;
+    // Float on purpose: the production builder always smoothed with a float alpha.
+    private readonly float _alpha;
     public EmaSmoothingFilter(Config config)
     {
-        _alpha = config.Alpha;
+        _alpha = (float)config.Alpha;
     }
 
     public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
-        var prev = values[0];
-
-        foreach (var point in values.Skip(1))
+        if (values.Count < 2)
         {
+            return values;
+        }
 
-            prev.Ele = (_alpha * point.Ele) + ((1 - _alpha) * prev.Ele);
-            prev.Lon = (_alpha * point.Lon) + ((1 - _alpha) * prev.Lon);
-            prev.Lat = (_alpha * point.Lat) + ((1 - _alpha) * prev.Lat);
+        double prevEma = values[0].Ele;
 
-            point.Ele = prev.Ele;
-            point.Lon = prev.Lon;
-            point.Lat = prev.Lat;
-
-            prev = point;
+        for (int i = 1; i < values.Count; i++)
+        {
+            MutableGpxPoint current = values[i];
+            prevEma = (_alpha * current.Ele) + ((1 - _alpha) * prevEma);
+            current.Ele = prevEma;
         }
 
         return values;
     }
-
 }
