@@ -37,7 +37,7 @@ function RoutePreviewMap({ baseline, preview }: RoutePreviewMapProps) {
       initialPitch={60}
       initialBearing={-20}
       initialCenter={[center.Lon, center.Lat]}
-      style={{ width: "100%", height: "600px" }}
+      style={{ width: "100%", height: "80vh" }}
       mapStyle="https://tiles.openfreemap.org/styles/bright"
     >
       <RSource id="bench-baseline-route" type="geojson" data={baselineRoute} />
