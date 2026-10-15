@@ -3,6 +3,7 @@ using Application.Commons.Abstractions;
 using Application.Commons.Services.Auth;
 using Application.FileReferences;
 using Application.Trips.Analytics.ElevationProfiles;
+using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.Analytics.Queries;
 using Application.Trips.Analytics.RouteVisualizations;
 using Application.Trips.GpxFile.Services;
@@ -27,6 +28,7 @@ public class AnalyticsController : ControllerBase
     private readonly IGpxFileService _fileService;
     private readonly IAuthService _authService;
     private readonly IGpxService _gpxService;
+    private readonly IPipelinePreviewService _pipelinePreview;
 
     public AnalyticsController(
         IRouteVisualizationService routeVisualizationService,
@@ -35,7 +37,8 @@ public class AnalyticsController : ControllerBase
         ITripAnalyticsQueryService queryService,
         IGpxFileService fileService,
         IAuthService authService,
-        IGpxService gpxService
+        IGpxService gpxService,
+        IPipelinePreviewService pipelinePreview
     )
     {
         _routeVisualizationService = routeVisualizationService;
@@ -45,6 +48,7 @@ public class AnalyticsController : ControllerBase
         _fileService = fileService;
         _authService = authService;
         _gpxService = gpxService;
+        _pipelinePreview = pipelinePreview;
     }
 
     [HttpGet("")]
@@ -113,5 +117,15 @@ public class AnalyticsController : ControllerBase
             .BindAsync(d => _routeVisualizationService.GetRouteVisualization(d.Points, configs))
             .ToActionResultAsync();
 
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("pipeline/preview")]
+    [ProducesResponseType(typeof(PipelinePreviewResponse), 200)]
+    public async Task<IActionResult> PipelinePreview(Guid id, [FromBody] PipelinePreviewRequest request)
+    {
+        var response = await _pipelinePreview.PreviewAsync(id, request, HttpContext.RequestAborted);
+
+        return response is null ? NotFound() : Ok(response);
     }
 }
