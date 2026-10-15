@@ -281,18 +281,18 @@ export function stageErrorOf(results: StageResults, stage: StageId): string | nu
   return results[stage]?.error ?? null;
 }
 
-// Preview minus baseline. Returns null when either side is missing.
+// Value minus reference. Returns null when either side is missing.
 export function computeDelta(
-  baseline: number | undefined,
-  preview: number | undefined,
+  reference: number | undefined,
+  value: number | undefined,
 ): StatDelta | null {
-  if (baseline === undefined || preview === undefined) {
+  if (reference === undefined || value === undefined) {
     return null;
   }
 
-  const absolute = preview - baseline;
-  const hasBaseline = baseline !== 0;
-  const percent = hasBaseline ? (absolute / baseline) * 100 : null;
+  const absolute = value - reference;
+  const hasReference = reference !== 0;
+  const percent = hasReference ? (absolute / reference) * 100 : null;
 
   return { absolute, percent };
 }

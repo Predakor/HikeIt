@@ -15,7 +15,7 @@ import RoutePreviewMap from "./views/RoutePreviewMap";
 export default function PipelineBench() {
   const { tripId } = useParams();
   const { state, updateConfig, run } = usePipelineBench(tripId);
-  const { config, status, results, baseline } = state;
+  const { config, status, results, baseline, raw } = state;
 
   return (
     <Stack direction={{ base: "column", lg: "row" }} gap={6} align={"start"}>
@@ -69,7 +69,7 @@ export default function PipelineBench() {
       </Stack>
 
       <Stack flex={1} minW={0} gap={4} w={"full"}>
-        <StatsTable baseline={baseline} preview={results} />
+        <StatsTable raw={raw} baseline={baseline} preview={results} />
 
         <Tabs.Root defaultValue={"elevation"} lazyMount={true}>
           <Tabs.List>

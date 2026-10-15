@@ -33,6 +33,7 @@ const initialState: BenchState = {
   },
   results: {},
   baseline: {},
+  raw: {},
 };
 
 export function usePipelineBench(tripId?: string) {
@@ -71,9 +72,12 @@ export function usePipelineBench(tripId?: string) {
       }
       commit({ ...requested, status: runningStatus });
 
+      // Raw depends only on the file, so it is requested once per stage and never refreshed.
+      const isRawMissing = stages.some((stage) => requested.raw[stage] === undefined);
+
       let response: PipelinePreviewResponse | null = null;
       try {
-        response = await mutateAsync({ config: requested.config, stages });
+        response = await mutateAsync({ config: requested.config, stages, includeRaw: isRawMissing });
       } catch {
         response = null;
       }
@@ -86,10 +90,16 @@ export function usePipelineBench(tripId?: string) {
       const next = stateRef.current;
       const results: Partial<Record<StageId, StageResult>> = { ...next.results };
       const baseline: Partial<Record<StageId, StageResult>> = { ...next.baseline };
+      const raw: Partial<Record<StageId, StageResult>> = { ...next.raw };
       const status: Record<StageId, BlockStatus> = { ...next.status };
 
       for (const stage of owned) {
         delete ownerRef.current[stage];
+
+        const rawResult = response?.raw?.[stage];
+        if (rawResult !== undefined) {
+          raw[stage] = rawResult;
+        }
 
         const result = response?.results[stage];
         if (result === undefined) {
@@ -107,6 +117,7 @@ export function usePipelineBench(tripId?: string) {
         ...next,
         results: results as StageResults,
         baseline: baseline as StageResults,
+        raw: raw as StageResults,
         status,
       });
     },

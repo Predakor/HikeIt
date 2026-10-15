@@ -16,6 +16,7 @@ export interface BenchState {
   status: Record<StageId, BlockStatus>;
   results: StageResults;
   baseline: StageResults;
+  raw: StageResults;
 }
 
 // Result views take the data of ONE stage for the preview config and for the baseline (null = not available).
