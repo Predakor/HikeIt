@@ -151,6 +151,18 @@ Files: `Frontend/src/types/Api/pipelinePreview.types.ts`,
 3. A mock layer that returns `fixture.response.json`, switchable by an env flag, so UI work does
    not wait for the backend.
 
+### BE-1b: unify smoothing filters (after BE-1, Haiku)
+
+Filter classes become the single implementation of clamp/median/EMA/round; builder methods delegate. Golden
+hashes of current `GpxDataDirector` output must stay unchanged. EMA filter is elevation-only.
+
+### BE-4: coordinate smoothing filter (after BE-1b, Haiku)
+
+New opt-in `CoordinateSmoothingFilter.Config(double Alpha)` (EMA on Lat/Lon, off by default, not in any
+default list because production does not smooth coordinates). Register on `IFilterConfig` and
+`IPointFilterConfig`, add to the factory handler map and the TS `PointFilterConfig` union. Test: smooths a
+noisy track; absent from `PipelineDefaults`.
+
 ## Phase 2: parallel, after Phase 1
 
 ### BE-3: orchestrator and endpoint (Sonnet-level; design-heavy)
