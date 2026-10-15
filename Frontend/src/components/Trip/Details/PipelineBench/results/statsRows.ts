@@ -249,6 +249,18 @@ export const statsRows: StatsRow[] = [
   ...stageCostRows,
 ];
 
+// Percent changes below this are treated as "unchanged" (rounding noise), so rows do not light up for nothing.
+const minChangedPercent = 0.05;
+
+// True when the value really moved: a non-zero delta, and (when a percent exists) at least minChangedPercent.
+export function isChangedDelta(delta: StatDelta | null): boolean {
+  if (delta === null || delta.absolute === 0) {
+    return false;
+  }
+
+  return delta.percent === null || Math.abs(delta.percent) >= minChangedPercent;
+}
+
 // Error text for a stage, shown next to a missing value.
 export function stageErrorOf(results: StageResults, stage: StageId): string | null {
   return results[stage]?.error ?? null;

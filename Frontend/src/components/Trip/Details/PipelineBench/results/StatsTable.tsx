@@ -4,6 +4,7 @@ import { For, Table, Text } from "@chakra-ui/react";
 import { memo } from "react";
 import {
   computeDelta,
+  isChangedDelta,
   stageErrorOf,
   statsRows,
   type StatDelta,
@@ -19,11 +20,12 @@ type DeltaTone = "neutral" | "good" | "bad" | "unknown";
 
 const headers = ["Metric", "Baseline", "Preview", "Delta"];
 
+// "unknown" = the value changed but the row has no good/bad direction, so it gets the neutral "changed" colour.
 const deltaColors: Record<DeltaTone, string> = {
   neutral: "fg.muted",
   good: "fg.success",
   bad: "fg.error",
-  unknown: "fg.muted",
+  unknown: "fg.info",
 };
 
 // Memoised: it only depends on the results, so editing a config must not re-render every row.
@@ -56,10 +58,11 @@ function StatsTableRow({ row, baseline, preview }: RowProps) {
   const baselineValue = row.get(baseline);
   const previewValue = row.get(preview);
   const delta = computeDelta(baselineValue, previewValue);
+  const isChanged = isChangedDelta(delta);
 
   return (
-    <Table.Row>
-      <Table.Cell>{row.label}</Table.Cell>
+    <Table.Row bg={isChanged ? "bg.muted" : undefined}>
+      <Table.Cell fontWeight={isChanged ? "semibold" : undefined}>{row.label}</Table.Cell>
       <Table.Cell>
         <ValueText row={row} value={baselineValue} error={stageErrorOf(baseline, row.stage)} />
       </Table.Cell>
@@ -108,7 +111,7 @@ function DeltaText({ row, delta }: DeltaTextProps) {
 
   const tone = deltaTone(delta, row.higherIsBetter);
   return (
-    <Text as="span" color={deltaColors[tone]}>
+    <Text as="span" color={deltaColors[tone]} fontWeight={isChangedDelta(delta) ? "semibold" : undefined}>
       {formatDelta(row, delta)}
     </Text>
   );
@@ -154,10 +157,10 @@ function formatDelta(row: StatsRow, delta: StatDelta): string {
 }
 
 function deltaTone(delta: StatDelta, higherIsBetter: boolean | null | undefined): DeltaTone {
-  const isEqual = delta.absolute === 0;
+  const isUnchanged = !isChangedDelta(delta);
   const hasDirection = higherIsBetter === true || higherIsBetter === false;
 
-  if (isEqual) {
+  if (isUnchanged) {
     return "neutral";
   }
 
