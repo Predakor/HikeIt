@@ -1,6 +1,8 @@
+using System.Globalization;
 using Application.Commons.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
+using Domain.Trips.Root.Builders.Config;
 
 namespace Application.Trips.Analytics.Pipeline;
 
@@ -8,13 +10,25 @@ namespace Application.Trips.Analytics.Pipeline;
 public static class PipelineDefaults
 {
     // Same values as GpxDataConfigs.GpxFile (clamp, median, ema, round), in production order.
-    public static readonly IReadOnlyList<IPointFilterConfig> CleanupFilters =
-    [
-        new MaxSpikeFilter.Config(8) with { Value = new MaxSpikeFilter.Config(8) },
-        new MedianSmoothingFilter.Config(6) with { Value = new MedianSmoothingFilter.Config(6) },
-        new EmaSmoothingFilter.Config(0.88) with { Value = new EmaSmoothingFilter.Config(0.88) },
-        new RoundingPrecisionFilter.Config(1) with { Value = new RoundingPrecisionFilter.Config(1) },
-    ];
+    public static readonly IReadOnlyList<IPointFilterConfig> CleanupFilters = CleanupFiltersFrom(GpxDataConfigs.GpxFile);
+
+    // Cleanup filters in production order, built from the GPX processing settings (DB row or the code constants).
+    public static IReadOnlyList<IPointFilterConfig> CleanupFiltersFrom(IGpxDataProcessingSettings settings)
+    {
+        var maxSpike = AsDouble(settings.MaxElevationSpike);
+        var ema = AsDouble(settings.EmaSmoothingAlpha);
+
+        return
+        [
+            new MaxSpikeFilter.Config(maxSpike) with { Value = new MaxSpikeFilter.Config(maxSpike) },
+            new MedianSmoothingFilter.Config(settings.MedianFilterWindowSize) with { Value = new MedianSmoothingFilter.Config(settings.MedianFilterWindowSize) },
+            new EmaSmoothingFilter.Config(ema) with { Value = new EmaSmoothingFilter.Config(ema) },
+            new RoundingPrecisionFilter.Config(settings.RoundingDecimalsCount) with { Value = new RoundingPrecisionFilter.Config(settings.RoundingDecimalsCount) },
+        ];
+    }
+
+    // Goes through the float's shortest decimal form, so 0.88f becomes the double 0.88 used by the code constants.
+    static double AsDouble(float value) => double.Parse(value.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
 
     // Production stores every cleaned point as the route (TripAnalyticService builds the RoutePath from all points), so no filters.
     public static readonly IReadOnlyList<IPointFilterConfig> RouteFilters = [];
