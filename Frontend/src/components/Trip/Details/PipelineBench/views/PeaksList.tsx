@@ -1,5 +1,6 @@
 import type { MatchedPeak } from "@/types/Api/pipelinePreview.types";
 import { For, Stack, Table, Text } from "@chakra-ui/react";
+import { memo } from "react";
 import type { PeaksListProps } from "../bench.types";
 
 type PeakStatus = "new" | "kept" | "unknown";
@@ -28,7 +29,7 @@ const statusLabels: Record<PeakStatus, string> = {
   unknown: "-",
 };
 
-export default function PeaksList({ baseline, preview }: PeaksListProps) {
+function PeaksList({ baseline, preview }: PeaksListProps) {
   if (!baseline && !preview) {
     return <Text color={"fg.muted"}>No data</Text>;
   }
@@ -73,6 +74,8 @@ export default function PeaksList({ baseline, preview }: PeaksListProps) {
     </Stack>
   );
 }
+
+export default memo(PeaksList);
 
 function PreviewPeakTableRow({ row }: { row: PreviewPeakRow }) {
   const { peak, status } = row;

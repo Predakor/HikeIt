@@ -4,14 +4,14 @@ import { Text } from "@chakra-ui/react";
 import type { FeatureCollection, LineString } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import type { RoutePreviewMapProps } from "../bench.types";
 
 const rasterDemTiles = [
   "https://api.maptiler.com/tiles/terrain-rgb-v2/{z}/{x}/{y}.webp?key=ujaK4vTFjQkSEF2NqowK",
 ];
 
-export default function RoutePreviewMap({ baseline, preview }: RoutePreviewMapProps) {
+function RoutePreviewMap({ baseline, preview }: RoutePreviewMapProps) {
   const baselineRoute = useMemo(() => toRouteCollection(baseline?.points), [baseline?.points]);
   const previewRoute = useMemo(() => toRouteCollection(preview?.points), [preview?.points]);
 
@@ -84,6 +84,9 @@ export default function RoutePreviewMap({ baseline, preview }: RoutePreviewMapPr
     </RMap>
   );
 }
+
+// Memoised so editing a config (which re-renders the bench) does not re-render the map until its data changes.
+export default memo(RoutePreviewMap);
 
 const emptyRoute: FeatureCollection<LineString> = { type: "FeatureCollection", features: [] };
 

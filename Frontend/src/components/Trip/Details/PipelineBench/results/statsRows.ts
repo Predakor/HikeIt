@@ -76,6 +76,12 @@ function formatDurationSeconds(totalSeconds: number): string {
   return `${seconds}s`;
 }
 
+const bytesPerKilobyte = 1024;
+
+function bytesToKilobytes(bytes: number | undefined): number | undefined {
+  return bytes === undefined ? undefined : bytes / bytesPerKilobyte;
+}
+
 const oneDecimal = (value: number) => formatValue.NumberFormatter(value, 1);
 const noDecimals = (value: number) => formatValue.NumberFormatter(value, 0);
 
@@ -220,11 +226,11 @@ const countRows: StatsRow[] = [
 const stageCostRows: StatsRow[] = allStageIds.flatMap((stage) => [
   {
     label: `${stageLabels[stage]} payload`,
-    unit: "B",
+    unit: "KB",
     stage,
-    get: (results: StageResults) => okResult(results, stage)?.payloadBytes,
+    get: (results: StageResults) => bytesToKilobytes(okResult(results, stage)?.payloadBytes),
     higherIsBetter: false,
-    format: noDecimals,
+    format: oneDecimal,
   },
   {
     label: `${stageLabels[stage]} duration`,

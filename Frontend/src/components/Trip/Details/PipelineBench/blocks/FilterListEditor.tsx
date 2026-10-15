@@ -291,7 +291,14 @@ interface RangeValueInputProps {
 }
 
 // Same Chakra slider parts as the shared Range input, driven by value/onChange since this editor is not a react-hook-form.
+// The dragged value lives in local state and is committed when the drag ends, so a drag does not re-render the whole bench per tick.
 function RangeValueInput({ field, value, onValueChange }: RangeValueInputProps) {
+  const [draft, setDraft] = useState(value);
+
+  useEffect(() => {
+    setDraft(value);
+  }, [value]);
+
   return (
     <Flex align={"center"} gap={2}>
       <Text fontSize={"xs"} color={"fg.muted"}>
@@ -302,8 +309,9 @@ function RangeValueInput({ field, value, onValueChange }: RangeValueInputProps) 
         min={field.min}
         max={field.max}
         step={field.step}
-        value={[value]}
-        onValueChange={({ value: next }) => onValueChange(next[0])}
+        value={[draft]}
+        onValueChange={({ value: next }) => setDraft(next[0])}
+        onValueChangeEnd={({ value: next }) => onValueChange(next[0])}
       >
         <Slider.Control>
           <Slider.Track>
@@ -313,7 +321,7 @@ function RangeValueInput({ field, value, onValueChange }: RangeValueInputProps) 
         </Slider.Control>
       </Slider.Root>
       <Text fontSize={"xs"} minW={"10"} textAlign={"right"}>
-        {value}
+        {draft}
       </Text>
     </Flex>
   );

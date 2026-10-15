@@ -1,6 +1,7 @@
 import type { StageResults } from "@/types/Api/pipelinePreview.types";
 import { formatValue } from "@/Utils/Formatters";
 import { For, Table, Text } from "@chakra-ui/react";
+import { memo } from "react";
 import {
   computeDelta,
   stageErrorOf,
@@ -25,7 +26,8 @@ const deltaColors: Record<DeltaTone, string> = {
   unknown: "fg.muted",
 };
 
-export function StatsTable({ baseline, preview }: Props) {
+// Memoised: it only depends on the results, so editing a config must not re-render every row.
+export const StatsTable = memo(function StatsTable({ baseline, preview }: Props) {
   return (
     <Table.Root variant={"outline"} size="sm">
       <Table.Header>
@@ -42,7 +44,7 @@ export function StatsTable({ baseline, preview }: Props) {
       </Table.Body>
     </Table.Root>
   );
-}
+});
 
 interface RowProps {
   row: StatsRow;
