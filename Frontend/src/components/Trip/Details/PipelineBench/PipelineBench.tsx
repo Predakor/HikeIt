@@ -38,14 +38,16 @@ interface StageCardProps {
   stage: StageId;
   baseline: StageResults;
   preview: StageResults;
+  // False for blocks without filters, which are short and keep their natural height.
+  isFixedHeight?: boolean;
   children: ReactNode;
 }
 
 // One stage: its fixed-height config block with that stage's rows of the stats table right below it.
-function StageCard({ stage, baseline, preview, children }: StageCardProps) {
+function StageCard({ stage, baseline, preview, isFixedHeight = true, children }: StageCardProps) {
   return (
     <Stack gap={3} minW={0}>
-      <Box h={configBlockHeight} overflowY={"auto"}>
+      <Box h={isFixedHeight ? configBlockHeight : undefined} overflowY={"auto"}>
         {children}
       </Box>
       <StatsTable stage={stage} baseline={baseline} preview={preview} />
@@ -106,13 +108,37 @@ export default function PipelineBench() {
           />
         </StageCard>
 
-        <StageCard stage={"analytics"} baseline={baseline} preview={results}>
-          <AnalyticsBlock
-            status={status.analytics}
-            result={results.analytics}
-            onRun={() => run("analytics")}
-          />
-        </StageCard>
+        {/* Analytics has no filters, so it shares a cell with peak matching instead of leaving a tall empty block. */}
+        <Stack gap={6} minW={0}>
+          <StageCard
+            stage={"analytics"}
+            baseline={baseline}
+            preview={results}
+            isFixedHeight={false}
+          >
+            <AnalyticsBlock
+              status={status.analytics}
+              result={results.analytics}
+              onRun={() => run("analytics")}
+            />
+          </StageCard>
+
+          <StageCard stage={"peakMatching"} baseline={baseline} preview={results}>
+            <PeaksBlock
+              status={status.peakMatching}
+              result={results.peakMatching}
+              filters={config.peakMatching?.filters}
+              proximityRadiusM={config.peakMatching?.proximityRadiusM}
+              defaultFilters={defaults.peaks}
+              defaultProximityRadiusM={defaults.peakProximityRadiusM}
+              onFiltersChange={(filters) => updateConfig("peakMatching", { filters })}
+              onProximityRadiusChange={(proximityRadiusM) =>
+                updateConfig("peakMatching", { proximityRadiusM })
+              }
+              onRun={() => run("peakMatching")}
+            />
+          </StageCard>
+        </Stack>
 
         <StageCard stage={"elevationProfile"} baseline={baseline} preview={results}>
           <ProfileBlock
@@ -133,22 +159,6 @@ export default function PipelineBench() {
             defaultFilters={defaults.route}
             onFiltersChange={(filters) => updateConfig("route", { filters })}
             onRun={() => run("route")}
-          />
-        </StageCard>
-
-        <StageCard stage={"peakMatching"} baseline={baseline} preview={results}>
-          <PeaksBlock
-            status={status.peakMatching}
-            result={results.peakMatching}
-            filters={config.peakMatching?.filters}
-            proximityRadiusM={config.peakMatching?.proximityRadiusM}
-            defaultFilters={defaults.peaks}
-            defaultProximityRadiusM={defaults.peakProximityRadiusM}
-            onFiltersChange={(filters) => updateConfig("peakMatching", { filters })}
-            onProximityRadiusChange={(proximityRadiusM) =>
-              updateConfig("peakMatching", { proximityRadiusM })
-            }
-            onRun={() => run("peakMatching")}
           />
         </StageCard>
       </SimpleGrid>
