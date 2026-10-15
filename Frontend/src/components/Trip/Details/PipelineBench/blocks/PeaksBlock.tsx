@@ -1,7 +1,6 @@
 import type { PeakFilterConfig, StageResult } from "@/types/Api/pipelinePreview.types";
 import { Flex, Input, Text } from "@chakra-ui/react";
 import type { BlockStatus } from "../bench.types";
-import { defaultPeakFilters, defaultPeakProximityRadiusM } from "../state/defaults";
 import { FilterListEditor } from "./FilterListEditor";
 import { StageBlock } from "./StageBlock";
 
@@ -10,6 +9,8 @@ interface PeaksBlockProps {
   result: StageResult<"peakMatching"> | undefined;
   filters: PeakFilterConfig[] | null | undefined;
   proximityRadiusM: number | null | undefined;
+  defaultFilters: PeakFilterConfig[];
+  defaultProximityRadiusM: number;
   onFiltersChange: (filters: PeakFilterConfig[] | null) => void;
   onProximityRadiusChange: (radiusM: number | null) => void;
   onRun: () => void;
@@ -21,6 +22,8 @@ export function PeaksBlock({
   result,
   filters,
   proximityRadiusM,
+  defaultFilters,
+  defaultProximityRadiusM,
   onFiltersChange,
   onProximityRadiusChange,
   onRun,
@@ -34,7 +37,7 @@ export function PeaksBlock({
           size={"sm"}
           w={"24"}
           min={0}
-          placeholder={String(defaultPeakProximityRadiusM)}
+          placeholder={String(defaultProximityRadiusM)}
           value={proximityRadiusM ?? ""}
           onChange={(event) => onProximityRadiusChange(parseOptionalNumber(event.target.value))}
         />
@@ -43,7 +46,7 @@ export function PeaksBlock({
       <FilterListEditor
         kind={"peak"}
         filters={filters}
-        defaultFilters={defaultPeakFilters}
+        defaultFilters={defaultFilters}
         onChange={onFiltersChange}
       />
     </StageBlock>

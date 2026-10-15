@@ -1,4 +1,4 @@
-import type { StageResults } from "@/types/Api/pipelinePreview.types";
+import type { StageId, StageResults } from "@/types/Api/pipelinePreview.types";
 import { formatValue } from "@/Utils/Formatters";
 import { For, Stack, Table, Text } from "@chakra-ui/react";
 import { Fragment, memo } from "react";
@@ -12,6 +12,8 @@ import {
 } from "./statsRows";
 
 interface Props {
+  // When set, only this stage's rows are shown (no group header); otherwise every stage, grouped.
+  stage?: StageId;
   // The baseline is whichever run the user picked (current config or raw file); the preview is compared against it.
   baseline: StageResults;
   preview: StageResults;
@@ -47,8 +49,11 @@ const deltaColors: Record<DeltaTone, string> = {
 };
 
 // Memoised: it only depends on the results and the local reference choice, so editing a config must not re-render every row.
-export const StatsTable = memo(function StatsTable({ baseline, preview }: Props) {
+export const StatsTable = memo(function StatsTable({ stage, baseline, preview }: Props) {
   const sources: Record<SourceId, StageResults> = { baseline, preview };
+  const groups =
+    stage === undefined ? statsGroups : statsGroups.filter((group) => group.stage === stage);
+  const showGroupHeaders = stage === undefined;
 
   return (
     <Stack gap={2}>
@@ -65,14 +70,21 @@ export const StatsTable = memo(function StatsTable({ baseline, preview }: Props)
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          <For each={statsGroups}>
+          <For each={groups}>
             {(group) => (
               <Fragment key={group.stage}>
-                <Table.Row bg={"bg.subtle"}>
-                  <Table.Cell colSpan={columns.length} fontWeight={"semibold"} fontSize={"xs"} textTransform={"uppercase"}>
-                    {group.label}
-                  </Table.Cell>
-                </Table.Row>
+                {showGroupHeaders ?
+                  <Table.Row bg={"bg.subtle"}>
+                    <Table.Cell
+                      colSpan={columns.length}
+                      fontWeight={"semibold"}
+                      fontSize={"xs"}
+                      textTransform={"uppercase"}
+                    >
+                      {group.label}
+                    </Table.Cell>
+                  </Table.Row>
+                : null}
                 <For each={group.rows}>
                   {(row) => (
                     <StatsTableRow
@@ -176,11 +188,11 @@ function ValueText({ row, value, error }: ValueTextProps) {
     return (
       <Text as="span" color={"fg.muted"} title={error ?? undefined}>
         {"—"}
-        {error ? (
+        {error ?
           <Text as="span" color={"fg.error"} fontSize={"xs"} ms={2}>
             {error}
           </Text>
-        ) : null}
+        : null}
       </Text>
     );
   }
@@ -195,10 +207,16 @@ interface DeltaTextProps {
 
 function DeltaText({ row, delta }: DeltaTextProps) {
   const tone = deltaTone(delta, row.higherIsBetter);
-  const text = delta.percent === null ? formatAbsoluteDelta(row, delta) : formatPercentDelta(delta.percent);
+  const text =
+    delta.percent === null ? formatAbsoluteDelta(row, delta) : formatPercentDelta(delta.percent);
 
   return (
-    <Text as="span" color={deltaColors[tone]} fontWeight={isChangedDelta(delta) ? "semibold" : undefined} ms={2}>
+    <Text
+      as="span"
+      color={deltaColors[tone]}
+      fontWeight={isChangedDelta(delta) ? "semibold" : undefined}
+      ms={2}
+    >
       {text}
     </Text>
   );
