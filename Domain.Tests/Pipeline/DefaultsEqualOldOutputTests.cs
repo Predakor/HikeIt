@@ -12,9 +12,6 @@ public class DefaultsEqualOldOutputTests
     public static TheoryData<string> GpxFiles { get; } =
         ["data/trip_small.gpx", "data/trip_medium.gpx", "data/trip_big.gpx"];
 
-    // Known divergence, not fixed here (see the BE-1 report): MedianSmoothingFilter uses a different window
-    // than GpxBuilderMethods.MedianSmooth, and EmaSmoothingFilter writes each result one index early.
-    // Clamp alone matches exactly. Remove the Skip once the filters are made equivalent.
     [Theory]
     [MemberData(nameof(GpxFiles))]
     public async Task CleanupDefaults_MatchGpxDataDirector_Elevations(string path)
