@@ -48,17 +48,7 @@ public sealed class CleanupStage(IAppSettingsService? appSettings = null) : IPip
     // Null when no service is injected or the setting is missing or fails to load.
     async Task<IGpxDataProcessingSettings?> LoadSettingsAsync(CancellationToken cancellationToken)
     {
-        if (appSettings is null)
-        {
-            return null;
-        }
-
-        var result = await appSettings.GetSettingAsync<GpxDataProcessingSetting>(
-            AppSettingType.GpxDataProcessing,
-            cancellationToken
-        );
-
-        return result.IsSuccess ? result.Value : null;
+        return await PipelineSettings.GpxDataProcessingAsync(appSettings, cancellationToken);
     }
 
     static IReadOnlyList<IPointFilterConfig> DefaultFilters(IGpxDataProcessingSettings? settings)

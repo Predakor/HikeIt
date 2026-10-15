@@ -1,8 +1,10 @@
 ﻿using Api.Commons.Extentions;
+using Application.AppSettings;
 using Application.Commons.Abstractions;
 using Application.Commons.Services.Auth;
 using Application.FileReferences;
 using Application.Trips.Analytics.ElevationProfiles;
+using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.Analytics.Queries;
 using Application.Trips.Analytics.RouteVisualizations;
@@ -29,6 +31,7 @@ public class AnalyticsController : ControllerBase
     private readonly IAuthService _authService;
     private readonly IGpxService _gpxService;
     private readonly IPipelinePreviewService _pipelinePreview;
+    private readonly IAppSettingsService _appSettings;
 
     public AnalyticsController(
         IRouteVisualizationService routeVisualizationService,
@@ -38,9 +41,11 @@ public class AnalyticsController : ControllerBase
         IGpxFileService fileService,
         IAuthService authService,
         IGpxService gpxService,
-        IPipelinePreviewService pipelinePreview
+        IPipelinePreviewService pipelinePreview,
+        IAppSettingsService appSettings
     )
     {
+        _appSettings = appSettings;
         _routeVisualizationService = routeVisualizationService;
         _fileReferenceRepository = fileReferenceRepository;
         _elevationQueries = elevationQueries;
@@ -117,6 +122,15 @@ public class AnalyticsController : ControllerBase
             .BindAsync(d => _routeVisualizationService.GetRouteVisualization(d.Points, configs))
             .ToActionResultAsync();
 
+    }
+
+    // What every stage resolves for a null config (DB settings, else code constants); the bench customises from it.
+    [Authorize(Roles = "Admin")]
+    [HttpGet("pipeline/defaults")]
+    [ProducesResponseType(typeof(PipelineDefaultsDto), 200)]
+    public async Task<IActionResult> PipelineDefaults()
+    {
+        return Ok(await PipelineSettings.DefaultsAsync(_appSettings, HttpContext.RequestAborted));
     }
 
     [Authorize(Roles = "Admin")]
