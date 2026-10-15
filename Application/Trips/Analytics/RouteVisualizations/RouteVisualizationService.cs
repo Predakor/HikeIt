@@ -41,7 +41,7 @@ internal sealed class RouteVisualizationService : IRouteVisualizationService
 
         foreach (var filter in filterList)
         {
-            filter.Apply(muttablePoints);
+            muttablePoints = [.. filter.Apply(muttablePoints)];
         }
 
         return new RoutePath(muttablePoints);
@@ -49,16 +49,30 @@ internal sealed class RouteVisualizationService : IRouteVisualizationService
 
     public static class GpxFilterFactory
     {
+        private static readonly Dictionary<Type, Func<IFilterConfig, IFilter<MutableGpxPoint>>> FilterHandlers = new()
+        {
+            [typeof(MedianSmoothingFilter.Config)] = Create<MedianSmoothingFilter.Config>(value => new MedianSmoothingFilter(value)),
+            [typeof(MaxSpikeFilter.Config)] = Create<MaxSpikeFilter.Config>(value => new MaxSpikeFilter(value)),
+            [typeof(EmaSmoothingFilter.Config)] = Create<EmaSmoothingFilter.Config>(value => new EmaSmoothingFilter(value)),
+            [typeof(RoundingPrecisionFilter.Config)] = Create<RoundingPrecisionFilter.Config>(value => new RoundingPrecisionFilter(value)),
+            [typeof(PinLocalMaximaFilter.Config)] = Create<PinLocalMaximaFilter.Config>(value => new PinLocalMaximaFilter(value)),
+            [typeof(SimplifyFilter.Config)] = Create<SimplifyFilter.Config>(value => new SimplifyFilter(value)),
+        };
+
         public static IFilter<MutableGpxPoint> CreateFilter(IFilterConfig config)
         {
-            return config switch
+            if (!FilterHandlers.TryGetValue(config.GetType(), out var handler))
             {
-                MedianSmoothingFilter.Config c => new MedianSmoothingFilter(c.Value),
-                MaxSpikeFilter.Config c => new MaxSpikeFilter(c.Value),
-                EmaSmoothingFilter.Config c => new EmaSmoothingFilter(c.Value),
-                RoundingPrecisionFilter.Config c => new RoundingPrecisionFilter(c.Value),
-                _ => throw new NotSupportedException($"Filter type {config.GetType().Name} is not supported.")
-            };
+                throw new NotSupportedException($"Filter type {config.GetType().Name} is not supported.");
+            }
+
+            return handler(config);
+        }
+
+        // Wraps a typed filter constructor so the handler map can take the untyped config.
+        private static Func<IFilterConfig, IFilter<MutableGpxPoint>> Create<TValue>(Func<TValue, IFilter<MutableGpxPoint>> create)
+        {
+            return config => create((TValue)config.GetValue());
         }
 
         public static IList<IFilter<MutableGpxPoint>> CreateFilterList(IEnumerable<IFilterConfig> configs)

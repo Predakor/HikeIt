@@ -1,5 +1,6 @@
 using Application.Commons.Abstractions;
 using Domain.AppSettings.Settings;
+using Domain.Trips.Analytics.ElevationProfiles.Commands;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Domain.Trips.Analytics.Shared.Filters;
@@ -11,7 +12,28 @@ public sealed class PinLocalMaximaFilter(PinLocalMaximaFilter.Config config) : I
 
     public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
-        // STUB (Phase 0): implemented by BE-2.
-        throw new NotImplementedException();
+        if (!config.Enabled || values.Count == 0)
+        {
+            return values;
+        }
+
+        values[0].Pinned = true;
+        values[^1].Pinned = true;
+
+        // ToGains needs at least two points.
+        if (values.Count < 2)
+        {
+            return values;
+        }
+
+        var gpxPoints = values.Select(p => p.ToGpxPoint()).ToList();
+
+        foreach (var localMaximum in AnalyticDataExtentions.LocalMaximaIndicesWithDistance(gpxPoints, null))
+        {
+            // The yielded index is the summit itself (same as ToLocalMaxima), gains[i] is the step from point i to i+1.
+            values[localMaximum.index].Pinned = true;
+        }
+
+        return values;
     }
 }
