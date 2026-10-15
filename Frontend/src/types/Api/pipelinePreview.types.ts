@@ -22,17 +22,19 @@ export const stageDependencies: Record<StageId, StageId[]> = {
   route: ["cleanup"],
 };
 
+// What an EmaSmoothingFilter smooths; omitted means "Elevation" (what production does).
+export type EmaTargets = "Elevation" | "Coordinates" | "Both";
+
 // Request: every config field is optional, undefined/null means "production default".
 // Wire format of the polymorphic filter configs (same shape the existing dev preview sends).
 // Point filters work on track points (cleanup, elevation profile, route).
 export type PointFilterConfig =
   | { FilterType: "MedianSmoothingFilter"; value: { WindowSize: number } }
-  | { FilterType: "EmaSmoothingFilter"; value: { Alpha: number } }
+  | { FilterType: "EmaSmoothingFilter"; value: { Alpha: number; Targets?: EmaTargets } }
   | { FilterType: "MaxSpikeFilter"; value: { MaxSpike: number } }
   | { FilterType: "RoundingPrecisionFilter"; value: { Decimals: number } }
   | { FilterType: "PinLocalMaximaFilter"; value: { Enabled: boolean } }
-  | { FilterType: "SimplifyFilter"; value: { ToleranceM: number } }
-  | { FilterType: "CoordinateSmoothingFilter"; value: { Alpha: number } };
+  | { FilterType: "SimplifyFilter"; value: { ToleranceM: number } };
 
 // Peak filters work on candidate peaks (local maxima) in peak matching only.
 export type PeakFilterConfig =
