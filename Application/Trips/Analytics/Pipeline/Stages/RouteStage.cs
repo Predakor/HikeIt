@@ -4,7 +4,7 @@ using Domain.Trips.Analytics.Root;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-// Route path of the cleaned points. No filters configured means production settings; otherwise the given filters.
+// Route path of the cleaned points. No filters configured means the production default, which is no filters at all.
 public sealed class RouteStage(IRouteVisualizationService routeVisualizations) : IPipelineStage
 {
     public StageId Id => StageId.Route;
@@ -18,11 +18,9 @@ public sealed class RouteStage(IRouteVisualizationService routeVisualizations) :
     )
     {
         var points = CleanupStage.CleanedDataFrom(context).Points;
-        var filters = config.Route?.Filters;
+        var filters = config.Route?.Filters ?? PipelineDefaults.RouteFilters;
 
-        var result = filters is null
-            ? await routeVisualizations.GetRouteVisualizationAsync(points)
-            : routeVisualizations.GetRouteVisualization(points, filters);
+        var result = routeVisualizations.GetRouteVisualization(points, filters);
 
         if (!result.IsSuccess)
         {

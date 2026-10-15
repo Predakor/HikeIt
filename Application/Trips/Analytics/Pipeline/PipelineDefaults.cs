@@ -16,6 +16,9 @@ public static class PipelineDefaults
         new RoundingPrecisionFilter.Config(1) with { Value = new RoundingPrecisionFilter.Config(1) },
     ];
 
+    // Production stores every cleaned point as the route (TripAnalyticService builds the RoutePath from all points), so no filters.
+    public static readonly IReadOnlyList<IPointFilterConfig> RouteFilters = [];
+
     // Same values as the former ReachedPeakService.WithProximityMerge() call, in production order.
     public static readonly IReadOnlyList<IPeakFilterConfig> PeakFilters =
     [

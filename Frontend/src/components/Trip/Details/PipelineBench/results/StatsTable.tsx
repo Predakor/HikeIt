@@ -1,12 +1,12 @@
 import type { StageResults } from "@/types/Api/pipelinePreview.types";
 import { formatValue } from "@/Utils/Formatters";
 import { For, Table, Text } from "@chakra-ui/react";
-import { memo } from "react";
+import { Fragment, memo } from "react";
 import {
   computeDelta,
   isChangedDelta,
   stageErrorOf,
-  statsRows,
+  statsGroups,
   type StatDelta,
   type StatsRow,
 } from "./statsRows";
@@ -53,8 +53,26 @@ export const StatsTable = memo(function StatsTable({ baseline, preview }: Props)
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        <For each={statsRows}>
-          {(row) => <StatsTableRow key={row.label} row={row} baseline={baseline} preview={preview} />}
+        <For each={statsGroups}>
+          {(group) => (
+            <Fragment key={group.stage}>
+              <Table.Row bg={"bg.subtle"}>
+                <Table.Cell colSpan={columns.length} fontWeight={"semibold"} fontSize={"xs"} textTransform={"uppercase"}>
+                  {group.label}
+                </Table.Cell>
+              </Table.Row>
+              <For each={group.rows}>
+                {(row) => (
+                  <StatsTableRow
+                    key={`${group.stage}-${row.label}`}
+                    row={row}
+                    baseline={baseline}
+                    preview={preview}
+                  />
+                )}
+              </For>
+            </Fragment>
+          )}
         </For>
       </Table.Body>
     </Table.Root>

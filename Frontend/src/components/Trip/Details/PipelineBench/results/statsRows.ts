@@ -25,7 +25,7 @@ export interface StatDelta {
   percent: number | null;
 }
 
-const stageLabels: Record<StageId, string> = {
+export const stageLabels: Record<StageId, string> = {
   cleanup: "Cleanup",
   analytics: "Analytics",
   elevationProfile: "Elevation profile",
@@ -225,7 +225,7 @@ const countRows: StatsRow[] = [
 // Per-stage cost rows: payload and duration are lower-is-better.
 const stageCostRows: StatsRow[] = allStageIds.flatMap((stage) => [
   {
-    label: `${stageLabels[stage]} payload`,
+    label: "Payload size",
     unit: "KB",
     stage,
     get: (results: StageResults) => bytesToKilobytes(okResult(results, stage)?.payloadBytes),
@@ -233,7 +233,7 @@ const stageCostRows: StatsRow[] = allStageIds.flatMap((stage) => [
     format: oneDecimal,
   },
   {
-    label: `${stageLabels[stage]} duration`,
+    label: "Compute time",
     unit: "ms",
     stage,
     get: (results: StageResults) => okResult(results, stage)?.durationMs,
@@ -248,6 +248,21 @@ export const statsRows: StatsRow[] = [
   ...countRows,
   ...stageCostRows,
 ];
+
+export interface StatsGroup {
+  stage: StageId;
+  label: string;
+  rows: StatsRow[];
+}
+
+// Rows grouped by the stage (config block) they come from, in pipeline order; empty groups are dropped.
+export const statsGroups: StatsGroup[] = allStageIds
+  .map((stage) => ({
+    stage,
+    label: stageLabels[stage],
+    rows: statsRows.filter((row) => row.stage === stage),
+  }))
+  .filter((group) => group.rows.length > 0);
 
 // Percent changes below this are treated as "unchanged" (rounding noise), so rows do not light up for nothing.
 const minChangedPercent = 0.05;

@@ -30,12 +30,15 @@ public class PipelineEndToEndTests
         var productionCount = GpxDataDirector.AnalyticData([.. points]).Points.Count;
         Assert.True(cleanup.Ok);
         Assert.Equal(productionCount, ((StageData.Cleanup)cleanup.Data!).PointCountOut);
-        Assert.All(DatabaseFreeStages.Where(s => s != StageId.Route), stage =>
+        Assert.All(DatabaseFreeStages, stage =>
         {
             var key = StageIds.Key(stage);
             Assert.True(response.Results[key].Ok, $"{stage}: {response.Results[key].Error}");
             Assert.Equal(response.Baseline[key].PayloadBytes, response.Results[key].PayloadBytes);
         });
+
+        // Production stores every cleaned point as the route, so the default route is exactly the cleaned points.
+        Assert.Equal(productionCount, response.Results[StageIds.Key(StageId.Route)].PointCount);
     }
 
     [Fact]
