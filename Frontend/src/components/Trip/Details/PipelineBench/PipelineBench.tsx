@@ -64,12 +64,16 @@ export default function PipelineBench() {
             onRun={() => run("analytics")}
           />
 
-          <RouteBlock
-            status={status.route}
-            result={results.route}
-            filters={config.route?.filters}
-            onFiltersChange={(filters) => updateConfig("route", { filters })}
-            onRun={() => run("route")}
+          <PeaksBlock
+            status={status.peakMatching}
+            result={results.peakMatching}
+            filters={config.peakMatching?.filters}
+            proximityRadiusM={config.peakMatching?.proximityRadiusM}
+            onFiltersChange={(filters) => updateConfig("peakMatching", { filters })}
+            onProximityRadiusChange={(proximityRadiusM) =>
+              updateConfig("peakMatching", { proximityRadiusM })
+            }
+            onRun={() => run("peakMatching")}
           />
         </Stack>
 
@@ -98,7 +102,7 @@ export default function PipelineBench() {
         </Stack>
       </Stack>
 
-      {/* 2x2 grid: elevation profile and peak matching configs side by side, the previews span both columns below. */}
+      {/* 2x2 grid: elevation profile and route configs side by side, the previews span both columns below. */}
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6} alignItems={"start"}>
         <ProfileBlock
           status={status.elevationProfile}
@@ -108,16 +112,12 @@ export default function PipelineBench() {
           onRun={() => run("elevationProfile")}
         />
 
-        <PeaksBlock
-          status={status.peakMatching}
-          result={results.peakMatching}
-          filters={config.peakMatching?.filters}
-          proximityRadiusM={config.peakMatching?.proximityRadiusM}
-          onFiltersChange={(filters) => updateConfig("peakMatching", { filters })}
-          onProximityRadiusChange={(proximityRadiusM) =>
-            updateConfig("peakMatching", { proximityRadiusM })
-          }
-          onRun={() => run("peakMatching")}
+        <RouteBlock
+          status={status.route}
+          result={results.route}
+          filters={config.route?.filters}
+          onFiltersChange={(filters) => updateConfig("route", { filters })}
+          onRun={() => run("route")}
         />
 
         <Box gridColumn={"1 / -1"} minW={0}>
