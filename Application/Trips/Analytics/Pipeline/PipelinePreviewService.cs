@@ -17,6 +17,9 @@ public sealed class PipelinePreviewService(
 {
     static readonly TimeSpan CacheLifetime = TimeSpan.FromMinutes(10);
 
+    // The untouched file: cleanup with no filters, every other section left at its default.
+    static readonly PipelineConfig RawConfig = new(Cleanup: new PipeConfig.Cleanup([]));
+
     // Filter configs have a FilterType property (a System.Type) that clashes with the polymorphic discriminator of the same name.
     // The discriminator already identifies the config, so the property is left out of the key.
     static readonly JsonSerializerOptions CacheKeyOptions = new()
@@ -43,8 +46,13 @@ public sealed class PipelinePreviewService(
 
         var preview = await RunPlanAsync(input, request.Config, plan, cancellationToken);
         var baseline = await RunPlanAsync(input, new PipelineConfig(), plan, cancellationToken);
+        var raw = request.IncludeRaw ? await RunPlanAsync(input, RawConfig, plan, cancellationToken) : null;
 
-        return new PipelinePreviewResponse(Select(preview, requested), Select(baseline, requested));
+        return new PipelinePreviewResponse(
+            Select(preview, requested),
+            Select(baseline, requested),
+            raw is null ? null : Select(raw, requested)
+        );
     }
 
     async Task<Dictionary<StageId, StageRun>> RunPlanAsync(
@@ -89,7 +97,8 @@ public sealed class PipelinePreviewService(
             var handler = _stagesById[stage];
             var dependencies = StageIds.DependenciesOf(stage);
             var upstreamKeys = dependencies.Select(dependency => upstreamRuns[dependency].CacheKey!);
-            var key = CacheKey(input.CacheScope, stage, handler.SelectConfig(config), upstreamKeys);
+            var discriminator = await handler.CacheDiscriminatorAsync(cancellationToken);
+            var key = CacheKey(input.CacheScope, stage, handler.SelectConfig(config), discriminator, upstreamKeys);
 
             if (cache.TryGetValue(key, out StageOutput? cached) && cached is not null)
             {
@@ -152,13 +161,20 @@ public sealed class PipelinePreviewService(
         IEnumerable<StageId> requested
     ) => requested.ToDictionary(StageIds.Key, stage => runs[stage].Result);
 
-    static string CacheKey(string scope, StageId stage, object? selectedConfig, IEnumerable<string> upstreamKeys)
+    static string CacheKey(
+        string scope,
+        StageId stage,
+        object? selectedConfig,
+        string discriminator,
+        IEnumerable<string> upstreamKeys
+    )
     {
         var material = string.Join(
             "\n",
             scope,
             StageIds.Key(stage),
             JsonSerializer.Serialize(selectedConfig, CacheKeyOptions),
+            discriminator,
             string.Join(",", upstreamKeys)
         );
 
