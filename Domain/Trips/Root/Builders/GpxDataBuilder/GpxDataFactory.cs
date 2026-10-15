@@ -4,10 +4,10 @@ using Domain.Trips.Root.Builders.Config;
 namespace Domain.Trips.Root.Builders.GpxDataBuilder;
 
 public static class GpxDataFactory {
-    public static AnalyticData Create<T>(T data) =>
+    public static AnalyticData Create<T>(T data, IGpxDataProcessingSettings? settings = null) =>
         data switch {
-            List<GpxPoint> points => GpxDataDirector.AnalyticData(points),
-            AnalyticData analyticData => GpxDataDirector.AnalyticData(analyticData.Points),
+            List<GpxPoint> points => GpxDataDirector.AnalyticData(points, settings),
+            AnalyticData analyticData => GpxDataDirector.AnalyticData(analyticData.Points, settings),
             //ElevationProfileData elevationData => GpxDataDirector.ElevationProfile(elevationData),
             _ => throw new NotImplementedException($"unsuported data type: {data}"),
         };

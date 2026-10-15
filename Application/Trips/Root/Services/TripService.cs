@@ -1,12 +1,16 @@
-﻿using Application.FileReferences;
+﻿using Application.AppSettings;
+using Application.FileReferences;
 using Application.ReachedPeaks;
 using Application.Trips.Analytics.Commands;
 using Application.Trips.Analytics.Interfaces;
 using Application.Trips.GpxFile.Services;
 using Application.Trips.Root.Dtos;
 using Application.Trips.Root.ValueObjects;
+using Domain.AppSettings.Root;
+using Domain.AppSettings.Settings;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Domain.Trips.Root;
+using Domain.Trips.Root.Builders.Config;
 
 namespace Application.Trips.Root.Services;
 
@@ -18,6 +22,7 @@ public class TripService : ITripService
     private readonly ITripAnalyticUnitOfWork _unitOfWork;
     private readonly ITripAnalyticService _analyticsService;
     private readonly IReachedPeaksQureryService _reachedPeaksQureryService;
+    private readonly IAppSettingsService _appSettingsService;
 
     public TripService(
         IGpxService gpxService,
@@ -25,7 +30,8 @@ public class TripService : ITripService
         ITripRepository tripRepository,
         ITripAnalyticUnitOfWork unitOfWork,
         ITripAnalyticService analyticsService,
-        IReachedPeaksQureryService reachedPeaksQureryService
+        IReachedPeaksQureryService reachedPeaksQureryService,
+        IAppSettingsService appSettingsService
     )
     {
         _gpxService = gpxService;
@@ -34,6 +40,7 @@ public class TripService : ITripService
         _unitOfWork = unitOfWork;
         _analyticsService = analyticsService;
         _reachedPeaksQureryService = reachedPeaksQureryService;
+        _appSettingsService = appSettingsService;
     }
 
     public async Task<Result<Guid>> CreateSimpleAsync(CreateTripContext ctx)
@@ -95,10 +102,23 @@ public class TripService : ITripService
 
     private async Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx)
     {
+        var settings = await GetCleanupSettingsAsync();
+
         return await _gpxService
             .ExtractGpxData(ctx.File)
-            .BindAsync(data => ProccesGpxDataCommand.Create(data).Execute())
+            .BindAsync(data => ProccesGpxDataCommand.Create(data, settings).Execute())
             .MapAsync(ctx.WithAnalyticData);
+    }
+
+    // Null when the setting is missing or fails to load; the cleanup falls back to the code constants.
+    private async Task<IGpxDataProcessingSettings?> GetCleanupSettingsAsync()
+    {
+        var result = await _appSettingsService.GetSettingAsync<GpxDataProcessingSetting>(
+            AppSettingType.GpxDataProcessing,
+            CancellationToken.None
+        );
+
+        return result.IsSuccess ? result.Value : null;
     }
 
     private async Task<Result<CreateTripContext>> CreateAnalytics(CreateTripContext ctx)

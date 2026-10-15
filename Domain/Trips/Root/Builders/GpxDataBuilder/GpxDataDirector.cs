@@ -11,9 +11,9 @@ internal static class GpxDataDirector
     {
         return AnalyticData(points, GpxDataConfigs.GpxFile);
     }
-    public static AnalyticData AnalyticData(List<GpxPoint> points, DataProccesConfig dataCleanupSettings)
+    public static AnalyticData AnalyticData(List<GpxPoint> points, IGpxDataProcessingSettings? dataCleanupSettings)
     {
-        IGpxDataProcessingSettings config = dataCleanupSettings as IGpxDataProcessingSettings ?? GpxDataConfigs.GpxFile;
+        IGpxDataProcessingSettings config = dataCleanupSettings ?? GpxDataConfigs.GpxFile;
         return new GpxDataBuilder(points)
             .ClampElevationSpikes(config.MaxElevationSpike)
             .ApplyMedianFilter(config.MedianFilterWindowSize)
