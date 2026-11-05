@@ -46,4 +46,3 @@ public class AdminController : ControllerBase
         return await _peakService.Delete(peakId).ToActionResultAsync(ResultType.noContent);
     }
 }
-

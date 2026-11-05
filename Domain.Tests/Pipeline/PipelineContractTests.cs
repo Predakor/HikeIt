@@ -1,13 +1,13 @@
-using System.Text.Json;
 using Application.Commons.Abstractions;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Domain.Trips.Analytics.Shared.Filters;
+using System.Text.Json;
 
 namespace Domain.Tests.Pipeline;
 
 public class PipelineContractTests
 {
-    static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
     [Fact]
     public void Fixture_DeserialisesIntoResponse()

@@ -1,9 +1,9 @@
-using System.Text.Json;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
 using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Shared.Filters;
+using System.Text.Json;
 
 namespace Domain.Tests.Pipeline;
 
@@ -151,7 +151,7 @@ public class SettingValidationTests
         Assert.Equal(12, ((MaxSpikeFilter.Config)reread.Value!.Filters[0]).Value.MaxSpike);
     }
 
-    static IReadOnlyList<IPointFilterConfig> CleanupFilters() =>
+    private static IReadOnlyList<IPointFilterConfig> CleanupFilters() =>
     [
         new MaxSpikeFilter.Config(8) with { Value = new MaxSpikeFilter.Config(8) },
         new MedianSmoothingFilter.Config(6) with { Value = new MedianSmoothingFilter.Config(6) },
@@ -159,13 +159,13 @@ public class SettingValidationTests
         new RoundingPrecisionFilter.Config(1) with { Value = new RoundingPrecisionFilter.Config(1) },
     ];
 
-    static IReadOnlyList<IPeakFilterConfig> PeakFilters(double distance = 50, double elevation = 50) =>
+    private static IReadOnlyList<IPeakFilterConfig> PeakFilters(double distance = 50, double elevation = 50) =>
     [
         new MergeNearbyByDistanceFilter.Config(distance) with { Value = new MergeNearbyByDistanceFilter.Config(distance) },
         new MergeNearbyByElevationFilter.Config(elevation) with { Value = new MergeNearbyByElevationFilter.Config(elevation) },
     ];
 
-    static IReadOnlyList<IPointFilterConfig> PinAndSimplify(bool enabled = true, double tolerance = 3) =>
+    private static IReadOnlyList<IPointFilterConfig> PinAndSimplify(bool enabled = true, double tolerance = 3) =>
     [
         new PinLocalMaximaFilter.Config(enabled) with { Value = new PinLocalMaximaFilter.Config(enabled) },
         new SimplifyFilter.Config(tolerance) with { Value = new SimplifyFilter.Config(tolerance) },

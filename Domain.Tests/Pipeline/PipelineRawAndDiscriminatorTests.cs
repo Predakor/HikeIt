@@ -8,7 +8,7 @@ namespace Domain.Tests.Pipeline;
 // Tests for the raw run (untouched file) and the cache discriminator. Fake stages, orchestration only.
 public class PipelineRawAndDiscriminatorTests
 {
-    static readonly Guid TripId = Guid.NewGuid();
+    private static readonly Guid TripId = Guid.NewGuid();
 
     [Fact]
     public async Task RawNotRequested_ResponseHasNoRaw()
@@ -97,7 +97,7 @@ public class PipelineRawAndDiscriminatorTests
         Assert.Equal(1, stages[StageId.Cleanup].Runs);
     }
 
-    static (PipelinePreviewService Service, Dictionary<StageId, FakeStage> Stages) Create()
+    private static (PipelinePreviewService Service, Dictionary<StageId, FakeStage> Stages) Create()
     {
         var stages = StageIds.All.ToDictionary(s => s, s => new FakeStage(s));
         var service = new PipelinePreviewService(
@@ -109,15 +109,15 @@ public class PipelineRawAndDiscriminatorTests
         return (service, stages);
     }
 
-    sealed class FakeSource : IPipelineSource
+    private sealed class FakeSource : IPipelineSource
     {
         public Task<PipelineInput?> LoadAsync(Guid tripId, CancellationToken cancellationToken) =>
             Task.FromResult<PipelineInput?>(new PipelineInput("user-a/file", [new GpxPoint(50, 20, 100)]));
     }
 
-    sealed class FakeStage(StageId id) : IPipelineStage
+    private sealed class FakeStage(StageId id) : IPipelineStage
     {
-        static readonly Dictionary<StageId, Func<PipelineConfig, object?>> ConfigSelectors = new()
+        private static readonly Dictionary<StageId, Func<PipelineConfig, object?>> ConfigSelectors = new()
         {
             [StageId.Cleanup] = config => config.Cleanup,
             [StageId.Analytics] = _ => null,
@@ -134,13 +134,5 @@ public class PipelineRawAndDiscriminatorTests
         public object? SelectConfig(PipelineConfig config) => ConfigSelectors[Id](config);
 
         public Task<string> CacheDiscriminatorAsync(CancellationToken cancellationToken) => Task.FromResult(Discriminator);
-
-        public Task<StageOutput> RunAsync(StageContext context, PipelineConfig config, CancellationToken ct)
-        {
-            Runs++;
-            ReceivedConfigs.Add(config);
-
-            return Task.FromResult(new StageOutput(new { stage = Id.ToString() }, 3, Id.ToString()));
-        }
     }
 }

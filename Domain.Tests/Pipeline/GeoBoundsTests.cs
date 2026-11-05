@@ -5,7 +5,7 @@ namespace Domain.Tests.Pipeline;
 
 public class GeoBoundsTests
 {
-    const double MetersPerDegreeLat = 111_320;
+    private const double MetersPerDegreeLat = 111_320;
 
     [Fact]
     public void Around_SinglePoint_PadsByTheMarginOnEverySide()

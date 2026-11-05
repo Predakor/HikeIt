@@ -10,7 +10,7 @@ namespace Domain.Tests.Pipeline;
 // Phase 2 tests for BE-3b (orchestrator, cache). They use fake stages, so they test orchestration only.
 public class PipelinePreviewServiceTests
 {
-    static readonly Guid TripId = Guid.NewGuid();
+    private static readonly Guid TripId = Guid.NewGuid();
 
     [Fact]
     public async Task AllStages_ReturnResultsAndBaselineForEveryStage()
@@ -170,7 +170,7 @@ public class PipelinePreviewServiceTests
         Assert.True(route.DurationMs >= 0);
     }
 
-    static (PipelinePreviewService Service, Dictionary<StageId, FakeStage> Stages) Create()
+    private static (PipelinePreviewService Service, Dictionary<StageId, FakeStage> Stages) Create()
     {
         var stages = FakeStages();
         var service = new PipelinePreviewService(
@@ -182,26 +182,26 @@ public class PipelinePreviewServiceTests
         return (service, stages);
     }
 
-    static Dictionary<StageId, FakeStage> FakeStages() => StageIds.All.ToDictionary(s => s, s => new FakeStage(s));
+    private static Dictionary<StageId, FakeStage> FakeStages() => StageIds.All.ToDictionary(s => s, s => new FakeStage(s));
 
-    static IPointFilterConfig SimplifyConfig(double toleranceM) =>
+    private static IPointFilterConfig SimplifyConfig(double toleranceM) =>
         new SimplifyFilter.Config(toleranceM) with { Value = new SimplifyFilter.Config(toleranceM) };
 
-    sealed class FakeSource(string? scope) : IPipelineSource
+    private sealed class FakeSource(string? scope) : IPipelineSource
     {
         public Task<PipelineInput?> LoadAsync(Guid tripId, CancellationToken cancellationToken) =>
             Task.FromResult(scope is null ? null : new PipelineInput(scope, [new GpxPoint(50, 20, 100)]));
     }
 
     // Counts runs; selects the matching section of the config like a real stage would.
-    sealed class FakeStage(StageId id) : IPipelineStage
+    private sealed class FakeStage(StageId id) : IPipelineStage
     {
         public StageId Id { get; } = id;
         public int Runs { get; private set; }
         public Exception? Failure { get; set; }
         public object? LastUpstreamInternal { get; private set; }
 
-        static readonly Dictionary<StageId, Func<PipelineConfig, object?>> ConfigSelectors = new()
+        private static readonly Dictionary<StageId, Func<PipelineConfig, object?>> ConfigSelectors = new()
         {
             [StageId.Cleanup] = config => config.Cleanup,
             [StageId.Analytics] = _ => null,
@@ -211,18 +211,5 @@ public class PipelinePreviewServiceTests
         };
 
         public object? SelectConfig(PipelineConfig config) => ConfigSelectors[Id](config);
-
-        public Task<StageOutput> RunAsync(StageContext context, PipelineConfig config, CancellationToken ct)
-        {
-            Runs++;
-            LastUpstreamInternal = context.Upstream.GetValueOrDefault(StageId.Cleanup)?.Internal;
-
-            if (Failure is not null)
-            {
-                throw Failure;
-            }
-
-            return Task.FromResult(new StageOutput(new { stage = Id.ToString() }, 3, $"{Id.ToString().ToLowerInvariant()}-output"));
-        }
     }
 }

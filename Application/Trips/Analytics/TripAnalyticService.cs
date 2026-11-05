@@ -1,6 +1,7 @@
 ﻿using Application.Trips.Analytics.ElevationProfiles;
 using Application.Trips.Analytics.Interfaces;
 using Application.Trips.Analytics.PeakAnalytics.Commands;
+using Application.Trips.Analytics.RouteVisualizations;
 using Application.Trips.Root.ValueObjects;
 using Domain.Common.Geography.Extentions;
 using Domain.Common.Geography.ValueObjects;
@@ -19,16 +20,19 @@ public class TripAnalyticService : ITripAnalyticService
     private readonly ITripAnalyticUnitOfWork _unitOfWork;
     private readonly IReachedPeakService _reachedPeakService;
     private readonly IElevationProfileService _elevationProfileService;
+    private readonly IRouteVisualizationService _routeVisualizations;
 
     public TripAnalyticService(
         ITripAnalyticUnitOfWork unitOfWork,
         IReachedPeakService reachedPeakService,
-        IElevationProfileService elevationProfileService
+        IElevationProfileService elevationProfileService,
+        IRouteVisualizationService routeVisualizations
     )
     {
         _unitOfWork = unitOfWork;
         _reachedPeakService = reachedPeakService;
         _elevationProfileService = elevationProfileService;
+        _routeVisualizations = routeVisualizations;
     }
 
     public async Task<Result<TripAnalytic>> GenerateAnalytic(CreateTripContext ctx)
@@ -48,7 +52,10 @@ public class TripAnalyticService : ITripAnalyticService
         await GeneratePeaksAnalytics(ctx).TapAsync(t => builder.WithPeaksAnalytic(t));
         await GenerateElevationProfile(ctx).TapAsync(t => builder.WithElevationProfile(t));
 
-        builder.WithVisualisation(new RoutePath(points.ToList()));
+        await _routeVisualizations
+            .GetRouteVisualizationAsync(points)
+            .TapAsync(path => builder.WithVisualisation(path));
+
         return builder.Build();
     }
 

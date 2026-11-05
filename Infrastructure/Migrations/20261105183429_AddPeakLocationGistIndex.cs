@@ -15,6 +15,8 @@ namespace Infrastructure.Migrations
                 table: "Peaks",
                 column: "Location")
                 .Annotation("Npgsql:IndexMethod", "gist");
+
+            migrationBuilder.Sql("DELETE FROM \"AppSettings\";");
         }
 
         /// <inheritdoc />

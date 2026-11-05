@@ -5,7 +5,8 @@ using Domain.ReachedPeaks.Builders;
 
 namespace Application.Locations.Peaks;
 
-public interface IPeaksQueryService : IQueryService, IPeakSource {
+public interface IPeaksQueryService : IQueryService, IPeakSource
+{
     Task<Result<PeakDto.Complete>> GetByIdAsync(int id);
     Task<Result<IEnumerable<PeakDto.Complete>>> GetAllAsync();
     Task<Result<Peak>> GetPeakWithinRadius(GpxPoint point, float radius);

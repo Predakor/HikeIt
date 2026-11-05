@@ -38,7 +38,7 @@ public class DefaultsEqualOldOutputTests
         Assert.Equal(expected, actual);
     }
 
-    static List<MutableGpxPoint> ApplyDefaultCleanup(List<GpxPoint> points)
+    private static List<MutableGpxPoint> ApplyDefaultCleanup(List<GpxPoint> points)
     {
         var mutablePoints = points.Select(p => p.ToMutable()).ToList();
 

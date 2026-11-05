@@ -1,22 +1,25 @@
-﻿using Application.Trips.Root.ValueObjects;
+using Application.Trips.Analytics.Pipeline.Contracts;
+using Application.Trips.Analytics.Pipeline.Runners;
+using Application.Trips.Root.ValueObjects;
+using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.ElevationProfiles;
 using Domain.Trips.Analytics.ElevationProfiles.Commands;
-using Domain.Trips.Root.Builders.Config;
 
 namespace Application.Trips.Analytics.ElevationProfiles;
 
-public class ElevationProfileService : IElevationProfileService {
-    readonly IElevationProfileRepository _repository;
+public class ElevationProfileService : IElevationProfileService
+{
+    private readonly IPointsFilterRunner _pointsRunner;
 
-    public ElevationProfileService(IElevationProfileRepository repository) {
-        _repository = repository;
+    public ElevationProfileService(IPointsFilterRunner pointsRunner)
+    {
+        _pointsRunner = pointsRunner;
     }
 
-    public Result<ElevationProfile> Create(CreateTripContext ctx) {
-        return CreateElevationProfileDataCommand
-            .Create(ctx.AnalyticData, GpxDataConfigs.ElevationProfile)
-            .Execute()
-            .Bind(eleData => CreateElevationProfileCommand.Create(eleData, ctx.Trip.Id).Execute());
+    public Task<Result<ElevationProfile>> Create(CreateTripContext ctx)
+    {
+        return _pointsRunner
+            .ApplyAsync(ctx.AnalyticData.Points, StageId.ElevationProfile)
+            .BindAsync(points => CreateElevationProfileCommand.Create(new AnalyticData(points), ctx.Trip.Id).Execute());
     }
-
 }

@@ -1,16 +1,16 @@
-using System.Text.Json;
 using Application.Trips.Analytics.RouteVisualizations;
 using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
+using System.Text.Json;
 
 namespace Domain.Tests.Pipeline;
 
 // Phase 0 tests for BE-2. They fail until PinLocalMaxima, Simplify and the CreateVisualization fix are implemented.
 public class RouteFilterTests
 {
-    static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
     [Fact]
     public void Simplify_StraightTrack_CollapsesToEndpoints()
@@ -121,15 +121,15 @@ public class RouteFilterTests
         Assert.Equal(3, config.Value.ToleranceM);
     }
 
-    static IFilterConfig CreateConfig(string json) => JsonSerializer.Deserialize<IFilterConfig>(json, Json)!;
+    private static IFilterConfig CreateConfig(string json) => JsonSerializer.Deserialize<IFilterConfig>(json, Json)!;
 
-    static IFilter<MutableGpxPoint> CreateFilter(string json) =>
+    private static IFilter<MutableGpxPoint> CreateFilter(string json) =>
         RouteVisualizationService.GpxFilterFactory.CreateFilter(CreateConfig(json));
 
-    static IList<MutableGpxPoint> Simplify(IList<MutableGpxPoint> points, double toleranceM) =>
+    private static IList<MutableGpxPoint> Simplify(IList<MutableGpxPoint> points, double toleranceM) =>
         new SimplifyFilter(new SimplifyFilter.Config(toleranceM)).Apply(points);
 
     // Points ~11m apart along a straight line, so equal elevation steps give a straight 3D line.
-    static List<MutableGpxPoint> Track(params double[] elevations) =>
+    private static List<MutableGpxPoint> Track(params double[] elevations) =>
         [.. elevations.Select((e, i) => new MutableGpxPoint(50 + i * 0.0001, 20, e))];
 }

@@ -7,7 +7,6 @@ namespace Domain.AppSettings.Root;
 public enum AppSettingType
 {
     GpxDataProcessing = 1,
-    RouteVisualization = 2,
     PeakMatching = 3,
     ElevationProfile = 4,
     Route = 5,

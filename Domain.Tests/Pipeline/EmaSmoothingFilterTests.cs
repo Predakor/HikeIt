@@ -1,16 +1,16 @@
-using System.Text.Json;
 using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.RouteVisualizations;
 using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
+using System.Text.Json;
 
 namespace Domain.Tests.Pipeline;
 
 public class EmaSmoothingFilterTests
 {
-    static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
     private const double StraightLat = 50;
 
@@ -138,17 +138,17 @@ public class EmaSmoothingFilterTests
         Assert.Equal(PointFields.Elevation, emaConfig.Targets);
     }
 
-    static double TotalDeviation(IEnumerable<MutableGpxPoint> points) =>
+    private static double TotalDeviation(IEnumerable<MutableGpxPoint> points) =>
         points.Sum(p => Math.Abs(p.Lat - StraightLat));
 
     // Lat alternates +-0.00005 around the straight line, Lon steps evenly along it.
-    static List<MutableGpxPoint> NoisyStraightTrack(int count) =>
+    private static List<MutableGpxPoint> NoisyStraightTrack(int count) =>
         [.. Enumerable.Range(0, count).Select(i => new MutableGpxPoint(
             StraightLat + (i % 2 == 0 ? 0.00005 : -0.00005),
             20 + i * 0.0001,
             100 + i
         ))];
 
-    static List<MutableGpxPoint> Track(int count) =>
+    private static List<MutableGpxPoint> Track(int count) =>
         [.. Enumerable.Range(0, count).Select(i => new MutableGpxPoint(StraightLat, 20 + i * 0.0001, 100 + i))];
 }

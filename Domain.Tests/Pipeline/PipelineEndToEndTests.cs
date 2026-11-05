@@ -16,7 +16,7 @@ namespace Domain.Tests.Pipeline;
 // Peak matching needs the database, so it is left out of the requested stages.
 public class PipelineEndToEndTests
 {
-    static readonly StageId[] DatabaseFreeStages =
+    private static readonly StageId[] DatabaseFreeStages =
         [StageId.Cleanup, StageId.Analytics, StageId.ElevationProfile, StageId.Route];
 
     [Fact]
@@ -76,19 +76,19 @@ public class PipelineEndToEndTests
         );
 
         var profile = (ElevationProfileDto)response!.Results[StageIds.Key(StageId.ElevationProfile)].Data!;
-        var highestInProfile = profile.Gains.Aggregate(profile.Start.Ele, (ele, gain) => Math.Max(ele, ele + gain.Ele)) ;
+        var highestInProfile = profile.Gains.Aggregate(profile.Start.Ele, (ele, gain) => Math.Max(ele, ele + gain.Ele));
         var cleaned = (StageData.Cleanup)response.Results[StageIds.Key(StageId.Cleanup)].Data!;
         Assert.True(cleaned.PointCountOut > profile.Gains.Length);
         Assert.True(highestInProfile > profile.Start.Ele);
     }
 
-    static IPointFilterConfig[] PinAndSimplify(double toleranceM = 5) =>
+    private static IPointFilterConfig[] PinAndSimplify(double toleranceM = 5) =>
     [
         new PinLocalMaximaFilter.Config(true) with { Value = new PinLocalMaximaFilter.Config(true) },
         new SimplifyFilter.Config(toleranceM) with { Value = new SimplifyFilter.Config(toleranceM) },
     ];
 
-    static async Task<(PipelinePreviewService Service, IReadOnlyList<GpxPoint> Points)> CreateAsync()
+    private static async Task<(PipelinePreviewService Service, IReadOnlyList<GpxPoint> Points)> CreateAsync()
     {
         var data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
         IPipelineStage[] stages = [new CleanupStage(), new AnalyticsStage(), new ElevationProfileStage()];
@@ -102,7 +102,7 @@ public class PipelineEndToEndTests
         return (service, data.Points);
     }
 
-    sealed class FileSource(IReadOnlyList<GpxPoint> points) : IPipelineSource
+    private sealed class FileSource(IReadOnlyList<GpxPoint> points) : IPipelineSource
     {
         public Task<PipelineInput?> LoadAsync(Guid tripId, CancellationToken cancellationToken) =>
             Task.FromResult<PipelineInput?>(new PipelineInput("test/file", points));

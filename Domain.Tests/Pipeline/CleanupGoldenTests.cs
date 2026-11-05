@@ -1,5 +1,5 @@
-using System.Security.Cryptography;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
+using System.Security.Cryptography;
 
 namespace Domain.Tests.Pipeline;
 
@@ -41,7 +41,7 @@ public class CleanupGoldenTests
         Assert.Equal((expectedEleHash, expectedLatLonHash), actual);
     }
 
-    static string Hash(IEnumerable<double> values)
+    private static string Hash(IEnumerable<double> values)
     {
         using var stream = new MemoryStream();
         foreach (var value in values)

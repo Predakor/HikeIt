@@ -183,7 +183,7 @@ public class StageTests
         Assert.Equal(path.Points.Count, output.PointCount);
     }
 
-    static async Task<StageOutput> RunCleanup(List<GpxPoint> points, PipeConfig.Cleanup? cleanup = null)
+    private static async Task<StageOutput> RunCleanup(List<GpxPoint> points, PipeConfig.Cleanup? cleanup = null)
     {
         var config = new PipelineConfig(Cleanup: cleanup);
         return await new CleanupStage().RunAsync(
@@ -194,7 +194,7 @@ public class StageTests
     }
 
     // Runs the cleanup stage with its default config and returns a context that downstream stages can read.
-    static async Task<StageContext> CleanupContext(List<GpxPoint> points)
+    private static async Task<StageContext> CleanupContext(List<GpxPoint> points)
     {
         var input = new PipelineInput("test", points);
         var cleanup = await new CleanupStage().RunAsync(
@@ -206,40 +206,21 @@ public class StageTests
         return new StageContext(input, new Dictionary<StageId, StageOutput> { [StageId.Cleanup] = cleanup });
     }
 
-    static List<GpxPoint> CleanedPoints(StageOutput output) => ((AnalyticData)output.Internal!).Points;
+    private static List<GpxPoint> CleanedPoints(StageOutput output) => ((AnalyticData)output.Internal!).Points;
 
     // Filters built like PipelineDefaults: the config value must be set, otherwise GetValue() returns null.
-    static IPointFilterConfig Simplify(double toleranceM) =>
+    private static IPointFilterConfig Simplify(double toleranceM) =>
         new SimplifyFilter.Config(toleranceM) with { Value = new SimplifyFilter.Config(toleranceM) };
 
-    static IPointFilterConfig PinLocalMaxima() =>
+    private static IPointFilterConfig PinLocalMaxima() =>
         new PinLocalMaximaFilter.Config(true) with { Value = new PinLocalMaximaFilter.Config(true) };
 
-    sealed class FakePeaksQueryService : IPeaksQueryService
+    private sealed class FakePeaksQueryService : IPeaksQueryService
     {
         public List<string> Calls { get; } = [];
         public List<int> CandidateCounts { get; } = [];
         public float Radius { get; private set; }
         public Peak? PeakToMatch { get; init; }
-
-        public Task<Result<List<ReachedPeakDataBuilder>>> GetPeaksWithinRadius(
-            IEnumerable<ReachedPeakDataBuilder> points,
-            float radius
-        )
-        {
-            Calls.Add("GetPeaksWithinRadius");
-            var candidates = points.ToList();
-            CandidateCounts.Add(candidates.Count);
-            Radius = radius;
-
-            if (PeakToMatch is null)
-            {
-                return Task.FromResult<Result<List<ReachedPeakDataBuilder>>>(Errors.NotFound("no peaks"));
-            }
-
-            List<ReachedPeakDataBuilder> matched = [candidates[0].WithPeak(PeakToMatch)];
-            return Task.FromResult<Result<List<ReachedPeakDataBuilder>>>(matched);
-        }
 
         public Task<Result<PeakDto.Complete>> GetByIdAsync(int id) => throw new NotSupportedException();
 
@@ -259,14 +240,11 @@ public class StageTests
     }
 
     // Delegates to the real service; the filter overload never reads app settings, so no settings service is needed.
-    sealed class FakeRouteVisualizationService : IRouteVisualizationService
+    private sealed class FakeRouteVisualizationService : IRouteVisualizationService
     {
-        readonly RouteVisualizationService _inner = new(null!);
+        private readonly RouteVisualizationService _inner = new(null!);
 
         public Task<Result<RoutePath>> GetRouteVisualizationAsync(IEnumerable<GpxPoint> points) =>
             throw new NotSupportedException("Settings-backed overload is not used by these tests.");
-
-        public Result<RoutePath> GetRouteVisualization(IEnumerable<GpxPoint> points, IEnumerable<IFilterConfig> configs) =>
-            _inner.GetRouteVisualization(points, configs);
     }
 }

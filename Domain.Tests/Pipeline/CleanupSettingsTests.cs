@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Application.AppSettings;
 using Application.AppSettings.DTOs;
 using Application.Trips.Analytics.Commands;
@@ -13,13 +12,14 @@ using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
+using System.Text.Json;
 
 namespace Domain.Tests.Pipeline;
 
 // The cleanup values come from the GpxDataProcessing setting when it is available, the code constants otherwise.
 public class CleanupSettingsTests
 {
-    static readonly GpxDataProcessingSetting SeededSetting = SettingWith();
+    private static readonly GpxDataProcessingSetting SeededSetting = SettingWith();
 
     [Fact]
     public async Task Command_WithoutSettings_MatchesGpxDataDirector()
@@ -88,7 +88,7 @@ public class CleanupSettingsTests
         Assert.Equal(seeded, seededAgain);
     }
 
-    static GpxDataProcessingSetting SettingWith(double maxSpike = 8, int medianWindow = 6, double ema = 0.88, int rounding = 1)
+    private static GpxDataProcessingSetting SettingWith(double maxSpike = 8, int medianWindow = 6, double ema = 0.88, int rounding = 1)
     {
         IReadOnlyList<IPointFilterConfig> filters =
         [
@@ -101,12 +101,12 @@ public class CleanupSettingsTests
         return new GpxDataProcessingSetting(filters);
     }
 
-    static async Task<string> DiscriminatorOf(GpxDataProcessingSetting setting)
+    private static async Task<string> DiscriminatorOf(GpxDataProcessingSetting setting)
     {
         return await new CleanupStage(new FakeAppSettingsService(setting)).CacheDiscriminatorAsync(default);
     }
 
-    static async Task<List<double>> CleanupElevations(IAppSettingsService service, List<GpxPoint> points)
+    private static async Task<List<double>> CleanupElevations(IAppSettingsService service, List<GpxPoint> points)
     {
         var context = new StageContext(new PipelineInput("test", points), new Dictionary<StageId, StageOutput>());
         var output = await new CleanupStage(service).RunAsync(context, new PipelineConfig(), default);
@@ -114,21 +114,11 @@ public class CleanupSettingsTests
         return Elevations(((AnalyticData)output.Internal!));
     }
 
-    static List<double> Elevations(AnalyticData data) => data.Points.Select(p => p.Ele).ToList();
+    private static List<double> Elevations(AnalyticData data) => data.Points.Select(p => p.Ele).ToList();
 
     // Returns the setting when one is given, otherwise a failed result (the row is missing or unreadable).
-    sealed class FakeAppSettingsService(GpxDataProcessingSetting? setting) : IAppSettingsService
+    private sealed class FakeAppSettingsService(GpxDataProcessingSetting? setting) : IAppSettingsService
     {
-        public Task<Result<TSetting>> GetSettingAsync<TSetting>(AppSettingType settingType, CancellationToken ct)
-            where TSetting : IAppSetting
-        {
-            if (setting is null)
-            {
-                return Task.FromResult(Result<TSetting>.Failure(Errors.NotFound("GpxDataProcessing setting")));
-            }
-
-            return Task.FromResult(Result<TSetting>.Success((TSetting)(object)setting));
-        }
 
         public Task<Result<IList<AppSettingDto>>> GetAllAsync(CancellationToken ct) => throw new NotImplementedException();
 
