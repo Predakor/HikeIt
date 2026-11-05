@@ -1,5 +1,3 @@
-using Application.Trips.Analytics.Pipeline;
-using Application.Trips.Analytics.RouteVisualizations;
 using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
@@ -100,33 +98,31 @@ public class EmaSmoothingFilterTests
     public void Json_WithoutTargets_DeserialisesAsElevation()
     {
         var config = JsonSerializer.Deserialize<IPointFilterConfig>(
-            """{"FilterType":"EmaSmoothingFilter","value":{"Alpha":0.5}}""",
+            """{"FilterType":"EmaSmoothingFilter","Alpha":0.5}""",
             Json
         );
 
         Assert.IsType<EmaSmoothingFilter.Config>(config);
-        Assert.Equal(PointFields.Elevation, ((EmaSmoothingFilter.Config)config!).Value.Targets);
+        Assert.Equal(PointFields.Elevation, ((EmaSmoothingFilter.Config)config!).Targets);
     }
 
     [Fact]
     public void Json_WithCoordinatesTargets_DeserialisesAsCoordinates()
     {
         var config = JsonSerializer.Deserialize<IPointFilterConfig>(
-            """{"FilterType":"EmaSmoothingFilter","value":{"Alpha":0.5,"Targets":"Coordinates"}}""",
+            """{"FilterType":"EmaSmoothingFilter","Alpha":0.5,"Targets":"Coordinates"}""",
             Json
         );
 
-        Assert.Equal(PointFields.Coordinates, ((EmaSmoothingFilter.Config)config!).Value.Targets);
+        Assert.Equal(PointFields.Coordinates, ((EmaSmoothingFilter.Config)config!).Targets);
     }
 
     [Fact]
-    public void Factory_BuildsEmaFilterFromConfig()
+    public void Config_BuildsEmaFilter()
     {
-        // The factory reads the typed Value of the wrapper, so the config is set the same way PipelineDefaults does.
         var config = new EmaSmoothingFilter.Config(0.5, PointFields.Coordinates);
-        var wrapped = config with { Value = config };
 
-        Assert.IsType<EmaSmoothingFilter>(RouteVisualizationService.GpxFilterFactory.CreateFilter(wrapped));
+        Assert.IsType<EmaSmoothingFilter>(config.CreateFilter());
     }
 
     [Fact]

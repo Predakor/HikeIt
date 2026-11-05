@@ -1,4 +1,3 @@
-using Application.Trips.Analytics.RouteVisualizations;
 using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
@@ -83,29 +82,14 @@ public class RouteFilterTests
         var points = Track(100, 110, 130, 120, 110, 100);
         points[2].Pinned = true;
 
-        CreateFilter("""{"FilterType":"MaxSpikeFilter","value":{"MaxSpike":5}}""").Apply(points);
+        CreateFilter("""{"FilterType":"MaxSpikeFilter","MaxSpike":5}""").Apply(points);
 
         Assert.True(points[2].Pinned);
     }
 
-    [Fact]
-    public void CreateVisualization_UsesListReturnedByFilter()
-    {
-        var points = Track(100, 110, 120, 130, 140, 150).Select(p => new GpxPoint(p.Lat, p.Lon, p.Ele)).ToList();
-        var service = new RouteVisualizationService(null!);
-
-        var result = service.GetRouteVisualization(
-            points,
-            [CreateConfig("""{"FilterType":"SimplifyFilter","value":{"ToleranceM":1}}""")]
-        );
-
-        Assert.True(result.IsSuccess);
-        Assert.Equal(2, result.Value!.Points.Count);
-    }
-
     [Theory]
-    [InlineData("""{"FilterType":"SimplifyFilter","value":{"ToleranceM":3}}""", typeof(SimplifyFilter.Config))]
-    [InlineData("""{"FilterType":"PinLocalMaximaFilter","value":{"Enabled":true}}""", typeof(PinLocalMaximaFilter.Config))]
+    [InlineData("""{"FilterType":"SimplifyFilter","ToleranceM":3}""", typeof(SimplifyFilter.Config))]
+    [InlineData("""{"FilterType":"PinLocalMaximaFilter","Enabled":true}""", typeof(PinLocalMaximaFilter.Config))]
     public void FilterConfig_DeserialisesByDiscriminator(string json, Type expected)
     {
         var config = CreateConfig(json);
@@ -116,15 +100,14 @@ public class RouteFilterTests
     [Fact]
     public void FilterConfig_SimplifyValue_RoundTrips()
     {
-        var config = (SimplifyFilter.Config)CreateConfig("""{"FilterType":"SimplifyFilter","value":{"ToleranceM":3}}""");
+        var config = (SimplifyFilter.Config)CreateConfig("""{"FilterType":"SimplifyFilter","ToleranceM":3}""");
 
-        Assert.Equal(3, config.Value.ToleranceM);
+        Assert.Equal(3, config.ToleranceM);
     }
 
-    private static IFilterConfig CreateConfig(string json) => JsonSerializer.Deserialize<IFilterConfig>(json, Json)!;
+    private static IPointFilterConfig CreateConfig(string json) => JsonSerializer.Deserialize<IPointFilterConfig>(json, Json)!;
 
-    private static IFilter<MutableGpxPoint> CreateFilter(string json) =>
-        RouteVisualizationService.GpxFilterFactory.CreateFilter(CreateConfig(json));
+    private static IFilter<MutableGpxPoint> CreateFilter(string json) => CreateConfig(json).CreateFilter();
 
     private static IList<MutableGpxPoint> Simplify(IList<MutableGpxPoint> points, double toleranceM) =>
         new SimplifyFilter(new SimplifyFilter.Config(toleranceM)).Apply(points);
