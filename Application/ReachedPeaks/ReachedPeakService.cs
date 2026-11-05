@@ -1,13 +1,11 @@
-﻿using Application.Locations.Peaks;
-using Application.ReachedPeaks.ValueObjects;
-using Application.Trips.Analytics.Pipeline;
-using Application.Trips.Analytics.Pipeline.Contracts;
-using Domain.Common.Abstractions;
+﻿using Application.ReachedPeaks.ValueObjects;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.Builders;
 using Domain.ReachedPeaks.ValueObjects;
+using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Root;
 using Domain.Users.Root;
 
@@ -15,19 +13,13 @@ namespace Application.ReachedPeaks;
 
 public class ReachedPeakService : IReachedPeakService
 {
-    private readonly IPeaksQueryService _peaksQueries;
+    private readonly IPeaksFilterRunner _peaksRunner;
     private readonly IReachedPeaksQureryService _reachedPeaksQueries;
-    private readonly IPipelineSettingsService _pipelineSettings;
 
-    public ReachedPeakService(
-        IPeaksQueryService peaksQueryService,
-        IReachedPeaksQureryService reachedPeaksQueries,
-        IPipelineSettingsService pipelineSettings
-    )
+    public ReachedPeakService(IPeaksFilterRunner peaksRunner, IReachedPeaksQureryService reachedPeaksQueries)
     {
-        _peaksQueries = peaksQueryService;
+        _peaksRunner = peaksRunner;
         _reachedPeaksQueries = reachedPeaksQueries;
-        _pipelineSettings = pipelineSettings;
     }
 
     public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user)
@@ -37,10 +29,8 @@ public class ReachedPeakService : IReachedPeakService
 
     public async Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip)
     {
-        var filters = await _pipelineSettings.GetFiltersAsync<IPeakFilterConfig>(StageId.PeakMatching, CancellationToken.None);
-
-        return await new PeakFilterChain(_peaksQueries)
-            .ApplyAsync(PeakFilterChain.CandidatesFrom(data), filters)
+        return await _peaksRunner
+            .ApplyAsync(PeakCandidate.From(data))
             .BindAsync(ToMatchedBuilders)
             .BindAsync(peaks => MarkNewPeaks(trip.UserId, peaks))
             .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, trip));

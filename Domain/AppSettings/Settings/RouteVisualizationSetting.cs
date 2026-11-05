@@ -6,7 +6,7 @@ using Domain.Trips.Analytics.Shared;
 namespace Domain.AppSettings.Settings;
 
 public sealed record RouteVisualizationSetting(
-    IReadOnlyList<IFilterConfig> FilterConfigs
+    IReadOnlyList<IPointFilterConfig> FilterConfigs
 ) : IAppSetting<RouteVisualizationSetting>
 {
     public static AppSettingType SettingFor => AppSettingType.RouteVisualization;

@@ -24,35 +24,29 @@ namespace Api.Controllers.Trips;
 public class AnalyticsController : ControllerBase
 {
     private readonly IRouteVisualizationService _routeVisualizationService;
-    private readonly IFileReferenceRepository _fileReferenceRepository;
     private readonly IElevationProfileQueryService _elevationQueries;
     private readonly ITripAnalyticsQueryService _analyticsQueryies;
-    private readonly IGpxFileService _fileService;
+    private readonly ITripSourceService _tripSource;
     private readonly IAuthService _authService;
-    private readonly IGpxService _gpxService;
     private readonly IPipelinePreviewService _pipelinePreview;
     private readonly IPipelineSettingsService _pipelineSettings;
 
     public AnalyticsController(
         IRouteVisualizationService routeVisualizationService,
-        IFileReferenceRepository fileReferenceRepository,
         IElevationProfileQueryService elevationQueries,
         ITripAnalyticsQueryService queryService,
-        IGpxFileService fileService,
+        ITripSourceService tripSource,
         IAuthService authService,
-        IGpxService gpxService,
         IPipelinePreviewService pipelinePreview,
         IPipelineSettingsService pipelineSettings
     )
     {
         _pipelineSettings = pipelineSettings;
         _routeVisualizationService = routeVisualizationService;
-        _fileReferenceRepository = fileReferenceRepository;
         _elevationQueries = elevationQueries;
         _analyticsQueryies = queryService;
-        _fileService = fileService;
+        _tripSource = tripSource;
         _authService = authService;
-        _gpxService = gpxService;
         _pipelinePreview = pipelinePreview;
     }
 
@@ -100,10 +94,8 @@ public class AnalyticsController : ControllerBase
         [FromBody] DataProccesConfig.Partial config
     )
     {
-        return await _fileReferenceRepository
-            .GetByIdAsync(id)
-            .BindAsync(_fileService.GetAsync)
-            .BindAsync(_gpxService.ExtractGpxData)
+        return await _tripSource
+            .GetStoredAsync(id, HttpContext.RequestAborted)
             .MapAsync(data => new ElevationDataWithConfig(data, config))
             .MapAsync(GpxDataFactory.CreateFromConfig)
             .MapAsync(x => x.ToElevationProfileDto())
@@ -113,12 +105,10 @@ public class AnalyticsController : ControllerBase
     [Authorize(Roles = "Admin")]
     [HttpPost("visualizations/preview")]
     [ProducesResponseType(typeof(RoutePath), 200)]
-    public async Task<IActionResult> DevAnalyticPreview(Guid id, [FromBody] IEnumerable<IFilterConfig> configs)
+    public async Task<IActionResult> DevAnalyticPreview(Guid id, [FromBody] IEnumerable<IPointFilterConfig> configs)
     {
-        return await _fileReferenceRepository
-            .GetByIdAsync(id)
-            .BindAsync(_fileService.GetAsync)
-            .BindAsync(_gpxService.ExtractGpxData)
+        return await _tripSource
+            .GetStoredAsync(id, HttpContext.RequestAborted)
             .BindAsync(d => _routeVisualizationService.GetRouteVisualization(d.Points, configs))
             .ToActionResultAsync();
 

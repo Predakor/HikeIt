@@ -1,6 +1,6 @@
-using Application.Commons.Abstractions;
 using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.Pipeline.Contracts;
+using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
 using Microsoft.Extensions.Caching.Memory;

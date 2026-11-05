@@ -1,9 +1,9 @@
-using Application.Commons.Abstractions;
 using Application.Trips.Analytics.ElevationProfiles;
 using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.Analytics.Pipeline.Stages;
 using Application.Trips.Analytics.RouteVisualizations;
+using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Root;
 using Domain.Trips.Analytics.Shared.Filters;
@@ -37,8 +37,7 @@ public class PipelineEndToEndTests
             Assert.Equal(response.Baseline[key].PayloadBytes, response.Results[key].PayloadBytes);
         });
 
-        // Production stores every cleaned point as the route, so the default route is exactly the cleaned points.
-        Assert.Equal(productionCount, response.Results[StageIds.Key(StageId.Route)].PointCount);
+        Assert.True(response.Results[StageIds.Key(StageId.Route)].PointCount < productionCount);
     }
 
     [Fact]

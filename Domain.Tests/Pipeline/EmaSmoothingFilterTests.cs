@@ -1,7 +1,8 @@
 using System.Text.Json;
-using Application.Commons.Abstractions;
 using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.RouteVisualizations;
+using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
@@ -37,7 +38,7 @@ public class EmaSmoothingFilterTests
         var deviationBefore = TotalDeviation(points);
         var elevationsBefore = points.Select(p => p.Ele).ToList();
 
-        new EmaSmoothingFilter(new EmaSmoothingFilter.Config(0.5, EmaTargets.Coordinates)).Apply(points);
+        new EmaSmoothingFilter(new EmaSmoothingFilter.Config(0.5, PointFields.Coordinates)).Apply(points);
 
         Assert.Equal(elevationsBefore, points.Select(p => p.Ele).ToList());
         Assert.True(TotalDeviation(points) < deviationBefore);
@@ -50,17 +51,17 @@ public class EmaSmoothingFilterTests
         var deviationBefore = TotalDeviation(points);
         var elevationsBefore = points.Select(p => p.Ele).ToList();
 
-        new EmaSmoothingFilter(new EmaSmoothingFilter.Config(0.5, EmaTargets.Both)).Apply(points);
+        new EmaSmoothingFilter(new EmaSmoothingFilter.Config(0.5, PointFields.All)).Apply(points);
 
         Assert.NotEqual(elevationsBefore, points.Select(p => p.Ele).ToList());
         Assert.True(TotalDeviation(points) < deviationBefore);
     }
 
     [Theory]
-    [InlineData(EmaTargets.Elevation)]
-    [InlineData(EmaTargets.Coordinates)]
-    [InlineData(EmaTargets.Both)]
-    public void AnyTargets_LeavesTimeAndPinnedUnchanged(EmaTargets targets)
+    [InlineData(PointFields.Elevation)]
+    [InlineData(PointFields.Coordinates)]
+    [InlineData(PointFields.All)]
+    public void AnyTargets_LeavesTimeAndPinnedUnchanged(PointFields targets)
     {
         var points = Track(3);
         points[1].Ele = 120;
@@ -81,7 +82,7 @@ public class EmaSmoothingFilterTests
         var points = NoisyStraightTrack(20);
         var before = points.Select(p => (p.Lat, p.Lon, p.Ele)).ToList();
 
-        new EmaSmoothingFilter(new EmaSmoothingFilter.Config(1, EmaTargets.Both)).Apply(points);
+        new EmaSmoothingFilter(new EmaSmoothingFilter.Config(1, PointFields.All)).Apply(points);
 
         Assert.Equal(before, points.Select(p => (p.Lat, p.Lon, p.Ele)).ToList());
     }
@@ -104,7 +105,7 @@ public class EmaSmoothingFilterTests
         );
 
         Assert.IsType<EmaSmoothingFilter.Config>(config);
-        Assert.Equal(EmaTargets.Elevation, ((EmaSmoothingFilter.Config)config!).Value.Targets);
+        Assert.Equal(PointFields.Elevation, ((EmaSmoothingFilter.Config)config!).Value.Targets);
     }
 
     [Fact]
@@ -115,14 +116,14 @@ public class EmaSmoothingFilterTests
             Json
         );
 
-        Assert.Equal(EmaTargets.Coordinates, ((EmaSmoothingFilter.Config)config!).Value.Targets);
+        Assert.Equal(PointFields.Coordinates, ((EmaSmoothingFilter.Config)config!).Value.Targets);
     }
 
     [Fact]
     public void Factory_BuildsEmaFilterFromConfig()
     {
         // The factory reads the typed Value of the wrapper, so the config is set the same way PipelineDefaults does.
-        var config = new EmaSmoothingFilter.Config(0.5, EmaTargets.Coordinates);
+        var config = new EmaSmoothingFilter.Config(0.5, PointFields.Coordinates);
         var wrapped = config with { Value = config };
 
         Assert.IsType<EmaSmoothingFilter>(RouteVisualizationService.GpxFilterFactory.CreateFilter(wrapped));
@@ -134,7 +135,7 @@ public class EmaSmoothingFilterTests
         var emaConfigs = PipelineDefaults.CleanupFilters.OfType<EmaSmoothingFilter.Config>().ToList();
 
         var emaConfig = Assert.Single(emaConfigs);
-        Assert.Equal(EmaTargets.Elevation, emaConfig.Targets);
+        Assert.Equal(PointFields.Elevation, emaConfig.Targets);
     }
 
     static double TotalDeviation(IEnumerable<MutableGpxPoint> points) =>

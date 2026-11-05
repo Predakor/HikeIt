@@ -1,11 +1,12 @@
 using Application.Trips.Analytics.Pipeline.Contracts;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
-using Domain.Trips.Analytics.Shared;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class CleanupStage(IPipelineSettingsService settings) : FilterListStageBase<IPointFilterConfig>(settings)
+public sealed class CleanupStage(IPipelineSettingsService settings, IPointsFilterRunner runner)
+    : FilterListStageBase<IPointFilterConfig>(settings)
 {
     public override StageId Id => StageId.Cleanup;
 
@@ -20,14 +21,16 @@ public sealed class CleanupStage(IPipelineSettingsService settings) : FilterList
         CancellationToken cancellationToken
     )
     {
-        return ResolveFiltersAsync(config, cancellationToken)
-            .MapAsync(filters => Clean(context.Input.RawPoints, filters));
+        var rawPoints = context.Input.RawPoints;
+
+        return runner
+            .ApplyAsync(rawPoints, Id, RequestFilters(config), cancellationToken)
+            .MapAsync(cleanedPoints => ToOutput(rawPoints.Count, cleanedPoints));
     }
 
-    private static StageOutput Clean(IReadOnlyList<GpxPoint> rawPoints, IEnumerable<IFilterConfig> filters)
+    private static StageOutput ToOutput(int rawCount, List<GpxPoint> cleanedPoints)
     {
-        var cleanedPoints = PointFilters.Apply(rawPoints, filters);
-        var data = new StageData.Cleanup(rawPoints.Count, cleanedPoints.Count);
+        var data = new StageData.Cleanup(rawCount, cleanedPoints.Count);
 
         return new StageOutput(data, cleanedPoints.Count, new AnalyticData(cleanedPoints));
     }

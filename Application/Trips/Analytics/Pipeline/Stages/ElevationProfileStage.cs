@@ -1,15 +1,13 @@
-using Domain.Trips.Analytics.Shared;
-using Domain.Trips.Analytics.Shared.Filters;
-using Application.AppSettings;
 using Application.Trips.Analytics.ElevationProfiles;
 using Application.Trips.Analytics.Pipeline.Contracts;
-using Application.Trips.Analytics.RouteVisualizations;
-using Domain.Common.Geography.ValueObjects;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Domain.Common.Abstractions;
+using Domain.Common.Geography.ValueObjects;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class ElevationProfileStage(IPipelineSettingsService settings) : FilterListStageBase<IPointFilterConfig>(settings)
+public sealed class ElevationProfileStage(IPipelineSettingsService settings, IPointsFilterRunner runner)
+    : FilterListStageBase<IPointFilterConfig>(settings)
 {
     public override StageId Id => StageId.ElevationProfile;
 
@@ -24,13 +22,15 @@ public sealed class ElevationProfileStage(IPipelineSettingsService settings) : F
         CancellationToken cancellationToken
     )
     {
-        return ResolveFiltersAsync(config, cancellationToken)
-            .MapAsync(filters => BuildProfile(CleanupStage.CleanedDataFrom(context).Points, filters));
+        var cleanedPoints = CleanupStage.CleanedDataFrom(context).Points;
+
+        return runner
+            .ApplyAsync(cleanedPoints, Id, RequestFilters(config), cancellationToken)
+            .MapAsync(ToOutput);
     }
 
-    private static StageOutput BuildProfile(IEnumerable<GpxPoint> cleanedPoints, IEnumerable<IFilterConfig> filters)
+    private static StageOutput ToOutput(List<GpxPoint> points)
     {
-        var points = PointFilters.Apply(cleanedPoints, filters);
         var profile = new AnalyticData(points).ToElevationProfileDto();
 
         return new StageOutput(profile, points.Count);

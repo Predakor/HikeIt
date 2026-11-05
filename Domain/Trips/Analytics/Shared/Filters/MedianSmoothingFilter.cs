@@ -6,7 +6,10 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 public sealed class MedianSmoothingFilter : IFilter<MutableGpxPoint>
 {
     // Targets omitted from JSON means Elevation, which is what production smooths.
-    public sealed record Config(int WindowSize, PointFields Targets = PointFields.Elevation) : IPointFilterConfig;
+    public sealed record Config(int WindowSize, PointFields Targets = PointFields.Elevation) : IPointFilterConfig
+    {
+        public IFilter<MutableGpxPoint> CreateFilter() => new MedianSmoothingFilter(this);
+    }
 
     private static readonly (PointFields Field, Func<MutableGpxPoint, double> Get, Action<MutableGpxPoint, double> Set)[] Accessors =
     [

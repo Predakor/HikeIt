@@ -7,6 +7,6 @@ namespace Application.Trips.Analytics.RouteVisualizations;
 public interface IRouteVisualizationService
 {
     Task<Result<RoutePath>> GetRouteVisualizationAsync(IEnumerable<GpxPoint> points);
-    Result<RoutePath> GetRouteVisualization(IEnumerable<GpxPoint> points, IEnumerable<IFilterConfig> configs);
+    Result<RoutePath> GetRouteVisualization(IEnumerable<GpxPoint> points, IEnumerable<IPointFilterConfig> configs);
 
 }

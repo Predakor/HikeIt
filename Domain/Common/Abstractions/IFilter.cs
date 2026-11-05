@@ -1,6 +1,7 @@
 using Domain.Peaks;
 using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
+using Domain.Trips.Root.Builders.GpxDataBuilder;
 using System.Text.Json.Serialization;
 
 namespace Domain.Common.Abstractions;
@@ -39,7 +40,10 @@ public interface IFilterConfig;
 [JsonDerivedType(typeof(RoundingPrecisionFilter.Config), typeDiscriminator: nameof(RoundingPrecisionFilter))]
 [JsonDerivedType(typeof(PinLocalMaximaFilter.Config), typeDiscriminator: nameof(PinLocalMaximaFilter))]
 [JsonDerivedType(typeof(SimplifyFilter.Config), typeDiscriminator: nameof(SimplifyFilter))]
-public interface IPointFilterConfig : IFilterConfig;
+public interface IPointFilterConfig : IFilterConfig
+{
+    IFilter<MutableGpxPoint> CreateFilter();
+}
 
 // Configs of filters that work on candidate peaks (peak matching only).
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]

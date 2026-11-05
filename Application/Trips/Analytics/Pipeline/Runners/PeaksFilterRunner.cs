@@ -1,42 +1,36 @@
+using Application.Trips.Analytics.Pipeline.Contracts;
 using Domain.Common.Abstractions;
-using Domain.Common.Geography.Extentions;
-using Domain.Common.Geography.ValueObjects;
 using Domain.Peaks;
 using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
 
-namespace Application.Trips.Analytics.Pipeline;
+namespace Application.Trips.Analytics.Pipeline.Runners;
 
-public sealed class PeakFilterChain(IPeakSource peaks)
+public interface IPeaksFilterRunner
 {
-    public static List<PeakCandidate> CandidatesFrom(AnalyticData data)
-    {
-        if (data.Points.Count == 0)
-        {
-            return [];
-        }
-
-        var gains = data.Gains ?? (data.Points.Count > 1 ? data.Points.ToGains() : []);
-        var candidates = new List<PeakCandidate>(data.Points.Count) { new(new GpxPointWithDistance(data.Points[0], 0)) };
-
-        double distanceFromStart = 0;
-        for (int i = 1; i < data.Points.Count; i++)
-        {
-            distanceFromStart += gains[i - 1].DistanceDelta;
-            candidates.Add(new PeakCandidate(new GpxPointWithDistance(data.Points[i], (float)distanceFromStart)));
-        }
-
-        return candidates;
-    }
-
-    public Task<Result<PeakChainResult>> ApplyAsync(
+    Task<Result<PeakChainResult>> ApplyAsync(
         IList<PeakCandidate> candidates,
-        IEnumerable<IPeakFilterConfig> configs
+        IReadOnlyList<IPeakFilterConfig>? configs = null,
+        CancellationToken cancellationToken = default
+    );
+}
+
+public sealed class PeaksFilterRunner(IPeakSource peaks, IPipelineSettingsService settings) : IPeaksFilterRunner
+{
+    public async Task<Result<PeakChainResult>> ApplyAsync(
+        IList<PeakCandidate> candidates,
+        IReadOnlyList<IPeakFilterConfig>? configs = null,
+        CancellationToken cancellationToken = default
     )
     {
-        return candidates
+        configs ??= await settings.GetFiltersAsync<IPeakFilterConfig>(StageId.PeakMatching, cancellationToken);
+
+        return await candidates
             .EnsureNotEmpty("The trip has no points to match peaks against")
-            .BindAsync(nonEmpty => RunFiltersAsync(nonEmpty, configs));
+            .BindAsync(nonEmpty => RunFiltersAsync(
+                nonEmpty,
+                configs
+            ));
     }
 
     private async Task<Result<PeakChainResult>> RunFiltersAsync(

@@ -6,7 +6,10 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
 {
     // Targets omitted from JSON means Elevation, which is what production smooths.
-    public sealed record Config(double Alpha, PointFields Targets = PointFields.Elevation) : IPointFilterConfig;
+    public sealed record Config(double Alpha, PointFields Targets = PointFields.Elevation) : IPointFilterConfig
+    {
+        public IFilter<MutableGpxPoint> CreateFilter() => new EmaSmoothingFilter(this);
+    }
 
     // Float on purpose: the production builder always smoothed with a float alpha.
     private readonly float _alpha;

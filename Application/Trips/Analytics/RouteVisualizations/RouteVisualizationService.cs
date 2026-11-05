@@ -3,46 +3,35 @@ using Domain.AppSettings.Settings;
 using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Root;
-using Domain.Trips.Analytics.Shared;
-using Domain.Trips.Root.Builders.GpxDataBuilder;
+using Application.Trips.Analytics.Pipeline.Runners;
 
 namespace Application.Trips.Analytics.RouteVisualizations;
 
 internal sealed class RouteVisualizationService : IRouteVisualizationService
 {
     private readonly IAppSettingsService _appSettingsService;
+    private readonly IPointsFilterRunner _pointsRunner;
 
-    public RouteVisualizationService(IAppSettingsService appSettingsService)
+    public RouteVisualizationService(IAppSettingsService appSettingsService, IPointsFilterRunner pointsRunner)
     {
         _appSettingsService = appSettingsService;
+        _pointsRunner = pointsRunner;
     }
 
     public Task<Result<RoutePath>> GetRouteVisualizationAsync(IEnumerable<GpxPoint> points)
     {
         return _appSettingsService
               .GetSettingAsync<RouteVisualizationSetting>(CancellationToken.None)
-              .MapAsync(setting => PointFilters.CreateFilterList(setting.FilterConfigs))
-              .MapAsync(filters => CreateVisualization(points, filters));
-
-    }
-    public Result<RoutePath> GetRouteVisualization(IEnumerable<GpxPoint> points, IEnumerable<IFilterConfig> configs)
-    {
-        return CreateVisualization(
-            points,
-            PointFilters.CreateFilterList(configs)
-        );
-
+              .MapAsync(setting => CreateVisualization(points, setting.FilterConfigs));
     }
 
-    private static RoutePath CreateVisualization(IEnumerable<GpxPoint> points, IEnumerable<IFilter<MutableGpxPoint>> filterList)
+    public Result<RoutePath> GetRouteVisualization(IEnumerable<GpxPoint> points, IEnumerable<IPointFilterConfig> configs)
     {
-        var muttablePoints = points.Select(p => p.ToMutable()).ToList();
+        return CreateVisualization(points, configs);
+    }
 
-        foreach (var filter in filterList)
-        {
-            muttablePoints = [.. filter.Apply(muttablePoints)];
-        }
-
-        return new RoutePath(muttablePoints);
+    private RoutePath CreateVisualization(IEnumerable<GpxPoint> points, IEnumerable<IPointFilterConfig> configs)
+    {
+        return new RoutePath(_pointsRunner.Apply(points, configs));
     }
 }

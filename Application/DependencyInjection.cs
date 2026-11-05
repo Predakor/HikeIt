@@ -4,6 +4,7 @@ using Application.Commons.Abstractions;
 using Application.Commons.Drafts;
 using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.Pipeline.Contracts;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -24,6 +25,8 @@ public static class DependencyInjection
     {
         return services
             .AddScoped<IPipelineSource, TripFilePipelineSource>()
+            .AddScoped<IPointsFilterRunner, PointsFilterRunner>()
+            .AddScoped<IPeaksFilterRunner, PeaksFilterRunner>()
             .Scan(scan =>
                 scan.FromAssembliesOf(typeof(DependencyInjection))
                     .AddClasses(

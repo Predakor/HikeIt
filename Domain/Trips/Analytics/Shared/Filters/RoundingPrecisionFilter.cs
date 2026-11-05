@@ -6,7 +6,10 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 public sealed class RoundingPrecisionFilter : IFilter<MutableGpxPoint>
 {
     // Targets omitted from JSON means Elevation, which is what production rounds.
-    public sealed record Config(int Decimals, PointFields Targets = PointFields.Elevation) : IPointFilterConfig;
+    public sealed record Config(int Decimals, PointFields Targets = PointFields.Elevation) : IPointFilterConfig
+    {
+        public IFilter<MutableGpxPoint> CreateFilter() => new RoundingPrecisionFilter(this);
+    }
 
     private readonly int _decimals;
     private readonly PointFields _targets;

@@ -1,12 +1,13 @@
-﻿using Application.AppSettings;
-using Application.FileReferences;
+﻿using Application.FileReferences;
 using Application.ReachedPeaks;
-using Application.Trips.Analytics.Commands;
 using Application.Trips.Analytics.Interfaces;
+using Application.Trips.Analytics.Pipeline.Contracts;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Application.Trips.GpxFile.Services;
 using Application.Trips.Root.Dtos;
 using Application.Trips.Root.ValueObjects;
-using Domain.AppSettings.Settings;
+using Domain.Common.Geography.Extentions;
+using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Domain.Trips.Root;
 
@@ -14,31 +15,31 @@ namespace Application.Trips.Root.Services;
 
 public class TripService : ITripService
 {
-    private readonly IGpxService _gpxService;
+    private readonly ITripSourceService _tripSource;
+    private readonly IPointsFilterRunner _pointsRunner;
     private readonly IGpxFileService _fileService;
     private readonly ITripRepository _tripRepository;
     private readonly ITripAnalyticUnitOfWork _unitOfWork;
     private readonly ITripAnalyticService _analyticsService;
     private readonly IReachedPeaksQureryService _reachedPeaksQureryService;
-    private readonly IAppSettingsService _appSettingsService;
 
     public TripService(
-        IGpxService gpxService,
+        ITripSourceService tripSource,
+        IPointsFilterRunner pointsRunner,
         IGpxFileService fileService,
         ITripRepository tripRepository,
         ITripAnalyticUnitOfWork unitOfWork,
         ITripAnalyticService analyticsService,
-        IReachedPeaksQureryService reachedPeaksQureryService,
-        IAppSettingsService appSettingsService
+        IReachedPeaksQureryService reachedPeaksQureryService
     )
     {
-        _gpxService = gpxService;
+        _tripSource = tripSource;
+        _pointsRunner = pointsRunner;
         _fileService = fileService;
         _tripRepository = tripRepository;
         _unitOfWork = unitOfWork;
         _analyticsService = analyticsService;
         _reachedPeaksQureryService = reachedPeaksQureryService;
-        _appSettingsService = appSettingsService;
     }
 
     public async Task<Result<Guid>> CreateSimpleAsync(CreateTripContext ctx)
@@ -100,18 +101,17 @@ public class TripService : ITripService
 
     private async Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx)
     {
-        var settings = await GetCleanupSettingsAsync();
-
-        return await _gpxService
-            .ExtractGpxData(ctx.File)
-            .BindAsync(data => ProccesGpxDataCommand.Create(data, settings).Execute())
+        return await _tripSource
+            .ExtractUploadedAsync(ctx.File)
+            .BindAsync(CleanData)
             .MapAsync(ctx.WithAnalyticData);
     }
 
-    // Null when the setting is missing or fails to load; the cleanup falls back to the code constants.
-    private async Task<GpxDataProcessingSetting?> GetCleanupSettingsAsync()
+    private Task<Result<AnalyticData>> CleanData(AnalyticData data)
     {
-        return await _appSettingsService.GetSettingOrDefaultAsync<GpxDataProcessingSetting>(CancellationToken.None);
+        return _pointsRunner
+            .ApplyAsync(data.Points, StageId.Cleanup)
+            .MapAsync(points => new AnalyticData(points, points.ToGains()));
     }
 
     private async Task<Result<CreateTripContext>> CreateAnalytics(CreateTripContext ctx)

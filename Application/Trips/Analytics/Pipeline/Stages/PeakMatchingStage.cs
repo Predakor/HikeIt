@@ -1,13 +1,12 @@
-using Application.Locations.Peaks;
 using Application.Trips.Analytics.Pipeline.Contracts;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Domain.Common.Abstractions;
 using Domain.Common.Geography;
-using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class PeakMatchingStage(IPeaksQueryService peaksQueries, IPipelineSettingsService settings)
+public sealed class PeakMatchingStage(IPeaksFilterRunner runner, IPipelineSettingsService settings)
     : FilterListStageBase<IPeakFilterConfig>(settings)
 {
     public override StageId Id => StageId.PeakMatching;
@@ -23,10 +22,10 @@ public sealed class PeakMatchingStage(IPeaksQueryService peaksQueries, IPipeline
         CancellationToken cancellationToken
     )
     {
-        var candidates = PeakFilterChain.CandidatesFrom(CleanupStage.CleanedDataFrom(context));
+        var candidates = PeakCandidate.From(CleanupStage.CleanedDataFrom(context));
 
-        return ResolveFiltersAsync(config, cancellationToken)
-            .BindAsync(filters => new PeakFilterChain(peaksQueries).ApplyAsync(candidates, filters))
+        return runner
+            .ApplyAsync(candidates, RequestFilters(config), cancellationToken)
             .MapAsync(ToOutput);
     }
 

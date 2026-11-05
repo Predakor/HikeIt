@@ -9,7 +9,9 @@ using Core.Results;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
+using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
+using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Domain.Tests.Pipeline;
@@ -17,7 +19,7 @@ namespace Domain.Tests.Pipeline;
 // The cleanup values come from the GpxDataProcessing setting when it is available, the code constants otherwise.
 public class CleanupSettingsTests
 {
-    static readonly GpxDataProcessingSetting SeededSetting = new(8, 0.88f, 6, 1);
+    static readonly GpxDataProcessingSetting SeededSetting = SettingWith();
 
     [Fact]
     public async Task Command_WithoutSettings_MatchesGpxDataDirector()
@@ -33,7 +35,7 @@ public class CleanupSettingsTests
     public async Task Command_WithEmaAlpha03_DiffersFromDefault()
     {
         var data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
-        var emaSetting = new GpxDataProcessingSetting(8, 0.3f, 6, 1);
+        var emaSetting = SettingWith(ema: 0.3);
 
         var defaults = ProccesGpxDataCommand.Run(data, null);
         var withSettings = ProccesGpxDataCommand.Run(data, emaSetting);
@@ -45,7 +47,7 @@ public class CleanupSettingsTests
     public async Task CleanupStage_SettingsFromService_ChangeTheDefaultFilters()
     {
         var data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
-        var medianSetting = new GpxDataProcessingSetting(8, 0.88f, 2, 1);
+        var medianSetting = SettingWith(medianWindow: 2);
 
         var actual = await CleanupElevations(new FakeAppSettingsService(medianSetting), data.Points);
 
@@ -63,14 +65,40 @@ public class CleanupSettingsTests
     }
 
     [Fact]
+    public async Task CleanupStage_StaleSettingWithNullFilters_FallsBackToCodeConstants()
+    {
+        var data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
+        var staleSetting = new GpxDataProcessingSetting(null!);
+
+        var actual = await CleanupElevations(new FakeAppSettingsService(staleSetting), data.Points);
+        var discriminator = await DiscriminatorOf(staleSetting);
+
+        Assert.Equal(Elevations(GpxDataDirector.AnalyticData(data.Points)), actual);
+        Assert.Equal(await DiscriminatorOf(SettingWith()), discriminator);
+    }
+
+    [Fact]
     public async Task CacheDiscriminator_DiffersBetweenSettings_AndIsStableForTheSameSetting()
     {
         var seeded = await DiscriminatorOf(SeededSetting);
-        var changed = await DiscriminatorOf(new GpxDataProcessingSetting(8, 0.3f, 6, 1));
-        var seededAgain = await DiscriminatorOf(new GpxDataProcessingSetting(8, 0.88f, 6, 1));
+        var changed = await DiscriminatorOf(SettingWith(ema: 0.3));
+        var seededAgain = await DiscriminatorOf(SettingWith());
 
         Assert.NotEqual(seeded, changed);
         Assert.Equal(seeded, seededAgain);
+    }
+
+    static GpxDataProcessingSetting SettingWith(double maxSpike = 8, int medianWindow = 6, double ema = 0.88, int rounding = 1)
+    {
+        IReadOnlyList<IPointFilterConfig> filters =
+        [
+            new MaxSpikeFilter.Config(maxSpike) with { Value = new MaxSpikeFilter.Config(maxSpike) },
+            new MedianSmoothingFilter.Config(medianWindow) with { Value = new MedianSmoothingFilter.Config(medianWindow) },
+            new EmaSmoothingFilter.Config(ema) with { Value = new EmaSmoothingFilter.Config(ema) },
+            new RoundingPrecisionFilter.Config(rounding) with { Value = new RoundingPrecisionFilter.Config(rounding) },
+        ];
+
+        return new GpxDataProcessingSetting(filters);
     }
 
     static async Task<string> DiscriminatorOf(GpxDataProcessingSetting setting)

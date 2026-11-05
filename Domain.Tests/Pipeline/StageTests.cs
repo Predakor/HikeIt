@@ -1,4 +1,3 @@
-using Application.Commons.Abstractions;
 using Application.Locations.Peaks;
 using Application.Locations.Regions;
 using Application.Trips.Analytics.ElevationProfiles;
@@ -6,6 +5,7 @@ using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.Analytics.Pipeline.Stages;
 using Application.Trips.Analytics.RouteVisualizations;
+using Domain.Common.Abstractions;
 using Domain.Common.Geography.Extentions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Peaks;
@@ -72,13 +72,14 @@ public class StageTests
     }
 
     [Fact]
-    public async Task ElevationProfile_Default_KeepsEveryCleanedPoint()
+    public async Task ElevationProfile_ExplicitEmptyFilters_KeepsEveryCleanedPoint()
     {
         var data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
         var context = await CleanupContext(data.Points);
         var cleanedCount = CleanupStage.CleanedDataFrom(context).Points.Count;
+        var config = new PipelineConfig(ElevationProfile: new PipeConfig.Profile([]));
 
-        var output = await new ElevationProfileStage().RunAsync(context, new PipelineConfig(), default);
+        var output = await new ElevationProfileStage().RunAsync(context, config, default);
 
         var profile = Assert.IsType<ElevationProfileDto>(output.Data);
         // ToGains yields one gain per step between points, so N points give N - 1 gains.
@@ -87,19 +88,37 @@ public class StageTests
     }
 
     [Fact]
-    public async Task ElevationProfile_PinAndSimplify_HasFewerGains()
+    public async Task ElevationProfile_Default_AppliesTheElevationProfileSettingFallback()
     {
         var data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
         var context = await CleanupContext(data.Points);
         var stage = new ElevationProfileStage();
 
         var defaultOutput = await stage.RunAsync(context, new PipelineConfig(), default);
+        var explicitConfig = new PipelineConfig(ElevationProfile: new PipeConfig.Profile(PipelineDefaults.ElevationProfileFilters));
+        var explicitOutput = await stage.RunAsync(context, explicitConfig, default);
+
+        Assert.Equal(explicitOutput.PointCount, defaultOutput.PointCount);
+    }
+
+    [Fact]
+    public async Task ElevationProfile_PinAndSimplify_HasFewerGainsThanUnfiltered()
+    {
+        var data = await ParserTests.ParseFromGpxFile("data/trip_small.gpx");
+        var context = await CleanupContext(data.Points);
+        var stage = new ElevationProfileStage();
+
+        var unfilteredOutput = await stage.RunAsync(
+            context,
+            new PipelineConfig(ElevationProfile: new PipeConfig.Profile([])),
+            default
+        );
         var config = new PipelineConfig(ElevationProfile: new PipeConfig.Profile([PinLocalMaxima(), Simplify(5)]));
         var simplified = await stage.RunAsync(context, config, default);
 
-        var defaultProfile = (ElevationProfileDto)defaultOutput.Data!;
+        var unfilteredProfile = (ElevationProfileDto)unfilteredOutput.Data!;
         var simplifiedProfile = (ElevationProfileDto)simplified.Data!;
-        Assert.True(simplifiedProfile.Gains.Length < defaultProfile.Gains.Length);
+        Assert.True(simplifiedProfile.Gains.Length < unfilteredProfile.Gains.Length);
         Assert.Equal(simplified.PointCount, simplifiedProfile.Gains.Length + 1);
     }
 
@@ -144,7 +163,7 @@ public class StageTests
         Assert.Equal(1234d, matched.Elevation);
         Assert.InRange(matched.DistanceM, 39d, 41d);
         Assert.True(matched.DistanceM < PipelineDefaults.PeakProximityRadiusM);
-        Assert.Equal(["GetPeaksWithinRadius", "NearbyPeaks"], fake.Calls);
+        Assert.Equal(["GetPeaksWithinRadius"], fake.Calls);
         Assert.Equal(1, output.PointCount);
     }
 

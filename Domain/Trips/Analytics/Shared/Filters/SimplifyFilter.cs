@@ -7,7 +7,10 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 // Ramer-Douglas-Peucker in local-plane coordinates (elevation as third axis). Never removes Pinned points.
 public sealed class SimplifyFilter(SimplifyFilter.Config config) : IFilter<MutableGpxPoint>
 {
-    public sealed record Config(double ToleranceM) : IPointFilterConfig;
+    public sealed record Config(double ToleranceM) : IPointFilterConfig
+    {
+        public IFilter<MutableGpxPoint> CreateFilter() => new SimplifyFilter(this);
+    }
 
     private const double EarthRadiusM = 6_371_000d;
 

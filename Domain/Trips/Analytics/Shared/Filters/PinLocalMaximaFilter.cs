@@ -8,7 +8,10 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 // Marks local maxima (plus first and last point) as Pinned so later filters keep them.
 public sealed class PinLocalMaximaFilter(PinLocalMaximaFilter.Config config) : IFilter<MutableGpxPoint>
 {
-    public sealed record Config(bool Enabled) : IPointFilterConfig;
+    public sealed record Config(bool Enabled) : IPointFilterConfig
+    {
+        public IFilter<MutableGpxPoint> CreateFilter() => new PinLocalMaximaFilter(this);
+    }
 
     public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {

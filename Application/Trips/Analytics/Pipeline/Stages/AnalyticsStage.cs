@@ -26,6 +26,10 @@ public sealed class AnalyticsStage : IPipelineStage
         var route = RouteAnalyticFactory.Create(points, gains);
         var time = TimeAnalyticFactory.CreateAnalytics(new(route, points));
 
-        return Task.FromResult<Result<StageOutput>>(new StageOutput(new StageData.Analytics(route, time), points.Count));
+        return Task.FromResult<Result<StageOutput>>(
+            new StageOutput(
+                new StageData.Analytics(route, time),
+                points.Count)
+            );
     }
 }

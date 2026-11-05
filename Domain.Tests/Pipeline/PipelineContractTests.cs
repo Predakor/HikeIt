@@ -113,10 +113,13 @@ public class PipelineContractTests
 
         var request = JsonSerializer.Deserialize<PipelinePreviewRequest>(json, Json)!;
 
-        Assert.IsType<MaxSpikeFilter.Config>(request.Config.Cleanup!.Filters![0]);
+        var maxSpike = Assert.IsType<MaxSpikeFilter.Config>(request.Config.Cleanup!.Filters![0]);
+        Assert.Equal(5, ((MaxSpikeFilter.Config)maxSpike.GetValue()).MaxSpike);
         Assert.Null(request.Config.PeakMatching);
         Assert.Equal([StageId.Cleanup, StageId.Route], request.Stages);
-        Assert.IsType<PinLocalMaximaFilter.Config>(request.Config.Route!.Filters![0]);
-        Assert.IsType<SimplifyFilter.Config>(request.Config.Route.Filters[1]);
+        var pin = Assert.IsType<PinLocalMaximaFilter.Config>(request.Config.Route!.Filters![0]);
+        Assert.True(((PinLocalMaximaFilter.Config)pin.GetValue()).Enabled);
+        var simplify = Assert.IsType<SimplifyFilter.Config>(request.Config.Route.Filters[1]);
+        Assert.Equal(2.5, ((SimplifyFilter.Config)simplify.GetValue()).ToleranceM);
     }
 }

@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Application.Commons.Abstractions;
 using Application.Trips.Analytics.RouteVisualizations;
+using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;

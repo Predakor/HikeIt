@@ -1,61 +1,53 @@
+using System.Text.Json;
 using Domain.AppSettings.Interfaces;
-using Application.Trips.Analytics.Pipeline;
 using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
+using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Shared.Filters;
 
 namespace Domain.Tests.Pipeline;
 
-// Settings are validated when they are written, so an invalid value never reaches the database.
 public class SettingValidationTests
 {
     [Fact]
-    public void GpxDataProcessing_SeededValues_AreValid()
+    public void GpxDataProcessing_ColdRead_OfTheOrderAppSettingActuallyWrites_Succeeds()
     {
-        IAppSetting setting = new GpxDataProcessingSetting(8, 0.88f, 6, 1);
+        var coldWriteOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var written = JsonSerializer.Serialize(new GpxDataProcessingSetting(CleanupFilters()), coldWriteOptions);
+
+        var coldReadOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var setting = JsonSerializer.Deserialize<GpxDataProcessingSetting>(written, coldReadOptions);
+
+        Assert.NotNull(setting);
+        Assert.Equal(4, setting.Filters.Count);
+        Assert.Equal(8, ((MaxSpikeFilter.Config)setting.Filters[0].GetValue()).MaxSpike);
+    }
+
+    [Fact]
+    public void PeakMatching_SeededValues_AreValid()
+    {
+        IAppSetting setting = new PeakMatchingSetting(100, PeakFilters());
 
         Assert.Empty(setting.Validate());
     }
 
     [Theory]
-    [InlineData(0f, 0.88f, 6, 1)]
-    [InlineData(-1f, 0.88f, 6, 1)]
-    [InlineData(8f, 0f, 6, 1)]
-    [InlineData(8f, 1.5f, 6, 1)]
-    [InlineData(8f, -0.1f, 6, 1)]
-    [InlineData(8f, 0.88f, 0, 1)]
-    [InlineData(8f, 0.88f, 6, -1)]
-    [InlineData(8f, 0.88f, 6, 16)]
-    public void GpxDataProcessing_OutOfRangeValue_ReportsAnError(float spike, float alpha, int window, int decimals)
+    [InlineData(0f)]
+    [InlineData(-1f)]
+    public void PeakMatching_NonPositiveRadius_ReportsAnError(float radius)
     {
-        IAppSetting setting = new GpxDataProcessingSetting(spike, alpha, window, decimals);
+        IAppSetting setting = new PeakMatchingSetting(radius, PeakFilters());
 
         Assert.NotEmpty(setting.Validate());
     }
 
     [Fact]
-    public void GpxDataProcessing_AlphaOfOne_IsValid()
-    {
-        IAppSetting setting = new GpxDataProcessingSetting(8, 1f, 6, 1);
-
-        Assert.Empty(setting.Validate());
-    }
-
-    [Fact]
-    public void GpxDataProcessing_EveryBadField_IsReported()
-    {
-        IAppSetting setting = new GpxDataProcessingSetting(0, 0, 0, -1);
-
-        Assert.Equal(4, setting.Validate().Count());
-    }
-
-    [Fact]
     public void AppSetting_SettingAnInvalidValue_IsRejectedAndKeepsTheOldValue()
     {
-        var stored = AppSetting.Create(new GpxDataProcessingSetting(8, 0.88f, 6, 1));
+        var stored = AppSetting.Create(new PeakMatchingSetting(100, PeakFilters()));
         var before = stored.JsonValue!.RootElement.GetRawText();
 
-        var result = stored.SetSetting(new GpxDataProcessingSetting(8, 1.5f, 6, 1));
+        var result = stored.SetSetting(new PeakMatchingSetting(0, PeakFilters()));
 
         Assert.False(result.IsSuccess);
         Assert.Equal(before, stored.JsonValue!.RootElement.GetRawText());
@@ -64,41 +56,118 @@ public class SettingValidationTests
     [Fact]
     public void AppSetting_SettingAnInvalidValueByType_IsRejected()
     {
-        var stored = AppSetting.Create(new GpxDataProcessingSetting(8, 0.88f, 6, 1));
+        var stored = AppSetting.Create(new PeakMatchingSetting(100, PeakFilters()));
 
-        var result = stored.SetSetting(new GpxDataProcessingSetting(8, 0f, 6, 1), typeof(GpxDataProcessingSetting));
+        var result = stored.SetSetting(new PeakMatchingSetting(0, PeakFilters()), typeof(PeakMatchingSetting));
 
         Assert.False(result.IsSuccess);
     }
 
     [Fact]
-    public void PeakMatching_SeededValues_AreValid()
+    public void GpxDataProcessing_RoundTripsThroughJson_WithTheSameFilters()
     {
-        IAppSetting setting = new PeakMatchingSetting(100, 50, 50);
+        var stored = AppSetting.Create(new GpxDataProcessingSetting(CleanupFilters()));
 
-        Assert.Empty(setting.Validate());
-    }
+        var result = stored.GetSetting<GpxDataProcessingSetting>();
 
-    [Theory]
-    [InlineData(0f, 50f, 50f)]
-    [InlineData(100f, -1f, 50f)]
-    [InlineData(100f, 50f, -1f)]
-    public void PeakMatching_NonPositiveValue_ReportsAnError(float radius, float distance, float elevation)
-    {
-        IAppSetting setting = new PeakMatchingSetting(radius, distance, elevation);
-
-        Assert.NotEmpty(setting.Validate());
+        Assert.True(result.IsSuccess);
+        var filters = result.Value!.Filters;
+        Assert.Equal(4, filters.Count);
+        Assert.Equal(8, ((MaxSpikeFilter.Config)filters[0]).Value.MaxSpike);
+        Assert.Equal(6, ((MedianSmoothingFilter.Config)filters[1]).Value.WindowSize);
+        Assert.Equal(0.88, ((EmaSmoothingFilter.Config)filters[2]).Value.Alpha);
+        Assert.Equal(1, ((RoundingPrecisionFilter.Config)filters[3]).Value.Decimals);
     }
 
     [Fact]
-    public void PeakMatching_AsPipelineFilters_UseTheSettingValues()
+    public void PeakMatching_RoundTripsThroughJson_WithTheSameFilters()
     {
-        var setting = new PeakMatchingSetting(120, 30, 40);
+        var stored = AppSetting.Create(new PeakMatchingSetting(120, PeakFilters(distance: 30, elevation: 40)));
 
-        var filters = PipelineDefaults.PeakFiltersFrom(setting);
+        var result = stored.GetSetting<PeakMatchingSetting>();
 
+        Assert.True(result.IsSuccess);
+        Assert.Equal(120, result.Value!.ProximityRadiusM);
+        var filters = result.Value.Filters;
         Assert.Equal(2, filters.Count);
         Assert.Equal(30, ((MergeNearbyByDistanceFilter.Config)filters[0]).Value.DistanceM);
         Assert.Equal(40, ((MergeNearbyByElevationFilter.Config)filters[1]).Value.ElevationDeltaM);
     }
+
+    [Fact]
+    public void ElevationProfile_RoundTripsThroughJson_WithTheSameFilters()
+    {
+        var stored = AppSetting.Create(new ElevationProfileSetting(PinAndSimplify(enabled: false, tolerance: 5)));
+
+        var result = stored.GetSetting<ElevationProfileSetting>();
+
+        Assert.True(result.IsSuccess);
+        var filters = result.Value!.Filters;
+        Assert.Equal(2, filters.Count);
+        Assert.False(((PinLocalMaximaFilter.Config)filters[0]).Value.Enabled);
+        Assert.Equal(5, ((SimplifyFilter.Config)filters[1]).Value.ToleranceM);
+    }
+
+    [Fact]
+    public void Route_RoundTripsThroughJson_WithTheSameFilters()
+    {
+        var stored = AppSetting.Create(new RouteSetting(PinAndSimplify(enabled: true, tolerance: 7)));
+
+        var result = stored.GetSetting<RouteSetting>();
+
+        Assert.True(result.IsSuccess);
+        var filters = result.Value!.Filters;
+        Assert.Equal(2, filters.Count);
+        Assert.True(((PinLocalMaximaFilter.Config)filters[0]).Value.Enabled);
+        Assert.Equal(7, ((SimplifyFilter.Config)filters[1]).Value.ToleranceM);
+    }
+
+    [Fact]
+    public void GpxDataProcessing_DeserialisesFromThePutRequestWireShape()
+    {
+        const string json = """
+            {
+              "Filters": [
+                { "FilterType": "MaxSpikeFilter", "value": { "MaxSpike": 12 } },
+                { "FilterType": "MedianSmoothingFilter", "value": { "WindowSize": 4 } },
+                { "FilterType": "EmaSmoothingFilter", "value": { "Alpha": 0.5 } },
+                { "FilterType": "RoundingPrecisionFilter", "value": { "Decimals": 2 } }
+              ]
+            }
+            """;
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        var setting = JsonSerializer.Deserialize<GpxDataProcessingSetting>(json, options)!;
+
+        Assert.Equal(4, setting.Filters.Count);
+        Assert.Equal(12, ((MaxSpikeFilter.Config)setting.Filters[0].GetValue()).MaxSpike);
+        Assert.Equal(4, ((MedianSmoothingFilter.Config)setting.Filters[1].GetValue()).WindowSize);
+        Assert.Equal(0.5, ((EmaSmoothingFilter.Config)setting.Filters[2].GetValue()).Alpha);
+        Assert.Equal(2, ((RoundingPrecisionFilter.Config)setting.Filters[3].GetValue()).Decimals);
+
+        var stored = AppSetting.Create(setting);
+        var reread = stored.GetSetting<GpxDataProcessingSetting>();
+        Assert.True(reread.IsSuccess);
+        Assert.Equal(12, ((MaxSpikeFilter.Config)reread.Value!.Filters[0]).Value.MaxSpike);
+    }
+
+    static IReadOnlyList<IPointFilterConfig> CleanupFilters() =>
+    [
+        new MaxSpikeFilter.Config(8) with { Value = new MaxSpikeFilter.Config(8) },
+        new MedianSmoothingFilter.Config(6) with { Value = new MedianSmoothingFilter.Config(6) },
+        new EmaSmoothingFilter.Config(0.88) with { Value = new EmaSmoothingFilter.Config(0.88) },
+        new RoundingPrecisionFilter.Config(1) with { Value = new RoundingPrecisionFilter.Config(1) },
+    ];
+
+    static IReadOnlyList<IPeakFilterConfig> PeakFilters(double distance = 50, double elevation = 50) =>
+    [
+        new MergeNearbyByDistanceFilter.Config(distance) with { Value = new MergeNearbyByDistanceFilter.Config(distance) },
+        new MergeNearbyByElevationFilter.Config(elevation) with { Value = new MergeNearbyByElevationFilter.Config(elevation) },
+    ];
+
+    static IReadOnlyList<IPointFilterConfig> PinAndSimplify(bool enabled = true, double tolerance = 3) =>
+    [
+        new PinLocalMaximaFilter.Config(enabled) with { Value = new PinLocalMaximaFilter.Config(enabled) },
+        new SimplifyFilter.Config(tolerance) with { Value = new SimplifyFilter.Config(tolerance) },
+    ];
 }

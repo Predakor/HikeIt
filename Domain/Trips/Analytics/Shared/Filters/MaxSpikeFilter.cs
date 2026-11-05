@@ -5,7 +5,10 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 
 public sealed class MaxSpikeFilter(MaxSpikeFilter.Config config) : IFilter<MutableGpxPoint>
 {
-    public sealed record Config(double MaxSpike) : IPointFilterConfig;
+    public sealed record Config(double MaxSpike) : IPointFilterConfig
+    {
+        public IFilter<MutableGpxPoint> CreateFilter() => new MaxSpikeFilter(this);
+    }
 
     public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
