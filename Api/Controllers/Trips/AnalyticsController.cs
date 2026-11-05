@@ -1,6 +1,5 @@
 ﻿using Api.Commons.Extentions;
 using Application.AppSettings;
-using Application.Commons.Abstractions;
 using Application.Commons.Services.Auth;
 using Application.FileReferences;
 using Application.Trips.Analytics.ElevationProfiles;
@@ -9,6 +8,7 @@ using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.Analytics.Queries;
 using Application.Trips.Analytics.RouteVisualizations;
 using Application.Trips.GpxFile.Services;
+using Domain.Common.Abstractions;
 using Domain.FileReferences;
 using Domain.Trips.Analytics.Root;
 using Domain.Trips.Root.Builders.Config;
@@ -31,7 +31,7 @@ public class AnalyticsController : ControllerBase
     private readonly IAuthService _authService;
     private readonly IGpxService _gpxService;
     private readonly IPipelinePreviewService _pipelinePreview;
-    private readonly IAppSettingsService _appSettings;
+    private readonly IPipelineSettingsService _pipelineSettings;
 
     public AnalyticsController(
         IRouteVisualizationService routeVisualizationService,
@@ -42,10 +42,10 @@ public class AnalyticsController : ControllerBase
         IAuthService authService,
         IGpxService gpxService,
         IPipelinePreviewService pipelinePreview,
-        IAppSettingsService appSettings
+        IPipelineSettingsService pipelineSettings
     )
     {
-        _appSettings = appSettings;
+        _pipelineSettings = pipelineSettings;
         _routeVisualizationService = routeVisualizationService;
         _fileReferenceRepository = fileReferenceRepository;
         _elevationQueries = elevationQueries;
@@ -130,7 +130,7 @@ public class AnalyticsController : ControllerBase
     [ProducesResponseType(typeof(PipelineDefaultsDto), 200)]
     public async Task<IActionResult> PipelineDefaults()
     {
-        return Ok(await PipelineSettings.DefaultsAsync(_appSettings, HttpContext.RequestAborted));
+        return Ok(await _pipelineSettings.GetDefaultsAsync(HttpContext.RequestAborted));
     }
 
     [Authorize(Roles = "Admin")]

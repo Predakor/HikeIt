@@ -1,14 +1,14 @@
-using Application.Commons.Abstractions;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
-using System.Text.Json.Serialization;
+using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Shared;
 
 namespace Domain.AppSettings.Settings;
 
 public sealed record GpxDataProcessingSetting(
     IReadOnlyList<IPointFilterConfig> Filters
-) : IAppSetting
+) : IAppSetting<GpxDataProcessingSetting>, IFilterSetting<IPointFilterConfig>
 {
-    [JsonIgnore] public string Name => nameof(GpxDataProcessingSetting);
-    [JsonIgnore] public AppSettingType SettingFor => AppSettingType.GpxDataProcessing;
+    public static AppSettingType SettingFor => AppSettingType.GpxDataProcessing;
+    public static GpxDataProcessingSetting GetDefault() => new(PipelineDefaults.CleanupFilters);
 }

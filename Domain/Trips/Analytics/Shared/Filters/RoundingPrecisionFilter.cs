@@ -1,4 +1,4 @@
-using Application.Commons.Abstractions;
+using Domain.Common.Abstractions;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Domain.Trips.Analytics.Shared.Filters;

@@ -1,7 +1,7 @@
-using Application.Commons.Abstractions;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
+using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Shared.Filters;
 
 namespace Infrastructure.Commons.Databases.Seeding.AppSettings;
@@ -50,11 +50,14 @@ internal class SeedAppSettings : ISeeder
     {
         IReadOnlyList<IPeakFilterConfig> filters =
         [
+            new LocalMaximaFilter.Config(0),
             new MergeNearbyByDistanceFilter.Config(50),
             new MergeNearbyByElevationFilter.Config(50),
+            new PeakLookupFilter.Config(100),
+            new MatchWithinDistanceFilter.Config(100),
         ];
 
-        return repository.AddAsync(AppSetting.Create(new PeakMatchingSetting(ProximityRadiusM: 100f, filters)));
+        return repository.AddAsync(AppSetting.Create(new PeakMatchingSetting(filters)));
     }
 
     // Same values as the bench's former "suggested" pin + simplify customize starting point.

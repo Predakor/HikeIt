@@ -1,4 +1,4 @@
-﻿using Application.Commons.Abstractions;
+﻿using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Root;
 

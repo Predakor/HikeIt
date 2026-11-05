@@ -27,7 +27,7 @@ public class AppSetting : AggregateRoot<int, AppSetting>
     public Result<AppSetting> SetSetting<TSetting>(TSetting setting)
         where TSetting : IAppSetting
     {
-        if (setting.SettingFor != SettingType)
+        if (TSetting.SettingFor != SettingType)
         {
             return Errors.Unknown("setting type doesn't match");
         }
@@ -39,7 +39,7 @@ public class AppSetting : AggregateRoot<int, AppSetting>
         }
 
         JsonValue = JsonSerializer.SerializeToDocument(setting, SerializerOptions);
-        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(setting.SettingFor));
+        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(TSetting.SettingFor));
         return this;
     }
 
@@ -62,7 +62,7 @@ public class AppSetting : AggregateRoot<int, AppSetting>
         }
 
         JsonValue = JsonSerializer.SerializeToDocument(setting, type, SerializerOptions);
-        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(st.SettingFor));
+        AddDomainEvent(new AppSettingEvents.JsonValueUpdated(SettingType));
         return this;
     }
 
@@ -82,9 +82,9 @@ public class AppSetting : AggregateRoot<int, AppSetting>
         return new AppSetting()
         {
             Id = 0,
-            Name = setting.Name,
+            Name = typeof(TSetting).Name,
             JsonValue = JsonSerializer.SerializeToDocument(setting, SerializerOptions),
-            SettingType = setting.SettingFor,
+            SettingType = TSetting.SettingFor,
         };
     }
 }

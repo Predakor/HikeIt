@@ -1,5 +1,5 @@
-using Application.Commons.Abstractions;
 using Domain.AppSettings.Settings;
+using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.ElevationProfiles.Commands;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 

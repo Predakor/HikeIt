@@ -1,27 +1,38 @@
+using Domain.Trips.Analytics.Shared;
+using Domain.Trips.Analytics.Shared.Filters;
+using Application.AppSettings;
 using Application.Trips.Analytics.ElevationProfiles;
 using Application.Trips.Analytics.Pipeline.Contracts;
+using Application.Trips.Analytics.RouteVisualizations;
 using Domain.Common.Geography.ValueObjects;
+using Domain.Common.Abstractions;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-// Elevation profile of the cleaned points. Production applies no filters here, so the default keeps every point.
-public sealed class ElevationProfileStage : IPipelineStage
+public sealed class ElevationProfileStage(IPipelineSettingsService settings) : FilterListStageBase<IPointFilterConfig>(settings)
 {
-    public StageId Id => StageId.ElevationProfile;
+    public override StageId Id => StageId.ElevationProfile;
 
-    public object? SelectConfig(PipelineConfig config) => config.ElevationProfile;
+    protected override IReadOnlyList<IPointFilterConfig>? RequestFilters(PipelineConfig config)
+    {
+        return config.ElevationProfile?.Filters;
+    }
 
-    public Task<StageOutput> RunAsync(
+    public override Task<Result<StageOutput>> RunAsync(
         StageContext context,
         PipelineConfig config,
         CancellationToken cancellationToken
     )
     {
-        var filters = config.ElevationProfile?.Filters ?? [];
-        var points = CleanupStage.ApplyPointFilters(CleanupStage.CleanedDataFrom(context).Points, filters);
+        return ResolveFiltersAsync(config, cancellationToken)
+            .MapAsync(filters => BuildProfile(CleanupStage.CleanedDataFrom(context).Points, filters));
+    }
 
+    private static StageOutput BuildProfile(IEnumerable<GpxPoint> cleanedPoints, IEnumerable<IFilterConfig> filters)
+    {
+        var points = PointFilters.Apply(cleanedPoints, filters);
         var profile = new AnalyticData(points).ToElevationProfileDto();
 
-        return Task.FromResult(new StageOutput(profile, points.Count));
+        return new StageOutput(profile, points.Count);
     }
 }

@@ -6,7 +6,6 @@ using Application.Trips.Analytics.Interfaces;
 using Application.Trips.GpxFile.Services;
 using Application.Trips.Root.Dtos;
 using Application.Trips.Root.ValueObjects;
-using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Domain.Trips.Root;
@@ -112,12 +111,7 @@ public class TripService : ITripService
     // Null when the setting is missing or fails to load; the cleanup falls back to the code constants.
     private async Task<GpxDataProcessingSetting?> GetCleanupSettingsAsync()
     {
-        var result = await _appSettingsService.GetSettingAsync<GpxDataProcessingSetting>(
-            AppSettingType.GpxDataProcessing,
-            CancellationToken.None
-        );
-
-        return result.IsSuccess ? result.Value : null;
+        return await _appSettingsService.GetSettingOrDefaultAsync<GpxDataProcessingSetting>(CancellationToken.None);
     }
 
     private async Task<Result<CreateTripContext>> CreateAnalytics(CreateTripContext ctx)

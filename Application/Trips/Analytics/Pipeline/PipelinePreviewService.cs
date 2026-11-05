@@ -1,10 +1,10 @@
+using Application.Trips.Analytics.Pipeline.Contracts;
+using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using Application.Trips.Analytics.Pipeline.Contracts;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Application.Trips.Analytics.Pipeline;
 
@@ -15,19 +15,19 @@ public sealed class PipelinePreviewService(
     IMemoryCache cache
 ) : IPipelinePreviewService
 {
-    static readonly TimeSpan CacheLifetime = TimeSpan.FromMinutes(10);
+    private static readonly TimeSpan CacheLifetime = TimeSpan.FromMinutes(10);
 
     // The untouched file: cleanup with no filters, every other section left at its default.
-    static readonly PipelineConfig RawConfig = new(Cleanup: new PipeConfig.Cleanup([]));
+    private static readonly PipelineConfig RawConfig = new(Cleanup: new PipeConfig.Cleanup([]));
 
     // Filter configs have a FilterType property (a System.Type) that clashes with the polymorphic discriminator of the same name.
     // The discriminator already identifies the config, so the property is left out of the key.
-    static readonly JsonSerializerOptions CacheKeyOptions = new()
+    private static readonly JsonSerializerOptions CacheKeyOptions = new()
     {
         TypeInfoResolver = new DefaultJsonTypeInfoResolver { Modifiers = { RemoveFilterTypeProperty } },
     };
 
-    readonly IReadOnlyDictionary<StageId, IPipelineStage> _stagesById = stages.ToDictionary(stage => stage.Id);
+    private readonly IReadOnlyDictionary<StageId, IPipelineStage> _stagesById = stages.ToDictionary(stage => stage.Id);
 
     public async Task<PipelinePreviewResponse?> PreviewAsync(
         Guid tripId,
@@ -55,7 +55,7 @@ public sealed class PipelinePreviewService(
         );
     }
 
-    async Task<Dictionary<StageId, StageRun>> RunPlanAsync(
+    private async Task<Dictionary<StageId, StageRun>> RunPlanAsync(
         PipelineInput input,
         PipelineConfig config,
         IReadOnlyList<StageId> plan,
@@ -84,7 +84,7 @@ public sealed class PipelinePreviewService(
         return runs;
     }
 
-    async Task<StageRun> RunStageAsync(
+    private async Task<StageRun> RunStageAsync(
         StageId stage,
         PipelineInput input,
         PipelineConfig config,
@@ -108,20 +108,13 @@ public sealed class PipelinePreviewService(
             var upstream = dependencies.ToDictionary(dependency => dependency, dependency => upstreamRuns[dependency].Output!);
 
             var watch = Stopwatch.StartNew();
-            var output = await handler.RunAsync(new StageContext(input, upstream), config, cancellationToken);
+            var run = await handler.RunAsync(new StageContext(input, upstream), config, cancellationToken);
             watch.Stop();
 
-            cache.Set(
-                key,
-                output,
-                new MemoryCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = CacheLifetime,
-                    Size = output.PointCount + 1,
-                }
+            return run.Match(
+                output => CacheRun(stage, key, output, (int)watch.ElapsedMilliseconds),
+                error => new StageRun(Failed(stage, error.Message), null, null)
             );
-
-            return new StageRun(ToResult(stage, output, cacheHit: false, durationMs: (int)watch.ElapsedMilliseconds), output, key);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -129,7 +122,22 @@ public sealed class PipelinePreviewService(
         }
     }
 
-    static IReadOnlyList<StageId> WithDependencies(IEnumerable<StageId> requested)
+    private StageRun CacheRun(StageId stage, string key, StageOutput output, int durationMs)
+    {
+        cache.Set(
+            key,
+            output,
+            new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = CacheLifetime,
+                Size = output.PointCount + 1,
+            }
+        );
+
+        return new StageRun(ToResult(stage, output, cacheHit: false, durationMs), output, key);
+    }
+
+    private static IReadOnlyList<StageId> WithDependencies(IEnumerable<StageId> requested)
     {
         var plan = new List<StageId>();
 
@@ -141,7 +149,7 @@ public sealed class PipelinePreviewService(
         return plan;
     }
 
-    static void AddWithDependencies(StageId stage, List<StageId> plan)
+    private static void AddWithDependencies(StageId stage, List<StageId> plan)
     {
         if (plan.Contains(stage))
         {
@@ -156,12 +164,12 @@ public sealed class PipelinePreviewService(
         plan.Add(stage);
     }
 
-    static IReadOnlyDictionary<string, StageResult> Select(
+    private static IReadOnlyDictionary<string, StageResult> Select(
         IReadOnlyDictionary<StageId, StageRun> runs,
         IEnumerable<StageId> requested
     ) => requested.ToDictionary(StageIds.Key, stage => runs[stage].Result);
 
-    static string CacheKey(
+    private static string CacheKey(
         string scope,
         StageId stage,
         object? selectedConfig,
@@ -181,17 +189,17 @@ public sealed class PipelinePreviewService(
         return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(material)));
     }
 
-    static StageResult ToResult(StageId stage, StageOutput output, bool cacheHit, int durationMs) =>
+    private static StageResult ToResult(StageId stage, StageOutput output, bool cacheHit, int durationMs) =>
         new(stage, true, null, cacheHit, durationMs, output.PointCount, PayloadBytes(output.Data), output.Data);
 
-    static StageResult Failed(StageId stage, string error) => new(stage, false, error, false, 0, 0, 0, null);
+    private static StageResult Failed(StageId stage, string error) => new(stage, false, error, false, 0, 0, 0, null);
 
-    static int PayloadBytes(object? data) => data is null ? 0 : JsonSerializer.SerializeToUtf8Bytes(data).Length;
+    private static int PayloadBytes(object? data) => data is null ? 0 : JsonSerializer.SerializeToUtf8Bytes(data).Length;
 
     // Result is what the client sees; Output and CacheKey feed downstream stages and are null when the stage failed.
-    sealed record StageRun(StageResult Result, StageOutput? Output, string? CacheKey);
+    private sealed record StageRun(StageResult Result, StageOutput? Output, string? CacheKey);
 
-    static void RemoveFilterTypeProperty(JsonTypeInfo typeInfo)
+    private static void RemoveFilterTypeProperty(JsonTypeInfo typeInfo)
     {
         var filterTypeProperties = typeInfo.Properties.Where(property => property.Name == "FilterType").ToList();
 

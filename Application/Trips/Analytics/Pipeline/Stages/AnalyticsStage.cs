@@ -13,7 +13,7 @@ public sealed class AnalyticsStage : IPipelineStage
     // Has no config of its own; it only depends on the cleanup output.
     public object? SelectConfig(PipelineConfig config) => null;
 
-    public Task<StageOutput> RunAsync(
+    public Task<Result<StageOutput>> RunAsync(
         StageContext context,
         PipelineConfig config,
         CancellationToken cancellationToken
@@ -26,6 +26,6 @@ public sealed class AnalyticsStage : IPipelineStage
         var route = RouteAnalyticFactory.Create(points, gains);
         var time = TimeAnalyticFactory.CreateAnalytics(new(route, points));
 
-        return Task.FromResult(new StageOutput(new StageData.Analytics(route, time), points.Count));
+        return Task.FromResult<Result<StageOutput>>(new StageOutput(new StageData.Analytics(route, time), points.Count));
     }
 }

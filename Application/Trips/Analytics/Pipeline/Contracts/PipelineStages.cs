@@ -32,7 +32,7 @@ public interface IPipelineStage
     // e.g. cleanup's default filters come from a database setting. Must change whenever that input changes.
     Task<string> CacheDiscriminatorAsync(CancellationToken cancellationToken) => Task.FromResult(string.Empty);
 
-    Task<StageOutput> RunAsync(
+    Task<Result<StageOutput>> RunAsync(
         StageContext context,
         PipelineConfig config,
         CancellationToken cancellationToken

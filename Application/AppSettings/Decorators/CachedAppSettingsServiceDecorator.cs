@@ -27,14 +27,24 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
             ct: ct
         );
     }
-    public Task<Result<TSetting>> GetSettingAsync<TSetting>(AppSettingType settingType, CancellationToken ct)
+    public Task<Result<TSetting>> GetSettingAsync<TSetting>(CancellationToken ct)
         where TSetting : IAppSetting
     {
         return cache.GetOrCreateAsync(
-            GetKey(settingType),
-            () => inner.GetSettingAsync<TSetting>(settingType, ct),
+            GetKey(TSetting.SettingFor),
+            () => inner.GetSettingAsync<TSetting>(ct),
             ct: ct
         );
+    }
+
+    public Task<TSetting> GetSettingOrDefaultAsync<TSetting>(CancellationToken ct)
+        where TSetting : class, IAppSetting<TSetting>
+    {
+        return GetSettingAsync<TSetting>(ct)
+            .MatchAsync(
+                setting => setting,
+                _ => TSetting.GetDefault()
+            );
     }
 
     public Task<Result<AppSetting>> SetSetting<TSetting>(
@@ -44,7 +54,7 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
         where TSetting : IAppSetting
     {
         return cache.GetOrCreateAsync(
-            GetKey(setting.SettingFor),
+            GetKey(TSetting.SettingFor),
             () => inner.SetSetting(setting, ct),
             ct: ct
         );

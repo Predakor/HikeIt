@@ -1,3 +1,5 @@
+using Domain.Trips.Analytics.Shared;
+using Domain.Trips.Analytics.Shared.Filters;
 ﻿using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.RouteVisualizations;
 using Domain.AppSettings.Settings;
@@ -25,7 +27,7 @@ internal class ProccesGpxDataCommand(AnalyticData data, GpxDataProcessingSetting
     public Result<AnalyticData> Execute()
     {
         var filters = _settings?.Filters ?? PipelineDefaults.CleanupFilters;
-        var points = RouteVisualizationService.GpxFilterFactory.ApplyPointFilters(_data.Points, filters);
+        var points = PointFilters.Apply(_data.Points, filters);
         var gains = points.ToGains();
         if (points == null || gains == null)
         {

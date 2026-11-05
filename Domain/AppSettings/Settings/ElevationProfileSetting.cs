@@ -1,14 +1,14 @@
-using Application.Commons.Abstractions;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
-using System.Text.Json.Serialization;
+using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Shared;
 
 namespace Domain.AppSettings.Settings;
 
 public sealed record ElevationProfileSetting(
     IReadOnlyList<IPointFilterConfig> Filters
-) : IAppSetting
+) : IAppSetting<ElevationProfileSetting>, IFilterSetting<IPointFilterConfig>
 {
-    [JsonIgnore] public string Name => nameof(ElevationProfileSetting);
-    [JsonIgnore] public AppSettingType SettingFor => AppSettingType.ElevationProfile;
+    public static AppSettingType SettingFor => AppSettingType.ElevationProfile;
+    public static ElevationProfileSetting GetDefault() => new(PipelineDefaults.ElevationProfileFilters);
 }

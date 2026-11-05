@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Domain.Trips.Analytics.Shared;
 
-// Which numeric fields of a track point a filter acts on. Time and pinned flags are never touched.
+/// <summary>Which numeric fields of a track point a filter acts on.</summary>
 [Flags]
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum PointFields
@@ -17,7 +17,6 @@ public enum PointFields
 
 public static class PointFieldsExtensions
 {
-    // Smoothing nothing is a config mistake, so each filter rejects it up front.
     public static void EnsureAny(this PointFields fields, string paramName)
     {
         bool selectsNothing = fields == PointFields.None;

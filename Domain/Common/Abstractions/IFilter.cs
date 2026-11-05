@@ -1,12 +1,21 @@
+using Domain.Peaks;
+using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
 using System.Text.Json.Serialization;
 
-namespace Application.Commons.Abstractions;
+namespace Domain.Common.Abstractions;
 
 public interface IFilter<TValue>
 {
     IList<TValue> Apply(IList<TValue> values);
 }
+
+public interface IPeakFilter
+{
+    ValueTask<IList<PeakCandidate>> ApplyAsync(IList<PeakCandidate> candidates);
+}
+
+public sealed record PeakFilterContext(IPeakSource Peaks);
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]
 [JsonDerivedType(typeof(EmaSmoothingFilter.Config), typeDiscriminator: nameof(EmaSmoothingFilter))]
@@ -17,6 +26,9 @@ public interface IFilter<TValue>
 [JsonDerivedType(typeof(SimplifyFilter.Config), typeDiscriminator: nameof(SimplifyFilter))]
 [JsonDerivedType(typeof(MergeNearbyByDistanceFilter.Config), typeDiscriminator: nameof(MergeNearbyByDistanceFilter))]
 [JsonDerivedType(typeof(MergeNearbyByElevationFilter.Config), typeDiscriminator: nameof(MergeNearbyByElevationFilter))]
+[JsonDerivedType(typeof(PeakLookupFilter.Config), typeDiscriminator: nameof(PeakLookupFilter))]
+[JsonDerivedType(typeof(MatchWithinDistanceFilter.Config), typeDiscriminator: nameof(MatchWithinDistanceFilter))]
+[JsonDerivedType(typeof(LocalMaximaFilter.Config), typeDiscriminator: nameof(LocalMaximaFilter))]
 public interface IFilterConfig;
 
 // Configs of filters that work on track points (cleanup, elevation profile, route).
@@ -33,7 +45,13 @@ public interface IPointFilterConfig : IFilterConfig;
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]
 [JsonDerivedType(typeof(MergeNearbyByDistanceFilter.Config), typeDiscriminator: nameof(MergeNearbyByDistanceFilter))]
 [JsonDerivedType(typeof(MergeNearbyByElevationFilter.Config), typeDiscriminator: nameof(MergeNearbyByElevationFilter))]
-public interface IPeakFilterConfig : IFilterConfig;
+[JsonDerivedType(typeof(PeakLookupFilter.Config), typeDiscriminator: nameof(PeakLookupFilter))]
+[JsonDerivedType(typeof(MatchWithinDistanceFilter.Config), typeDiscriminator: nameof(MatchWithinDistanceFilter))]
+[JsonDerivedType(typeof(LocalMaximaFilter.Config), typeDiscriminator: nameof(LocalMaximaFilter))]
+public interface IPeakFilterConfig : IFilterConfig
+{
+    IPeakFilter CreateFilter(PeakFilterContext context);
+}
 
 public interface ITransform<TIn, TOut>
 {

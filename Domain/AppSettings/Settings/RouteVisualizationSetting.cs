@@ -1,14 +1,14 @@
-﻿using Application.Commons.Abstractions;
-using Domain.AppSettings.Interfaces;
+﻿using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
-using System.Text.Json.Serialization;
+using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Shared;
 
 namespace Domain.AppSettings.Settings;
 
 public sealed record RouteVisualizationSetting(
     IReadOnlyList<IFilterConfig> FilterConfigs
-) : IAppSetting
+) : IAppSetting<RouteVisualizationSetting>
 {
-    [JsonIgnore] public string Name => nameof(RouteVisualizationSetting);
-    [JsonIgnore] public AppSettingType SettingFor => AppSettingType.RouteVisualization;
+    public static AppSettingType SettingFor => AppSettingType.RouteVisualization;
+    public static RouteVisualizationSetting GetDefault() => new(PipelineDefaults.RouteFilters);
 }
