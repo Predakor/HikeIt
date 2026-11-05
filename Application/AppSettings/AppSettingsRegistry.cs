@@ -13,13 +13,11 @@ public static class AppSettingsRegistry
     {
         { AppSettingType.GpxDataProcessing, typeof(GpxDataProcessingSetting) },
         { AppSettingType.PeakMatching, typeof(PeakMatchingSetting) },
+        { AppSettingType.ElevationProfile, typeof(ElevationProfileSetting) },
+        { AppSettingType.Route, typeof(RouteSetting) },
     };
 
-    private static readonly JsonSerializerOptions options = new(JsonSerializerOptions.Default)
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-
-    };
+    private static readonly JsonSerializerOptions options = new(JsonSerializerOptions.Default);
 
     private static readonly JsonSchemaExporterOptions exportOptions = new()
     {

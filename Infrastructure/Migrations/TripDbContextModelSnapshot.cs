@@ -41,7 +41,7 @@ namespace Infrastructure.Migrations
 
                     b.Property<JsonDocument>("JsonValue")
                         .IsRequired()
-                        .HasColumnType("jsonb");
+                        .HasColumnType("json");
 
                     b.Property<string>("Name")
                         .IsRequired()

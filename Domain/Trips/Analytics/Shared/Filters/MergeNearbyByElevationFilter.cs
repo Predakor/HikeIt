@@ -9,7 +9,7 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 public sealed class MergeNearbyByElevationFilter(MergeNearbyByElevationFilter.Config config)
     : IFilter<GpxPointWithDistance>
 {
-    public sealed record Config(double ElevationDeltaM) : FilterConfigBase<Config>(default!), IPeakFilterConfig;
+    public sealed record Config(double ElevationDeltaM) : IPeakFilterConfig;
 
     public IList<GpxPointWithDistance> Apply(IList<GpxPointWithDistance> values)
     {

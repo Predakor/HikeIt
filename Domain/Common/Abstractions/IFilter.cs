@@ -8,7 +8,7 @@ public interface IFilter<TValue>
     IList<TValue> Apply(IList<TValue> values);
 }
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = nameof(FilterType))]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]
 [JsonDerivedType(typeof(EmaSmoothingFilter.Config), typeDiscriminator: nameof(EmaSmoothingFilter))]
 [JsonDerivedType(typeof(MaxSpikeFilter.Config), typeDiscriminator: nameof(MaxSpikeFilter))]
 [JsonDerivedType(typeof(MedianSmoothingFilter.Config), typeDiscriminator: nameof(MedianSmoothingFilter))]
@@ -17,19 +17,10 @@ public interface IFilter<TValue>
 [JsonDerivedType(typeof(SimplifyFilter.Config), typeDiscriminator: nameof(SimplifyFilter))]
 [JsonDerivedType(typeof(MergeNearbyByDistanceFilter.Config), typeDiscriminator: nameof(MergeNearbyByDistanceFilter))]
 [JsonDerivedType(typeof(MergeNearbyByElevationFilter.Config), typeDiscriminator: nameof(MergeNearbyByElevationFilter))]
-public interface IFilterConfig
-{
-    Type FilterType { get; }
-    object GetValue();
-}
-
-public interface IFilterConfig<out T> : IFilterConfig
-{
-    T Value { get; }
-}
+public interface IFilterConfig;
 
 // Configs of filters that work on track points (cleanup, elevation profile, route).
-[JsonPolymorphic(TypeDiscriminatorPropertyName = nameof(FilterType))]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]
 [JsonDerivedType(typeof(EmaSmoothingFilter.Config), typeDiscriminator: nameof(EmaSmoothingFilter))]
 [JsonDerivedType(typeof(MaxSpikeFilter.Config), typeDiscriminator: nameof(MaxSpikeFilter))]
 [JsonDerivedType(typeof(MedianSmoothingFilter.Config), typeDiscriminator: nameof(MedianSmoothingFilter))]
@@ -39,7 +30,7 @@ public interface IFilterConfig<out T> : IFilterConfig
 public interface IPointFilterConfig : IFilterConfig;
 
 // Configs of filters that work on candidate peaks (peak matching only).
-[JsonPolymorphic(TypeDiscriminatorPropertyName = nameof(FilterType))]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]
 [JsonDerivedType(typeof(MergeNearbyByDistanceFilter.Config), typeDiscriminator: nameof(MergeNearbyByDistanceFilter))]
 [JsonDerivedType(typeof(MergeNearbyByElevationFilter.Config), typeDiscriminator: nameof(MergeNearbyByElevationFilter))]
 public interface IPeakFilterConfig : IFilterConfig;

@@ -1,6 +1,8 @@
+using Application.Commons.Abstractions;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
+using Domain.Trips.Analytics.Shared.Filters;
 
 namespace Infrastructure.Commons.Databases.Seeding.AppSettings;
 
@@ -17,6 +19,8 @@ internal class SeedAppSettings : ISeeder
     {
         await SeedIfMissing(AppSettingType.GpxDataProcessing, AddDefaultProcessingSetting);
         await SeedIfMissing(AppSettingType.PeakMatching, AddDefaultPeakMatchingSetting);
+        await SeedIfMissing(AppSettingType.ElevationProfile, AddDefaultElevationProfileSetting);
+        await SeedIfMissing(AppSettingType.Route, AddDefaultRouteSetting);
     }
 
     private Task SeedIfMissing(AppSettingType type, Func<Task<Result<AppSetting>>> addDefault)
@@ -27,27 +31,46 @@ internal class SeedAppSettings : ISeeder
            .TapAsync(_ => repository.SaveChangesAsync(CancellationToken.None));
     }
 
+    // Same values as the former hard-coded cleanup constants, in production order.
     private Task<Result<AppSetting>> AddDefaultProcessingSetting()
     {
-        return repository.AddAsync(
-            AppSetting.Create(
-                new GpxDataProcessingSetting(
-                    MaxElevationSpike: 8f,
-                    EmaSmoothingAlpha: 0.88f,
-                    MedianFilterWindowSize: 6,
-                    RoundingDecimalsCount: 1
-                )
-            )
-        );
+        IReadOnlyList<IPointFilterConfig> filters =
+        [
+            new MaxSpikeFilter.Config(8),
+            new MedianSmoothingFilter.Config(6),
+            new EmaSmoothingFilter.Config(0.88),
+            new RoundingPrecisionFilter.Config(1),
+        ];
+
+        return repository.AddAsync(AppSetting.Create(new GpxDataProcessingSetting(filters)));
     }
 
     // Same values as the former hard-coded peak matching constants.
     private Task<Result<AppSetting>> AddDefaultPeakMatchingSetting()
     {
-        return repository.AddAsync(
-            AppSetting.Create(
-                new PeakMatchingSetting(ProximityRadiusM: 100f, MergeDistanceM: 50f, MergeElevationM: 50f)
-            )
-        );
+        IReadOnlyList<IPeakFilterConfig> filters =
+        [
+            new MergeNearbyByDistanceFilter.Config(50),
+            new MergeNearbyByElevationFilter.Config(50),
+        ];
+
+        return repository.AddAsync(AppSetting.Create(new PeakMatchingSetting(ProximityRadiusM: 100f, filters)));
     }
+
+    // Same values as the bench's former "suggested" pin + simplify customize starting point.
+    private Task<Result<AppSetting>> AddDefaultElevationProfileSetting()
+    {
+        return repository.AddAsync(AppSetting.Create(new ElevationProfileSetting(PinAndSimplify())));
+    }
+
+    private Task<Result<AppSetting>> AddDefaultRouteSetting()
+    {
+        return repository.AddAsync(AppSetting.Create(new RouteSetting(PinAndSimplify())));
+    }
+
+    private static IReadOnlyList<IPointFilterConfig> PinAndSimplify() =>
+    [
+        new PinLocalMaximaFilter.Config(true),
+        new SimplifyFilter.Config(3),
+    ];
 }

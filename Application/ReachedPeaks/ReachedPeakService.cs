@@ -14,29 +14,33 @@ using Domain.Users.Root;
 
 namespace Application.ReachedPeaks;
 
-public class ReachedPeakService : IReachedPeakService {
-    readonly IPeaksQueryService _peaksQueries;
-    readonly IReachedPeaksQureryService _reachedPeaksQueries;
-    readonly IAppSettingsService _appSettings;
+public class ReachedPeakService : IReachedPeakService
+{
+    private readonly IPeaksQueryService _peaksQueries;
+    private readonly IReachedPeaksQureryService _reachedPeaksQueries;
+    private readonly IAppSettingsService _appSettings;
 
     public ReachedPeakService(
         IPeaksQueryService peaksQueryService,
         IReachedPeaksQureryService reachedPeaksQueries,
         IAppSettingsService appSettings
-    ) {
+    )
+    {
         _peaksQueries = peaksQueryService;
         _reachedPeaksQueries = reachedPeaksQueries;
         _appSettings = appSettings;
     }
 
-    public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user) {
+    public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user)
+    {
         return ReachedPeak.Create(peak, trip, user);
     }
 
-    public async Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip) {
+    public async Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip)
+    {
         // Read once per trip; a missing or unreadable row falls back to the code constants.
         var setting = await PipelineSettings.PeakMatchingAsync(_appSettings, CancellationToken.None);
-        var filters = setting is null ? PipelineDefaults.PeakFilters : PipelineDefaults.PeakFiltersFrom(setting);
+        var filters = setting?.Filters ?? PipelineDefaults.PeakFilters;
         var radius = setting?.ProximityRadiusM ?? PipelineDefaults.PeakProximityRadiusM;
 
         return await ExtractPotentialPeaks(data, filters)
@@ -45,39 +49,45 @@ public class ReachedPeakService : IReachedPeakService {
             .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, trip));
     }
 
-    static Result<List<ReachedPeakDataBuilder>> ExtractPotentialPeaks(
+    private static Result<List<ReachedPeakDataBuilder>> ExtractPotentialPeaks(
         AnalyticData data,
         IReadOnlyList<IPeakFilterConfig> filters
-    ) {
+    )
+    {
         return PeakFilterFactory
             .Apply(data.ToLocalMaximaWithDistance(), filters)
             .Select(ReachedPeakDataFactory.FromPointWithDistance)
             .ToList();
     }
 
-    Task<Result<List<ReachedPeakDataBuilder>>> FindMatchingPeaks(
+    private Task<Result<List<ReachedPeakDataBuilder>>> FindMatchingPeaks(
         List<ReachedPeakDataBuilder> peaksCandidates,
         float radius
-    ) {
+    )
+    {
         return _peaksQueries.GetPeaksWithinRadius(peaksCandidates, radius);
     }
 
-    async Task<Result<List<ReachedPeakDataBuilder>>> MarkNewPeaks(
+    private async Task<Result<List<ReachedPeakDataBuilder>>> MarkNewPeaks(
         Guid userId,
         List<ReachedPeakDataBuilder> peaks
-    ) {
+    )
+    {
         var newPeaks = await _reachedPeaksQueries.ReachedByUserBefore(
             userId,
             peaks.Select(p => p.PeakId)
         );
 
-        if (newPeaks.NullOrEmpty()) {
+        if (newPeaks.NullOrEmpty())
+        {
             return peaks;
         }
 
-        foreach (var newPeak in newPeaks) {
+        foreach (var newPeak in newPeaks)
+        {
             var firstMathchingPeak = peaks.FirstOrDefault(p => p.PeakId == newPeak.Id);
-            if (firstMathchingPeak is not null) {
+            if (firstMathchingPeak is not null)
+            {
                 firstMathchingPeak.SetFirstTimeReached(true);
             }
         }
@@ -85,11 +95,13 @@ public class ReachedPeakService : IReachedPeakService {
         return peaks;
     }
 
-    static Result<List<ReachedPeak>> ToReachedPeaks(
+    private static Result<List<ReachedPeak>> ToReachedPeaks(
         IEnumerable<ReachedPeakDataBuilder> peaks,
         Trip trip
-    ) {
-        if (peaks.NullOrEmpty()) {
+    )
+    {
+        if (peaks.NullOrEmpty())
+        {
             return Errors.EmptyCollection("Peaks");
         }
 

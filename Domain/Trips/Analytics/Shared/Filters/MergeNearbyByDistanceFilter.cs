@@ -1,5 +1,4 @@
 using Application.Commons.Abstractions;
-using Domain.AppSettings.Settings;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.ElevationProfiles.Commands;
 
@@ -9,7 +8,7 @@ namespace Domain.Trips.Analytics.Shared.Filters;
 public sealed class MergeNearbyByDistanceFilter(MergeNearbyByDistanceFilter.Config config)
     : IFilter<GpxPointWithDistance>
 {
-    public sealed record Config(double DistanceM) : FilterConfigBase<Config>(default!), IPeakFilterConfig;
+    public sealed record Config(double DistanceM) : IPeakFilterConfig;
 
     public IList<GpxPointWithDistance> Apply(IList<GpxPointWithDistance> values)
     {

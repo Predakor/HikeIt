@@ -3,15 +3,20 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Api.DI;
 
-internal static partial class DIextentions {
-    public static IServiceCollection InjectSwagger(this IServiceCollection services) {
+internal static partial class DIextentions
+{
+    public static IServiceCollection InjectSwagger(this IServiceCollection services)
+    {
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
 
-        services.AddSwaggerGen(options => {
+        services.AddSwaggerGen(options =>
+        {
+            options.CustomSchemaIds(type => type.FullName);
             options.SwaggerDoc(
                 "v1",
-                new OpenApiInfo {
+                new OpenApiInfo
+                {
                     Title = "HikeIT Api",
                     Version = "v1",
                     Description = "HikeIt Api documentation",
@@ -19,7 +24,8 @@ internal static partial class DIextentions {
             );
             options.AddSecurityDefinition(
                 "ApiKeyAuth",
-                new OpenApiSecurityScheme {
+                new OpenApiSecurityScheme
+                {
                     In = ParameterLocation.Header,
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,

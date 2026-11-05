@@ -10,7 +10,6 @@ using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Domain.Trips.Root;
-using Domain.Trips.Root.Builders.Config;
 
 namespace Application.Trips.Root.Services;
 
@@ -111,7 +110,7 @@ public class TripService : ITripService
     }
 
     // Null when the setting is missing or fails to load; the cleanup falls back to the code constants.
-    private async Task<IGpxDataProcessingSettings?> GetCleanupSettingsAsync()
+    private async Task<GpxDataProcessingSetting?> GetCleanupSettingsAsync()
     {
         var result = await _appSettingsService.GetSettingAsync<GpxDataProcessingSetting>(
             AppSettingType.GpxDataProcessing,

@@ -9,13 +9,15 @@ public enum AppSettingType
     GpxDataProcessing = 1,
     RouteVisualization = 2,
     PeakMatching = 3,
+    ElevationProfile = 4,
+    Route = 5,
 }
 
 public class AppSetting : AggregateRoot<int, AppSetting>
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
     };
 
     public string Name { get; protected set; } = string.Empty;

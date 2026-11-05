@@ -1,5 +1,6 @@
 ﻿using Api.Commons.Extentions;
 using Application.Locations.Peaks;
+using Application.Trips.Root.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,19 @@ namespace Api.Controllers.Admin;
 public class AdminController : ControllerBase
 {
     private readonly IPeaksService _peakService;
+    private readonly ITripQueryService _tripQueryService;
 
-    public AdminController(IPeaksService peakService)
+    public AdminController(IPeaksService peakService, ITripQueryService tripQueryService)
     {
         _peakService = peakService;
+        _tripQueryService = tripQueryService;
+    }
+
+    // Trip picker for admin tools (e.g. the pipeline bench): search by name across every user's trips.
+    [HttpGet("trips")]
+    public async Task<IActionResult> SearchTrips([FromQuery] string search = "")
+    {
+        return await _tripQueryService.SearchForAdminAsync(search).ToActionResultAsync();
     }
 
     [HttpPost("peaks")]

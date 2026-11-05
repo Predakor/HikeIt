@@ -17,8 +17,11 @@ internal class AppSettingsConfiguration : IEntityTypeConfiguration<AppSetting>
             .IsRequired()
             .HasMaxLength(255);
 
+        // json, not jsonb: jsonb reorders object keys (by length) on storage, which breaks a cold
+        // System.Text.Json polymorphic read of the stored filter configs - their discriminator ends up
+        // out of position. json is text-based and preserves the exact property order it was written with.
         builder.Property(a => a.JsonValue)
-            .HasColumnType("jsonb")
+            .HasColumnType("json")
             .IsRequired();
 
         builder.HasIndex(a => a.SettingType).IsUnique();

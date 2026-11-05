@@ -16,6 +16,9 @@ public abstract record TripDto(TripBase Base)
 
     public record WithBasicAnalytics(Guid Id, string Name, DateOnly TripDay, TripAnalyticsDto.Basic Analytics);
 
+    // For the admin trip picker: just enough to identify a trip, regardless of whose it is.
+    public sealed record AdminSearchResult(Guid Id, string Name, string Owner);
+
     public record Partial(
         Guid Id,
         TripAnalytic? TrackAnalytic,

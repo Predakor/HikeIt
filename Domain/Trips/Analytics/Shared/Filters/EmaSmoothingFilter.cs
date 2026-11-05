@@ -1,29 +1,19 @@
-using System.Text.Json.Serialization;
 using Application.Commons.Abstractions;
-using Domain.AppSettings.Settings;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
-
 namespace Domain.Trips.Analytics.Shared.Filters;
-
-[JsonConverter(typeof(JsonStringEnumConverter))]
-public enum EmaTargets
-{
-    Elevation,
-    Coordinates,
-    Both,
-}
 
 // Exponential moving average. Targets says what it smooths; Time, Pinned and untargeted values are left alone.
 public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
 {
     // Targets omitted from JSON means Elevation, which is what production smooths.
-    public sealed record Config(double Alpha, EmaTargets Targets = EmaTargets.Elevation) : FilterConfigBase<Config>(default!), IPointFilterConfig;
+    public sealed record Config(double Alpha, PointFields Targets = PointFields.Elevation) : IPointFilterConfig;
 
     // Float on purpose: the production builder always smoothed with a float alpha.
     private readonly float _alpha;
     private readonly double _coordinateAlpha;
     private readonly bool _smoothsElevation;
-    private readonly bool _smoothsCoordinates;
+    private readonly bool _smoothsLatitude;
+    private readonly bool _smoothsLongitude;
 
     public EmaSmoothingFilter(Config config)
     {
@@ -33,10 +23,13 @@ public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
             throw new ArgumentOutOfRangeException(nameof(config), config.Alpha, "Alpha must be in (0, 1].");
         }
 
+        config.Targets.EnsureAny(nameof(config));
+
         _alpha = (float)config.Alpha;
         _coordinateAlpha = config.Alpha;
-        _smoothsElevation = config.Targets is EmaTargets.Elevation or EmaTargets.Both;
-        _smoothsCoordinates = config.Targets is EmaTargets.Coordinates or EmaTargets.Both;
+        _smoothsElevation = config.Targets.HasFlag(PointFields.Elevation);
+        _smoothsLatitude = config.Targets.HasFlag(PointFields.Latitude);
+        _smoothsLongitude = config.Targets.HasFlag(PointFields.Longitude);
     }
 
     public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
@@ -60,9 +53,13 @@ public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
                 current.Ele = prevEma;
             }
 
-            if (_smoothsCoordinates)
+            if (_smoothsLatitude)
             {
                 current.Lat = (_coordinateAlpha * current.Lat) + ((1 - _coordinateAlpha) * previous.Lat);
+            }
+
+            if (_smoothsLongitude)
+            {
                 current.Lon = (_coordinateAlpha * current.Lon) + ((1 - _coordinateAlpha) * previous.Lon);
             }
         }
