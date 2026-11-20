@@ -1,10 +1,10 @@
 import IsAdminUser from "@/Utils/IsAdminUser";
 import useUser from "@/hooks/Auth/useUser";
 import { Center, Flex, Spacer, Stack } from "@chakra-ui/react";
+import FetchWrapper from "@components/Utils/Fetching/FetchWrapper";
+import { GoBackButton } from "@components/ui/Buttons";
+import PageTitle from "@components/ui/Titles/PageTitle";
 import type { ReactNode } from "react";
-import PageTitle from "../ui/Titles/PageTitle";
-import FetchWrapper from "../Utils/Fetching/FetchWrapper";
-import { GoBackButton } from "../ui/Buttons";
 
 interface Props {
   children: ReactNode | ReactNode[];
@@ -12,17 +12,17 @@ interface Props {
   header?: ReactNode;
 }
 
-export default function AdminPage(props: Props) {
+export default function AdminLayout(props: Props) {
   const getUser = useUser();
 
   return (
     <FetchWrapper request={getUser}>
-      {(user) => (IsAdminUser(user) ? <AdminLayout {...props} /> : <NoAcces />)}
+      {(user) => (IsAdminUser(user) ? <AdminFrame {...props} /> : <NoAcces />)}
     </FetchWrapper>
   );
 }
 
-function AdminLayout({ title, children, header }: Props) {
+function AdminFrame({ title, children, header }: Props) {
   return (
     <Stack gapY={8}>
       <Stack alignItems={"center"} direction={{ base: "column", lg: "row" }}>
