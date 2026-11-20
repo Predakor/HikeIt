@@ -1,4 +1,5 @@
 using Application.Trips.Analytics.Pipeline.Contracts;
+using Core.Serialization;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -194,7 +195,7 @@ public sealed class PipelinePreviewService(
 
     private static StageResult Failed(StageId stage, string error) => new(stage, false, error, false, 0, 0, 0, null);
 
-    private static int PayloadBytes(object? data) => data is null ? 0 : JsonSerializer.SerializeToUtf8Bytes(data).Length;
+    private static int PayloadBytes(object? data) => data is null ? 0 : Encoding.UTF8.GetByteCount(data.ToJson());
 
     // Result is what the client sees; Output and CacheKey feed downstream stages and are null when the stage failed.
     private sealed record StageRun(StageResult Result, StageOutput? Output, string? CacheKey);

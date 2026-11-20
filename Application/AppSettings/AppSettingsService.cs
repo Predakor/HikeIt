@@ -1,4 +1,5 @@
 ﻿using Application.AppSettings.DTOs;
+using Core.Serialization;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Microsoft.Extensions.Logging;
@@ -11,11 +12,6 @@ internal sealed class AppSettingsService : IAppSettingsService
     private readonly IAppSettingsRepository repository;
     private readonly TimeProvider dateTimeProvider;
     private readonly ILogger<AppSettingsService> logger;
-
-    private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
-    {
-        PropertyNameCaseInsensitive = true
-    };
 
     public AppSettingsService(IAppSettingsRepository repository, TimeProvider dateTimeProvider, ILogger<AppSettingsService> logger)
     {
@@ -76,7 +72,7 @@ internal sealed class AppSettingsService : IAppSettingsService
 
                 try
                 {
-                    var deserialized = JsonSerializer.Deserialize(source, type, jsonSerializerOptions);
+                    var deserialized = source.FromJson(type);
                     return s.SetSetting(deserialized, type);
 
                 }

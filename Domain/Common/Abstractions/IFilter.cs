@@ -18,7 +18,7 @@ public interface IPeakFilter
 
 public sealed record PeakFilterContext(IPeakSource Peaks);
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "filterType")]
 [JsonDerivedType(typeof(EmaSmoothingFilter.Config), typeDiscriminator: nameof(EmaSmoothingFilter))]
 [JsonDerivedType(typeof(MaxSpikeFilter.Config), typeDiscriminator: nameof(MaxSpikeFilter))]
 [JsonDerivedType(typeof(MedianSmoothingFilter.Config), typeDiscriminator: nameof(MedianSmoothingFilter))]
@@ -33,7 +33,7 @@ public sealed record PeakFilterContext(IPeakSource Peaks);
 public interface IFilterConfig;
 
 // Configs of filters that work on track points (cleanup, elevation profile, route).
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "filterType")]
 [JsonDerivedType(typeof(EmaSmoothingFilter.Config), typeDiscriminator: nameof(EmaSmoothingFilter))]
 [JsonDerivedType(typeof(MaxSpikeFilter.Config), typeDiscriminator: nameof(MaxSpikeFilter))]
 [JsonDerivedType(typeof(MedianSmoothingFilter.Config), typeDiscriminator: nameof(MedianSmoothingFilter))]
@@ -46,7 +46,7 @@ public interface IPointFilterConfig : IFilterConfig
 }
 
 // Configs of filters that work on candidate peaks (peak matching only).
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "FilterType")]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "filterType")]
 [JsonDerivedType(typeof(MergeNearbyByDistanceFilter.Config), typeDiscriminator: nameof(MergeNearbyByDistanceFilter))]
 [JsonDerivedType(typeof(MergeNearbyByElevationFilter.Config), typeDiscriminator: nameof(MergeNearbyByElevationFilter))]
 [JsonDerivedType(typeof(PeakLookupFilter.Config), typeDiscriminator: nameof(PeakLookupFilter))]

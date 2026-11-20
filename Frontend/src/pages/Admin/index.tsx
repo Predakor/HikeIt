@@ -6,4 +6,5 @@ export default {
   ManagePeaks: lazyWithPreload(() => import("./ManagePeaksAdminPage")),
   AdminCenter: lazyWithPreload(() => import("./AdminCenterPage")),
   AppSettings: lazyWithPreload(() => import("./AppSettings/AppSettigsPage")),
+  PipelineBench: lazyWithPreload(() => import("./PipelineBench/PipelineBenchAdminPage")),
 };

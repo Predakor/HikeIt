@@ -1,4 +1,5 @@
-﻿using Domain.AppSettings.Interfaces;
+﻿using Core.Serialization;
+using Domain.AppSettings.Interfaces;
 using Domain.Common.AggregateRoot;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -16,11 +17,6 @@ public enum AppSettingType
 
 public class AppSetting : AggregateRoot<int, AppSetting>
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        PropertyNameCaseInsensitive = true,
-    };
-
     public string Name { get; protected set; } = string.Empty;
     public JsonDocument? JsonValue { get; protected set; }
     public AppSettingType SettingType { get; protected set; }
@@ -39,7 +35,7 @@ public class AppSetting : AggregateRoot<int, AppSetting>
             return Errors.BadRequest(string.Join(" ", validationErrors));
         }
 
-        JsonValue = JsonSerializer.SerializeToDocument(setting, SerializerOptions);
+        JsonValue = setting.ToJsonDocument();
         AddDomainEvent(new AppSettingEvents.JsonValueUpdated(TSetting.SettingFor));
         return this;
     }
@@ -62,7 +58,7 @@ public class AppSetting : AggregateRoot<int, AppSetting>
             return Errors.BadRequest(string.Join(" ", validationErrors));
         }
 
-        JsonValue = JsonSerializer.SerializeToDocument(setting, type, SerializerOptions);
+        JsonValue = setting.ToJsonDocument(type);
         AddDomainEvent(new AppSettingEvents.JsonValueUpdated(SettingType));
         return this;
     }
@@ -70,7 +66,7 @@ public class AppSetting : AggregateRoot<int, AppSetting>
     public Result<TSetting> GetSetting<TSetting>()
         where TSetting : IAppSetting
     {
-        var parsedSetting = JsonSerializer.Deserialize<TSetting>(JsonValue.RootElement.GetRawText(), SerializerOptions);
+        var parsedSetting = JsonValue.RootElement.GetRawText().FromJson<TSetting>();
 
         return parsedSetting is null
             ? Errors.ParsingError<TSetting>(JsonValue.RootElement.GetRawText())
@@ -84,7 +80,7 @@ public class AppSetting : AggregateRoot<int, AppSetting>
         {
             Id = 0,
             Name = typeof(TSetting).Name,
-            JsonValue = JsonSerializer.SerializeToDocument(setting, SerializerOptions),
+            JsonValue = setting.ToJsonDocument(),
             SettingType = TSetting.SettingFor,
         };
     }

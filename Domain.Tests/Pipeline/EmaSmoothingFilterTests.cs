@@ -98,7 +98,7 @@ public class EmaSmoothingFilterTests
     public void Json_WithoutTargets_DeserialisesAsElevation()
     {
         var config = JsonSerializer.Deserialize<IPointFilterConfig>(
-            """{"FilterType":"EmaSmoothingFilter","Alpha":0.5}""",
+            """{"filterType":"EmaSmoothingFilter","Alpha":0.5}""",
             Json
         );
 
@@ -110,7 +110,7 @@ public class EmaSmoothingFilterTests
     public void Json_WithCoordinatesTargets_DeserialisesAsCoordinates()
     {
         var config = JsonSerializer.Deserialize<IPointFilterConfig>(
-            """{"FilterType":"EmaSmoothingFilter","Alpha":0.5,"Targets":"Coordinates"}""",
+            """{"filterType":"EmaSmoothingFilter","Alpha":0.5,"Targets":"Coordinates"}""",
             Json
         );
 

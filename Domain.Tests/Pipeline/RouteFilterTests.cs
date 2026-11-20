@@ -82,14 +82,14 @@ public class RouteFilterTests
         var points = Track(100, 110, 130, 120, 110, 100);
         points[2].Pinned = true;
 
-        CreateFilter("""{"FilterType":"MaxSpikeFilter","MaxSpike":5}""").Apply(points);
+        CreateFilter("""{"filterType":"MaxSpikeFilter","MaxSpike":5}""").Apply(points);
 
         Assert.True(points[2].Pinned);
     }
 
     [Theory]
-    [InlineData("""{"FilterType":"SimplifyFilter","ToleranceM":3}""", typeof(SimplifyFilter.Config))]
-    [InlineData("""{"FilterType":"PinLocalMaximaFilter","Enabled":true}""", typeof(PinLocalMaximaFilter.Config))]
+    [InlineData("""{"filterType":"SimplifyFilter","ToleranceM":3}""", typeof(SimplifyFilter.Config))]
+    [InlineData("""{"filterType":"PinLocalMaximaFilter","Enabled":true}""", typeof(PinLocalMaximaFilter.Config))]
     public void FilterConfig_DeserialisesByDiscriminator(string json, Type expected)
     {
         var config = CreateConfig(json);
@@ -100,7 +100,7 @@ public class RouteFilterTests
     [Fact]
     public void FilterConfig_SimplifyValue_RoundTrips()
     {
-        var config = (SimplifyFilter.Config)CreateConfig("""{"FilterType":"SimplifyFilter","ToleranceM":3}""");
+        var config = (SimplifyFilter.Config)CreateConfig("""{"filterType":"SimplifyFilter","ToleranceM":3}""");
 
         Assert.Equal(3, config.ToleranceM);
     }

@@ -1,8 +1,7 @@
-﻿using Domain.AppSettings.Root;
+﻿using Core.Serialization;
+using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Schema;
 
 namespace Application.AppSettings;
 
@@ -17,13 +16,6 @@ public static class AppSettingsRegistry
         { AppSettingType.Route, typeof(RouteSetting) },
     };
 
-    private static readonly JsonSerializerOptions options = new(JsonSerializerOptions.Default);
-
-    private static readonly JsonSchemaExporterOptions exportOptions = new()
-    {
-        TreatNullObliviousAsNonNullable = true,
-    };
-
     public static JsonNode GetSchema(AppSettingType type)
     {
         if (!map.TryGetValue(type, out var settingType))
@@ -31,8 +23,7 @@ public static class AppSettingsRegistry
             throw new InvalidOperationException($"Setting type {type} not registered.");
         }
 
-        return options.GetJsonSchemaAsNode(settingType, exportOptions)
-            ?? throw new InvalidCastException($"Failed to generate schema for {type}");
+        return settingType.ToJsonSchema();
     }
 
     public static Type GetType(AppSettingType type)
