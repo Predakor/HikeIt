@@ -16,6 +16,11 @@ function DangerButton(props: Props) {
     setShowWarning(true);
   };
 
+  const handleConfirmed = () => {
+    setShowWarning(false);
+    onConfirm();
+  };
+
   return (
     <>
       <Button
@@ -31,7 +36,7 @@ function DangerButton(props: Props) {
       <AlertDialog
         open={showWarning}
         onOpenChange={({ open }) => setShowWarning(open)}
-        onConfirm={onConfirm}
+        onConfirm={handleConfirmed}
         config={alertConfig}
       />
     </>

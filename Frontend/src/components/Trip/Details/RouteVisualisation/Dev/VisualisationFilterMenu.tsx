@@ -68,8 +68,7 @@ export function VisualisationFilterMenu({ onFilterSubmit }: Props) {
 
     const parsedFilters = proValueList.map(([key, value]) => ({
       FilterType: ToTitleCase(key),
-      name: key,
-      value: valueToConfigMap[key as FilterTypes](value),
+      ...valueToConfigMap[key as FilterTypes](value),
     }));
 
     previewMutation.mutateAsync(parsedFilters as any);

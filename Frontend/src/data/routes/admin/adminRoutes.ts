@@ -35,5 +35,11 @@ export const adminRoutes: RouteGroup = {
       label: "Manage App settings",
       Page: AdminPages.AppSettings,
     },
+    {
+      type: "item",
+      path: "pipeline",
+      label: "Pipeline config",
+      Page: AdminPages.PipelineBench,
+    },
   ],
 };
