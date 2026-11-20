@@ -2,6 +2,7 @@ using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
 using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
 
 namespace Infrastructure.Commons.Databases.Seeding.AppSettings;
@@ -23,7 +24,7 @@ internal class SeedAppSettings : ISeeder
         await SeedIfMissing(AppSettingType.Route, AddDefaultRouteSetting);
     }
 
-    private Task SeedIfMissing(AppSettingType type, Func<Task<Result<AppSetting>>> addDefault)
+    private Task<Result<AppSetting>> SeedIfMissing(AppSettingType type, Func<Task<Result<AppSetting>>> addDefault)
     {
         return repository
            .GetBySettingTypeAsync(type, CancellationToken.None)
@@ -60,20 +61,13 @@ internal class SeedAppSettings : ISeeder
         return repository.AddAsync(AppSetting.Create(new PeakMatchingSetting(filters)));
     }
 
-    // Same values as the bench's former "suggested" pin + simplify customize starting point.
     private Task<Result<AppSetting>> AddDefaultElevationProfileSetting()
     {
-        return repository.AddAsync(AppSetting.Create(new ElevationProfileSetting(PinAndSimplify())));
+        return repository.AddAsync(AppSetting.Create(new ElevationProfileSetting(PipelineDefaults.ElevationProfileFilters)));
     }
 
     private Task<Result<AppSetting>> AddDefaultRouteSetting()
     {
-        return repository.AddAsync(AppSetting.Create(new RouteSetting(PinAndSimplify())));
+        return repository.AddAsync(AppSetting.Create(new RouteSetting(PipelineDefaults.RouteFilters)));
     }
-
-    private static IReadOnlyList<IPointFilterConfig> PinAndSimplify() =>
-    [
-        new PinLocalMaximaFilter.Config(true),
-        new SimplifyFilter.Config(3),
-    ];
 }

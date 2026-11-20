@@ -1,15 +1,17 @@
 ﻿using Domain.AppSettings.Interfaces;
 using Domain.Common.AggregateRoot;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Domain.AppSettings.Root;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum AppSettingType
 {
-    GpxDataProcessing = 1,
-    PeakMatching = 3,
-    ElevationProfile = 4,
-    Route = 5,
+    GpxDataProcessing,
+    PeakMatching,
+    ElevationProfile,
+    Route,
 }
 
 public class AppSetting : AggregateRoot<int, AppSetting>

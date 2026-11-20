@@ -72,8 +72,29 @@ public class TripQueryService : ITripQueryService
         return await query
             .OrderBy(t => t.Name)
             .Take(20)
-            .Select(t => new TripDto.AdminSearchResult(t.Id, t.Name, $"{t.User!.FirstName} {t.User!.LastName}"))
+            .Select(t => new TripDto.AdminSearchResult(
+                Id: t.Id,
+                Name: t.Name,
+                Owner: $"{t.User!.FirstName} {t.User!.LastName}"))
             .ToListAsync();
+    }
+
+    public async Task<Result<TripDto.AdminSearchResult>> GetForAdminAsync(Guid id)
+    {
+        var trip = await Trips
+            .Where(t => t.Id == id)
+            .Select(t => new TripDto.AdminSearchResult(
+                Id: t.Id,
+                Name: t.Name,
+                Owner: $"{t.User!.FirstName} {t.User!.LastName}"))
+            .FirstOrDefaultAsync();
+
+        if (trip is null)
+        {
+            return Errors.NotFound("trip", id);
+        }
+
+        return trip;
     }
 }
 

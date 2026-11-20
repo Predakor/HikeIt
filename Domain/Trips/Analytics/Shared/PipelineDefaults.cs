@@ -16,13 +16,16 @@ public static class PipelineDefaults
     public static readonly IReadOnlyList<IPointFilterConfig> ElevationProfileFilters =
     [
         new PinLocalMaximaFilter.Config(true),
-        new SimplifyFilter.Config(3),
+        new SimplifyFilter.Config(6),
+        new RoundingPrecisionFilter.Config(0),
     ];
 
     public static readonly IReadOnlyList<IPointFilterConfig> RouteFilters =
     [
         new PinLocalMaximaFilter.Config(true),
-        new SimplifyFilter.Config(3),
+        new SimplifyFilter.Config(4),
+        new EmaSmoothingFilter.Config(0.92, PointFields.Coordinates),
+        new RoundingPrecisionFilter.Config(6, PointFields.Coordinates),
     ];
 
     public static readonly IReadOnlyList<IPeakFilterConfig> PeakFilters =

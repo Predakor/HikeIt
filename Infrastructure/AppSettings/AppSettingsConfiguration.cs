@@ -25,6 +25,11 @@ internal class AppSettingsConfiguration : IEntityTypeConfiguration<AppSetting>
             .HasColumnType("json")
             .IsRequired();
 
+        // Stored by name, so renumbering or reordering the enum can never repoint existing rows.
+        builder.Property(a => a.SettingType)
+            .HasConversion<string>()
+            .HasMaxLength(64);
+
         builder.HasIndex(a => a.SettingType).IsUnique();
 
         builder.HasQueryFilter(e => !e.IsDeleted);

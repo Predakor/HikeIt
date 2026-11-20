@@ -27,6 +27,12 @@ public class AdminController : ControllerBase
         return await _tripQueryService.SearchForAdminAsync(search).ToActionResultAsync();
     }
 
+    [HttpGet("trips/{id:guid}")]
+    public async Task<IActionResult> GetTrip(Guid id)
+    {
+        return await _tripQueryService.GetForAdminAsync(id).ToActionResultAsync();
+    }
+
     [HttpPost("peaks")]
     [ProducesResponseType(201)]
     public async Task<IActionResult> AddPeak(PeakDto.CreateNew request)
