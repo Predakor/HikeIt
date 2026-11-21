@@ -2,13 +2,13 @@ import { IconSettings } from "@/Icons/Icons";
 import { Drawer, For } from "@chakra-ui/react";
 import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 import { memo } from "react";
-import { rasterDemTiles } from "../Trip/Details/RouteVisualisation/RouteVisualisation";
 import { SecondaryButton } from "../ui/Buttons";
 import { DEFAULT_CAMERA_OPTIONS } from "./CameraControls/useCameraControls";
 import { useHasHover, useIsHovered, useMapGlobals, useMapRoutes } from "./MapData/hooks";
 import type { RouteData } from "./MapData/mapData.types";
 import { useLayerOptions } from "./MapSettings/hooks";
 import PeakMarkers from "./Peaks/PeakMarkers";
+import { rasterDemTiles } from "./rasterDemTiles";
 
 export const RegionRoutesMapId = "region-routes-map";
 

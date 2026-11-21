@@ -6,7 +6,17 @@ export type PercentUnit = "%";
 export type LengthUnit = "m" | "km";
 export type TimeUnit = "d" | "s" | "min" | "h";
 export type SpeedUnit = `${LengthUnit}/${TimeUnit}`;
-export type UnitTypes = LengthUnit | TimeUnit | PercentUnit | SpeedUnit;
+export type CountUnit = "pts";
+export type SizeUnit = "KB";
+export type MillisecondUnit = "ms";
+export type UnitTypes =
+  | LengthUnit
+  | TimeUnit
+  | PercentUnit
+  | SpeedUnit
+  | CountUnit
+  | SizeUnit
+  | MillisecondUnit;
 
 export type IconUnit = {
   IconType: IconType;

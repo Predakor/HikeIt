@@ -67,7 +67,7 @@ export function VisualisationFilterMenu({ onFilterSubmit }: Props) {
     const proValueList = ObjectToArray(routeDataFilters);
 
     const parsedFilters = proValueList.map(([key, value]) => ({
-      FilterType: ToTitleCase(key),
+      filterType: ToTitleCase(key),
       ...valueToConfigMap[key as FilterTypes](value),
     }));
 

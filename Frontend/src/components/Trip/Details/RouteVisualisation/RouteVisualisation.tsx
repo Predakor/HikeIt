@@ -1,16 +1,13 @@
 import toLineStringFeature from "@/Utils/Maps/toLineString";
 import { arrayUtils } from "@/Utils/arrayUtils";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
+import { TerrainMap } from "@/components/MapVisualisations/TerrainMap";
 import useResourceLink from "@/hooks/Api/useResourceLink";
 import type { GpxEntry } from "@/types/Api/gpx.types";
 import type { ResourceUrl } from "@/types/Api/types";
 import { Stack } from "@chakra-ui/react";
-import "maplibre-gl/dist/maplibre-gl.css"; // See notes below
-import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
+import { RLayer, RSource } from "maplibre-react-components";
 
-export const rasterDemTiles = [
-  "https://api.maptiler.com/tiles/terrain-rgb-v2/{z}/{x}/{y}.webp?key=ujaK4vTFjQkSEF2NqowK",
-];
 type RoutePath = { points: GpxEntry[] };
 
 export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
@@ -26,14 +23,7 @@ export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
           };
 
           return (
-            <RMap
-              minZoom={12}
-              initialPitch={60}
-              initialBearing={-20}
-              initialCenter={[center.Lon, center.Lat]}
-              style={{ width: "100%", height: "700px" }}
-              mapStyle="https://tiles.openfreemap.org/styles/bright"
-            >
+            <TerrainMap center={[center.Lon, center.Lat]} height={"700px"}>
               <RSource
                 key="hike-path"
                 id="hike-path"
@@ -50,25 +40,7 @@ export default function RouteVisualisation({ data }: { data: ResourceUrl }) {
                   "line-opacity": 0.2, // 0 to 1 (transparency)
                 }}
               />
-
-              <RSource
-                type="raster-dem"
-                id="hillshade-data"
-                tiles={rasterDemTiles}
-                tileSize={512}
-                maxzoom={14}
-              />
-              <RLayer id="hillshade" type="hillshade" source="hillshade-data" />
-
-              <RSource
-                type="raster-dem"
-                id="terrain-mesh-data"
-                tiles={rasterDemTiles}
-                tileSize={512}
-                maxzoom={12}
-              />
-              <RTerrain source="terrain-mesh-data" exaggeration={1.3} />
-            </RMap>
+            </TerrainMap>
           );
         }}
       </FetchWrapper>

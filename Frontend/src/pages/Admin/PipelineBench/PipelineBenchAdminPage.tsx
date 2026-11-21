@@ -1,16 +1,24 @@
 import AdminLayout from "@/Layout/AdminLayout";
 import api from "@/Utils/Api/apiRequest";
-import PipelineBench from "@/components/Trip/Details/PipelineBench/PipelineBench";
-import { type SelectedTrip, TripPicker } from "@/components/Trip/Details/PipelineBench/TripPicker";
-import { Text } from "@chakra-ui/react";
+import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
+import { usePipelineDefaults } from "@/modules/PipelineBench/api/usePipelineDefaults";
+import PipelineBench from "@/modules/PipelineBench/PipelineBench";
+import { type SelectedTrip, TripPicker } from "@/modules/PipelineBench/TripPicker";
+import { Skeleton, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
 
 const tripParamName = "trip";
 
+const DefaultsLoading = () => <Skeleton h={"60vh"} />;
+const DefaultsError = () => (
+  <Text color={"fg.error"}>Failed to load the production pipeline settings.</Text>
+);
+
 export default function PipelineBenchAdminPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tripId = searchParams.get(tripParamName);
+  const defaults = usePipelineDefaults(tripId ?? undefined);
 
   // Only the id lives in the URL, so the name and owner are looked up from it (also after a reload).
   const { data: trip } = useQuery({
@@ -41,7 +49,13 @@ export default function PipelineBenchAdminPage() {
       }
     >
       {tripId ?
-        <PipelineBench tripId={tripId} />
+        <FetchWrapper
+          request={defaults}
+          LoadingComponent={DefaultsLoading}
+          ErrorComponent={DefaultsError}
+        >
+          {(data) => <PipelineBench key={tripId} tripId={tripId} defaults={data} />}
+        </FetchWrapper>
       : <Text color={"fg.muted"}>Pick a trip above to preview and tune its pipeline config.</Text>}
     </AdminLayout>
   );
