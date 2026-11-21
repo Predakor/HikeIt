@@ -14,8 +14,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TripDbContext))]
-    [Migration("20261121214039_AddSegmentAnalytics")]
-    partial class AddSegmentAnalytics
+    [Migration("20261121220150_PipelineSettingsAndSegmentAnalytics")]
+    partial class PipelineSettingsAndSegmentAnalytics
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -778,19 +778,19 @@ namespace Infrastructure.Migrations
                             b1.Property<TimeSpan>("ActiveTime")
                                 .HasColumnType("interval");
 
-                            b1.Property<TimeSpan?>("AscentTime")
+                            b1.Property<TimeSpan>("AscentTime")
                                 .HasColumnType("interval");
 
-                            b1.Property<double?>("AverageAscentKph")
+                            b1.Property<double>("AverageAscentKph")
                                 .HasColumnType("double precision");
 
-                            b1.Property<double?>("AverageDescentKph")
+                            b1.Property<double>("AverageDescentKph")
                                 .HasColumnType("double precision");
 
                             b1.Property<double>("AverageSpeedKph")
                                 .HasColumnType("double precision");
 
-                            b1.Property<TimeSpan?>("DescentTime")
+                            b1.Property<TimeSpan>("DescentTime")
                                 .HasColumnType("interval");
 
                             b1.Property<TimeSpan>("Duration")
@@ -802,7 +802,7 @@ namespace Infrastructure.Migrations
                             b1.Property<double?>("FastestSpeedKph")
                                 .HasColumnType("double precision");
 
-                            b1.Property<TimeSpan?>("IdleTime")
+                            b1.Property<TimeSpan>("IdleTime")
                                 .HasColumnType("interval");
 
                             b1.Property<double?>("SlowestSpeedKph")
