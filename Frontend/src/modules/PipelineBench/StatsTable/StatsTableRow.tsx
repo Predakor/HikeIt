@@ -1,4 +1,4 @@
-import type { StageResults } from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
 import { For, Table } from "@chakra-ui/react";
 import { StatCell } from "./StatCell";
 import {
@@ -12,7 +12,7 @@ import { noWrapCell, reference, sourceIds, type SourceId } from "./statsTableLay
 
 interface StatsTableRowProps {
   row: StatsRow;
-  sources: Record<SourceId, StageResults>;
+  sources: Record<SourceId, PipeStageResults>;
 }
 
 interface CellData {

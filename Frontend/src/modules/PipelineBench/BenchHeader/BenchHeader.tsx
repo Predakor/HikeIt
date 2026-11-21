@@ -1,21 +1,24 @@
-import { Button, Flex, Heading, SegmentGroup, Text } from "@chakra-ui/react";
+import type { ComparisonTarget } from "@/modules/PipelineBench/shared/types/PipelineConfig";
+import { Button, Checkbox, Flex, Heading, SegmentGroup, Text } from "@chakra-ui/react";
 
-export type BaselineSource = "config" | "raw";
-
-const baselineItems: { value: BaselineSource; label: string }[] = [
-  { value: "config", label: "Current config" },
+const targetItems: { value: ComparisonTarget; label: string }[] = [
+  { value: "currentProd", label: "Current config" },
   { value: "raw", label: "Raw file" },
 ];
 
 interface BenchHeaderProps {
-  baselineSource: BaselineSource;
-  onBaselineSourceChange: (source: BaselineSource) => void;
+  target: ComparisonTarget;
+  onTargetChange: (target: ComparisonTarget) => void;
+  includeSteps: boolean;
+  onIncludeStepsChange: (include: boolean) => void;
   onRunAll: () => void;
 }
 
 export function BenchHeader({
-  baselineSource,
-  onBaselineSourceChange,
+  target,
+  onTargetChange,
+  includeSteps,
+  onIncludeStepsChange,
   onRunAll,
 }: BenchHeaderProps) {
   return (
@@ -24,22 +27,32 @@ export function BenchHeader({
 
       <Flex align={"center"} gap={3} wrap={"wrap"}>
         <Text as="span" fontSize={"sm"} color={"fg.muted"}>
-          Baseline:
+          Compare to:
         </Text>
         <SegmentGroup.Root
           size={"sm"}
-          value={baselineSource}
+          value={target}
           onValueChange={(details) => {
             if (details.value === null) {
               return;
             }
 
-            onBaselineSourceChange(details.value as BaselineSource);
+            onTargetChange(details.value as ComparisonTarget);
           }}
         >
           <SegmentGroup.Indicator />
-          <SegmentGroup.Items items={baselineItems} />
+          <SegmentGroup.Items items={targetItems} />
         </SegmentGroup.Root>
+
+        <Checkbox.Root
+          size={"sm"}
+          checked={includeSteps}
+          onCheckedChange={(details) => onIncludeStepsChange(details.checked === true)}
+        >
+          <Checkbox.HiddenInput />
+          <Checkbox.Control />
+          <Checkbox.Label>Filter timings</Checkbox.Label>
+        </Checkbox.Root>
 
         <Button size={"sm"} variant={"outline"} onClick={onRunAll}>
           Run all stale

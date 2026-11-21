@@ -1,4 +1,5 @@
 import type { FilterField, FilterFieldValue } from "./filterCatalog";
+import { GradeTargetsInput } from "./Inputs/GradeTargetsInput";
 import { NumberInput } from "./Inputs/NumberInput";
 import { RangeInput } from "./Inputs/RangeInput";
 import { SwitchInput } from "./Inputs/SwitchInput";
@@ -17,6 +18,10 @@ export function FieldInput({ field, value, onValueChange }: FieldInputProps) {
 
   if (field.kind === "pointFields") {
     return <TargetsInput field={field} value={value} onValueChange={onValueChange} />;
+  }
+
+  if (field.kind === "gradeTargets") {
+    return <GradeTargetsInput field={field} value={value} onValueChange={onValueChange} />;
   }
 
   if (field.control === "range") {

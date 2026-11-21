@@ -1,4 +1,4 @@
-import type { MatchedPeak } from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { MatchedPeak } from "@/modules/PipelineBench/shared/types/StageData";
 import { For, Show, Stack, Table, Text } from "@chakra-ui/react";
 import { memo } from "react";
 import type { PeaksListProps } from "./shared/model/bench.types";

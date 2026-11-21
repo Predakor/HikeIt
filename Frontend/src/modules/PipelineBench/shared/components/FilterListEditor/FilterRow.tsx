@@ -1,4 +1,4 @@
-import { Flex, For, IconButton, Text } from "@chakra-ui/react";
+import { Badge, Flex, For, IconButton, Show, Text } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconDelete } from "@/Icons/Icons";
 import {
   fieldsOf,
@@ -14,6 +14,7 @@ interface FilterRowProps {
   filter: FilterItem;
   index: number;
   count: number;
+  durationMs?: number;
   onMove: (delta: number) => void;
   onRemove: () => void;
   onValueChange: (name: string, value: FilterFieldValue) => void;
@@ -24,6 +25,7 @@ export function FilterRow({
   filter,
   index,
   count,
+  durationMs,
   onMove,
   onRemove,
   onValueChange,
@@ -42,9 +44,17 @@ export function FilterRow({
       px={3}
       py={2}
     >
-      <Text fontSize={"sm"} fontWeight={"medium"} flex={1} minW={0}>
-        {index + 1}. {filter.filterType}
-      </Text>
+      <Flex align={"center"} gap={2} flex={1} minW={0}>
+        <Text fontSize={"sm"} fontWeight={"medium"}>
+          {index + 1}. {filter.filterType}
+        </Text>
+
+        <Show when={durationMs !== undefined}>
+          <Badge variant={"subtle"} title={"Time this filter took in the last run"}>
+            {durationMs?.toFixed(3)} ms
+          </Badge>
+        </Show>
+      </Flex>
 
       <For each={fields}>
         {(field) => (

@@ -1,4 +1,5 @@
-import type { StageId, StageResults } from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
+import type { StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import { For, Show, Stack, Table } from "@chakra-ui/react";
 import { Fragment, memo } from "react";
 import { statsGroups } from "./statsRows";
@@ -7,8 +8,8 @@ import { StatsTableRow } from "./StatsTableRow";
 
 interface Props {
   stages?: StageId[];
-  baseline: StageResults;
-  preview: StageResults;
+  baseline: PipeStageResults;
+  preview: PipeStageResults;
 }
 
 const sourceLabels: Record<SourceId, string> = {
@@ -23,7 +24,7 @@ const columns = [
 
 // Memoised: it only depends on the results and the local reference choice, so editing a config must not re-render every row.
 export const StatsTable = memo(function StatsTable({ stages, baseline, preview }: Props) {
-  const sources: Record<SourceId, StageResults> = { baseline, preview };
+  const sources: Record<SourceId, PipeStageResults> = { baseline, preview };
   const hasStages = stages === undefined;
   const groups =
     hasStages ? statsGroups : statsGroups.filter((group) => stages.includes(group.stage));

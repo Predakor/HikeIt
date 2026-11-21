@@ -1,8 +1,6 @@
 import * as AppSettings from "@/modules/AppSettings";
-import type {
-  PeakFilterConfig,
-  StageResult,
-} from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PeakFilterConfig } from "@/modules/PipelineBench/shared/types/FilterConfig";
+import type { PipeStageResult } from "@/modules/PipelineBench/shared/types/PipeStageDto";
 import { ApplyToProductionButton } from "../../shared/components/ApplyToProductionButton/ApplyToProductionButton";
 import { FilterListEditor } from "../../shared/components/FilterListEditor";
 import { StageBlock } from "../../shared/components/StageBlock/StageBlock";
@@ -10,7 +8,7 @@ import type { BlockStatus } from "../../shared/model/bench.types";
 
 interface PeaksBlockProps {
   status: BlockStatus;
-  result: StageResult<"peakMatching"> | undefined;
+  result: PipeStageResult<"peakMatching"> | undefined;
   filters: PeakFilterConfig[] | null | undefined;
   defaultFilters: PeakFilterConfig[];
   onFiltersChange: (filters: PeakFilterConfig[] | null) => void;
@@ -31,6 +29,7 @@ export function PeaksBlock({
   return (
     <StageBlock title={"Peak matching"} status={status} result={result} onRun={onRun} isPrimaryRun>
       <FilterListEditor
+        stepTimings={result?.telemetry?.steps}
         kind={"peak"}
         filters={filters}
         defaultFilters={defaultFilters}

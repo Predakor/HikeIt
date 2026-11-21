@@ -2,10 +2,12 @@ import { Button, Flex, For, Menu, Portal, Show, Stack, Text } from "@chakra-ui/r
 import { useContext, type ReactNode } from "react";
 import { FillHeightContext } from "../../context/fillHeightContext";
 import { IconPlus } from "@/Icons/Icons";
+import type { PipeStageStepTiming } from "@/modules/PipelineBench/shared/types/PipeStageDto";
 import {
   createFilterItem,
   fieldsOf,
   filterTypesOf,
+  hasGradeBeforeIdle,
   hasSimplifyBeforePinLocalMaxima,
   withFieldValue,
   type FilterFieldValue,
@@ -13,6 +15,31 @@ import {
   type FilterKind,
 } from "./filterCatalog";
 import { FilterRow } from "./FilterRow";
+
+interface OrderWarning {
+  isTriggered: (filters: FilterItem[]) => boolean;
+  message: string;
+}
+
+const orderWarningByKind: Partial<Record<FilterKind, OrderWarning>> = {
+  point: {
+    isTriggered: hasSimplifyBeforePinLocalMaxima,
+    message:
+      "SimplifyFilter runs before PinLocalMaximaFilter, so summits can be simplified away before they are pinned.",
+  },
+  pace: {
+    isTriggered: hasGradeBeforeIdle,
+    message:
+      "GradeFilter runs before IdleFilter, so standing still on a slope can be counted as climbing.",
+  },
+};
+
+const emptyTextByKind: Record<FilterKind, string> = {
+  point: "No filters: points pass through unchanged.",
+  peak: "No filters: points pass through unchanged.",
+  pace: "No filters: every segment counts as flat and the ascent, descent and idle times are not split out.",
+  terrain: "No filters: ascent and descent are plain sums, and the steepest and longest segments are not computed.",
+};
 
 // Only the list of filters scrolls; the header, the add / reset / apply row and the result info stay in view.
 const listMaxHeight = "15rem";
@@ -22,6 +49,7 @@ interface FilterListEditorProps<TFilter extends FilterItem> {
   filters: TFilter[] | null | undefined;
   defaultFilters: TFilter[];
   onChange: (filters: TFilter[] | null) => void;
+  stepTimings?: PipeStageStepTiming[] | null;
   actions?: ReactNode;
 }
 
@@ -30,11 +58,20 @@ export function FilterListEditor<TFilter extends FilterItem>({
   filters,
   defaultFilters,
   onChange,
+  stepTimings,
   actions,
 }: FilterListEditorProps<TFilter>) {
   const effectiveFilters = filters ?? defaultFilters;
   const isFillingHeight = useContext(FillHeightContext);
-  const hasOrderWarning = hasSimplifyBeforePinLocalMaxima(effectiveFilters);
+  const orderWarning = orderWarningByKind[kind];
+  const hasOrderWarning = orderWarning?.isTriggered(effectiveFilters) === true;
+
+  // Steps come back in run order; a name mismatch means the list was edited since the run.
+  const durationOf = (index: number, filter: TFilter) => {
+    const step = stepTimings?.[index];
+
+    return step?.name === filter.filterType ? step.durationMs : undefined;
+  };
 
   const addFilter = (filterType: string) => {
     const created = createFilterItem(filterType, fieldsOf(kind, filterType)) as TFilter;
@@ -69,14 +106,13 @@ export function FilterListEditor<TFilter extends FilterItem>({
     <Stack gap={2} flex={isFillingHeight ? 1 : undefined} minH={0}>
       <Show when={hasOrderWarning}>
         <Text fontSize={"xs"} color={"fg.warning"}>
-          SimplifyFilter runs before PinLocalMaximaFilter, so summits can be simplified away before
-          they are pinned.
+          {orderWarning?.message}
         </Text>
       </Show>
 
       <Show when={effectiveFilters.length === 0}>
         <Text fontSize={"sm"} color={"fg.muted"}>
-          No filters: points pass through unchanged.
+          {emptyTextByKind[kind]}
         </Text>
       </Show>
 
@@ -96,6 +132,7 @@ export function FilterListEditor<TFilter extends FilterItem>({
               filter={filter}
               index={index}
               count={effectiveFilters.length}
+              durationMs={durationOf(index, filter)}
               onMove={(delta) => moveFilter(index, delta)}
               onRemove={() => removeFilter(index)}
               onValueChange={(name, value) => changeValue(index, name, value)}

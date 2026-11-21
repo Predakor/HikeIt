@@ -1,10 +1,14 @@
 import { DangerButton } from "@/components/ui/Buttons";
 import * as AppSettings from "@/modules/AppSettings";
 import type {
+  PaceFilterConfig,
   PeakFilterConfig,
   PointFilterConfig,
-} from "@/modules/PipelineBench/api/pipelinePreview.types";
+  TerrainFilterConfig,
+} from "@/modules/PipelineBench/shared/types/FilterConfig";
 import { Flex, Show, Text } from "@chakra-ui/react";
+
+type AppliedFilter = PointFilterConfig | PeakFilterConfig | PaceFilterConfig | TerrainFilterConfig;
 
 const confirmConfig = {
   title: "Apply to production?",
@@ -12,12 +16,12 @@ const confirmConfig = {
   warningDescription: "This replaces the production setting for every trip.",
 };
 
-interface ApplyToProductionButtonProps<TFilter extends PointFilterConfig | PeakFilterConfig> {
+interface ApplyToProductionButtonProps<TFilter extends AppliedFilter> {
   settingType: AppSettings.AppSettingTypeId;
   filters: TFilter[];
 }
 
-export function ApplyToProductionButton<TFilter extends PointFilterConfig | PeakFilterConfig>({
+export function ApplyToProductionButton<TFilter extends AppliedFilter>({
   settingType,
   filters,
 }: ApplyToProductionButtonProps<TFilter>) {
@@ -39,7 +43,8 @@ export function ApplyToProductionButton<TFilter extends PointFilterConfig | Peak
       <DangerButton
         size={"sm"}
         fontWeight={"normal"}
-        disabled={!disabledReason}
+        disabled={disabledReason !== undefined}
+        title={disabledReason}
         loading={mutation.isPending}
         onConfirm={apply}
         alertConfig={confirmConfig}
@@ -54,7 +59,9 @@ export function ApplyToProductionButton<TFilter extends PointFilterConfig | Peak
       </Show>
 
       <Show when={mutation.isError}>
-        <Text fontSize={"xs"} color={"fg.error"}></Text>
+        <Text fontSize={"xs"} color={"fg.error"}>
+          Failed to apply
+        </Text>
       </Show>
     </Flex>
   );

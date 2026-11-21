@@ -1,11 +1,13 @@
-import type { StageId, StageResults } from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
+import type { StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import type { PipelineDefaults } from "@/modules/PipelineBench/api/usePipelineDefaults";
 import type { ReactNode } from "react";
-import { AnalyticsBlock } from "../Blocks/Analytics/AnalyticsBlock";
 import { CleanupBlock } from "../Blocks/Cleanup/CleanupBlock";
+import { PaceBlock } from "../Blocks/Pace/PaceBlock";
 import { PeaksBlock } from "../Blocks/Peaks/PeaksBlock";
 import { ProfileBlock } from "../Blocks/Profile/ProfileBlock";
 import { RouteBlock } from "../Blocks/Route/RouteBlock";
+import { TerrainBlock } from "../Blocks/Terrain/TerrainBlock";
 import ElevationOverlayGraph from "../ElevationOverlayGraph";
 import type { usePipelineBench } from "../hooks/usePipelineBench";
 import PeaksList from "../PeaksList";
@@ -17,7 +19,7 @@ import { StatsTable } from "../StatsTable/StatsTable";
 type Bench = ReturnType<typeof usePipelineBench>;
 
 export interface BenchTabContext extends Pick<BenchState, "config" | "status" | "results"> {
-  baseline: StageResults;
+  baseline: PipeStageResults;
   defaults: PipelineDefaults;
   updateConfig: Bench["updateConfig"];
   run: Bench["run"];
@@ -47,7 +49,7 @@ export const benchTabs: BenchTab[] = [
           status={status.cleanup}
           result={results.cleanup}
           filters={config.cleanup?.filters}
-          defaultFilters={defaults.cleanup}
+          defaultFilters={defaults.cleanup.filters}
           onFiltersChange={(filters) => updateConfig("cleanup", { filters })}
           onRun={() => run("cleanup")}
         />
@@ -55,15 +57,35 @@ export const benchTabs: BenchTab[] = [
     ),
   },
   {
-    value: "analytics",
-    label: "Analytics",
-    stage: "analytics",
-    render: ({ baseline, results, status, run }) => (
-      <StageCard stage={"analytics"} baseline={baseline} preview={results}>
-        <AnalyticsBlock
-          status={status.analytics}
-          result={results.analytics}
-          onRun={() => run("analytics")}
+    value: "terrain",
+    label: "Terrain",
+    stage: "terrain",
+    render: ({ baseline, results, status, config, defaults, updateConfig, run }) => (
+      <StageCard stage={"terrain"} baseline={baseline} preview={results} fillHeight>
+        <TerrainBlock
+          status={status.terrain}
+          result={results.terrain}
+          filters={config.terrain?.filters}
+          defaultFilters={defaults.terrain.filters}
+          onFiltersChange={(filters) => updateConfig("terrain", { filters })}
+          onRun={() => run("terrain")}
+        />
+      </StageCard>
+    ),
+  },
+  {
+    value: "pace",
+    label: "Pace",
+    stage: "pace",
+    render: ({ baseline, results, status, config, defaults, updateConfig, run }) => (
+      <StageCard stage={"pace"} baseline={baseline} preview={results} fillHeight>
+        <PaceBlock
+          status={status.pace}
+          result={results.pace}
+          filters={config.pace?.filters}
+          defaultFilters={defaults.pace.filters}
+          onFiltersChange={(filters) => updateConfig("pace", { filters })}
+          onRun={() => run("pace")}
         />
       </StageCard>
     ),
@@ -91,7 +113,7 @@ export const benchTabs: BenchTab[] = [
           status={status.elevationProfile}
           result={results.elevationProfile}
           filters={config.elevationProfile?.filters}
-          defaultFilters={defaults.elevationProfile}
+          defaultFilters={defaults.elevationProfile.filters}
           onFiltersChange={(filters) => updateConfig("elevationProfile", { filters })}
           onRun={() => run("elevationProfile")}
         />
@@ -121,7 +143,7 @@ export const benchTabs: BenchTab[] = [
           status={status.route}
           result={results.route}
           filters={config.route?.filters}
-          defaultFilters={defaults.route}
+          defaultFilters={defaults.route.filters}
           onFiltersChange={(filters) => updateConfig("route", { filters })}
           onRun={() => run("route")}
         />
@@ -149,7 +171,7 @@ export const benchTabs: BenchTab[] = [
           status={status.peakMatching}
           result={results.peakMatching}
           filters={config.peakMatching?.filters}
-          defaultFilters={defaults.peaks}
+          defaultFilters={defaults.peakMatching.filters}
           onFiltersChange={(filters) => updateConfig("peakMatching", { filters })}
           onRun={() => run("peakMatching")}
         />

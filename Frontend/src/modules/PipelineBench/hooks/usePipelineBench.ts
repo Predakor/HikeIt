@@ -1,19 +1,17 @@
-import {
-  type PipelineConfig,
-  type StageId,
-  type StageResult,
-  type StageResults,
-} from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PipeStageResult, PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
+import type { ComparisonTarget, PipelineConfig } from "@/modules/PipelineBench/shared/types/PipelineConfig";
+import { allStageIds, type StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePipelinePreview } from "../api/usePipelinePreview";
 import { affectedBy, markEdited, staleStages } from "../model/staleness";
 import type { BenchState, BlockStatus } from "../shared/model/bench.types";
 
-// Analytics has no config of its own; it is derived from cleanup.
-export type ConfigStageId = Exclude<StageId, "analytics">;
+export type ConfigStageId = StageId;
 
 const configKeyOf: Record<ConfigStageId, keyof PipelineConfig> = {
   cleanup: "cleanup",
+  terrain: "terrain",
+  pace: "pace",
   elevationProfile: "elevationProfile",
   peakMatching: "peakMatching",
   route: "route",
@@ -27,28 +25,36 @@ interface InFlightRequest {
 }
 
 // Only the stages the response actually has; the cast narrows the per-stage data type of the entries.
-const pickStages = (source: StageResults, stages: StageId[]): StageResults =>
+const pickStages = (source: PipeStageResults, stages: StageId[]): PipeStageResults =>
   Object.fromEntries(
     stages.filter((stage) => source[stage] !== undefined).map((stage) => [stage, source[stage]]),
-  ) as StageResults;
+  ) as PipeStageResults;
 
 const initialState: BenchState = {
   config: {},
   status: {
     cleanup: "idle",
-    analytics: "idle",
+    terrain: "idle",
+    pace: "idle",
     elevationProfile: "idle",
     peakMatching: "idle",
     route: "idle",
   },
   results: {},
-  baseline: {},
-  raw: {},
+  comparisons: { currentProd: {}, raw: {} },
 };
 
-export function usePipelineBench(tripId?: string) {
+export function usePipelineBench(
+  tripId?: string,
+  includeSteps = false,
+  target: ComparisonTarget = "currentProd",
+) {
   const { mutateAsync } = usePipelinePreview(tripId);
   const [state, setState] = useState<BenchState>(initialState);
+  const includeStepsRef = useRef(includeSteps);
+  includeStepsRef.current = includeSteps;
+  const targetRef = useRef(target);
+  targetRef.current = target;
 
   // Refs hold the latest state for the async and debounced paths, so they never read a stale closure.
   const stateRef = useRef<BenchState>(initialState);
@@ -87,11 +93,15 @@ export function usePipelineBench(tripId?: string) {
       const running = Object.fromEntries(stages.map((stage) => [stage, "running"]));
       commit({ ...requested, status: { ...requested.status, ...running } });
 
-      // Raw depends only on the file, so it is requested once per stage and never refreshed.
-      const isRawMissing = stages.some((stage) => requested.raw[stage] === undefined);
+      const comparedTo = targetRef.current;
 
       const response = await mutateAsync({
-        request: { config: requested.config, stages, includeRaw: isRawMissing },
+        request: {
+          config: requested.config,
+          stages,
+          target: comparedTo,
+          includeSteps: includeStepsRef.current,
+        },
         signal: controller.signal,
       }).catch((): null => null);
 
@@ -105,13 +115,24 @@ export function usePipelineBench(tripId?: string) {
 
       const next = stateRef.current;
       const received = response?.results ?? {};
-      const statusOf = (result?: StageResult): BlockStatus => (result?.ok ? "done" : "error");
+      const statusOf = (result?: PipeStageResult): BlockStatus => {
+        if (result?.skipped) {
+          return "skipped";
+        }
+
+        return result?.ok ? "done" : "error";
+      };
 
       commit({
         ...next,
         results: { ...next.results, ...pickStages(received, stages) },
-        baseline: { ...next.baseline, ...pickStages(response?.baseline ?? {}, stages) },
-        raw: { ...next.raw, ...pickStages(response?.raw ?? {}, stages) },
+        comparisons: {
+          ...next.comparisons,
+          [comparedTo]: {
+            ...next.comparisons[comparedTo],
+            ...pickStages(response?.comparison ?? {}, stages),
+          },
+        },
         status: {
           ...next.status,
           ...Object.fromEntries(stages.map((stage) => [stage, statusOf(received[stage])])),
@@ -177,6 +198,21 @@ export function usePipelineBench(tripId?: string) {
       inFlightRef.current.forEach((request) => request.controller.abort());
     };
   }, []);
+
+  // A newly picked target has no comparison yet; fetch it for the stages it lacks.
+  const previousTargetRef = useRef(target);
+  useEffect(() => {
+    if (previousTargetRef.current === target) {
+      return;
+    }
+
+    previousTargetRef.current = target;
+    const missing = allStageIds.filter(
+      (stage) => stateRef.current.comparisons[target][stage] === undefined,
+    );
+
+    void runStages(missing);
+  }, [target, runStages]);
 
   const isRunning = Object.values(state.status).includes("running");
 

@@ -1,5 +1,5 @@
 import { PrimaryButton } from "@/components/ui/Buttons";
-import type { StageResult } from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PipeStageResult } from "@/modules/PipelineBench/shared/types/PipeStageDto";
 import { Badge, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
 import { type ReactNode, useContext } from "react";
 import { FillHeightContext } from "../../context/fillHeightContext";
@@ -9,7 +9,7 @@ import { statusBadge } from "../../model/statusBadge";
 interface StageBlockProps {
   title: string;
   status: BlockStatus;
-  result: StageResult | undefined;
+  result?: PipeStageResult;
   onRun: () => void;
   isPrimaryRun?: boolean;
   children?: ReactNode;
@@ -51,12 +51,6 @@ export function StageBlock({
           <Badge colorPalette={badge.colorPalette} variant={"subtle"}>
             {badge.label}
           </Badge>
-
-          {result?.cacheHit && (
-            <Badge colorPalette={"teal"} variant={"subtle"}>
-              Cache hit
-            </Badge>
-          )}
         </Flex>
         {runButton}
       </Flex>
@@ -66,7 +60,7 @@ export function StageBlock({
       </Stack>
 
       {result?.error && (
-        <Text fontSize={"xs"} color={"fg.error"}>
+        <Text fontSize={"xs"} color={result.skipped ? "fg.muted" : "fg.error"}>
           {result.error}
         </Text>
       )}

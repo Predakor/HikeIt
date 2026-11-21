@@ -6,6 +6,8 @@ export const AppSettingType = {
   PeakMatching: "PeakMatching",
   ElevationProfile: "ElevationProfile",
   Route: "Route",
+  Pace: "Pace",
+  Terrain: "Terrain",
 } as const;
 
 export type AppSettingTypeId = (typeof AppSettingType)[keyof typeof AppSettingType];

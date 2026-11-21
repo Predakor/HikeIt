@@ -27,6 +27,16 @@ export interface RouteAnalytic {
   averageSlopePercent: number;
   averageAscentSlopePercent: number;
   averageDescentSlopePercent: number;
+
+  // Null when the metric is off, the track is shorter than its window, or the trip predates it.
+  steepestClimbPercent?: number | null;
+  steepestDescentPercent?: number | null;
+
+  // Null when the metric is off, the track has no such segment, or the trip predates it.
+  longestClimbDistanceM?: number | null;
+  longestClimbPercent?: number | null;
+  longestDescentDistanceM?: number | null;
+  longestDescentPercent?: number | null;
 }
 
 export interface TimeAnalytic {
@@ -35,13 +45,18 @@ export interface TimeAnalytic {
   endTime: TimeSpanString; //actually iso stirng
 
   activeTime: TimeSpanString;
-  idleTime: TimeSpanString;
-  ascentTime: TimeSpanString;
-  descentTime: TimeSpanString;
+  // Null when no filter classified the segments.
+  idleTime?: TimeSpanString | null;
+  ascentTime?: TimeSpanString | null;
+  descentTime?: TimeSpanString | null;
 
   averageSpeedKph: number;
-  averageAscentKph: number;
-  averageDescentKph: number;
+  averageAscentKph?: number | null;
+  averageDescentKph?: number | null;
+
+  // Null when the speed segment metric is off, the track is shorter than its window, or the trip predates it.
+  fastestSpeedKph?: number | null;
+  slowestSpeedKph?: number | null;
 }
 
 export interface PeaksAnalytics {

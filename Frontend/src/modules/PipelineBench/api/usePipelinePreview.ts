@@ -1,21 +1,19 @@
 import api from "@/Utils/Api/apiRequest";
-import type {
-  PipelineConfig,
-  StageId,
-  StageResults,
-} from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
+import type { ComparisonTarget, PipelineConfig } from "@/modules/PipelineBench/shared/types/PipelineConfig";
+import type { StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import { useMutation } from "@tanstack/react-query";
 
 export interface PipelinePreviewRequest {
   config: PipelineConfig;
   stages?: StageId[] | null; // null = all stages
-  includeRaw?: boolean; // ask for the raw run (untouched file); clients need it once per file
+  target?: ComparisonTarget; // what the comparison run uses; default currentProd
+  includeSteps?: boolean; // time per filter in each stage's telemetry
 }
 
 export interface PipelinePreviewResponse {
-  results: StageResults;
-  baseline: StageResults; // current production settings (cleanup values come from the GpxDataProcessing app setting)
-  raw?: StageResults | null; // same stages on the untouched file; only present when includeRaw was requested
+  results: PipeStageResults;
+  comparison: PipeStageResults; // the same stages run for the requested target
 }
 
 export function usePipelinePreview(tripId?: string) {

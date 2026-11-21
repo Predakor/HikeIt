@@ -1,5 +1,6 @@
 import { IconCompress, IconExpand } from "@/Icons/Icons";
-import type { StageId, StageResults } from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
+import type { StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import { Box, Flex, Grid, IconButton, Show, Stack } from "@chakra-ui/react";
 import { useState, type ReactNode } from "react";
 import { FillHeightContext } from "../shared/context/fillHeightContext";
@@ -9,7 +10,8 @@ const fillMinHeight = "max(26rem, 60dvh)";
 
 const stageLists: Record<StageId, StageId[]> = {
   cleanup: ["cleanup"],
-  analytics: ["analytics"],
+  terrain: ["terrain"],
+  pace: ["pace"],
   elevationProfile: ["elevationProfile"],
   peakMatching: ["peakMatching"],
   route: ["route"],
@@ -17,8 +19,8 @@ const stageLists: Record<StageId, StageId[]> = {
 
 interface StageCardProps {
   stage: StageId;
-  baseline: StageResults;
-  preview: StageResults;
+  baseline: PipeStageResults;
+  preview: PipeStageResults;
   belowStats?: ReactNode | ((isExpanded: boolean) => ReactNode);
   isExpandable?: boolean;
   fillHeight?: boolean;

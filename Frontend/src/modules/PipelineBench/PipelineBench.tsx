@@ -2,10 +2,11 @@ import { Stack } from "@chakra-ui/react";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
 import type { PipelineDefaults } from "./api/usePipelineDefaults";
-import { BenchHeader, type BaselineSource } from "./BenchHeader/BenchHeader";
+import { BenchHeader } from "./BenchHeader/BenchHeader";
 import { BenchTabs } from "./BenchTabs/BenchTabs";
 import { benchTabs } from "./BenchTabs/tabsConfig";
 import { usePipelineBench } from "./hooks/usePipelineBench";
+import type { ComparisonTarget } from "./shared/types/PipelineConfig";
 
 const defaultView = "elevation";
 const viewParamName = "tab";
@@ -17,9 +18,10 @@ interface PipelineBenchProps {
 }
 
 export default function PipelineBench({ tripId, defaults }: PipelineBenchProps) {
-  const { state, updateConfig, run } = usePipelineBench(tripId);
+  const [includeSteps, setIncludeSteps] = useState(true);
+  const [target, setTarget] = useState<ComparisonTarget>("currentProd");
+  const { state, updateConfig, run } = usePipelineBench(tripId, includeSteps, target);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [baselineSource, setBaselineSource] = useState<BaselineSource>("config");
 
   const viewParam = searchParams.get(viewParamName);
   const isKnownView = viewParam !== null && knownViews.includes(viewParam);
@@ -31,14 +33,15 @@ export default function PipelineBench({ tripId, defaults }: PipelineBenchProps) 
     setSearchParams(nextSearchParams, { replace: true });
   };
 
-  // What the preview is compared against: the current (DB) config run, or the untouched file.
-  const baseline = baselineSource === "raw" ? state.raw : state.baseline;
+  const baseline = state.comparisons[target];
 
   return (
     <Stack gap={6}>
       <BenchHeader
-        baselineSource={baselineSource}
-        onBaselineSourceChange={setBaselineSource}
+        target={target}
+        onTargetChange={setTarget}
+        includeSteps={includeSteps}
+        onIncludeStepsChange={setIncludeSteps}
         onRunAll={() => run()}
       />
 

@@ -2,7 +2,7 @@ import {
   allStageIds,
   stageDependencies,
   type StageId,
-} from "@/modules/PipelineBench/api/pipelinePreview.types";
+} from "@/modules/PipelineBench/shared/types/StageId";
 import type { BlockStatus } from "../shared/model/bench.types";
 
 type StatusMap = Record<StageId, BlockStatus>;

@@ -1,16 +1,24 @@
 import api from "@/Utils/Api/apiRequest";
 import type {
-  PeakFilterConfig,
-  PointFilterConfig,
-} from "@/modules/PipelineBench/api/pipelinePreview.types";
+  CleanupConfig,
+  PaceConfig,
+  PeaksConfig,
+  ProfileConfig,
+  RouteConfig,
+  TerrainConfig,
+} from "@/modules/PipelineBench/shared/types/PipelineConfig";
 import { useQuery } from "@tanstack/react-query";
 
-// What every stage resolves for a null config on the server (DB settings, else code constants).
+type Resolved<TConfig> = { [TKey in keyof TConfig]-?: NonNullable<TConfig[TKey]> };
+
+// Same shape as PipelineConfig, but every stage and list is filled with what a null config resolves to on the server.
 export interface PipelineDefaults {
-  cleanup: PointFilterConfig[];
-  elevationProfile: PointFilterConfig[];
-  peaks: PeakFilterConfig[];
-  route: PointFilterConfig[];
+  cleanup: Resolved<CleanupConfig>;
+  elevationProfile: Resolved<ProfileConfig>;
+  peakMatching: Resolved<PeaksConfig>;
+  route: Resolved<RouteConfig>;
+  terrain: Resolved<TerrainConfig>;
+  pace: Resolved<PaceConfig>;
 }
 
 export function usePipelineDefaults(tripId?: string) {

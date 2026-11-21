@@ -6,4 +6,5 @@ export const statusBadge: Record<BlockStatus, { label: string; colorPalette: str
   running: { label: "Running", colorPalette: "blue" },
   done: { label: "Done", colorPalette: "green" },
   error: { label: "Error", colorPalette: "red" },
+  skipped: { label: "Skipped", colorPalette: "gray" },
 };

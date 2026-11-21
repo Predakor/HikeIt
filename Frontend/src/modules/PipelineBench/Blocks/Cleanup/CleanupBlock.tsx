@@ -1,7 +1,5 @@
-import type {
-  PointFilterConfig,
-  StageResult,
-} from "@/modules/PipelineBench/api/pipelinePreview.types";
+import type { PointFilterConfig } from "@/modules/PipelineBench/shared/types/FilterConfig";
+import type { PipeStageResult } from "@/modules/PipelineBench/shared/types/PipeStageDto";
 import type { BlockStatus } from "../../shared/model/bench.types";
 import { ApplyToProductionButton } from "../../shared/components/ApplyToProductionButton/ApplyToProductionButton";
 import * as AppSettings from "@/modules/AppSettings";
@@ -10,7 +8,7 @@ import { StageBlock } from "../../shared/components/StageBlock/StageBlock";
 
 interface CleanupBlockProps {
   status: BlockStatus;
-  result: StageResult<"cleanup"> | undefined;
+  result: PipeStageResult<"cleanup"> | undefined;
   filters: PointFilterConfig[] | null | undefined;
   defaultFilters: PointFilterConfig[];
   onFiltersChange: (filters: PointFilterConfig[] | null) => void;
@@ -30,6 +28,7 @@ export function CleanupBlock({
   return (
     <StageBlock title={"Cleanup"} status={status} result={result} onRun={onRun}>
       <FilterListEditor
+        stepTimings={result?.telemetry?.steps}
         kind={"point"}
         filters={filters}
         defaultFilters={defaultFilters}
