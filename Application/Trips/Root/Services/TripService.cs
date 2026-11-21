@@ -1,10 +1,13 @@
 ﻿using Application.FileReferences;
 using Application.ReachedPeaks;
-using Application.Trips.Analytics.Commands;
 using Application.Trips.Analytics.Interfaces;
+using Application.Trips.Analytics.Pipeline.Contracts;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Application.Trips.GpxFile.Services;
 using Application.Trips.Root.Dtos;
 using Application.Trips.Root.ValueObjects;
+using Domain.Common.Geography.Extentions;
+using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Domain.Trips.Root;
 
@@ -12,7 +15,8 @@ namespace Application.Trips.Root.Services;
 
 public class TripService : ITripService
 {
-    private readonly IGpxService _gpxService;
+    private readonly ITripSourceService _tripSource;
+    private readonly IPointsFilterRunner _pointsRunner;
     private readonly IGpxFileService _fileService;
     private readonly ITripRepository _tripRepository;
     private readonly ITripAnalyticUnitOfWork _unitOfWork;
@@ -20,7 +24,8 @@ public class TripService : ITripService
     private readonly IReachedPeaksQureryService _reachedPeaksQureryService;
 
     public TripService(
-        IGpxService gpxService,
+        ITripSourceService tripSource,
+        IPointsFilterRunner pointsRunner,
         IGpxFileService fileService,
         ITripRepository tripRepository,
         ITripAnalyticUnitOfWork unitOfWork,
@@ -28,7 +33,8 @@ public class TripService : ITripService
         IReachedPeaksQureryService reachedPeaksQureryService
     )
     {
-        _gpxService = gpxService;
+        _tripSource = tripSource;
+        _pointsRunner = pointsRunner;
         _fileService = fileService;
         _tripRepository = tripRepository;
         _unitOfWork = unitOfWork;
@@ -95,10 +101,17 @@ public class TripService : ITripService
 
     private async Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx)
     {
-        return await _gpxService
-            .ExtractGpxData(ctx.File)
-            .BindAsync(data => ProccesGpxDataCommand.Create(data).Execute())
+        return await _tripSource
+            .ExtractUploadedAsync(ctx.File)
+            .BindAsync(CleanData)
             .MapAsync(ctx.WithAnalyticData);
+    }
+
+    private Task<Result<AnalyticData>> CleanData(AnalyticData data)
+    {
+        return _pointsRunner
+            .ApplyAsync(data.Points, StageId.Cleanup)
+            .MapAsync(points => new AnalyticData(points, points.ToGains()));
     }
 
     private async Task<Result<CreateTripContext>> CreateAnalytics(CreateTripContext ctx)

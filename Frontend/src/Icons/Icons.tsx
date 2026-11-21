@@ -23,6 +23,8 @@ export {
   FaEdit as IconEdit,
   FaExternalLinkAlt as IconExternal,
   FaTrashAlt as IconDelete,
+  FaExpandAlt as IconExpand,
+  FaCompressAlt as IconCompress,
 } from "react-icons/fa";
 
 export {

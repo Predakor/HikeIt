@@ -1,5 +1,5 @@
 import { IconPlus } from "@/Icons/Icons";
-import AdminPage from "@/components/Pages/AdminPage";
+import AdminLayout from "@/Layout/AdminLayout";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import LinkCard from "@/components/ui/Cards/LinkCard";
 import useRegions from "@/hooks/Regions/useRegions";
@@ -18,7 +18,7 @@ export default function ManageRegionsAdminPage() {
   const [filterValue, setFilterValue] = useState("");
 
   return (
-    <AdminPage
+    <AdminLayout
       title="Manage Regions"
       header={
         <Button size={"lg"} colorPalette={"blue"}>
@@ -42,7 +42,7 @@ export default function ManageRegionsAdminPage() {
           />
         )}
       </FetchWrapper>
-    </AdminPage>
+    </AdminLayout>
   );
 }
 

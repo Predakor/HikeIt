@@ -1,4 +1,5 @@
 ﻿using Domain.Common.Geography.ValueObjects;
+using Domain.Trips.Analytics.Shared.Filters;
 
 namespace Domain.Trips.Root.Builders.GpxDataBuilder;
 
@@ -8,6 +9,9 @@ public sealed class MutableGpxPoint(double lat, double lon, double ele, DateTime
     public double Lon { get; set; } = lon;
     public double Ele { get; set; } = ele;
     public DateTime? Time = time;
+
+    // Pinned points (e.g. local maxima) must survive point-removing filters such as SimplifyFilter.
+    public bool Pinned { get; set; }
 
 }
 
@@ -35,11 +39,7 @@ internal class GpxDataBuilder(List<GpxPoint> points)
 
     public GpxDataBuilder RoundElevation(int decimals = 1)
     {
-        foreach (var point in _gpxPoints)
-        {
-            point.Ele = Math.Round(point.Ele, decimals);
-        }
-
+        new RoundingPrecisionFilter(new RoundingPrecisionFilter.Config(decimals)).Apply(_gpxPoints);
         return this;
     }
 

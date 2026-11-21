@@ -27,14 +27,24 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
             ct: ct
         );
     }
-    public Task<Result<TSetting>> GetSettingAsync<TSetting>(AppSettingType settingType, CancellationToken ct)
+    public Task<Result<TSetting>> GetSettingAsync<TSetting>(CancellationToken ct)
         where TSetting : IAppSetting
     {
         return cache.GetOrCreateAsync(
-            GetKey(settingType),
-            () => inner.GetSettingAsync<TSetting>(settingType, ct),
+            GetKey(TSetting.SettingFor),
+            () => inner.GetSettingAsync<TSetting>(ct),
             ct: ct
         );
+    }
+
+    public Task<TSetting> GetSettingOrDefaultAsync<TSetting>(CancellationToken ct)
+        where TSetting : class, IAppSetting<TSetting>
+    {
+        return GetSettingAsync<TSetting>(ct)
+            .MatchAsync(
+                setting => setting,
+                _ => TSetting.GetDefault()
+            );
     }
 
     public Task<Result<AppSetting>> SetSetting<TSetting>(
@@ -43,13 +53,28 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
     )
         where TSetting : IAppSetting
     {
-        return cache.GetOrCreateAsync(
-            GetKey(setting.SettingFor),
-            () => inner.SetSetting(setting, ct),
-            ct: ct
-        );
+        return inner
+            .SetSetting(setting, ct)
+            .TapAsync(_ => Invalidate(TSetting.SettingFor, ct));
     }
 
-    public Task<Result<AppSettingDto>> Update(int id, JsonDocument jsonSetting, CancellationToken ct) => inner.Update(id, jsonSetting, ct);
-    public Task<Result<AppSetting>> DeleteSettingAsync(int id, CancellationToken ct) => inner.DeleteSettingAsync(id, ct);
+    public Task<Result<AppSettingDto>> Update(int id, JsonDocument jsonSetting, CancellationToken ct)
+    {
+        return inner
+            .Update(id, jsonSetting, ct)
+            .TapAsync(updated => Invalidate(updated.Type, ct));
+    }
+
+    public Task<Result<AppSetting>> DeleteSettingAsync(int id, CancellationToken ct)
+    {
+        return inner
+            .DeleteSettingAsync(id, ct)
+            .TapAsync(deleted => Invalidate(deleted.SettingType, ct));
+    }
+
+    private async Task Invalidate(AppSettingType settingType, CancellationToken ct)
+    {
+        await cache.RemoveAsync(GetKey(settingType), ct);
+        await cache.RemoveAsync(GetAllKey, ct);
+    }
 }

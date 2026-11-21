@@ -1,3 +1,4 @@
 export * as formatDuration from "./durationFormatter";
 export * as formatValue from "./valueFormatter";
 export * as formatDate from "./dateFormatter";
+export * as formatSize from "./sizeFormatter";

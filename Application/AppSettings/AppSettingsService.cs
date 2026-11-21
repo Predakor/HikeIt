@@ -1,4 +1,5 @@
 ﻿using Application.AppSettings.DTOs;
+using Core.Serialization;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Microsoft.Extensions.Logging;
@@ -12,11 +13,6 @@ internal sealed class AppSettingsService : IAppSettingsService
     private readonly TimeProvider dateTimeProvider;
     private readonly ILogger<AppSettingsService> logger;
 
-    private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
-    {
-        PropertyNameCaseInsensitive = true
-    };
-
     public AppSettingsService(IAppSettingsRepository repository, TimeProvider dateTimeProvider, ILogger<AppSettingsService> logger)
     {
         this.repository = repository;
@@ -28,7 +24,7 @@ internal sealed class AppSettingsService : IAppSettingsService
         where TSetting : IAppSetting
     {
         return repository
-            .GetBySettingTypeAsync(setting.SettingFor, ct)
+            .GetBySettingTypeAsync(TSetting.SettingFor, ct)
             .MatchAsync(
                 found => found.SetSetting(setting),
                 notFound => repository.AddAsync(AppSetting.Create(setting))
@@ -36,12 +32,22 @@ internal sealed class AppSettingsService : IAppSettingsService
             .TapAsync(_ => repository.SaveChangesAsync(ct));
     }
 
-    public Task<Result<TSetting>> GetSettingAsync<TSetting>(AppSettingType settingType, CancellationToken ct)
+    public Task<Result<TSetting>> GetSettingAsync<TSetting>(CancellationToken ct)
         where TSetting : IAppSetting
     {
         return repository
-            .GetBySettingTypeAsync(settingType, ct)
+            .GetBySettingTypeAsync(TSetting.SettingFor, ct)
             .BindAsync(r => r.GetSetting<TSetting>());
+    }
+
+    public Task<TSetting> GetSettingOrDefaultAsync<TSetting>(CancellationToken ct)
+        where TSetting : class, IAppSetting<TSetting>
+    {
+        return GetSettingAsync<TSetting>(ct)
+            .MatchAsync(
+                setting => setting,
+                _ => TSetting.GetDefault()
+            );
     }
 
     public Task<Result<IList<AppSettingDto>>> GetAllAsync(CancellationToken ct)
@@ -66,7 +72,7 @@ internal sealed class AppSettingsService : IAppSettingsService
 
                 try
                 {
-                    var deserialized = JsonSerializer.Deserialize(source, type, jsonSerializerOptions);
+                    var deserialized = source.FromJson(type);
                     return s.SetSetting(deserialized, type);
 
                 }

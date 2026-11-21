@@ -1,18 +1,16 @@
-﻿using Domain.AppSettings.Interfaces;
+using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
-using Domain.Trips.Root.Builders.Config;
-using System.Text.Json.Serialization;
+using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Shared;
 
 namespace Domain.AppSettings.Settings;
 
 public sealed record GpxDataProcessingSetting(
-    float MaxElevationSpike,
-    float EmaSmoothingAlpha,
-    int MedianFilterWindowSize,
-    int RoundingDecimalsCount
-) : IAppSetting, IGpxDataProcessingSettings
+    IReadOnlyList<IPointFilterConfig> Filters
+) : IAppSetting<GpxDataProcessingSetting>, IFilterSetting<IPointFilterConfig>
 {
-    [JsonIgnore] public string Name => nameof(GpxDataProcessingSetting);
-    [JsonIgnore] public AppSettingType SettingFor => AppSettingType.GpxDataProcessing;
+    public static AppSettingType SettingFor => AppSettingType.GpxDataProcessing;
+    public static GpxDataProcessingSetting GetDefault() => new(PipelineDefaults.CleanupFilters);
 
+    public IEnumerable<string> Validate() => PointFilterValidation.Validate(Filters);
 }

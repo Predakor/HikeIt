@@ -17,11 +17,13 @@ const post = async <T>(
   path: string,
   body: any,
   responseResolver?: ResponseResolver<T>,
+  options?: { signal?: AbortSignal },
 ): Promise<T> => {
   const isFormData = body instanceof FormData;
 
   const request = await apiRequest(path, {
     method: "POST",
+    signal: options?.signal,
     body: isFormData ? body : JSON.stringify(body),
     headers:
       isFormData ?

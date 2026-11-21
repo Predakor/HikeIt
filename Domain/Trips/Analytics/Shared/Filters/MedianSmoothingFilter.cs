@@ -1,45 +1,66 @@
-﻿using Application.Commons.Abstractions;
-using Domain.AppSettings.Settings;
+using Domain.Common.Abstractions;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Domain.Trips.Analytics.Shared.Filters;
 
-public sealed class MedianSmoothingFilter : IFilter<MutableGpxPoint>
+public sealed class MedianSmoothingFilter : SyncFilter<IList<MutableGpxPoint>>
 {
-    public sealed record Config(int WindowSize) : FilterConfigBase<Config>(default!);
+    // Targets omitted from JSON means Elevation, which is what production smooths.
+    public sealed record Config(int WindowSize, PointFields Targets = PointFields.Elevation) : IPointFilterConfig
+    {
+        public IFilter<IList<MutableGpxPoint>> CreateFilter() => new MedianSmoothingFilter(this);
+    }
 
-    private readonly int _windowSize;
+    private static readonly (PointFields Field, Func<MutableGpxPoint, double> Get, Action<MutableGpxPoint, double> Set)[] Accessors =
+    [
+        (PointFields.Elevation, p => p.Ele, (p, v) => p.Ele = v),
+        (PointFields.Latitude, p => p.Lat, (p, v) => p.Lat = v),
+        (PointFields.Longitude, p => p.Lon, (p, v) => p.Lon = v),
+    ];
+
+    private readonly int _half;
+    private readonly PointFields _targets;
+
     public MedianSmoothingFilter(Config config)
     {
-        _windowSize = config.WindowSize;
+        config.Targets.EnsureAny(nameof(config));
+
+        _half = config.WindowSize / 2;
+        _targets = config.Targets;
     }
-    public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
+
+    // Centred window of up to 2 * half + 1 points, clipped at both ends. Values are overwritten in place,
+    // so the left side of each window already holds smoothed values.
+    public override IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
-        var sortedWindow = new List<double>(_windowSize);
-
-        for (int i = 0; i < values.Count; i++)
+        foreach (var (field, get, set) in Accessors)
         {
-            double currentEle = values[i].Ele;
-            int insertIdx = sortedWindow.BinarySearch(currentEle);
-            if (insertIdx < 0)
+            if (!_targets.HasFlag(field))
             {
-                insertIdx = ~insertIdx;
+                continue;
             }
 
-            sortedWindow.Insert(insertIdx, currentEle);
-
-            if (sortedWindow.Count > _windowSize)
+            for (int i = 0; i < values.Count; i++)
             {
-                var oldEle = values[i - _windowSize].Ele;
-                int removeIdx = sortedWindow.BinarySearch(oldEle);
-                if (removeIdx > 0)
-                {
-                    sortedWindow.RemoveAt(removeIdx);
-                }
+                set(values[i], GetMedian(values, i, _half, get));
             }
-
-            values[i].Ele = sortedWindow[sortedWindow.Count / 2];
         }
+
         return values;
+    }
+
+    private static double GetMedian(IList<MutableGpxPoint> values, int i, int half, Func<MutableGpxPoint, double> get)
+    {
+        int start = Math.Max(i - half, 0);
+        int end = Math.Min(i + half, values.Count - 1);
+
+        List<double> window = values
+            .Skip(start)
+            .Take(end - start + 1)
+            .Select(get)
+            .Order()
+            .ToList();
+
+        return window[window.Count / 2];
     }
 }

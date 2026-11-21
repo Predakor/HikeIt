@@ -6,11 +6,15 @@ using NetTopologySuite.Geometries;
 
 namespace Domain.Peaks;
 
-public class Peak : AggregateRoot<int, Peak>
+public class Peak : AggregateRoot<int, Peak>, IGeoPoint
 {
     public required string Name { get; set; }
     public required int Height { get; set; }
     public required Point Location { get; set; }
+
+    public double Lat => Location.Y;
+    public double Lon => Location.X;
+    public double Ele => Height;
 
     public int RegionID { get; set; }
 

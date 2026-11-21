@@ -1,45 +1,19 @@
-import api from "@/Utils/Api/apiRequest";
-import AdminPage from "@/components/Pages/AdminPage";
+import AdminLayout from "@/Layout/AdminLayout";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
-import type { InputConfigEntry } from "@/components/Utils/RenderInputs/inputTypes";
 import { For } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
-import { AppSetting } from "../../../components/AppSettings/AppSetting";
-
-type PropertyType = "number" | "string" | "integer";
-
-export interface AppSettingsEntry<TValue extends object = any> {
-  id: number;
-  name: string;
-  value: TValue;
-  schema: {
-    type: PropertyType;
-    properties: Record<keyof TValue, { type: PropertyType }>;
-    required: Partial<keyof TValue[]>;
-  };
-  settingType: any;
-}
-
-export const SchemaInputMap: Record<PropertyType, InputConfigEntry["type"]> = {
-  string: "text",
-  number: "number",
-  integer: "number",
-};
+import * as AppSettings from "@modules/AppSettings";
 
 function AppSettigsPage() {
-  const appSettingsValues = useQuery<AppSettingsEntry<any>[]>({
-    queryKey: ["settings"],
-    queryFn: () => api.get("appSettings"),
-  });
+  const appSettingsValues = AppSettings.useAll();
 
   return (
-    <AdminPage title={"App Settings"}>
+    <AdminLayout title={"App Settings"}>
       <FetchWrapper request={appSettingsValues}>
         {(presentAppsettings) => (
-          <For each={presentAppsettings}>{(setting) => <AppSetting setting={setting} />}</For>
+          <For each={presentAppsettings}>{(setting) => <AppSettings.Item setting={setting} />}</For>
         )}
       </FetchWrapper>
-    </AdminPage>
+    </AdminLayout>
   );
 }
 export default AppSettigsPage;

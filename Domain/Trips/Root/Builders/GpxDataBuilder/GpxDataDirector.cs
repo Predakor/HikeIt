@@ -9,17 +9,11 @@ internal static class GpxDataDirector
 {
     public static AnalyticData AnalyticData(List<GpxPoint> points)
     {
-        var config = GpxDataConfigs.GpxFile;
-        return new GpxDataBuilder(points)
-            .ClampElevationSpikes(config.MaxElevationSpike)
-            .ApplyMedianFilter(config.MedianFilterWindowSize)
-            .ApplyEmaSmoothing(config.EmaSmoothingAlpha)
-            .RoundElevation(config.RoundingDecimalsCount)
-            .Build();
+        return AnalyticData(points, GpxDataConfigs.GpxFile);
     }
-    public static AnalyticData AnalyticData(List<GpxPoint> points, DataProccesConfig dataCleanupSettings)
+    public static AnalyticData AnalyticData(List<GpxPoint> points, IGpxDataProcessingSettings? dataCleanupSettings)
     {
-        var config = GpxDataConfigs.GpxFile;
+        IGpxDataProcessingSettings config = dataCleanupSettings ?? GpxDataConfigs.GpxFile;
         return new GpxDataBuilder(points)
             .ClampElevationSpikes(config.MaxElevationSpike)
             .ApplyMedianFilter(config.MedianFilterWindowSize)

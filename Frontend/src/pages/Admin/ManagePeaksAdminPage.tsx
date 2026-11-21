@@ -1,5 +1,5 @@
 import api from "@/Utils/Api/apiRequest";
-import AdminPage from "@/components/Pages/AdminPage";
+import AdminLayout from "@/Layout/AdminLayout";
 import { PeakList } from "@/components/Peaks/Peak";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import type { Peak } from "@/types/Api/peak.types";
@@ -8,11 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 export default function ManagePeaksAdminPage() {
   const getPeaks = usePeaks();
   return (
-    <AdminPage title="Manage Peaks">
+    <AdminLayout title="Manage Peaks">
       <FetchWrapper request={getPeaks}>
         {(peaks) => <PeakList peaks={peaks} />}
       </FetchWrapper>
-    </AdminPage>
+    </AdminLayout>
   );
 }
 

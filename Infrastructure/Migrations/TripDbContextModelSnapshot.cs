@@ -41,15 +41,17 @@ namespace Infrastructure.Migrations
 
                     b.Property<JsonDocument>("JsonValue")
                         .IsRequired()
-                        .HasColumnType("jsonb");
+                        .HasColumnType("json");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("SettingType")
-                        .HasColumnType("integer");
+                    b.Property<string>("SettingType")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -135,6 +137,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Location");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "gist");
 
                     b.HasIndex("RegionID");
 
@@ -723,7 +729,25 @@ namespace Infrastructure.Migrations
                             b1.Property<double>("HighestElevationMeters")
                                 .HasColumnType("double precision");
 
+                            b1.Property<double?>("LongestClimbDistanceM")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("LongestClimbPercent")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("LongestDescentDistanceM")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("LongestDescentPercent")
+                                .HasColumnType("double precision");
+
                             b1.Property<double>("LowestElevationMeters")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("SteepestClimbPercent")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("SteepestDescentPercent")
                                 .HasColumnType("double precision");
 
                             b1.Property<double>("TotalAscentMeters")
@@ -772,8 +796,14 @@ namespace Infrastructure.Migrations
                             b1.Property<DateTime>("EndTime")
                                 .HasColumnType("timestamp with time zone");
 
+                            b1.Property<double?>("FastestSpeedKph")
+                                .HasColumnType("double precision");
+
                             b1.Property<TimeSpan>("IdleTime")
                                 .HasColumnType("interval");
+
+                            b1.Property<double?>("SlowestSpeedKph")
+                                .HasColumnType("double precision");
 
                             b1.Property<DateTime>("StartTime")
                                 .HasColumnType("timestamp with time zone");

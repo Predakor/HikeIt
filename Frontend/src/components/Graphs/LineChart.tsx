@@ -41,7 +41,6 @@ function ElevationChart({ config, ...rest }: Props) {
             tickLine={false}
             tickMargin={10}
             domain={["auto", "auto"]}
-            dataKey={chart.key("ele")}
           />
           <Tooltip animationDuration={100} cursor={false} content={<Chart.Tooltip />} />
           {chart.series.map((item) => (

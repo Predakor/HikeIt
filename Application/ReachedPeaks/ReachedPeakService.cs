@@ -1,69 +1,72 @@
-﻿using Application.Locations.Peaks;
-using Application.ReachedPeaks.ValueObjects;
+﻿using Application.ReachedPeaks.ValueObjects;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Peaks;
 using Domain.ReachedPeaks;
 using Domain.ReachedPeaks.Builders;
 using Domain.ReachedPeaks.ValueObjects;
-using Domain.Trips.Analytics.ElevationProfiles.Commands;
+using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Root;
 using Domain.Users.Root;
 
 namespace Application.ReachedPeaks;
 
-public class ReachedPeakService : IReachedPeakService {
-    const float PeakProximityTreshold = 100f;
-    readonly IPeaksQueryService _peaksQueries;
-    readonly IReachedPeaksQureryService _reachedPeaksQueries;
+public class ReachedPeakService : IReachedPeakService
+{
+    private readonly IPeaksFilterRunner _peaksRunner;
+    private readonly IReachedPeaksQureryService _reachedPeaksQueries;
 
-    public ReachedPeakService(
-        IPeaksQueryService peaksQueryService,
-        IReachedPeaksQureryService reachedPeaksQueries
-    ) {
-        _peaksQueries = peaksQueryService;
+    public ReachedPeakService(IPeaksFilterRunner peaksRunner, IReachedPeaksQureryService reachedPeaksQueries)
+    {
+        _peaksRunner = peaksRunner;
         _reachedPeaksQueries = reachedPeaksQueries;
     }
 
-    public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user) {
+    public Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user)
+    {
         return ReachedPeak.Create(peak, trip, user);
     }
 
-    public async Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip) {
-        return await ExtractPotentialPeaks(data)
-            .BindAsync(FindMatchingPeaks)
+    public async Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip)
+    {
+        return await _peaksRunner
+            .ApplyAsync(PeakCandidate.From(data))
+            .BindAsync(ToMatchedBuilders)
             .BindAsync(peaks => MarkNewPeaks(trip.UserId, peaks))
             .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, trip));
     }
 
-    static Result<List<ReachedPeakDataBuilder>> ExtractPotentialPeaks(AnalyticData data) {
-        return data.ToLocalMaximaWithDistance()
-            .WithProximityMerge()
-            .Select(ReachedPeakDataFactory.FromPointWithDistance)
-            .ToList();
+    private static Result<List<ReachedPeakDataBuilder>> ToMatchedBuilders(PeakChain chain)
+    {
+        return chain
+            .Matched
+            .Select(candidate => ReachedPeakDataFactory
+                .FromPointWithDistance(candidate.Point)
+                .WithPeak(candidate.Peak!))
+            .EnsureNotEmpty("No peak matched the trip's candidate peaks")
+            .Map(builders => builders.ToList());
     }
 
-    Task<Result<List<ReachedPeakDataBuilder>>> FindMatchingPeaks(
-        List<ReachedPeakDataBuilder> peaksCandidates
-    ) {
-        return _peaksQueries.GetPeaksWithinRadius(peaksCandidates, PeakProximityTreshold);
-    }
-
-    async Task<Result<List<ReachedPeakDataBuilder>>> MarkNewPeaks(
+    private async Task<Result<List<ReachedPeakDataBuilder>>> MarkNewPeaks(
         Guid userId,
         List<ReachedPeakDataBuilder> peaks
-    ) {
+    )
+    {
         var newPeaks = await _reachedPeaksQueries.ReachedByUserBefore(
             userId,
             peaks.Select(p => p.PeakId)
         );
 
-        if (newPeaks.NullOrEmpty()) {
+        if (newPeaks.NullOrEmpty())
+        {
             return peaks;
         }
 
-        foreach (var newPeak in newPeaks) {
+        foreach (var newPeak in newPeaks)
+        {
             var firstMathchingPeak = peaks.FirstOrDefault(p => p.PeakId == newPeak.Id);
-            if (firstMathchingPeak is not null) {
+            if (firstMathchingPeak is not null)
+            {
                 firstMathchingPeak.SetFirstTimeReached(true);
             }
         }
@@ -71,11 +74,13 @@ public class ReachedPeakService : IReachedPeakService {
         return peaks;
     }
 
-    static Result<List<ReachedPeak>> ToReachedPeaks(
+    private static Result<List<ReachedPeak>> ToReachedPeaks(
         IEnumerable<ReachedPeakDataBuilder> peaks,
         Trip trip
-    ) {
-        if (peaks.NullOrEmpty()) {
+    )
+    {
+        if (peaks.NullOrEmpty())
+        {
             return Errors.EmptyCollection("Peaks");
         }
 

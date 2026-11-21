@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "es2025",
     "useDefineForClassFields": true,
-    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "lib": ["es2025", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -22,9 +22,10 @@
 
     "paths": {
       "@/*": ["./src/*"],
-      "@pages/*": ["src/pages/*"],
-      "@components/*": ["src/components/*"],
-      "@utils/*": ["src/utils/*"]
+      "@pages/*": ["./src/pages/*"],
+      "@components/*": ["./src/components/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   },
   "extends": "./tsconfig.json",

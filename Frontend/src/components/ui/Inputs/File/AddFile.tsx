@@ -1,5 +1,4 @@
-import { Button, Field, FileUpload } from "@chakra-ui/react";
-import type { FileChangeDetails } from "node_modules/@chakra-ui/react/dist/types/components/file-upload/namespace";
+import { Button, Field, FileUpload, type FileUploadFileChangeDetails } from "@chakra-ui/react";
 import { HiUpload } from "react-icons/hi";
 
 interface AddFileProps {
@@ -7,7 +6,7 @@ interface AddFileProps {
 }
 
 export function AddFile({ onFileChange }: AddFileProps) {
-  const handleFileChange = (f: FileChangeDetails) => {
+  const handleFileChange = (f: FileUploadFileChangeDetails) => {
     const file = f.acceptedFiles[0];
     onFileChange(file);
   };

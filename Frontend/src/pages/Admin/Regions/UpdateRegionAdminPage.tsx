@@ -1,4 +1,4 @@
-import AdminPage from "@/components/Pages/AdminPage";
+import AdminLayout from "@/Layout/AdminLayout";
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import { UseDetailedRegionPeaks } from "@/hooks/Regions/UseRegionPeaks";
 import ManageRegionPeaks from "@components/Regions/Manage/ManageRegionPeaks";
@@ -11,10 +11,10 @@ export default function ManageRegionAdminPage() {
   const regionName = regionPeaks?.data?.region?.name || "";
 
   return (
-    <AdminPage title={`Manage ${regionName}`}>
+    <AdminLayout title={`Manage ${regionName}`}>
       <FetchWrapper request={regionPeaks}>
         {(region) => <ManageRegionPeaks region={region} />}
       </FetchWrapper>
-    </AdminPage>
+    </AdminLayout>
   );
 }

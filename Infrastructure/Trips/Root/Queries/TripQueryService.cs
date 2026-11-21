@@ -58,6 +58,44 @@ public class TripQueryService : ITripQueryService
 
         return query.ToPartialDto();
     }
+
+    public async Task<Result<List<TripDto.AdminSearchResult>>> SearchForAdminAsync(string search)
+    {
+        var term = search.Trim();
+        IQueryable<Trip> query = Trips.Include(t => t.User);
+
+        if (term.Length > 0)
+        {
+            query = query.Where(t => EF.Functions.ILike(t.Name, $"%{term}%"));
+        }
+
+        return await query
+            .OrderBy(t => t.Name)
+            .Take(20)
+            .Select(t => new TripDto.AdminSearchResult(
+                Id: t.Id,
+                Name: t.Name,
+                Owner: $"{t.User!.FirstName} {t.User!.LastName}"))
+            .ToListAsync();
+    }
+
+    public async Task<Result<TripDto.AdminSearchResult>> GetForAdminAsync(Guid id)
+    {
+        var trip = await Trips
+            .Where(t => t.Id == id)
+            .Select(t => new TripDto.AdminSearchResult(
+                Id: t.Id,
+                Name: t.Name,
+                Owner: $"{t.User!.FirstName} {t.User!.LastName}"))
+            .FirstOrDefaultAsync();
+
+        if (trip is null)
+        {
+            return Errors.NotFound("trip", id);
+        }
+
+        return trip;
+    }
 }
 
 internal static class Helpers

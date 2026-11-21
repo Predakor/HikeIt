@@ -6,6 +6,7 @@ import { tripAnalyticTabs } from "../../Data/tabOrder";
 
 export function TripDetailsMenu({ data }: { data: BasicAnalytics }) {
   const config = tripAnalyticTabs;
+
   return (
     <Tabs.Root lazyMount={true} defaultValue={"route"}>
       <Tabs.List display={"flex"} maxW={"100vw"} overflowX={{ base: "scroll", lg: "clip" }}>

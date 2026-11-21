@@ -50,6 +50,21 @@ export class TimeSpan {
     return Math.floor(this.seconds / 3600);
   }
 
+  // "1:02:05:09"-style clock text (days only when non-zero).
+  toClockString() {
+    const total = Math.floor(this.seconds);
+    const duration = {
+      days: Math.floor(total / 86400),
+      hours: Math.floor((total % 86400) / 3600),
+      minutes: Math.floor((total % 3600) / 60),
+      seconds: total % 60,
+    };
+
+    return new Intl.DurationFormat("en", { style: "digital", daysDisplay: "auto" }).format(
+      duration,
+    );
+  }
+
   toString() {
     const d = Math.floor(this.seconds / 86400);
     const h = Math.floor((this.seconds % 86400) / 3600);

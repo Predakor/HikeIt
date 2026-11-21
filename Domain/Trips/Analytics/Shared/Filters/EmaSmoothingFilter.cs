@@ -1,38 +1,72 @@
-﻿using Application.Commons.Abstractions;
-using Domain.AppSettings.Settings;
+using Domain.Common.Abstractions;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
-
 namespace Domain.Trips.Analytics.Shared.Filters;
 
-public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
+// Exponential moving average. Targets says what it smooths; Time, Pinned and untargeted values are left alone.
+public sealed class EmaSmoothingFilter : SyncFilter<IList<MutableGpxPoint>>
 {
-    public sealed record Config(double Alpha) : FilterConfigBase<Config>(default!);
-
-    private readonly double _alpha;
-    public EmaSmoothingFilter(Config config)
+    // Targets omitted from JSON means Elevation, which is what production smooths.
+    public sealed record Config(double Alpha, PointFields Targets = PointFields.Elevation) : IPointFilterConfig
     {
-        _alpha = config.Alpha;
+        public IFilter<IList<MutableGpxPoint>> CreateFilter() => new EmaSmoothingFilter(this);
     }
 
-    public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
+    // Float on purpose: the production builder always smoothed with a float alpha.
+    private readonly float _alpha;
+    private readonly double _coordinateAlpha;
+    private readonly bool _smoothsElevation;
+    private readonly bool _smoothsLatitude;
+    private readonly bool _smoothsLongitude;
+
+    public EmaSmoothingFilter(Config config)
     {
-        var prev = values[0];
-
-        foreach (var point in values.Skip(1))
+        bool alphaInRange = config.Alpha > 0 && config.Alpha <= 1;
+        if (!alphaInRange)
         {
+            throw new ArgumentOutOfRangeException(nameof(config), config.Alpha, "Alpha must be in (0, 1].");
+        }
 
-            prev.Ele = (_alpha * point.Ele) + ((1 - _alpha) * prev.Ele);
-            prev.Lon = (_alpha * point.Lon) + ((1 - _alpha) * prev.Lon);
-            prev.Lat = (_alpha * point.Lat) + ((1 - _alpha) * prev.Lat);
+        config.Targets.EnsureAny(nameof(config));
 
-            point.Ele = prev.Ele;
-            point.Lon = prev.Lon;
-            point.Lat = prev.Lat;
+        _alpha = (float)config.Alpha;
+        _coordinateAlpha = config.Alpha;
+        _smoothsElevation = config.Targets.HasFlag(PointFields.Elevation);
+        _smoothsLatitude = config.Targets.HasFlag(PointFields.Latitude);
+        _smoothsLongitude = config.Targets.HasFlag(PointFields.Longitude);
+    }
 
-            prev = point;
+    public override IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
+    {
+        if (values.Count < 2)
+        {
+            return values;
+        }
+
+        double prevEma = values[0].Ele;
+
+        // values[i - 1] already holds its smoothed coordinates when values[i] is updated.
+        for (int i = 1; i < values.Count; i++)
+        {
+            MutableGpxPoint current = values[i];
+            MutableGpxPoint previous = values[i - 1];
+
+            if (_smoothsElevation)
+            {
+                prevEma = (_alpha * current.Ele) + ((1 - _alpha) * prevEma);
+                current.Ele = prevEma;
+            }
+
+            if (_smoothsLatitude)
+            {
+                current.Lat = (_coordinateAlpha * current.Lat) + ((1 - _coordinateAlpha) * previous.Lat);
+            }
+
+            if (_smoothsLongitude)
+            {
+                current.Lon = (_coordinateAlpha * current.Lon) + ((1 - _coordinateAlpha) * previous.Lon);
+            }
         }
 
         return values;
     }
-
 }
