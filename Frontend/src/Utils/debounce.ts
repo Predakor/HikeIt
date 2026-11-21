@@ -6,7 +6,7 @@ export function debounce<Args extends any[], Return>(
   fn: (...args: Args) => Return,
   delay: number = 500,
 ): (...args: Args) => void {
-  let timeoutId: NodeJS.Timeout | null = null;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   return (...args: Args) => {
     if (timeoutId) {

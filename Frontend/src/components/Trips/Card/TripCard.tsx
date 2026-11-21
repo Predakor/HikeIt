@@ -1,14 +1,13 @@
 import { toUkDate } from "@/Utils/Formatters/dateFormatter";
 import { formatter } from "@/components/User/Stats/Utils/formatter";
 import type { TripSummary } from "@/types/Api/TripDtos";
-import { Badge, Card, CardTitle, Flex, Span, Stack } from "@chakra-ui/react";
-import type { UtilityValues } from "node_modules/@chakra-ui/react/dist/types/styled-system/generated/prop-types.gen";
+import { Badge, type BadgeProps, Card, CardTitle, Flex, Span, Stack } from "@chakra-ui/react";
 import { Link } from "react-router";
 import { cardCommonStyles } from "./_commonStyles";
 
 interface BadgeMeta {
   name: string;
-  color?: UtilityValues["colorPalette"];
+  color?: BadgeProps["colorPalette"];
 }
 
 interface Props {
