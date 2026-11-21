@@ -34,33 +34,14 @@ internal class SeedAppSettings : ISeeder
            .TapAsync(_ => repository.SaveChangesAsync(CancellationToken.None));
     }
 
-    // Same values as the former hard-coded cleanup constants, in production order.
     private Task<Result<AppSetting>> AddDefaultProcessingSetting()
     {
-        IReadOnlyList<IPointFilterConfig> filters =
-        [
-            new MaxSpikeFilter.Config(8),
-            new MedianSmoothingFilter.Config(6),
-            new EmaSmoothingFilter.Config(0.88),
-            new RoundingPrecisionFilter.Config(1),
-        ];
-
-        return repository.AddAsync(AppSetting.Create(new GpxDataProcessingSetting(filters)));
+        return repository.AddAsync(AppSetting.Create(new GpxDataProcessingSetting(PipelineDefaults.CleanupFilters)));
     }
 
-    // Same values as the former hard-coded peak matching constants.
     private Task<Result<AppSetting>> AddDefaultPeakMatchingSetting()
     {
-        IReadOnlyList<IPeakFilterConfig> filters =
-        [
-            new LocalMaximaFilter.Config(0),
-            new MergeNearbyByDistanceFilter.Config(50),
-            new MergeNearbyByElevationFilter.Config(50),
-            new PeakLookupFilter.Config(100),
-            new MatchWithinDistanceFilter.Config(100),
-        ];
-
-        return repository.AddAsync(AppSetting.Create(new PeakMatchingSetting(filters)));
+        return repository.AddAsync(AppSetting.Create(new PeakMatchingSetting(PipelineDefaults.PeakFilters)));
     }
 
     private Task<Result<AppSetting>> AddDefaultElevationProfileSetting()

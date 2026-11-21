@@ -24,6 +24,11 @@ public sealed record PeakMatchingSetting(IReadOnlyList<IPeakFilterConfig> Filter
 
         foreach (var filter in filters)
         {
+            if (filter is null)
+            {
+                yield return "Filters must not contain empty entries.";
+            }
+
             if (filter is LocalMaximaFilter.Config { MinClimbM: < 0 })
             {
                 yield return "LocalMaximaFilter MinClimbM must not be negative.";

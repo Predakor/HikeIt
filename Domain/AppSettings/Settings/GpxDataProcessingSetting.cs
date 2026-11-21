@@ -11,4 +11,6 @@ public sealed record GpxDataProcessingSetting(
 {
     public static AppSettingType SettingFor => AppSettingType.GpxDataProcessing;
     public static GpxDataProcessingSetting GetDefault() => new(PipelineDefaults.CleanupFilters);
+
+    public IEnumerable<string> Validate() => PointFilterValidation.Validate(Filters);
 }

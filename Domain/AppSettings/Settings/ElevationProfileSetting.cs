@@ -11,4 +11,6 @@ public sealed record ElevationProfileSetting(
 {
     public static AppSettingType SettingFor => AppSettingType.ElevationProfile;
     public static ElevationProfileSetting GetDefault() => new(PipelineDefaults.ElevationProfileFilters);
+
+    public IEnumerable<string> Validate() => PointFilterValidation.Validate(Filters);
 }

@@ -11,4 +11,6 @@ public sealed record RouteSetting(
 {
     public static AppSettingType SettingFor => AppSettingType.Route;
     public static RouteSetting GetDefault() => new(PipelineDefaults.RouteFilters);
+
+    public IEnumerable<string> Validate() => PointFilterValidation.Validate(Filters);
 }

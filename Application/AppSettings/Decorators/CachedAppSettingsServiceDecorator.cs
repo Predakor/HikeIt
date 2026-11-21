@@ -53,13 +53,28 @@ internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
     )
         where TSetting : IAppSetting
     {
-        return cache.GetOrCreateAsync(
-            GetKey(TSetting.SettingFor),
-            () => inner.SetSetting(setting, ct),
-            ct: ct
-        );
+        return inner
+            .SetSetting(setting, ct)
+            .TapAsync(_ => Invalidate(TSetting.SettingFor, ct));
     }
 
-    public Task<Result<AppSettingDto>> Update(int id, JsonDocument jsonSetting, CancellationToken ct) => inner.Update(id, jsonSetting, ct);
-    public Task<Result<AppSetting>> DeleteSettingAsync(int id, CancellationToken ct) => inner.DeleteSettingAsync(id, ct);
+    public Task<Result<AppSettingDto>> Update(int id, JsonDocument jsonSetting, CancellationToken ct)
+    {
+        return inner
+            .Update(id, jsonSetting, ct)
+            .TapAsync(updated => Invalidate(updated.Type, ct));
+    }
+
+    public Task<Result<AppSetting>> DeleteSettingAsync(int id, CancellationToken ct)
+    {
+        return inner
+            .DeleteSettingAsync(id, ct)
+            .TapAsync(deleted => Invalidate(deleted.SettingType, ct));
+    }
+
+    private async Task Invalidate(AppSettingType settingType, CancellationToken ct)
+    {
+        await cache.RemoveAsync(GetKey(settingType), ct);
+        await cache.RemoveAsync(GetAllKey, ct);
+    }
 }

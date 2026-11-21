@@ -208,7 +208,9 @@ export function usePipelineBench(
 
     previousTargetRef.current = target;
     const missing = allStageIds.filter(
-      (stage) => stateRef.current.comparisons[target][stage] === undefined,
+      (stage) =>
+        stage !== "peakMatching" &&
+        stateRef.current.comparisons[target][stage] === undefined,
     );
 
     void runStages(missing);

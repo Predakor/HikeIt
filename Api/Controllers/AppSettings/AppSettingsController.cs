@@ -1,5 +1,6 @@
 ﻿using Api.Commons.Extentions;
 using Application.AppSettings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -7,6 +8,7 @@ namespace Api.Controllers.AppSettings;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class AppSettingsController : ControllerBase
 {
     private readonly IAppSettingsService service;

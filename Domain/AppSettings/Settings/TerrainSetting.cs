@@ -16,6 +16,11 @@ public sealed record TerrainSetting(IReadOnlyList<ITerrainFilterConfig> Filters)
     {
         foreach (var filter in Filters ?? [])
         {
+            if (filter is null)
+            {
+                yield return "Filters must not contain empty entries.";
+            }
+
             if (filter is ElevationGainFilter.Config { MinChangeM: <= 0 })
             {
                 yield return "ElevationGainFilter MinChangeM must be greater than 0.";

@@ -35,8 +35,8 @@ public sealed class PreviewCache(IMemoryCache cache, IPipelineSettingsService se
 
         var results = await run();
 
-        // A failed stage may be transient, so only complete runs are kept.
-        if (results.Values.All(result => result.Ok))
+        // A failed stage may be transient, so only runs where every stage finished or was skipped are kept.
+        if (results.Values.All(result => result.Ok || result.Skipped))
         {
             cache.Set(key, results, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = Lifetime });
         }

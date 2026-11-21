@@ -30,7 +30,7 @@ public static class PipelineDefaults
         new RoundingPrecisionFilter.Config(6, PointFields.Coordinates),
     ];
 
-    // Idle goes first so a standing wobble never counts as climbing. Without classifiers the split times stay null.
+    // Idle goes first so a standing wobble never counts as climbing.
     public static readonly IReadOnlyList<IPaceFilterConfig> PaceFilters =
     [
         new IdleFilter.Config(0.5),

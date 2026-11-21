@@ -18,6 +18,10 @@ public static class ElevationSegments
         double pivotElevation = 0;
         double extremeDistance = 0;
         double extremeElevation = 0;
+        double lowDistance = 0;
+        double lowElevation = 0;
+        double highDistance = 0;
+        double highElevation = 0;
         int direction = 0;
 
         foreach (var gain in gains)
@@ -32,12 +36,36 @@ public static class ElevationSegments
 
             if (isStarting)
             {
-                double change = elevation - pivotElevation;
-                bool hasMovedEnough = Math.Abs(change) >= minChangeM && change != 0;
-
-                if (hasMovedEnough)
+                if (elevation < lowElevation)
                 {
-                    direction = Math.Sign(change);
+                    lowDistance = distance;
+                    lowElevation = elevation;
+                }
+
+                if (elevation > highElevation)
+                {
+                    highDistance = distance;
+                    highElevation = elevation;
+                }
+
+                double rise = elevation - lowElevation;
+                double fall = highElevation - elevation;
+                bool hasRisen = rise > 0 && rise >= minChangeM;
+                bool hasFallen = fall > 0 && fall >= minChangeM;
+
+                if (hasRisen)
+                {
+                    direction = 1;
+                    pivotDistance = lowDistance;
+                    pivotElevation = lowElevation;
+                    extremeDistance = distance;
+                    extremeElevation = elevation;
+                }
+                else if (hasFallen)
+                {
+                    direction = -1;
+                    pivotDistance = highDistance;
+                    pivotElevation = highElevation;
                     extremeDistance = distance;
                     extremeElevation = elevation;
                 }

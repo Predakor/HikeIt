@@ -20,7 +20,7 @@ public interface IPointsFilterRunner
 
 public sealed class PointsFilterRunner(IPipelineSettingsService settings) : IPointsFilterRunner
 {
-    /// <summary>Runs point filters on a copy of the points; the input list is never mutated.</summary>
+    // Runs on a copy of the points; the input list is never mutated.
     public async Task<Result<List<GpxPoint>>> ApplyAsync(
         IEnumerable<GpxPoint> points,
         StageId stage,

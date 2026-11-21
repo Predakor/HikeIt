@@ -1,9 +1,10 @@
 using Application.Trips.Analytics.Dtos;
+using Core.Serialization;
 using System.Text.Json.Serialization;
 
 namespace Application.Trips.Analytics.Pipeline.Contracts;
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(CamelCaseEnumConverter<StageId>))]
 public enum StageId
 {
     Cleanup,

@@ -14,8 +14,13 @@ public sealed record PaceSetting(IReadOnlyList<IPaceFilterConfig> Filters)
 
     public IEnumerable<string> Validate()
     {
-        foreach (var filter in Filters)
+        foreach (var filter in Filters ?? [])
         {
+            if (filter is null)
+            {
+                yield return "Filters must not contain empty entries.";
+            }
+
             if (filter is IdleFilter.Config { SpeedKph: < 0 })
             {
                 yield return "IdleFilter SpeedKph must not be negative.";

@@ -96,6 +96,14 @@ public class RouteAnalyticFilterTests
         Assert.Equal(220, context.LongestClimbDistanceM!.Value, 3);
     }
 
+    [Fact]
+    public async Task LongestClimb_ASmallDipBeforeTheFirstClimbIsNotPartOfIt()
+    {
+        var context = await Run(new LongestClimbFilter.Config(3), Gain(50, -2), Gain(100, 10));
+
+        Assert.Equal(100, context.LongestClimbDistanceM!.Value, 3);
+        Assert.Equal(10, context.LongestClimbPercent!.Value, 3);
+    }
 
     [Fact]
     public void AverageSlope_FlatTrack_DoesNotFailOnMissingClimbOrDescent()
