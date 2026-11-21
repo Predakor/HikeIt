@@ -4,15 +4,17 @@ using Domain.Trips.Analytics.ElevationProfiles.Commands;
 namespace Domain.Trips.Analytics.Shared.Filters;
 
 // Merges candidate peaks closer than DistanceM, keeping the highest.
-public sealed class MergeNearbyByDistanceFilter(MergeNearbyByDistanceFilter.Config config) : IPeakFilter
+public sealed class MergeNearbyByDistanceFilter(MergeNearbyByDistanceFilter.Config config) : SyncFilter<PeakChain>
 {
     public sealed record Config(double DistanceM) : IPeakFilterConfig
     {
-        public IPeakFilter CreateFilter(PeakFilterContext context) => new MergeNearbyByDistanceFilter(this);
+        public IFilter<PeakChain> CreateFilter() => new MergeNearbyByDistanceFilter(this);
     }
 
-    public ValueTask<IList<PeakCandidate>> ApplyAsync(IList<PeakCandidate> candidates)
+    public override PeakChain Apply(PeakChain chain)
     {
-        return ValueTask.FromResult<IList<PeakCandidate>>(candidates.ToList().MergeNearbyPeakByDistance(config.DistanceM));
+        chain.Candidates = chain.Candidates.ToList().MergeNearbyPeakByDistance(config.DistanceM);
+
+        return chain;
     }
 }

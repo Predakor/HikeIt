@@ -6,14 +6,14 @@ using Domain.Trips.Root.Builders.GpxDataBuilder;
 namespace Domain.Trips.Analytics.Shared.Filters;
 
 // Marks local maxima (plus first and last point) as Pinned so later filters keep them.
-public sealed class PinLocalMaximaFilter(PinLocalMaximaFilter.Config config) : IFilter<MutableGpxPoint>
+public sealed class PinLocalMaximaFilter(PinLocalMaximaFilter.Config config) : SyncFilter<IList<MutableGpxPoint>>
 {
     public sealed record Config(bool Enabled) : IPointFilterConfig
     {
-        public IFilter<MutableGpxPoint> CreateFilter() => new PinLocalMaximaFilter(this);
+        public IFilter<IList<MutableGpxPoint>> CreateFilter() => new PinLocalMaximaFilter(this);
     }
 
-    public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
+    public override IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
         if (!config.Enabled || values.Count == 0)
         {

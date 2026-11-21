@@ -1,15 +1,10 @@
 ﻿using Api.Commons.Extentions;
-using Application.AppSettings;
 using Application.Commons.Services.Auth;
-using Application.FileReferences;
 using Application.Trips.Analytics.ElevationProfiles;
-using Application.Trips.Analytics.Pipeline;
-using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.Analytics.Queries;
 using Application.Trips.Analytics.RouteVisualizations;
 using Application.Trips.GpxFile.Services;
 using Domain.Common.Abstractions;
-using Domain.FileReferences;
 using Domain.Trips.Analytics.Root;
 using Domain.Trips.Root.Builders.Config;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
@@ -21,33 +16,27 @@ namespace Api.Controllers.Trips;
 [Authorize]
 [Route("api/trips/{id}/analytics/")]
 [ApiController]
-public class AnalyticsController : ControllerBase
+public sealed class AnalyticsController : ControllerBase
 {
     private readonly IRouteVisualizationService _routeVisualizationService;
     private readonly IElevationProfileQueryService _elevationQueries;
     private readonly ITripAnalyticsQueryService _analyticsQueryies;
     private readonly ITripSourceService _tripSource;
     private readonly IAuthService _authService;
-    private readonly IPipelinePreviewService _pipelinePreview;
-    private readonly IPipelineSettingsService _pipelineSettings;
 
     public AnalyticsController(
         IRouteVisualizationService routeVisualizationService,
         IElevationProfileQueryService elevationQueries,
         ITripAnalyticsQueryService queryService,
         ITripSourceService tripSource,
-        IAuthService authService,
-        IPipelinePreviewService pipelinePreview,
-        IPipelineSettingsService pipelineSettings
+        IAuthService authService
     )
     {
-        _pipelineSettings = pipelineSettings;
         _routeVisualizationService = routeVisualizationService;
         _elevationQueries = elevationQueries;
         _analyticsQueryies = queryService;
         _tripSource = tripSource;
         _authService = authService;
-        _pipelinePreview = pipelinePreview;
     }
 
     [HttpGet("")]
@@ -109,27 +98,9 @@ public class AnalyticsController : ControllerBase
     {
         return await _tripSource
             .GetStoredAsync(id, HttpContext.RequestAborted)
-            .BindAsync(d => _routeVisualizationService.GetRouteVisualization(d.Points, configs))
+            .BindAsync(d => _routeVisualizationService.GetRouteVisualizationAsync(d.Points, configs.ToList()))
             .ToActionResultAsync();
 
     }
 
-    // What every stage resolves for a null config (DB settings, else code constants); the bench customises from it.
-    [Authorize(Roles = "Admin")]
-    [HttpGet("pipeline/defaults")]
-    [ProducesResponseType(typeof(PipelineDefaultsDto), 200)]
-    public async Task<IActionResult> PipelineDefaults()
-    {
-        return Ok(await _pipelineSettings.GetDefaultsAsync(HttpContext.RequestAborted));
-    }
-
-    [Authorize(Roles = "Admin")]
-    [HttpPost("pipeline/preview")]
-    [ProducesResponseType(typeof(PipelinePreviewResponse), 200)]
-    public async Task<IActionResult> PipelinePreview(Guid id, [FromBody] PipelinePreviewRequest request)
-    {
-        var response = await _pipelinePreview.PreviewAsync(id, request, HttpContext.RequestAborted);
-
-        return response is null ? NotFound() : Ok(response);
-    }
 }

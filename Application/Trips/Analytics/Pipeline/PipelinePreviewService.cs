@@ -1,85 +1,117 @@
+using Application.Trips.Analytics.Dtos;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Core.Serialization;
-using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
+using Core.Timing;
 
 namespace Application.Trips.Analytics.Pipeline;
 
-// Runs the requested stages and the baseline (all-default config), caching each stage's output.
+public interface IPipelinePreviewService
+{
+    Task<Result<PipelinePreviewDto>> PreviewAsync(
+        Guid tripId,
+        PipelinePreviewRequest request,
+        CancellationToken cancellationToken
+    );
+}
+
 public sealed class PipelinePreviewService(
     IPipelineSource source,
     IEnumerable<IPipelineStage> stages,
-    IMemoryCache cache
+    PreviewCache cache
 ) : IPipelinePreviewService
 {
-    private static readonly TimeSpan CacheLifetime = TimeSpan.FromMinutes(10);
+    private readonly Dictionary<StageId, IPipelineStage> _stagesById = stages.ToDictionary(stage => stage.Id);
 
-    // The untouched file: cleanup with no filters, every other section left at its default.
-    private static readonly PipelineConfig RawConfig = new(Cleanup: new PipeConfig.Cleanup([]));
-
-    // Filter configs have a FilterType property (a System.Type) that clashes with the polymorphic discriminator of the same name.
-    // The discriminator already identifies the config, so the property is left out of the key.
-    private static readonly JsonSerializerOptions CacheKeyOptions = new()
-    {
-        TypeInfoResolver = new DefaultJsonTypeInfoResolver { Modifiers = { RemoveFilterTypeProperty } },
-    };
-
-    private readonly IReadOnlyDictionary<StageId, IPipelineStage> _stagesById = stages.ToDictionary(stage => stage.Id);
-
-    public async Task<PipelinePreviewResponse?> PreviewAsync(
+    public Task<Result<PipelinePreviewDto>> PreviewAsync(
         Guid tripId,
         PipelinePreviewRequest request,
         CancellationToken cancellationToken
     )
     {
-        var input = await source.LoadAsync(tripId, cancellationToken);
-        if (input is null)
+        return source
+            .LoadAsync(tripId, cancellationToken)
+            .MapAsync(input => PreviewAsync(tripId, input, request, cancellationToken));
+    }
+
+    private async Task<PipelinePreviewDto> PreviewAsync(
+        Guid tripId,
+        PipelineInput input,
+        PipelinePreviewRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var targetStages = request.Stages ?? Enum.GetValues<StageId>();
+        var requested = targetStages
+            .Distinct()
+            .ToList();
+
+        var plan = new List<StageId>();
+
+        foreach (var stage in requested)
         {
-            return null;
+            AddWithDependencies(stage, plan);
         }
 
-        var requested = (request.Stages ?? StageIds.All).Distinct().ToList();
-        var plan = WithDependencies(requested);
+        var setup = new PreviewSetup(input, plan, requested, request.IncludeSteps);
 
-        var preview = await RunPlanAsync(input, request.Config, plan, cancellationToken);
-        var baseline = await RunPlanAsync(input, new PipelineConfig(), plan, cancellationToken);
-        var raw = request.IncludeRaw ? await RunPlanAsync(input, RawConfig, plan, cancellationToken) : null;
+        var preview = await RunSelectedAsync(setup, request.Config, cancellationToken);
 
-        return new PipelinePreviewResponse(
-            Select(preview, requested),
-            Select(baseline, requested),
-            raw is null ? null : Select(raw, requested)
+        // The untouched file is cleanup with no filters; every other section stays at the production defaults.
+        var comparisonConfig = request.Target switch
+        {
+            ComparisonTarget.Raw => new PipelineConfig(Cleanup: new PipeConfig.Cleanup([])),
+            _ => new PipelineConfig(),
+        };
+
+        // Only the current pipe is recomputed on every edit; the comparison comes from the cache while the file and settings are unchanged.
+        var comparison = await cache.GetOrRunAsync(
+            request.Target,
+            tripId,
+            requested,
+            setup.IncludeSteps,
+            () => RunSelectedAsync(setup, comparisonConfig, cancellationToken),
+            cancellationToken
+        );
+
+        return new PipelinePreviewDto(preview, comparison);
+    }
+
+    private async Task<IReadOnlyDictionary<string, PipeStageDto.Result>> RunSelectedAsync(
+        PreviewSetup setup,
+        PipelineConfig config,
+        CancellationToken cancellationToken
+    )
+    {
+        var runs = await RunPlanAsync(setup, config, cancellationToken);
+        return setup.Requested.ToDictionary(
+            stage => stage.ToJsonName(),
+            stage => runs[stage].Result
         );
     }
 
     private async Task<Dictionary<StageId, StageRun>> RunPlanAsync(
-        PipelineInput input,
+        PreviewSetup setup,
         PipelineConfig config,
-        IReadOnlyList<StageId> plan,
         CancellationToken cancellationToken
     )
     {
         var runs = new Dictionary<StageId, StageRun>();
 
-        foreach (var stage in plan)
+        foreach (var stage in setup.Plan)
         {
-            var failedUpstream = StageIds
-                .DependenciesOf(stage)
+            var failedUpstream = _stagesById[stage]
+                .DependsOn
                 .Where(dependency => !runs[dependency].Result.Ok)
                 .Select(dependency => (StageId?)dependency)
                 .FirstOrDefault();
 
             if (failedUpstream is StageId failed)
             {
-                runs[stage] = new StageRun(Failed(stage, $"Upstream stage {StageIds.Key(failed)} failed"), null, null);
+                runs[stage] = new StageRun(stage.ToFailed($"Upstream stage {failed.ToJsonName()} failed"), null);
                 continue;
             }
 
-            runs[stage] = await RunStageAsync(stage, input, config, runs, cancellationToken);
+            runs[stage] = await RunStageAsync(stage, setup, config, runs, cancellationToken);
         }
 
         return runs;
@@ -87,7 +119,7 @@ public sealed class PipelinePreviewService(
 
     private async Task<StageRun> RunStageAsync(
         StageId stage,
-        PipelineInput input,
+        PreviewSetup setup,
         PipelineConfig config,
         IReadOnlyDictionary<StageId, StageRun> upstreamRuns,
         CancellationToken cancellationToken
@@ -96,68 +128,34 @@ public sealed class PipelinePreviewService(
         try
         {
             var handler = _stagesById[stage];
-            var dependencies = StageIds.DependenciesOf(stage);
-            var upstreamKeys = dependencies.Select(dependency => upstreamRuns[dependency].CacheKey!);
-            var discriminator = await handler.CacheDiscriminatorAsync(cancellationToken);
-            var key = CacheKey(input.CacheScope, stage, handler.SelectConfig(config), discriminator, upstreamKeys);
+            var upstream = handler.DependsOn
+                .ToDictionary(
+                    dependency => dependency,
+                    dependency => upstreamRuns[dependency].Output!
+                );
 
-            if (cache.TryGetValue(key, out StageOutput? cached) && cached is not null)
-            {
-                return new StageRun(ToResult(stage, cached, cacheHit: true, durationMs: 0), cached, key);
-            }
-
-            var upstream = dependencies.ToDictionary(dependency => dependency, dependency => upstreamRuns[dependency].Output!);
-
-            var watch = Stopwatch.StartNew();
-            var run = await handler.RunAsync(new StageContext(input, upstream), config, cancellationToken);
-            watch.Stop();
+            var context = new Stage.Context(setup.Input, upstream);
+            var (elapsed, run) = await Timed.RunAsync(() => handler.RunAsync(context, config, cancellationToken));
 
             return run.Match(
-                output => CacheRun(stage, key, output, (int)watch.ElapsedMilliseconds),
-                error => new StageRun(Failed(stage, error.Message), null, null)
+                output => new StageRun(output.ToResult(stage, setup, elapsed.TotalMilliseconds), output),
+                error => new StageRun(stage.ToFailed(error.Message), null)
             );
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            return new StageRun(Failed(stage, ex.Message), null, null);
+            return new StageRun(stage.ToFailed(ex.Message), null);
         }
     }
 
-    private StageRun CacheRun(StageId stage, string key, StageOutput output, int durationMs)
-    {
-        cache.Set(
-            key,
-            output,
-            new MemoryCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = CacheLifetime,
-                Size = output.PointCount + 1,
-            }
-        );
-
-        return new StageRun(ToResult(stage, output, cacheHit: false, durationMs), output, key);
-    }
-
-    private static IReadOnlyList<StageId> WithDependencies(IEnumerable<StageId> requested)
-    {
-        var plan = new List<StageId>();
-
-        foreach (var stage in requested)
-        {
-            AddWithDependencies(stage, plan);
-        }
-
-        return plan;
-    }
-
-    private static void AddWithDependencies(StageId stage, List<StageId> plan)
+    private void AddWithDependencies(StageId stage, List<StageId> plan)
     {
         if (plan.Contains(stage))
         {
             return;
         }
 
-        foreach (var dependency in StageIds.DependenciesOf(stage))
+        foreach (var dependency in _stagesById[stage].DependsOn)
         {
             AddWithDependencies(dependency, plan);
         }
@@ -165,48 +163,5 @@ public sealed class PipelinePreviewService(
         plan.Add(stage);
     }
 
-    private static IReadOnlyDictionary<string, StageResult> Select(
-        IReadOnlyDictionary<StageId, StageRun> runs,
-        IEnumerable<StageId> requested
-    ) => requested.ToDictionary(StageIds.Key, stage => runs[stage].Result);
-
-    private static string CacheKey(
-        string scope,
-        StageId stage,
-        object? selectedConfig,
-        string discriminator,
-        IEnumerable<string> upstreamKeys
-    )
-    {
-        var material = string.Join(
-            "\n",
-            scope,
-            StageIds.Key(stage),
-            JsonSerializer.Serialize(selectedConfig, CacheKeyOptions),
-            discriminator,
-            string.Join(",", upstreamKeys)
-        );
-
-        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(material)));
-    }
-
-    private static StageResult ToResult(StageId stage, StageOutput output, bool cacheHit, int durationMs) =>
-        new(stage, true, null, cacheHit, durationMs, output.PointCount, PayloadBytes(output.Data), output.Data);
-
-    private static StageResult Failed(StageId stage, string error) => new(stage, false, error, false, 0, 0, 0, null);
-
-    private static int PayloadBytes(object? data) => data is null ? 0 : Encoding.UTF8.GetByteCount(data.ToJson());
-
-    // Result is what the client sees; Output and CacheKey feed downstream stages and are null when the stage failed.
-    private sealed record StageRun(StageResult Result, StageOutput? Output, string? CacheKey);
-
-    private static void RemoveFilterTypeProperty(JsonTypeInfo typeInfo)
-    {
-        var filterTypeProperties = typeInfo.Properties.Where(property => property.Name == "FilterType").ToList();
-
-        foreach (var property in filterTypeProperties)
-        {
-            typeInfo.Properties.Remove(property);
-        }
-    }
+    private sealed record StageRun(PipeStageDto.Result Result, Stage.Output? Output);
 }

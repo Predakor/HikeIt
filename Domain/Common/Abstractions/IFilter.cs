@@ -1,22 +1,30 @@
-using Domain.Peaks;
+using Domain.Trips.Analytics.Route.Filters;
 using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
+using Domain.Trips.Analytics.Time.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
 using System.Text.Json.Serialization;
 
 namespace Domain.Common.Abstractions;
 
-public interface IFilter<TValue>
+// One step of a chain. Filters of a family share a state type and refine it in order.
+public interface IFilter<TState>
 {
-    IList<TValue> Apply(IList<TValue> values);
+    ValueTask<TState> ApplyAsync(TState state);
 }
 
-public interface IPeakFilter
+// Base for filters that never await.
+public abstract class SyncFilter<TState> : IFilter<TState>
 {
-    ValueTask<IList<PeakCandidate>> ApplyAsync(IList<PeakCandidate> candidates);
+    public abstract TState Apply(TState state);
+
+    public ValueTask<TState> ApplyAsync(TState state) => ValueTask.FromResult(Apply(state));
 }
 
-public sealed record PeakFilterContext(IPeakSource Peaks);
+public interface IFilterConfig<TState> : IFilterConfig
+{
+    IFilter<TState> CreateFilter();
+}
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "filterType")]
 [JsonDerivedType(typeof(EmaSmoothingFilter.Config), typeDiscriminator: nameof(EmaSmoothingFilter))]
@@ -30,6 +38,18 @@ public sealed record PeakFilterContext(IPeakSource Peaks);
 [JsonDerivedType(typeof(PeakLookupFilter.Config), typeDiscriminator: nameof(PeakLookupFilter))]
 [JsonDerivedType(typeof(MatchWithinDistanceFilter.Config), typeDiscriminator: nameof(MatchWithinDistanceFilter))]
 [JsonDerivedType(typeof(LocalMaximaFilter.Config), typeDiscriminator: nameof(LocalMaximaFilter))]
+[JsonDerivedType(typeof(IdleFilter.Config), typeDiscriminator: nameof(IdleFilter))]
+[JsonDerivedType(typeof(GradeFilter.Config), typeDiscriminator: nameof(GradeFilter))]
+[JsonDerivedType(typeof(DurationFilter.Config), typeDiscriminator: nameof(DurationFilter))]
+[JsonDerivedType(typeof(ClimbTimeFilter.Config), typeDiscriminator: nameof(ClimbTimeFilter))]
+[JsonDerivedType(typeof(ActivityTimeFilter.Config), typeDiscriminator: nameof(ActivityTimeFilter))]
+[JsonDerivedType(typeof(ClimbSpeedFilter.Config), typeDiscriminator: nameof(ClimbSpeedFilter))]
+[JsonDerivedType(typeof(TotalDistanceFilter.Config), typeDiscriminator: nameof(TotalDistanceFilter))]
+[JsonDerivedType(typeof(TotalElevationFilter.Config), typeDiscriminator: nameof(TotalElevationFilter))]
+[JsonDerivedType(typeof(ElevationRangeFilter.Config), typeDiscriminator: nameof(ElevationRangeFilter))]
+[JsonDerivedType(typeof(AverageSlopeFilter.Config), typeDiscriminator: nameof(AverageSlopeFilter))]
+[JsonDerivedType(typeof(ElevationGainFilter.Config), typeDiscriminator: nameof(ElevationGainFilter))]
+[JsonDerivedType(typeof(SteepestSegmentFilter.Config), typeDiscriminator: nameof(SteepestSegmentFilter))]
 public interface IFilterConfig;
 
 // Configs of filters that work on track points (cleanup, elevation profile, route).
@@ -40,10 +60,7 @@ public interface IFilterConfig;
 [JsonDerivedType(typeof(RoundingPrecisionFilter.Config), typeDiscriminator: nameof(RoundingPrecisionFilter))]
 [JsonDerivedType(typeof(PinLocalMaximaFilter.Config), typeDiscriminator: nameof(PinLocalMaximaFilter))]
 [JsonDerivedType(typeof(SimplifyFilter.Config), typeDiscriminator: nameof(SimplifyFilter))]
-public interface IPointFilterConfig : IFilterConfig
-{
-    IFilter<MutableGpxPoint> CreateFilter();
-}
+public interface IPointFilterConfig : IFilterConfig<IList<MutableGpxPoint>>;
 
 // Configs of filters that work on candidate peaks (peak matching only).
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "filterType")]
@@ -52,10 +69,27 @@ public interface IPointFilterConfig : IFilterConfig
 [JsonDerivedType(typeof(PeakLookupFilter.Config), typeDiscriminator: nameof(PeakLookupFilter))]
 [JsonDerivedType(typeof(MatchWithinDistanceFilter.Config), typeDiscriminator: nameof(MatchWithinDistanceFilter))]
 [JsonDerivedType(typeof(LocalMaximaFilter.Config), typeDiscriminator: nameof(LocalMaximaFilter))]
-public interface IPeakFilterConfig : IFilterConfig
-{
-    IPeakFilter CreateFilter(PeakFilterContext context);
-}
+public interface IPeakFilterConfig : IFilterConfig<PeakChain>;
+
+// Configs of filters that classify and measure time segments (time analytics only).
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "filterType")]
+[JsonDerivedType(typeof(IdleFilter.Config), typeDiscriminator: nameof(IdleFilter))]
+[JsonDerivedType(typeof(GradeFilter.Config), typeDiscriminator: nameof(GradeFilter))]
+[JsonDerivedType(typeof(DurationFilter.Config), typeDiscriminator: nameof(DurationFilter))]
+[JsonDerivedType(typeof(ClimbTimeFilter.Config), typeDiscriminator: nameof(ClimbTimeFilter))]
+[JsonDerivedType(typeof(ActivityTimeFilter.Config), typeDiscriminator: nameof(ActivityTimeFilter))]
+[JsonDerivedType(typeof(ClimbSpeedFilter.Config), typeDiscriminator: nameof(ClimbSpeedFilter))]
+public interface IPaceFilterConfig : IFilterConfig<TimeAnalyticContext>;
+
+// Configs of filters that fill in the route analytics (route analytics only).
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "filterType")]
+[JsonDerivedType(typeof(TotalDistanceFilter.Config), typeDiscriminator: nameof(TotalDistanceFilter))]
+[JsonDerivedType(typeof(TotalElevationFilter.Config), typeDiscriminator: nameof(TotalElevationFilter))]
+[JsonDerivedType(typeof(ElevationRangeFilter.Config), typeDiscriminator: nameof(ElevationRangeFilter))]
+[JsonDerivedType(typeof(AverageSlopeFilter.Config), typeDiscriminator: nameof(AverageSlopeFilter))]
+[JsonDerivedType(typeof(ElevationGainFilter.Config), typeDiscriminator: nameof(ElevationGainFilter))]
+[JsonDerivedType(typeof(SteepestSegmentFilter.Config), typeDiscriminator: nameof(SteepestSegmentFilter))]
+public interface ITerrainFilterConfig : IFilterConfig<RouteAnalyticContext>;
 
 public interface ITransform<TIn, TOut>
 {

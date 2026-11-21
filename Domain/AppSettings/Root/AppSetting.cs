@@ -13,6 +13,8 @@ public enum AppSettingType
     PeakMatching,
     ElevationProfile,
     Route,
+    Pace,
+    Terrain,
 }
 
 public class AppSetting : AggregateRoot<int, AppSetting>

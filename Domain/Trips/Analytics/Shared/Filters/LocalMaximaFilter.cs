@@ -3,16 +3,18 @@ using Domain.Common.Abstractions;
 namespace Domain.Trips.Analytics.Shared.Filters;
 
 /// <summary>Keeps the points the track rose into and falls away from. Needs the full track, so it must run first.</summary>
-public sealed class LocalMaximaFilter(LocalMaximaFilter.Config config) : IPeakFilter
+public sealed class LocalMaximaFilter(LocalMaximaFilter.Config config) : SyncFilter<PeakChain>
 {
     public sealed record Config(double MinClimbM = 0) : IPeakFilterConfig
     {
-        public IPeakFilter CreateFilter(PeakFilterContext context) => new LocalMaximaFilter(this);
+        public IFilter<PeakChain> CreateFilter() => new LocalMaximaFilter(this);
     }
 
-    public ValueTask<IList<PeakCandidate>> ApplyAsync(IList<PeakCandidate> candidates)
+    public override PeakChain Apply(PeakChain chain)
     {
-        return ValueTask.FromResult<IList<PeakCandidate>>(FindMaxima(candidates));
+        chain.Candidates = FindMaxima(chain.Candidates);
+
+        return chain;
     }
 
     private List<PeakCandidate> FindMaxima(IList<PeakCandidate> points)

@@ -4,16 +4,18 @@ using Domain.Common.Geography;
 namespace Domain.Trips.Analytics.Shared.Filters;
 
 /// <summary>Keeps candidates whose attached peak is within MaxDistanceM. Without it, any peak in the lookup box matches.</summary>
-public sealed class MatchWithinDistanceFilter(MatchWithinDistanceFilter.Config config) : IPeakFilter
+public sealed class MatchWithinDistanceFilter(MatchWithinDistanceFilter.Config config) : SyncFilter<PeakChain>
 {
     public sealed record Config(double MaxDistanceM) : IPeakFilterConfig
     {
-        public IPeakFilter CreateFilter(PeakFilterContext context) => new MatchWithinDistanceFilter(this);
+        public IFilter<PeakChain> CreateFilter() => new MatchWithinDistanceFilter(this);
     }
 
-    public ValueTask<IList<PeakCandidate>> ApplyAsync(IList<PeakCandidate> candidates)
+    public override PeakChain Apply(PeakChain chain)
     {
-        return ValueTask.FromResult<IList<PeakCandidate>>(candidates.Where(IsWithinDistance).ToList());
+        chain.Candidates = chain.Candidates.Where(IsWithinDistance).ToList();
+
+        return chain;
     }
 
     private bool IsWithinDistance(PeakCandidate candidate)

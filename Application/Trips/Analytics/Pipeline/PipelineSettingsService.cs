@@ -11,7 +11,7 @@ public interface IPipelineSettingsService
     Task<IReadOnlyList<TFilter>> GetFiltersAsync<TFilter>(StageId stage, CancellationToken cancellationToken)
         where TFilter : IFilterConfig;
 
-    Task<PipelineDefaultsDto> GetDefaultsAsync(CancellationToken cancellationToken);
+    Task<Result<PipelineConfig>> GetDefaultsAsync(CancellationToken cancellationToken);
 }
 
 public sealed class PipelineSettingsService(IAppSettingsService appSettingsService) : IPipelineSettingsService
@@ -25,26 +25,30 @@ public sealed class PipelineSettingsService(IAppSettingsService appSettingsServi
             StageId.ElevationProfile => await FiltersOf<ElevationProfileSetting, IPointFilterConfig>(cancellationToken) as IReadOnlyList<TFilter>,
             StageId.PeakMatching => await FiltersOf<PeakMatchingSetting, IPeakFilterConfig>(cancellationToken) as IReadOnlyList<TFilter>,
             StageId.Route => await FiltersOf<RouteSetting, IPointFilterConfig>(cancellationToken) as IReadOnlyList<TFilter>,
-            StageId.Analytics => null,
+            StageId.Terrain => await FiltersOf<TerrainSetting, ITerrainFilterConfig>(cancellationToken) as IReadOnlyList<TFilter>,
+            StageId.Pace => await FiltersOf<PaceSetting, IPaceFilterConfig>(cancellationToken) as IReadOnlyList<TFilter>,
             _ => throw new NotImplementedException(),
         };
 
         return filters ?? [];
     }
 
-    public async Task<PipelineDefaultsDto> GetDefaultsAsync(CancellationToken cancellationToken)
+    public async Task<Result<PipelineConfig>> GetDefaultsAsync(CancellationToken cancellationToken)
     {
-        return new PipelineDefaultsDto(
-            await FiltersOf<GpxDataProcessingSetting, IPointFilterConfig>(cancellationToken),
-            await FiltersOf<ElevationProfileSetting, IPointFilterConfig>(cancellationToken),
-            await FiltersOf<PeakMatchingSetting, IPeakFilterConfig>(cancellationToken),
-            await FiltersOf<RouteSetting, IPointFilterConfig>(cancellationToken)
+        return new PipelineConfig(
+            new PipeConfig.Cleanup(await GetFiltersAsync<IPointFilterConfig>(StageId.Cleanup, cancellationToken)),
+            new PipeConfig.Profile(await GetFiltersAsync<IPointFilterConfig>(StageId.ElevationProfile, cancellationToken)),
+            new PipeConfig.Peaks(await GetFiltersAsync<IPeakFilterConfig>(StageId.PeakMatching, cancellationToken)),
+            new PipeConfig.Route(await GetFiltersAsync<IPointFilterConfig>(StageId.Route, cancellationToken)),
+            new PipeConfig.Terrain(await GetFiltersAsync<ITerrainFilterConfig>(StageId.Terrain, cancellationToken)),
+            new PipeConfig.Pace(await GetFiltersAsync<IPaceFilterConfig>(StageId.Pace, cancellationToken))
         );
     }
 
     private async Task<IReadOnlyList<TFilter>> FiltersOf<TSetting, TFilter>(CancellationToken cancellationToken)
         where TSetting : class, IAppSetting<TSetting>, IFilterSetting<TFilter>
     {
-        return (await appSettingsService.GetSettingOrDefaultAsync<TSetting>(cancellationToken)).Filters;
+        var setting = await appSettingsService.GetSettingOrDefaultAsync<TSetting>(cancellationToken);
+        return setting.Filters;
     }
 }

@@ -14,6 +14,8 @@ public static class AppSettingsRegistry
         { AppSettingType.PeakMatching, typeof(PeakMatchingSetting) },
         { AppSettingType.ElevationProfile, typeof(ElevationProfileSetting) },
         { AppSettingType.Route, typeof(RouteSetting) },
+        { AppSettingType.Pace, typeof(PaceSetting) },
+        { AppSettingType.Terrain, typeof(TerrainSetting) },
     };
 
     public static JsonNode GetSchema(AppSettingType type)

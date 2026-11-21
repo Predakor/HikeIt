@@ -3,12 +3,12 @@ using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Domain.Trips.Analytics.Shared.Filters;
 
-public sealed class MedianSmoothingFilter : IFilter<MutableGpxPoint>
+public sealed class MedianSmoothingFilter : SyncFilter<IList<MutableGpxPoint>>
 {
     // Targets omitted from JSON means Elevation, which is what production smooths.
     public sealed record Config(int WindowSize, PointFields Targets = PointFields.Elevation) : IPointFilterConfig
     {
-        public IFilter<MutableGpxPoint> CreateFilter() => new MedianSmoothingFilter(this);
+        public IFilter<IList<MutableGpxPoint>> CreateFilter() => new MedianSmoothingFilter(this);
     }
 
     private static readonly (PointFields Field, Func<MutableGpxPoint, double> Get, Action<MutableGpxPoint, double> Set)[] Accessors =
@@ -31,7 +31,7 @@ public sealed class MedianSmoothingFilter : IFilter<MutableGpxPoint>
 
     // Centred window of up to 2 * half + 1 points, clipped at both ends. Values are overwritten in place,
     // so the left side of each window already holds smoothed values.
-    public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
+    public override IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
         foreach (var (field, get, set) in Accessors)
         {

@@ -1,18 +1,23 @@
-using Application.Commons.Services.Auth;
-using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.GpxFile.Services;
+using Domain.Common.Geography.ValueObjects;
 
 namespace Application.Trips.Analytics.Pipeline;
 
-public sealed class TripFilePipelineSource(ITripSourceService tripSource, IAuthService authService) : IPipelineSource
+// The raw stored file of a trip, parsed.
+public sealed record PipelineInput(IReadOnlyList<GpxPoint> RawPoints);
+
+public interface IPipelineSource
 {
-    public Task<PipelineInput?> LoadAsync(Guid tripId, CancellationToken cancellationToken)
+    // Read-only. Fails when the trip or its file does not exist.
+    Task<Result<PipelineInput>> LoadAsync(Guid tripId, CancellationToken cancellationToken);
+}
+
+public sealed class TripFilePipelineSource(ITripSourceService tripSource) : IPipelineSource
+{
+    public Task<Result<PipelineInput>> LoadAsync(Guid tripId, CancellationToken cancellationToken)
     {
-        return authService
-            .WithLoggedUserId()
-            .BindAsync(userId => tripSource
-                .GetStoredAsync(tripId, cancellationToken)
-                .MapAsync(data => new PipelineInput($"{userId}/{tripId}", data.Points)))
-            .MatchAsync(input => (PipelineInput?)input, _ => default(PipelineInput));
+        return tripSource
+            .GetStoredAsync(tripId, cancellationToken)
+            .MapAsync(data => new PipelineInput(data.Points));
     }
 }

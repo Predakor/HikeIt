@@ -22,8 +22,13 @@ internal sealed class RouteVisualizationService : IRouteVisualizationService
             .MapAsync(filtered => new RoutePath(filtered));
     }
 
-    public Result<RoutePath> GetRouteVisualization(IEnumerable<GpxPoint> points, IEnumerable<IPointFilterConfig> configs)
+    public Task<Result<RoutePath>> GetRouteVisualizationAsync(
+        IEnumerable<GpxPoint> points,
+        IReadOnlyList<IPointFilterConfig> configs
+    )
     {
-        return new RoutePath(_pointsRunner.Apply(points, configs));
+        return _pointsRunner
+            .ApplyAsync(points, StageId.Route, configs)
+            .MapAsync(filtered => new RoutePath(filtered));
     }
 }

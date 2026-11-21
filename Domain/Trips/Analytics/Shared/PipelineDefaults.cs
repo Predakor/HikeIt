@@ -1,5 +1,7 @@
 using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Route.Filters;
 using Domain.Trips.Analytics.Shared.Filters;
+using Domain.Trips.Analytics.Time.Filters;
 
 namespace Domain.Trips.Analytics.Shared;
 
@@ -26,6 +28,27 @@ public static class PipelineDefaults
         new SimplifyFilter.Config(4),
         new EmaSmoothingFilter.Config(0.92, PointFields.Coordinates),
         new RoundingPrecisionFilter.Config(6, PointFields.Coordinates),
+    ];
+
+    // Classifiers first, then the times they feed, then the speeds. Idle goes first so a standing wobble never counts as climbing.
+    public static readonly IReadOnlyList<IPaceFilterConfig> PaceFilters =
+    [
+        new IdleFilter.Config(0.5),
+        new GradeFilter.Config(2),
+        new DurationFilter.Config(),
+        new ClimbTimeFilter.Config(),
+        new ActivityTimeFilter.Config(),
+        new ClimbSpeedFilter.Config(),
+    ];
+
+    // TotalElevationFilter gives plain ascent and descent sums; swap in ElevationGainFilter to ignore GPS wobble.
+    public static readonly IReadOnlyList<ITerrainFilterConfig> TerrainFilters =
+    [
+        new TotalDistanceFilter.Config(),
+        new TotalElevationFilter.Config(),
+        new ElevationRangeFilter.Config(),
+        new AverageSlopeFilter.Config(),
+        new SteepestSegmentFilter.Config(100),
     ];
 
     public static readonly IReadOnlyList<IPeakFilterConfig> PeakFilters =

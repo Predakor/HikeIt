@@ -3,12 +3,12 @@ using Domain.Trips.Root.Builders.GpxDataBuilder;
 namespace Domain.Trips.Analytics.Shared.Filters;
 
 // Exponential moving average. Targets says what it smooths; Time, Pinned and untargeted values are left alone.
-public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
+public sealed class EmaSmoothingFilter : SyncFilter<IList<MutableGpxPoint>>
 {
     // Targets omitted from JSON means Elevation, which is what production smooths.
     public sealed record Config(double Alpha, PointFields Targets = PointFields.Elevation) : IPointFilterConfig
     {
-        public IFilter<MutableGpxPoint> CreateFilter() => new EmaSmoothingFilter(this);
+        public IFilter<IList<MutableGpxPoint>> CreateFilter() => new EmaSmoothingFilter(this);
     }
 
     // Float on purpose: the production builder always smoothed with a float alpha.
@@ -35,7 +35,7 @@ public sealed class EmaSmoothingFilter : IFilter<MutableGpxPoint>
         _smoothsLongitude = config.Targets.HasFlag(PointFields.Longitude);
     }
 
-    public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
+    public override IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
         if (values.Count < 2)
         {

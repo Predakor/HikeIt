@@ -36,10 +36,10 @@ public class ReachedPeakService : IReachedPeakService
             .BindAsync(foundPeaks => ToReachedPeaks(foundPeaks, trip));
     }
 
-    private static Result<List<ReachedPeakDataBuilder>> ToMatchedBuilders(PeakChainResult chain)
+    private static Result<List<ReachedPeakDataBuilder>> ToMatchedBuilders(PeakChain chain)
     {
         return chain
-            .ToMatched()
+            .Matched
             .Select(candidate => ReachedPeakDataFactory
                 .FromPointWithDistance(candidate.Point)
                 .WithPeak(candidate.Peak!))

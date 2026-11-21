@@ -3,12 +3,12 @@ using Domain.Trips.Root.Builders.GpxDataBuilder;
 
 namespace Domain.Trips.Analytics.Shared.Filters;
 
-public sealed class RoundingPrecisionFilter : IFilter<MutableGpxPoint>
+public sealed class RoundingPrecisionFilter : SyncFilter<IList<MutableGpxPoint>>
 {
     // Targets omitted from JSON means Elevation, which is what production rounds.
     public sealed record Config(int Decimals, PointFields Targets = PointFields.Elevation) : IPointFilterConfig
     {
-        public IFilter<MutableGpxPoint> CreateFilter() => new RoundingPrecisionFilter(this);
+        public IFilter<IList<MutableGpxPoint>> CreateFilter() => new RoundingPrecisionFilter(this);
     }
 
     private readonly int _decimals;
@@ -22,7 +22,7 @@ public sealed class RoundingPrecisionFilter : IFilter<MutableGpxPoint>
         _targets = config.Targets;
     }
 
-    public IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
+    public override IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
     {
         foreach (var point in values)
         {

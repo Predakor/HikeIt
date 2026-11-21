@@ -732,6 +732,12 @@ namespace Infrastructure.Migrations
                             b1.Property<double>("LowestElevationMeters")
                                 .HasColumnType("double precision");
 
+                            b1.Property<double?>("SteepestClimbPercent")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("SteepestDescentPercent")
+                                .HasColumnType("double precision");
+
                             b1.Property<double>("TotalAscentMeters")
                                 .HasColumnType("double precision");
 

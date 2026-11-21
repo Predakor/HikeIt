@@ -1,3 +1,4 @@
+using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Peaks;
 using Domain.Trips.Analytics.Shared;
@@ -15,7 +16,7 @@ public class PeakFilterTests
     {
         var candidates = Candidates(100, 120, 110, 130, 90);
 
-        var result = await new LocalMaximaFilter(new LocalMaximaFilter.Config()).ApplyAsync(candidates);
+        var result = await Run(new LocalMaximaFilter(new LocalMaximaFilter.Config()), candidates);
 
         Assert.Equal([120d, 130d], Elevations(result));
     }
@@ -25,7 +26,7 @@ public class PeakFilterTests
     {
         var candidates = Candidates(100, 120, 110, 130, 90);
 
-        var result = await new LocalMaximaFilter(new LocalMaximaFilter.Config(MinClimbM: 30)).ApplyAsync(candidates);
+        var result = await Run(new LocalMaximaFilter(new LocalMaximaFilter.Config(MinClimbM: 30)), candidates);
 
         Assert.Equal([130d], Elevations(result));
     }
@@ -33,7 +34,7 @@ public class PeakFilterTests
     [Fact]
     public async Task LocalMaxima_MonotoneTrack_HasNoMaxima()
     {
-        var result = await new LocalMaximaFilter(new LocalMaximaFilter.Config()).ApplyAsync(Candidates(100, 110, 120, 130));
+        var result = await Run(new LocalMaximaFilter(new LocalMaximaFilter.Config()), Candidates(100, 110, 120, 130));
 
         Assert.Empty(result);
     }
@@ -44,8 +45,7 @@ public class PeakFilterTests
         var close = Candidates(100, 120, 110);
         var far = new PeakCandidate(new GpxPointWithDistance(new GpxPoint(50.01, 20, 105), 0));
 
-        var result = await new MergeNearbyByDistanceFilter(new MergeNearbyByDistanceFilter.Config(50))
-            .ApplyAsync([.. close, far]);
+        var result = await Run(new MergeNearbyByDistanceFilter(new MergeNearbyByDistanceFilter.Config(50)), [.. close, far]);
 
         Assert.Equal([120d, 105d], Elevations(result));
     }
@@ -53,7 +53,7 @@ public class PeakFilterTests
     [Fact]
     public async Task MergeNearbyByDistance_ZeroDistance_KeepsEveryCandidate()
     {
-        var result = await new MergeNearbyByDistanceFilter(new MergeNearbyByDistanceFilter.Config(0)).ApplyAsync(Candidates(100, 120, 110));
+        var result = await Run(new MergeNearbyByDistanceFilter(new MergeNearbyByDistanceFilter.Config(0)), Candidates(100, 120, 110));
 
         Assert.Equal(3, result.Count);
     }
@@ -61,8 +61,7 @@ public class PeakFilterTests
     [Fact]
     public async Task MergeNearbyByElevation_CollapsesNeighboursWithinTheDeltaToTheHighest()
     {
-        var result = await new MergeNearbyByElevationFilter(new MergeNearbyByElevationFilter.Config(50))
-            .ApplyAsync(Candidates(100, 110, 300));
+        var result = await Run(new MergeNearbyByElevationFilter(new MergeNearbyByElevationFilter.Config(50)), Candidates(100, 110, 300));
 
         Assert.Equal([110d, 300d], Elevations(result));
     }
@@ -74,8 +73,7 @@ public class PeakFilterTests
         var farPeak = Candidates(100)[0] with { Peak = PeakAt(50.01, 20) };
         var unmatched = Candidates(100)[0];
 
-        var result = await new MatchWithinDistanceFilter(new MatchWithinDistanceFilter.Config(100))
-            .ApplyAsync([near, farPeak, unmatched]);
+        var result = await Run(new MatchWithinDistanceFilter(new MatchWithinDistanceFilter.Config(100)), [near, farPeak, unmatched]);
 
         Assert.Equal([near], result);
     }
@@ -87,7 +85,7 @@ public class PeakFilterTests
         var further = PeakAt(50.002, 20);
         var source = new FakePeakSource([further, closer]);
 
-        var result = await new PeakLookupFilter(new PeakLookupFilter.Config(100), source).ApplyAsync(Candidates(100, 120));
+        var result = await Run(new PeakLookupFilter(new PeakLookupFilter.Config(100)), Candidates(100, 120), source);
 
         Assert.Equal(2, result.Count);
         Assert.All(result, candidate => Assert.Same(closer, candidate.Peak));
@@ -96,7 +94,7 @@ public class PeakFilterTests
     [Fact]
     public async Task PeakLookup_NoPeaksFound_LeavesCandidatesUnmatched()
     {
-        var result = await new PeakLookupFilter(new PeakLookupFilter.Config(100), new FakePeakSource([])).ApplyAsync(Candidates(100, 120));
+        var result = await Run(new PeakLookupFilter(new PeakLookupFilter.Config(100)), Candidates(100, 120));
 
         Assert.Equal(2, result.Count);
         Assert.All(result, candidate => Assert.Null(candidate.Peak));
@@ -107,7 +105,7 @@ public class PeakFilterTests
     {
         var source = new FakePeakSource([]);
 
-        var result = await new PeakLookupFilter(new PeakLookupFilter.Config(100), source).ApplyAsync([]);
+        var result = await Run(new PeakLookupFilter(new PeakLookupFilter.Config(100)), [], source);
 
         Assert.Empty(result);
         Assert.Equal(0, source.Calls);
@@ -118,10 +116,21 @@ public class PeakFilterTests
     {
         var source = new FakePeakSource([]);
 
-        await new PeakLookupFilter(new PeakLookupFilter.Config(500), source).ApplyAsync(Candidates(100, 120));
+        await Run(new PeakLookupFilter(new PeakLookupFilter.Config(500)), Candidates(100, 120), source);
 
         var bounds = source.LastBounds!.Value;
         Assert.True(bounds.MinLat < 50 && bounds.MaxLat > 50 + Step);
+    }
+
+    private static async Task<IList<PeakCandidate>> Run(
+        IFilter<PeakChain> filter,
+        IList<PeakCandidate> candidates,
+        IPeakSource? source = null
+    )
+    {
+        var chain = await filter.ApplyAsync(new PeakChain(candidates, source ?? new FakePeakSource([])));
+
+        return chain.Candidates;
     }
 
     private static List<PeakCandidate> Candidates(params double[] elevations) =>

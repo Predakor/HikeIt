@@ -1,3 +1,4 @@
+using Application.Trips.Analytics.Dtos;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.Analytics.Pipeline.Runners;
 using Domain.Common.Abstractions;
@@ -6,8 +7,8 @@ using Domain.Trips.Analytics.Shared;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class PeakMatchingStage(IPeaksFilterRunner runner, IPipelineSettingsService settings)
-    : FilterListStageBase<IPeakFilterConfig>(settings)
+public sealed class PeakMatchingStage(IPeaksFilterRunner runner)
+    : FilterListStageBase<IPeakFilterConfig>
 {
     public override StageId Id => StageId.PeakMatching;
 
@@ -16,27 +17,28 @@ public sealed class PeakMatchingStage(IPeaksFilterRunner runner, IPipelineSettin
         return config.PeakMatching?.Filters;
     }
 
-    public override Task<Result<StageOutput>> RunAsync(
-        StageContext context,
+    public override Task<Result<Stage.Output>> RunAsync(
+        Stage.Context context,
         PipelineConfig config,
         CancellationToken cancellationToken
     )
     {
         var candidates = PeakCandidate.From(CleanupStage.CleanedDataFrom(context));
+        var steps = new List<PipeStageDto.StepTiming>();
 
         return runner
-            .ApplyAsync(candidates, RequestFilters(config), cancellationToken)
-            .MapAsync(ToOutput);
+            .ApplyAsync(candidates, RequestFilters(config), steps, cancellationToken)
+            .MapAsync(chain => ToOutput(chain, steps));
     }
 
-    private static StageOutput ToOutput(PeakChainResult chain)
+    private static Stage.Output ToOutput(PeakChain chain, List<PipeStageDto.StepTiming> steps)
     {
         var matched = chain
-            .ToMatched()
+            .Matched
             .Select(ToMatchedPeak)
             .ToList();
 
-        return new StageOutput(new StageData.PeakMatching(chain.CandidatesBeforeLookup, matched), matched.Count);
+        return new Stage.Output(new StageData.PeakMatching(chain.CandidatesBeforeLookup, matched), steps);
     }
 
     private static StageData.MatchedPeak ToMatchedPeak(PeakCandidate candidate)

@@ -1,3 +1,4 @@
+using Application.Trips.Analytics.Dtos;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Application.Trips.Analytics.Pipeline.Runners;
 using Domain.Common.Abstractions;
@@ -5,39 +6,35 @@ using Domain.Common.Geography.ValueObjects;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class CleanupStage(IPipelineSettingsService settings, IPointsFilterRunner runner)
-    : FilterListStageBase<IPointFilterConfig>(settings)
+public sealed class CleanupStage(IPointsFilterRunner runner)
+    : FilterListStageBase<IPointFilterConfig>
 {
     public override StageId Id => StageId.Cleanup;
+
+    public override IReadOnlyList<StageId> DependsOn => [];
 
     protected override IReadOnlyList<IPointFilterConfig>? RequestFilters(PipelineConfig config)
     {
         return config.Cleanup?.Filters;
     }
 
-    public override Task<Result<StageOutput>> RunAsync(
-        StageContext context,
+    public override Task<Result<Stage.Output>> RunAsync(
+        Stage.Context context,
         PipelineConfig config,
         CancellationToken cancellationToken
     )
     {
         var rawPoints = context.Input.RawPoints;
+        var steps = new List<PipeStageDto.StepTiming>();
 
         return runner
-            .ApplyAsync(rawPoints, Id, RequestFilters(config), cancellationToken)
-            .MapAsync(cleanedPoints => ToOutput(rawPoints.Count, cleanedPoints));
+            .ApplyAsync(rawPoints, Id, RequestFilters(config), steps, cancellationToken)
+            .MapAsync(cleaned => new Stage.Output(new AnalyticData(cleaned), steps));
     }
 
-    private static StageOutput ToOutput(int rawCount, List<GpxPoint> cleanedPoints)
+    internal static AnalyticData CleanedDataFrom(Stage.Context context)
     {
-        var data = new StageData.Cleanup(rawCount, cleanedPoints.Count);
-
-        return new StageOutput(data, cleanedPoints.Count, new AnalyticData(cleanedPoints));
-    }
-
-    internal static AnalyticData CleanedDataFrom(StageContext context)
-    {
-        return context.Upstream[StageId.Cleanup].Internal as AnalyticData
+        return context.Upstream[StageId.Cleanup].Data as AnalyticData
             ?? throw new InvalidOperationException("Cleanup output is missing its cleaned points.");
     }
 }

@@ -24,6 +24,7 @@ public static class DependencyInjection
     private static IServiceCollection AddPipeline(this IServiceCollection services)
     {
         return services
+            .AddScoped<PreviewCache>()
             .AddScoped<IPipelineSource, TripFilePipelineSource>()
             .AddScoped<IPointsFilterRunner, PointsFilterRunner>()
             .AddScoped<IPeaksFilterRunner, PeaksFilterRunner>()

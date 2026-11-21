@@ -22,6 +22,8 @@ internal class SeedAppSettings : ISeeder
         await SeedIfMissing(AppSettingType.PeakMatching, AddDefaultPeakMatchingSetting);
         await SeedIfMissing(AppSettingType.ElevationProfile, AddDefaultElevationProfileSetting);
         await SeedIfMissing(AppSettingType.Route, AddDefaultRouteSetting);
+        await SeedIfMissing(AppSettingType.Pace, AddDefaultPaceSetting);
+        await SeedIfMissing(AppSettingType.Terrain, AddDefaultTerrainSetting);
     }
 
     private Task<Result<AppSetting>> SeedIfMissing(AppSettingType type, Func<Task<Result<AppSetting>>> addDefault)
@@ -69,5 +71,15 @@ internal class SeedAppSettings : ISeeder
     private Task<Result<AppSetting>> AddDefaultRouteSetting()
     {
         return repository.AddAsync(AppSetting.Create(new RouteSetting(PipelineDefaults.RouteFilters)));
+    }
+
+    private Task<Result<AppSetting>> AddDefaultPaceSetting()
+    {
+        return repository.AddAsync(AppSetting.Create(new PaceSetting(PipelineDefaults.PaceFilters)));
+    }
+
+    private Task<Result<AppSetting>> AddDefaultTerrainSetting()
+    {
+        return repository.AddAsync(AppSetting.Create(new TerrainSetting(PipelineDefaults.TerrainFilters)));
     }
 }

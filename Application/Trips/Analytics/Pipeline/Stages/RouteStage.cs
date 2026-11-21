@@ -1,13 +1,13 @@
+using Application.Trips.Analytics.Dtos;
 using Application.Trips.Analytics.Pipeline.Contracts;
-using Application.Trips.Analytics.RouteVisualizations;
+using Application.Trips.Analytics.Pipeline.Runners;
 using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Root;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class RouteStage(
-    IRouteVisualizationService routeVisualizations,
-    IPipelineSettingsService settings
-) : FilterListStageBase<IPointFilterConfig>(settings)
+public sealed class RouteStage(IPointsFilterRunner runner)
+    : FilterListStageBase<IPointFilterConfig>
 {
     public override StageId Id => StageId.Route;
 
@@ -16,16 +16,17 @@ public sealed class RouteStage(
         return config.Route?.Filters;
     }
 
-    public override Task<Result<StageOutput>> RunAsync(
-        StageContext context,
+    public override Task<Result<Stage.Output>> RunAsync(
+        Stage.Context context,
         PipelineConfig config,
         CancellationToken cancellationToken
     )
     {
         var points = CleanupStage.CleanedDataFrom(context).Points;
+        var steps = new List<PipeStageDto.StepTiming>();
 
-        return ResolveFiltersAsync(config, cancellationToken)
-            .BindAsync(filters => routeVisualizations.GetRouteVisualization(points, filters))
-            .MapAsync(path => new StageOutput(path, path.Points.Count));
+        return runner
+            .ApplyAsync(points, Id, RequestFilters(config), steps, cancellationToken)
+            .MapAsync(path => new Stage.Output(new RoutePath(path), steps));
     }
 }

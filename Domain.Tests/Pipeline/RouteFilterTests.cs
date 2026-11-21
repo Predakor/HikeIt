@@ -77,12 +77,12 @@ public class RouteFilterTests
     }
 
     [Fact]
-    public void Pinned_SurvivesLaterElevationFilters()
+    public async Task Pinned_SurvivesLaterElevationFilters()
     {
         var points = Track(100, 110, 130, 120, 110, 100);
         points[2].Pinned = true;
 
-        CreateFilter("""{"filterType":"MaxSpikeFilter","MaxSpike":5}""").Apply(points);
+        await CreateFilter("""{"filterType":"MaxSpikeFilter","MaxSpike":5}""").ApplyAsync(points);
 
         Assert.True(points[2].Pinned);
     }
@@ -107,7 +107,7 @@ public class RouteFilterTests
 
     private static IPointFilterConfig CreateConfig(string json) => JsonSerializer.Deserialize<IPointFilterConfig>(json, Json)!;
 
-    private static IFilter<MutableGpxPoint> CreateFilter(string json) => CreateConfig(json).CreateFilter();
+    private static IFilter<IList<MutableGpxPoint>> CreateFilter(string json) => CreateConfig(json).CreateFilter();
 
     private static IList<MutableGpxPoint> Simplify(IList<MutableGpxPoint> points, double toleranceM) =>
         new SimplifyFilter(new SimplifyFilter.Config(toleranceM)).Apply(points);
