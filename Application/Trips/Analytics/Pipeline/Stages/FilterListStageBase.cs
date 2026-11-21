@@ -10,6 +10,11 @@ public abstract class FilterListStageBase<TFilter> : IPipelineStage
 
     public virtual IReadOnlyList<StageId> DependsOn => [StageId.Cleanup];
 
+    public virtual string? SkipReason(Stage.Context context)
+    {
+        return null;
+    }
+
     protected abstract IReadOnlyList<TFilter>? RequestFilters(PipelineConfig config);
 
     public abstract Task<Result<Stage.Output>> RunAsync(

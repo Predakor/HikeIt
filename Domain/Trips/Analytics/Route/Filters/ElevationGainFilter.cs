@@ -2,43 +2,25 @@ using Domain.Common.Abstractions;
 
 namespace Domain.Trips.Analytics.Route.Filters;
 
-// Counts ascent and descent only once the elevation has moved MinGainM away from the last counted level, so GPS wobble adds nothing.
+// Replaces the plain ascent and descent sums: a climb or descent counts only once the track has turned by MinChangeM, so GPS wobble adds nothing.
 public sealed class ElevationGainFilter(ElevationGainFilter.Config config) : SyncFilter<RouteAnalyticContext>
 {
-    public sealed record Config(double MinGainM) : ITerrainFilterConfig
+    public sealed record Config(double MinChangeM = 3) : ITerrainFilterConfig
     {
         public IFilter<RouteAnalyticContext> CreateFilter() => new ElevationGainFilter(this);
     }
 
     public override RouteAnalyticContext Apply(RouteAnalyticContext context)
     {
-        double elevation = 0;
-        double counted = 0;
-        double ascent = 0;
-        double descent = 0;
+        var segments = ElevationSegments.Split(context.Gains, config.MinChangeM);
 
-        foreach (var gain in context.Gains)
-        {
-            elevation += gain.ElevationDelta;
-            double change = elevation - counted;
+        context.TotalAscentMeters = segments
+            .Where(segment => segment.ElevationM > 0)
+            .Sum(segment => segment.ElevationM);
 
-            bool hasClimbedEnough = change >= config.MinGainM;
-            bool hasDescendedEnough = -change >= config.MinGainM;
-
-            if (hasClimbedEnough)
-            {
-                ascent += change;
-                counted = elevation;
-            }
-            else if (hasDescendedEnough)
-            {
-                descent -= change;
-                counted = elevation;
-            }
-        }
-
-        context.TotalAscentMeters = ascent;
-        context.TotalDescentMeters = descent;
+        context.TotalDescentMeters = -segments
+            .Where(segment => segment.ElevationM < 0)
+            .Sum(segment => segment.ElevationM);
 
         return context;
     }

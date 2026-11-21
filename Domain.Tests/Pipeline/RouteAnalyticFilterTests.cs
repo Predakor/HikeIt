@@ -52,19 +52,56 @@ public class RouteAnalyticFilterTests
     [Fact]
     public async Task ElevationGain_CountsRealClimbAndDescent()
     {
-        var context = await Run(new ElevationGainFilter.Config(1), Gain(10, 1.5f), Gain(10, 1.5f), Gain(10, -2f), Gain(10, -2f));
+        var context = await Run(
+            new ElevationGainFilter.Config(1),
+            Gain(10, 1.5f), Gain(10, 1.5f), Gain(10, -2f), Gain(10, -2f)
+        );
 
         Assert.Equal(3, context.TotalAscentMeters, 3);
         Assert.Equal(4, context.TotalDescentMeters, 3);
     }
 
     [Fact]
-    public async Task AverageSlope_FlatTrack_DoesNotFailOnMissingClimbOrDescent()
+    public void PlainTotals_CountEveryRiseAndFall()
+    {
+        var wobble = Enumerable.Range(0, 10).Select(i => Gain(10, i % 2 == 0 ? 0.3f : -0.3f)).ToArray();
+
+        var context = new RouteAnalyticContext([], wobble);
+
+        Assert.Equal(1.5, context.TotalAscentMeters, 3);
+        Assert.Equal(1.5, context.TotalDescentMeters, 3);
+    }
+
+    [Fact]
+    public async Task LongestClimb_PicksTheLongestSegmentByDistanceNotTheSteepest()
+    {
+        var context = await Run(
+            new LongestClimbFilter.Config(1),
+            Gain(100, 5), Gain(100, 5), Gain(100, 5),
+            Gain(50, -10),
+            Gain(20, 8)
+        );
+
+        Assert.Equal(300, context.LongestClimbDistanceM!.Value, 3);
+        Assert.Equal(5, context.LongestClimbPercent!.Value, 3);
+        Assert.Equal(50, context.LongestDescentDistanceM!.Value, 3);
+        Assert.Equal(-20, context.LongestDescentPercent!.Value, 3);
+    }
+
+    [Fact]
+    public async Task LongestClimb_ADipBelowTheThresholdDoesNotSplitTheClimb()
+    {
+        var context = await Run(new LongestClimbFilter.Config(2), Gain(100, 5), Gain(20, -1), Gain(100, 5));
+
+        Assert.Equal(220, context.LongestClimbDistanceM!.Value, 3);
+    }
+
+
+    [Fact]
+    public void AverageSlope_FlatTrack_DoesNotFailOnMissingClimbOrDescent()
     {
         var points = new List<GpxPoint> { new(50, 19.00, 500), new(50, 19.01, 500), new(50, 19.02, 500) };
         var context = new RouteAnalyticContext(points, points.ToGains());
-
-        await new AverageSlopeFilter.Config().CreateFilter().ApplyAsync(context);
 
         Assert.Equal(0, context.AverageAscentSlopePercent);
         Assert.Equal(0, context.AverageDescentSlopePercent);

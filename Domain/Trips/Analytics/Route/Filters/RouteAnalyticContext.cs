@@ -2,25 +2,42 @@ using Domain.Common.Geography.ValueObjects;
 
 namespace Domain.Trips.Analytics.Route.Filters;
 
-// The state the route analytic filters fill in. A metric stays at its default when its filter is not configured.
+// Plain metrics are computed up front; filters replace or add to them. Optional metrics stay null until their filter runs.
 public sealed class RouteAnalyticContext(IReadOnlyList<GpxPoint> points, IReadOnlyList<GpxGain> gains)
 {
     public IReadOnlyList<GpxPoint> Points { get; } = points;
     public IReadOnlyList<GpxGain> Gains { get; } = gains;
 
-    public double TotalDistanceMeters { get; set; }
-    public double TotalAscentMeters { get; set; }
-    public double TotalDescentMeters { get; set; }
+    public double TotalDistanceMeters { get; } = gains.Sum(gain => gain.DistanceDelta);
 
-    public double HighestElevationMeters { get; set; }
-    public double LowestElevationMeters { get; set; }
+    // Plain sums of every rise and fall; ElevationGainFilter replaces them.
+    public double TotalAscentMeters { get; set; } = gains.Where(gain => gain.ElevationDelta > 0).Sum(gain => gain.ElevationDelta);
+    public double TotalDescentMeters { get; set; } = Math.Abs(gains.Where(gain => gain.ElevationDelta < 0).Sum(gain => gain.ElevationDelta));
 
-    public float AverageSlopePercent { get; set; }
-    public float AverageAscentSlopePercent { get; set; }
-    public float AverageDescentSlopePercent { get; set; }
+    public double HighestElevationMeters { get; } = points.Count == 0 ? 0 : points.Max(point => point.Ele);
+    public double LowestElevationMeters { get; } = points.Count == 0 ? 0 : points.Min(point => point.Ele);
+
+    public float AverageSlopePercent { get; } = AverageOf(gains, slope => true);
+    public float AverageAscentSlopePercent { get; } = AverageOf(gains, slope => slope > 0);
+    public float AverageDescentSlopePercent { get; } = AverageOf(gains, slope => slope < 0);
 
     public double? SteepestClimbPercent { get; set; }
     public double? SteepestDescentPercent { get; set; }
+
+    public double? LongestClimbDistanceM { get; set; }
+    public double? LongestClimbPercent { get; set; }
+    public double? LongestDescentDistanceM { get; set; }
+    public double? LongestDescentPercent { get; set; }
+
+    // A track with no climbing (or no descending) has no such slopes to average.
+    private static float AverageOf(IReadOnlyList<GpxGain> gains, Func<float, bool> isIncluded)
+    {
+        return gains
+            .Select(gain => gain.Slope)
+            .Where(isIncluded)
+            .DefaultIfEmpty(0)
+            .Average();
+    }
 
     public RouteAnalytic ToAnalytic()
     {
@@ -39,6 +56,11 @@ public sealed class RouteAnalyticContext(IReadOnlyList<GpxPoint> points, IReadOn
 
             SteepestClimbPercent = SteepestClimbPercent,
             SteepestDescentPercent = SteepestDescentPercent,
+
+            LongestClimbDistanceM = LongestClimbDistanceM,
+            LongestClimbPercent = LongestClimbPercent,
+            LongestDescentDistanceM = LongestDescentDistanceM,
+            LongestDescentPercent = LongestDescentPercent,
         };
     }
 }

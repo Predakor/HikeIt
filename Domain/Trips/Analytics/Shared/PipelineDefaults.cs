@@ -30,25 +30,33 @@ public static class PipelineDefaults
         new RoundingPrecisionFilter.Config(6, PointFields.Coordinates),
     ];
 
-    // Classifiers first, then the times they feed, then the speeds. Idle goes first so a standing wobble never counts as climbing.
+    // Idle goes first so a standing wobble never counts as climbing. Without classifiers the split times stay null.
     public static readonly IReadOnlyList<IPaceFilterConfig> PaceFilters =
     [
         new IdleFilter.Config(0.5),
         new GradeFilter.Config(2),
-        new DurationFilter.Config(),
-        new ClimbTimeFilter.Config(),
-        new ActivityTimeFilter.Config(),
-        new ClimbSpeedFilter.Config(),
+        new SpeedSegmentFilter.Config(100),
     ];
 
-    // TotalElevationFilter gives plain ascent and descent sums; swap in ElevationGainFilter to ignore GPS wobble.
+    // The comparison baseline: every optional metric on, with thresholds at their most permissive.
+    public static readonly IReadOnlyList<IPaceFilterConfig> UnfilteredPaceFilters =
+    [
+        new IdleFilter.Config(0),
+        new GradeFilter.Config(0),
+        new SpeedSegmentFilter.Config(100),
+    ];
+
+    public static readonly IReadOnlyList<ITerrainFilterConfig> UnfilteredTerrainFilters =
+    [
+        new SteepestSegmentFilter.Config(100),
+        new LongestClimbFilter.Config(0),
+    ];
+
+    // Ascent and descent are plain sums until ElevationGainFilter is added to ignore GPS wobble.
     public static readonly IReadOnlyList<ITerrainFilterConfig> TerrainFilters =
     [
-        new TotalDistanceFilter.Config(),
-        new TotalElevationFilter.Config(),
-        new ElevationRangeFilter.Config(),
-        new AverageSlopeFilter.Config(),
         new SteepestSegmentFilter.Config(100),
+        new LongestClimbFilter.Config(),
     ];
 
     public static readonly IReadOnlyList<IPeakFilterConfig> PeakFilters =

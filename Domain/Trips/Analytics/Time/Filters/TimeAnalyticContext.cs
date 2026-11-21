@@ -13,7 +13,7 @@ public enum SegmentClass
     Descent,
 }
 
-// The state the time analytic filters fill in. Classifier filters claim segments, measuring filters read the claims.
+// The state the pace filters fill in: classifier filters claim segments, and the times and speeds are measured from the claims.
 public sealed class TimeAnalyticContext
 {
     private readonly SegmentClass?[] _claimed;
@@ -35,24 +35,18 @@ public sealed class TimeAnalyticContext
     // Unclaimed segments are flat.
     public IReadOnlyList<SegmentClass> Classes => _claimed.Select(claimed => claimed ?? SegmentClass.Flat).ToList();
 
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
-    public TimeSpan Duration { get; set; }
+    public double? FastestSpeedKph { get; set; }
+    public double? SlowestSpeedKph { get; set; }
 
-    public TimeSpan ActiveTime { get; set; }
-    public TimeSpan IdleTime { get; set; }
-    public TimeSpan AscentTime { get; set; }
-    public TimeSpan DescentTime { get; set; }
-
-    public double AverageSpeedKph { get; set; }
-    public double AverageAscentKph { get; set; }
-    public double AverageDescentKph { get; set; }
+    public static bool HasUsableTimestamps(List<GpxPoint> points)
+    {
+        return points.Count >= 2 && points.All(point => point.Time is not null);
+    }
 
     // Fails when the track has no usable timestamps.
     public static Result<TimeAnalyticContext> Create(RouteAnalytic route, List<GpxPoint> points)
     {
-        bool hasUsableTimestamps = points.Count >= 2 && points.All(point => point.Time is not null);
-        if (!hasUsableTimestamps)
+        if (!HasUsableTimestamps(points))
         {
             return Errors.EmptyCollection("timestamps");
         }
@@ -80,21 +74,38 @@ public sealed class TimeAnalyticContext
 
     public TimeAnalytic ToAnalytic()
     {
+        var startTime = Start.ToUniversalTime();
+        var endTime = End.ToUniversalTime();
+        var duration = endTime - startTime;
+
+        var idleTime = TimeOf(SegmentClass.Idle);
+        var ascentTime = TimeOf(SegmentClass.Ascent);
+        var descentTime = TimeOf(SegmentClass.Descent);
+        var activeTime = duration - idleTime;
+
         return new TimeAnalytic
         {
-            StartTime = StartTime,
-            EndTime = EndTime,
-            Duration = Duration,
+            StartTime = startTime,
+            EndTime = endTime,
+            Duration = duration,
 
-            ActiveTime = ActiveTime,
-            IdleTime = IdleTime,
-            AscentTime = AscentTime,
-            DescentTime = DescentTime,
+            ActiveTime = activeTime,
+            IdleTime = idleTime,
+            AscentTime = ascentTime,
+            DescentTime = descentTime,
 
-            AverageAscentKph = AverageAscentKph,
-            AverageDescentKph = AverageDescentKph,
-            AverageSpeedKph = AverageSpeedKph,
+            AverageSpeedKph = ToKph(activeTime, Route.TotalDistanceMeters),
+            AverageAscentKph = ToKph(ascentTime, Route.TotalAscentMeters),
+            AverageDescentKph = ToKph(descentTime, Route.TotalDescentMeters),
+
+            FastestSpeedKph = FastestSpeedKph,
+            SlowestSpeedKph = SlowestSpeedKph,
         };
+    }
+
+    private static double ToKph(TimeSpan time, double distanceMeters)
+    {
+        return time.TotalHours > 0 ? distanceMeters / 1000 / time.TotalHours : 0;
     }
 }
 

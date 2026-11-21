@@ -45,14 +45,13 @@ export interface TimeAnalytic {
   endTime: TimeSpanString; //actually iso stirng
 
   activeTime: TimeSpanString;
-  // Null when no filter classified the segments.
-  idleTime?: TimeSpanString | null;
-  ascentTime?: TimeSpanString | null;
-  descentTime?: TimeSpanString | null;
+  idleTime: TimeSpanString;
+  ascentTime: TimeSpanString;
+  descentTime: TimeSpanString;
 
   averageSpeedKph: number;
-  averageAscentKph?: number | null;
-  averageDescentKph?: number | null;
+  averageAscentKph: number;
+  averageDescentKph: number;
 
   // Null when the speed segment metric is off, the track is shorter than its window, or the trip predates it.
   fastestSpeedKph?: number | null;

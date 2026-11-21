@@ -21,6 +21,12 @@ public interface IPipelineStage
 
     IReadOnlyList<StageId> DependsOn { get; }
 
+    // A reason when the input cannot support this stage, so it is skipped and not reported as failed.
+    string? SkipReason(Stage.Context context)
+    {
+        return null;
+    }
+
     Task<Result<Stage.Output>> RunAsync(
         Stage.Context context,
         PipelineConfig config,

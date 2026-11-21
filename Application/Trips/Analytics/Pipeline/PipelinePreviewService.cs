@@ -2,6 +2,7 @@ using Application.Trips.Analytics.Dtos;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Core.Serialization;
 using Core.Timing;
+using Domain.Trips.Analytics.Shared;
 
 namespace Application.Trips.Analytics.Pipeline;
 
@@ -56,10 +57,16 @@ public sealed class PipelinePreviewService(
 
         var preview = await RunSelectedAsync(setup, request.Config, cancellationToken);
 
-        // The untouched file is cleanup with no filters; every other section stays at the production defaults.
+        // The unfiltered baseline: no point filters, plain terrain and pace metrics, and the saved settings for peak matching.
         var comparisonConfig = request.Target switch
         {
-            ComparisonTarget.Raw => new PipelineConfig(Cleanup: new PipeConfig.Cleanup([])),
+            ComparisonTarget.Raw => new PipelineConfig(
+                Cleanup: new PipeConfig.Cleanup([]),
+                ElevationProfile: new PipeConfig.Profile([]),
+                Route: new PipeConfig.Route([]),
+                Terrain: new PipeConfig.Terrain(PipelineDefaults.UnfilteredTerrainFilters),
+                Pace: new PipeConfig.Pace(PipelineDefaults.UnfilteredPaceFilters)
+            ),
             _ => new PipelineConfig(),
         };
 
@@ -135,6 +142,12 @@ public sealed class PipelinePreviewService(
                 );
 
             var context = new Stage.Context(setup.Input, upstream);
+
+            if (handler.SkipReason(context) is string skipReason)
+            {
+                return new StageRun(stage.ToSkipped(skipReason), null);
+            }
+
             var (elapsed, run) = await Timed.RunAsync(() => handler.RunAsync(context, config, cancellationToken));
 
             return run.Match(

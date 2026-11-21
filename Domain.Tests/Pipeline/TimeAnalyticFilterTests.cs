@@ -90,4 +90,19 @@ public class TimeAnalyticFilterTests
         Assert.Equal(TimeSpan.FromSeconds(10), analytic.DescentTime);
         Assert.Equal(TimeSpan.FromSeconds(30), analytic.ActiveTime);
     }
+
+    [Fact]
+    public async Task SpeedSegment_FindsTheFastestAndSlowestStretchOverTheWindow()
+    {
+        // 50 m in 10 s is 18 km/h, 50 m in 50 s is 3.6 km/h.
+        var gains = new List<GpxGainWithTime>
+        {
+            new(50, 0, 0, 10), new(50, 0, 0, 10), new(50, 0, 0, 50), new(50, 0, 0, 50),
+        };
+
+        var context = await Run(gains, Pipe(new SpeedSegmentFilter.Config(100)));
+
+        Assert.Equal(18, context.FastestSpeedKph!.Value, 3);
+        Assert.Equal(3.6, context.SlowestSpeedKph!.Value, 3);
+    }
 }

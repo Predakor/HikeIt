@@ -16,9 +16,14 @@ public sealed record TerrainSetting(IReadOnlyList<ITerrainFilterConfig> Filters)
     {
         foreach (var filter in Filters ?? [])
         {
-            if (filter is ElevationGainFilter.Config { MinGainM: < 0 })
+            if (filter is ElevationGainFilter.Config { MinChangeM: <= 0 })
             {
-                yield return "ElevationGainFilter MinGainM must not be negative.";
+                yield return "ElevationGainFilter MinChangeM must be greater than 0.";
+            }
+
+            if (filter is LongestClimbFilter.Config { MinChangeM: <= 0 })
+            {
+                yield return "LongestClimbFilter MinChangeM must be greater than 0.";
             }
 
             if (filter is SteepestSegmentFilter.Config { WindowM: <= 0 })

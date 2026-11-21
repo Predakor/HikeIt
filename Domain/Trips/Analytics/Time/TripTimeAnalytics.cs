@@ -13,4 +13,8 @@ public class TimeAnalytic {
     public double AverageSpeedKph { get; set; }
     public double AverageAscentKph { get; set; }
     public double AverageDescentKph { get; set; }
+
+    // Null when the speed segment metric is off, the track is shorter than its window, or the trip predates it.
+    public double? FastestSpeedKph { get; set; }
+    public double? SlowestSpeedKph { get; set; }
 }

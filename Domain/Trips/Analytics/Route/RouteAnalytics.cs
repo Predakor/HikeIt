@@ -17,4 +17,10 @@ public sealed class RouteAnalytic
     // Null when the steepest segment metric is off, the track is shorter than its window, or the trip predates it.
     public double? SteepestClimbPercent { get; init; }
     public double? SteepestDescentPercent { get; init; }
+
+    // Null when the longest climb metric is off, the track has no such segment, or the trip predates it.
+    public double? LongestClimbDistanceM { get; init; }
+    public double? LongestClimbPercent { get; init; }
+    public double? LongestDescentDistanceM { get; init; }
+    public double? LongestDescentPercent { get; init; }
 }

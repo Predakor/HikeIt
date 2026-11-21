@@ -729,6 +729,18 @@ namespace Infrastructure.Migrations
                             b1.Property<double>("HighestElevationMeters")
                                 .HasColumnType("double precision");
 
+                            b1.Property<double?>("LongestClimbDistanceM")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("LongestClimbPercent")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("LongestDescentDistanceM")
+                                .HasColumnType("double precision");
+
+                            b1.Property<double?>("LongestDescentPercent")
+                                .HasColumnType("double precision");
+
                             b1.Property<double>("LowestElevationMeters")
                                 .HasColumnType("double precision");
 
@@ -763,19 +775,19 @@ namespace Infrastructure.Migrations
                             b1.Property<TimeSpan>("ActiveTime")
                                 .HasColumnType("interval");
 
-                            b1.Property<TimeSpan>("AscentTime")
+                            b1.Property<TimeSpan?>("AscentTime")
                                 .HasColumnType("interval");
 
-                            b1.Property<double>("AverageAscentKph")
+                            b1.Property<double?>("AverageAscentKph")
                                 .HasColumnType("double precision");
 
-                            b1.Property<double>("AverageDescentKph")
+                            b1.Property<double?>("AverageDescentKph")
                                 .HasColumnType("double precision");
 
                             b1.Property<double>("AverageSpeedKph")
                                 .HasColumnType("double precision");
 
-                            b1.Property<TimeSpan>("DescentTime")
+                            b1.Property<TimeSpan?>("DescentTime")
                                 .HasColumnType("interval");
 
                             b1.Property<TimeSpan>("Duration")
@@ -784,8 +796,14 @@ namespace Infrastructure.Migrations
                             b1.Property<DateTime>("EndTime")
                                 .HasColumnType("timestamp with time zone");
 
-                            b1.Property<TimeSpan>("IdleTime")
+                            b1.Property<double?>("FastestSpeedKph")
+                                .HasColumnType("double precision");
+
+                            b1.Property<TimeSpan?>("IdleTime")
                                 .HasColumnType("interval");
+
+                            b1.Property<double?>("SlowestSpeedKph")
+                                .HasColumnType("double precision");
 
                             b1.Property<DateTime>("StartTime")
                                 .HasColumnType("timestamp with time zone");

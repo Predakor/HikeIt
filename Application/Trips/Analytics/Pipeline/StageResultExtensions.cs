@@ -27,4 +27,9 @@ internal static class StageResultExtensions
     {
         return new PipeStageDto.Result(stage, false, error, null, null);
     }
+
+    public static PipeStageDto.Result ToSkipped(this StageId stage, string reason)
+    {
+        return new PipeStageDto.Result(stage, false, reason, null, null, Skipped: true);
+    }
 }

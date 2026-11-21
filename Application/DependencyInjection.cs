@@ -28,6 +28,8 @@ public static class DependencyInjection
             .AddScoped<IPipelineSource, TripFilePipelineSource>()
             .AddScoped<IPointsFilterRunner, PointsFilterRunner>()
             .AddScoped<IPeaksFilterRunner, PeaksFilterRunner>()
+            .AddScoped<ITerrainRunner, TerrainRunner>()
+            .AddScoped<IPaceRunner, PaceRunner>()
             .Scan(scan =>
                 scan.FromAssembliesOf(typeof(DependencyInjection))
                     .AddClasses(

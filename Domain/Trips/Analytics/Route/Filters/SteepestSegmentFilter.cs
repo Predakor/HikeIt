@@ -1,4 +1,5 @@
 using Domain.Common.Abstractions;
+using Domain.Trips.Analytics.Shared;
 
 namespace Domain.Trips.Analytics.Route.Filters;
 
@@ -24,24 +25,10 @@ public sealed class SteepestSegmentFilter(SteepestSegmentFilter.Config config) :
 
         double? climb = null;
         double? descent = null;
-        int start = 0;
 
-        for (int end = 1; end < distance.Length; end++)
+        foreach (var (start, end) in DistanceWindows.Of(distance, config.WindowM))
         {
-            // Largest start that still leaves the window at least WindowM long.
-            while (start + 1 < end && distance[end] - distance[start + 1] >= config.WindowM)
-            {
-                start++;
-            }
-
-            double length = distance[end] - distance[start];
-            bool isLongEnough = length >= config.WindowM && length > 0;
-            if (!isLongEnough)
-            {
-                continue;
-            }
-
-            double grade = (elevation[end] - elevation[start]) / length * 100;
+            double grade = (elevation[end] - elevation[start]) / (distance[end] - distance[start]) * 100;
 
             bool isSteeperClimb = grade > 0 && (climb is null || grade > climb);
             bool isSteeperDescent = grade < 0 && (descent is null || grade < descent);
