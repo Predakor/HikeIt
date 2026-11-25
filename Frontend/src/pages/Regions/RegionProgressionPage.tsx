@@ -64,9 +64,11 @@ export default function RegionProgressionsPage() {
               <For each={config}>
                 {({ key, Component }) => (
                   <Tabs.Content value={key} key={key}>
-                    {Component ?
-                      <Component data={data[key]} key={key} />
-                    : `Please add a component for key: ${key}`}
+                    {!Component ?
+                      `Please add a component for key: ${key}`
+                    : data[key] == null ?
+                      "Nothing to show here yet"
+                    : <Component data={data[key]} key={key} />}
                   </Tabs.Content>
                 )}
               </For>

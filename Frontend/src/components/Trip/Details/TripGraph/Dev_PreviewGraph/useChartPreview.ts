@@ -2,8 +2,12 @@ import api from "@/Utils/Api/apiRequest";
 import type { ChartData } from "../grap.types";
 import type { ElevationProfileConfig } from "./DevPreview";
 
-function useChartPreview(id: string | number, onSucces: (data: ChartData) => void) {
+function useChartPreview(id: string | number | undefined, onSucces: (data: ChartData) => void) {
   const sendRequest = async (data: ElevationProfileConfig) => {
+    if (id === undefined) {
+      return;
+    }
+
     const payload = {
       MaxElevationSpike: data?.MaxElevationSpike || null,
       EmaSmoothingAlpha: data?.EmaSmoothingAlpha || null,
