@@ -58,9 +58,12 @@ export function usePipelineBench(
   const { mutateAsync } = usePipelinePreview(tripId);
   const [state, setState] = useState<BenchState>(initialState);
   const includeStepsRef = useRef(includeSteps);
-  includeStepsRef.current = includeSteps;
   const targetRef = useRef(target);
-  targetRef.current = target;
+
+  useEffect(() => {
+    includeStepsRef.current = includeSteps;
+    targetRef.current = target;
+  }, [includeSteps, target]);
 
   // Refs hold the latest state for the async and debounced paths, so they never read a stale closure.
   const stateRef = useRef<BenchState>(initialState);

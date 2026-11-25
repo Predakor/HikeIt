@@ -4,33 +4,27 @@ import AddTripForm, { type TripFormInitData } from "@/components/Forms/AddTripFo
 import PageTitle from "@/components/ui/Titles/PageTitle";
 import AddTripInstructions from "@/components/Trip/AddTripInfo/AddTripInfo";
 import { Flex, Stack } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
+
+type SelectedTrip = { file: File; initData: TripFormInitData };
 
 function AddTripPage() {
-  const fileRef = useRef<File>(undefined);
-  const initStatsRef = useRef<TripFormInitData>({
-    name: "",
-    tripDay: "",
-  });
-  const [showForm, setShowForm] = useState(false);
+  const [selected, setSelected] = useState<SelectedTrip>();
 
   const fileChangeHandler = async (newFile: File) => {
     const fileData = await GpxArrayBuilder.fromFile(newFile);
     const stats = fileData.smoothMedian().generateGains().getStats();
     const tripDate = stats.startTime?.slice(0, 10) || "";
 
-    const initStats = initStatsRef.current;
-
     const fileName = newFile.name.split(".");
-    initStats.name = fileName.length > 1 ? fileName.slice(0, -1).join(".") : fileName[0];
 
-    if (tripDate) {
-      initStats.tripDay = tripDate;
-    }
-
-    initStatsRef.current = initStats;
-    fileRef.current = newFile;
-    setShowForm(true);
+    setSelected({
+      file: newFile,
+      initData: {
+        name: fileName.length > 1 ? fileName.slice(0, -1).join(".") : fileName[0],
+        tripDay: tripDate,
+      },
+    });
   };
 
   return (
@@ -41,11 +35,11 @@ function AddTripPage() {
       </Flex>
 
       <Stack alignSelf={"center"} gapY={12}>
-        {showForm ?
+        {selected ?
           <AddTripForm
-            initData={initStatsRef.current}
-            file={fileRef.current}
-            resetForm={() => setShowForm(false)}
+            initData={selected.initData}
+            file={selected.file}
+            resetForm={() => setSelected(undefined)}
           />
         : <AddTripInstructions fileChangeHandler={fileChangeHandler} />}
       </Stack>
