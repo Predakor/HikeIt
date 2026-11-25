@@ -17,7 +17,6 @@ namespace Api.Controllers.Users;
 [ApiController]
 public class UsersController : UserControllerBase
 {
-
     private readonly IUserQueryService _userQueries;
     private readonly ITripQueryService _tripQueries;
     private readonly IUserAvatarFileService _userAvatarFileService;
@@ -40,7 +39,10 @@ public class UsersController : UserControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetMe() => await _userService.GetMe().ToActionResultAsync();
+    public async Task<IActionResult> GetMe() =>
+        await _userService
+            .GetMe()
+            .ToActionResultAsync();
 
     [HttpGet("profile")]
     [ProducesResponseType(typeof(UserDto.Profile), StatusCodes.Status200OK)]

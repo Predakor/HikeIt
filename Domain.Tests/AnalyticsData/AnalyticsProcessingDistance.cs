@@ -3,13 +3,15 @@ using Domain.Trips.Analytics.ElevationProfiles.Commands;
 
 namespace Domain.Tests.AnalyticsData;
 
-public class AnalyticsProcessingDistance {
-    static readonly int distanceThreshold = 10;
+public class AnalyticsProcessingDistance
+{
+    private static readonly int distanceThreshold = 10;
 
-    static GpxPoint Pt(double lat, double lon) => new(lat, lon, 0);
+    private static GpxPoint Pt(double lat, double lon) => new(lat, lon, 0);
 
     [Fact]
-    public void ReturnsOriginal_WhenLessThanTwoPeaks() {
+    public void ReturnsOriginal_WhenLessThanTwoPeaks()
+    {
         var input = new List<GpxPoint> { Pt(0, 0) };
         var result = input.MergeNearbyPeakByDistance(distanceThreshold);
 
@@ -19,7 +21,8 @@ public class AnalyticsProcessingDistance {
     }
 
     [Fact]
-    public void MergesTwoClosePeaks() {
+    public void MergesTwoClosePeaks()
+    {
         var input = new List<GpxPoint>
         {
             Pt(0, 0.00001), // very close, should merge
@@ -32,7 +35,8 @@ public class AnalyticsProcessingDistance {
     }
 
     [Fact]
-    public void DontMergesTwoDistantPeaks() {
+    public void DontMergesTwoDistantPeaks()
+    {
         var input = new List<GpxPoint>
         {
             Pt(0, 0),

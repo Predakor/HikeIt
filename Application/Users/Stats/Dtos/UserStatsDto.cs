@@ -24,4 +24,3 @@ public abstract record UserStatsDto
         TimeSpan LongestTripDuration
     );
 }
-

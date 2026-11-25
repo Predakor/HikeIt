@@ -3,17 +3,20 @@
 namespace Application.Commons.Drafts;
 
 internal class MemoryDraftService<TDraft> : IDraftService<TDraft>
-    where TDraft : class, IDraft {
-    readonly IMemoryCache _drafts;
-
+    where TDraft : class, IDraft
+{
     //5 mins
-    readonly static TimeSpan cacheDuration = TimeSpan.FromMinutes(5);
+    private static readonly TimeSpan cacheDuration = TimeSpan.FromMinutes(5);
 
-    public MemoryDraftService(IMemoryCache drafts) {
+    private readonly IMemoryCache _drafts;
+
+    public MemoryDraftService(IMemoryCache drafts)
+    {
         _drafts = drafts;
     }
 
-    public async Task<TDraft> Add(TDraft draft) {
+    public async Task<TDraft> Add(TDraft draft)
+    {
         //for async compatibility only
         await Task.CompletedTask;
 
@@ -21,17 +24,20 @@ internal class MemoryDraftService<TDraft> : IDraftService<TDraft>
         return draft;
     }
 
-    public async Task Remove(Guid id) {
+    public async Task Remove(Guid id)
+    {
         //for async compatibility only
         await Task.CompletedTask;
         _drafts.Remove(id);
     }
 
-    public async Task<TDraft> Get(Guid id) {
+    public async Task<TDraft> Get(Guid id)
+    {
         //for async compatibility only
         await Task.CompletedTask;
 
-        if (_drafts.TryGetValue(id, out TDraft? value)) {
+        if (_drafts.TryGetValue(id, out TDraft? value))
+        {
             return value;
         }
 

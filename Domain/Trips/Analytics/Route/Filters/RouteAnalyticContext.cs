@@ -11,11 +11,25 @@ public sealed class RouteAnalyticContext(IReadOnlyList<GpxPoint> points, IReadOn
     public double TotalDistanceMeters { get; } = gains.Sum(gain => gain.DistanceDelta);
 
     // Plain sums of every rise and fall; ElevationGainFilter replaces them.
-    public double TotalAscentMeters { get; set; } = gains.Where(gain => gain.ElevationDelta > 0).Sum(gain => gain.ElevationDelta);
-    public double TotalDescentMeters { get; set; } = Math.Abs(gains.Where(gain => gain.ElevationDelta < 0).Sum(gain => gain.ElevationDelta));
+    public double TotalAscentMeters { get; set; } =
+        gains
+            .Where(gain => gain.ElevationDelta > 0)
+            .Sum(gain => gain.ElevationDelta);
+    public double TotalDescentMeters { get; set; } =
+        Math.Abs(
+            gains
+                .Where(gain => gain.ElevationDelta < 0)
+                .Sum(gain => gain.ElevationDelta)
+        );
 
-    public double HighestElevationMeters { get; } = points.Count == 0 ? 0 : points.Max(point => point.Ele);
-    public double LowestElevationMeters { get; } = points.Count == 0 ? 0 : points.Min(point => point.Ele);
+    public double HighestElevationMeters { get; } =
+        points.Count == 0
+            ? 0
+            : points.Max(point => point.Ele);
+    public double LowestElevationMeters { get; } =
+        points.Count == 0
+            ? 0
+            : points.Min(point => point.Ele);
 
     public float AverageSlopePercent { get; } = AverageOf(gains, slope => true);
     public float AverageAscentSlopePercent { get; } = AverageOf(gains, slope => slope > 0);

@@ -31,7 +31,6 @@ public class TripAnalytic : IEntity<Guid>
         PeaksAnalytic? peaksAnalytics,
         ElevationProfile? elevationProfile,
         RoutePath? visualisationPath
-
     )
     {
         var analytics = new TripAnalytic()
@@ -90,7 +89,6 @@ public class TripAnalytic : IEntity<Guid>
         ArgumentNullException.ThrowIfNull(visualisation);
         VisualisationPath = visualisation;
     }
-
 }
 
 public sealed record RoutePath(IReadOnlyList<IGeoPoint> Points);

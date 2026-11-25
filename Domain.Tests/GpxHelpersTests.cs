@@ -3,8 +3,9 @@ using Domain.Common.Geography.ValueObjects;
 
 namespace Domain.Tests;
 
-public class GpxHelpersTests {
-    static readonly List<GpxPoint> data =
+public class GpxHelpersTests
+{
+    private static readonly List<GpxPoint> data =
     [
         new(16, 18, 100),
         new(16.5, 18, 102),
@@ -12,7 +13,7 @@ public class GpxHelpersTests {
         new(17.5, 18, 104, DateTime.UtcNow), // with timestamp
     ];
 
-    static readonly List<GpxPoint> gpxFileData =
+    private static readonly List<GpxPoint> gpxFileData =
     [
         new(50.67983628, 16.53870464, 487, DateTime.Parse("2025-05-01T07:05:52Z")),
         new(50.67988247, 16.53873224, 488, DateTime.Parse("2025-05-01T07:05:57Z")),
@@ -36,24 +37,23 @@ public class GpxHelpersTests {
     ];
 
     [Fact]
-    public void GpxGain_ShouldNot_BeNull() {
+    public void GpxGain_ShouldNot_BeNull()
+    {
         var gain = GpxHelpers.ComputeGain(data[1], data[0]);
         Assert.NotNull(gain);
     }
 
     [Fact]
-    public void GpxGain_ShouldHave_ElevationDelta() {
+    public void GpxGain_ShouldHave_ElevationDelta()
+    {
         var gain = GpxHelpers.ComputeGain(data[1], data[0]);
         Assert.Equal(2, gain.ElevationDelta);
     }
 
     [Fact]
-    public void GpxGain_ShouldHave_Slope() {
-        GpxPoint[] ascend =
-        [
-            new GpxPoint(16.0000, 18.0000, 100),
-            new GpxPoint(16.0005, 18.0000, 110),
-        ];
+    public void GpxGain_ShouldHave_Slope()
+    {
+        GpxPoint[] ascend = [new GpxPoint(16.0000, 18.0000, 100), new GpxPoint(16.0005, 18.0000, 110)];
 
         var upGain = GpxHelpers.ComputeGain(ascend[1], ascend[0]);
         var downGain = GpxHelpers.ComputeGain(ascend[0], ascend[1]);
@@ -63,38 +63,44 @@ public class GpxHelpersTests {
     }
 
     [Fact]
-    public void AllGpxGains_ShouldHave_Slope() {
+    public void AllGpxGains_ShouldHave_Slope()
+    {
         var gains = gpxFileData.ToGains();
-        gains.Select(s => s.Slope).ToList();
+        gains
+            .Select(s => s.Slope)
+            .ToList();
 
-        foreach (var ga in gains) {
-
+        foreach (var ga in gains)
+        {
             Assert.InRange(ga.Slope, -100, 100);
-
         }
     }
 
     [Fact]
-    public void GpxGain_ShouldNotHave_TimeDelta_When_Timestamps_AreMissing() {
+    public void GpxGain_ShouldNotHave_TimeDelta_When_Timestamps_AreMissing()
+    {
         var gain = GpxHelpers.ComputeGain(data[1], data[0]);
         Assert.Null(gain.TimeDelta);
     }
 
     [Fact]
-    public void GpxGain_ShouldHave_TimeDelta_When_Timestamps_ArePresent() {
+    public void GpxGain_ShouldHave_TimeDelta_When_Timestamps_ArePresent()
+    {
         var gain = GpxHelpers.ComputeGain(data[3], data[2]);
         Assert.NotNull(gain.TimeDelta);
         Assert.True(gain.TimeDelta > 0);
     }
 
     [Fact]
-    public void GpxGain_ElevationDelta_ShouldBe_Negative_ForDescent() {
+    public void GpxGain_ElevationDelta_ShouldBe_Negative_ForDescent()
+    {
         var gain = GpxHelpers.ComputeGain(data[2], data[1]); // 98 - 102 = -4
         Assert.True(gain.ElevationDelta < 0);
     }
 
     [Fact]
-    public void GpxGain_Slope_ShouldBe_Zero_When_HorizontalDistance_IsZero() {
+    public void GpxGain_Slope_ShouldBe_Zero_When_HorizontalDistance_IsZero()
+    {
         var point1 = new GpxPoint(0, 0, 100);
         var point2 = new GpxPoint(0, 0, 110);
 
@@ -103,7 +109,8 @@ public class GpxHelpersTests {
     }
 
     [Fact]
-    public void GpxGain_Should_Handle_SamePoint() {
+    public void GpxGain_Should_Handle_SamePoint()
+    {
         var point = new GpxPoint(0, 0, 100);
         var gain = GpxHelpers.ComputeGain(point, point);
 
@@ -112,7 +119,8 @@ public class GpxHelpersTests {
     }
 
     [Fact]
-    public void GpxGain_Should_Handle_ZeroElevationChange() {
+    public void GpxGain_Should_Handle_ZeroElevationChange()
+    {
         var point1 = new GpxPoint(16, 18, 100);
         var point2 = new GpxPoint(16.01, 18, 100);
 
@@ -122,7 +130,8 @@ public class GpxHelpersTests {
     }
 
     [Fact]
-    public void GainsMapper_Should_Return_SmallerArrayThanOrignal() {
+    public void GainsMapper_Should_Return_SmallerArrayThanOrignal()
+    {
         var gains = data.ToGains();
 
         Assert.NotNull(gains);
@@ -131,7 +140,8 @@ public class GpxHelpersTests {
     }
 
     [Fact]
-    public void MapToTimed_Should_FilterOut_Points_Without_Time() {
+    public void MapToTimed_Should_FilterOut_Points_Without_Time()
+    {
         List<GpxPoint> points =
         [
             new(16, 18, 100),

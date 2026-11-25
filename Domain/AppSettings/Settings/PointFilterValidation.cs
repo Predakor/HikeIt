@@ -35,9 +35,12 @@ internal static class PointFilterValidation
                 yield return "SimplifyFilter ToleranceM must not be negative.";
             }
 
-            if (filter is MedianSmoothingFilter.Config { Targets: PointFields.None }
-                or EmaSmoothingFilter.Config { Targets: PointFields.None }
-                or RoundingPrecisionFilter.Config { Targets: PointFields.None })
+            if (
+                filter
+                is MedianSmoothingFilter.Config { Targets: PointFields.None }
+                    or EmaSmoothingFilter.Config { Targets: PointFields.None }
+                    or RoundingPrecisionFilter.Config { Targets: PointFields.None }
+            )
             {
                 yield return "Smoothing and rounding filters must target Latitude, Longitude or Elevation.";
             }

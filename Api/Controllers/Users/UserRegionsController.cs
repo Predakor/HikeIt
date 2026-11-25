@@ -17,9 +17,14 @@ public sealed class UserRegionsController : UserControllerBase
     private readonly IUserQueryService _userQueries;
     private readonly IUserRegionsQueries _userRegionQueries;
 
-    private Uri GetUri(string actionName, object? values = null) => new(Url.Action(actionName, values)!, UriKind.Relative);
+    private Uri GetUri(string actionName, object? values = null) =>
+        new(Url.Action(actionName, values)!, UriKind.Relative);
 
-    public UserRegionsController(IAuthService authService, IUserQueryService userQueries, IUserRegionsQueries userRegionQueries)
+    public UserRegionsController(
+        IAuthService authService,
+        IUserQueryService userQueries,
+        IUserRegionsQueries userRegionQueries
+    )
     {
         _authService = authService;
         _userQueries = userQueries;
@@ -42,17 +47,15 @@ public sealed class UserRegionsController : UserControllerBase
         return await _authService
             .WithLoggedUserId()
             .BindAsync(userId => _userRegionQueries.GetRegionProgress(userId, regionId, ct))
-            .MapAsync(d =>
-                new RegionProgressDto.TabDataLinked(
-                    d.Progress,
-                    d.HasTrips
-                        ? GetUri(nameof(GetRegionTrips), new { regionId })
-                        : null,
-                    d.HasVisualizations
-                        ? GetUri(nameof(GetRegionRoutesVisualizations), new { regionId })
-                        : null
-                )
-            )
+            .MapAsync(d => new RegionProgressDto.TabDataLinked(
+                d.Progress,
+                d.HasTrips
+                    ? GetUri(nameof(GetRegionTrips), new { regionId })
+                    : null,
+                d.HasVisualizations
+                    ? GetUri(nameof(GetRegionRoutesVisualizations), new { regionId })
+                    : null
+            ))
             .ToActionResultAsync();
     }
 
@@ -74,5 +77,4 @@ public sealed class UserRegionsController : UserControllerBase
             .BindAsync(userID => _userRegionQueries.GetTrips(userID, regionId, ct))
             .ToActionResultAsync();
     }
-
 }

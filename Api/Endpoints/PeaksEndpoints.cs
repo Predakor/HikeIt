@@ -3,8 +3,10 @@ using Application.Locations.Peaks;
 
 namespace Api.Endpoints;
 
-public static class PeaksEndpoints {
-    public static RouteGroupBuilder MapPeaksEndpoints(this WebApplication app) {
+public static class PeaksEndpoints
+{
+    public static RouteGroupBuilder MapPeaksEndpoints(this WebApplication app)
+    {
         var group = app.MapGroup("api/peaks");
 
         group.MapGet("/", GetAll);
@@ -13,11 +15,17 @@ public static class PeaksEndpoints {
         return group;
     }
 
-    static async Task<IResult> GetAll(IPeaksQueryService service) {
-        return await service.GetAllAsync().ToApiResultAsync();
+    private static async Task<IResult> GetAll(IPeaksQueryService service)
+    {
+        return await service
+            .GetAllAsync()
+            .ToApiResultAsync();
     }
 
-    static async Task<IResult> GetById(int id, IPeaksQueryService service) {
-        return await service.GetByIdAsync(id).ToApiResultAsync();
+    private static async Task<IResult> GetById(int id, IPeaksQueryService service)
+    {
+        return await service
+            .GetByIdAsync(id)
+            .ToApiResultAsync();
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Commons.Factories;
-public interface IHttpResultFactory {
+
+public interface IHttpResultFactory
+{
     object Ok(object value);
     object Created(string location, object? value = null);
     object NoContent();
@@ -9,15 +11,17 @@ public interface IHttpResultFactory {
     object NotFound(object? error);
     object Unauthorized();
 }
-internal static class HttpResultFactory {
+
+internal static class HttpResultFactory
+{
     public static readonly IHttpResultFactory Controller = new MvcResult();
     public static readonly IHttpResultFactory MinimalApi = new MinimalApiResult();
 
-    class MvcResult : IHttpResultFactory {
+    private class MvcResult : IHttpResultFactory
+    {
         public object Ok(object value) => new OkObjectResult(value);
 
-        public object Created(string location, object? value = null) =>
-            new CreatedResult(location, value);
+        public object Created(string location, object? value = null) => new CreatedResult(location, value);
 
         public object NoContent() => new NoContentResult();
 
@@ -28,11 +32,11 @@ internal static class HttpResultFactory {
         public object Unauthorized() => new UnauthorizedResult();
     }
 
-    class MinimalApiResult : IHttpResultFactory {
+    private class MinimalApiResult : IHttpResultFactory
+    {
         public object Ok(object value) => Results.Ok(value);
 
-        public object Created(string location, object? value = null) =>
-            Results.Created(location, value);
+        public object Created(string location, object? value = null) => Results.Created(location, value);
 
         public object NoContent() => Results.NoContent();
 

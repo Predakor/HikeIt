@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Trips.Root;
 
-public class TripConfiguration : IEntityTypeConfiguration<Trip> {
-    public void Configure(EntityTypeBuilder<Trip> builder) {
+public class TripConfiguration : IEntityTypeConfiguration<Trip>
+{
+    public void Configure(EntityTypeBuilder<Trip> builder)
+    {
         builder
             .HasOne(t => t.User)
             .WithMany()

@@ -4,9 +4,8 @@ using Infrastructure.Commons.Repositories;
 
 namespace Infrastructure.Trips.Analytics.Peaks;
 
-public class PeakAnalyticRepository
-    : CrudResultRepository<PeaksAnalytic, Guid>,
-        IPeakAnalyticRepository {
+public class PeakAnalyticRepository : CrudResultRepository<PeaksAnalytic, Guid>, IPeakAnalyticRepository
+{
     public PeakAnalyticRepository(TripDbContext context)
         : base(context) { }
 }

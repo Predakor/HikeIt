@@ -11,5 +11,6 @@ public interface IUserRegionsQueries : IQueryService
     Task<Result<RegionData>> GetRegionProgress(Guid userId, int RegionId, CancellationToken ct);
 
     sealed record RegionTrip(Guid Id, string Name, DateOnly TripDay, int? Distance, TimeSpan? Duration);
+
     sealed record RegionData(RegionProgressDto.Full Progress, bool HasTrips, bool HasVisualizations);
 }

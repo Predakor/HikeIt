@@ -79,13 +79,13 @@ internal class TripAnalyticDataValidator(AnalyticData data)
 {
     private readonly List<GpxPoint> _data = data.Points;
 
-    public bool Validate()
-    {
-        return _data.Count > 2;
-    }
-
     public static bool ValidateData(AnalyticData data)
     {
         return new TripAnalyticDataValidator(data).Validate();
+    }
+
+    public bool Validate()
+    {
+        return _data.Count > 2;
     }
 }

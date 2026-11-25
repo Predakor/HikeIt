@@ -8,9 +8,16 @@ internal class PeakConfiguration : IEntityTypeConfiguration<Peak>
 {
     public void Configure(EntityTypeBuilder<Peak> builder)
     {
-        builder.Property(e => e.Location).HasColumnType("geography (Point, 4326)");
-        builder.HasIndex(e => e.Location).HasMethod("gist");
-        builder.HasOne(p => p.Region).WithMany(r => r.Peaks).HasForeignKey(p => p.RegionID);
+        builder
+            .Property(e => e.Location)
+            .HasColumnType("geography (Point, 4326)");
+        builder
+            .HasIndex(e => e.Location)
+            .HasMethod("gist");
+        builder
+            .HasOne(p => p.Region)
+            .WithMany(r => r.Peaks)
+            .HasForeignKey(p => p.RegionID);
         builder.HasQueryFilter(p => !p.IsDeleted);
     }
 }

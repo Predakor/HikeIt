@@ -13,8 +13,12 @@ public static class PipelineEndpoints
             .MapGroup("api/trips/{id}/analytics/pipeline")
             .RequireAuthorization(policy => policy.RequireRole("Admin"));
 
-        group.MapGet("/defaults", GetDefaults).Produces<PipelineConfig>();
-        group.MapPost("/preview", Preview).Produces<PipelinePreviewDto>();
+        group
+            .MapGet("/defaults", GetDefaults)
+            .Produces<PipelineConfig>();
+        group
+            .MapPost("/preview", Preview)
+            .Produces<PipelinePreviewDto>();
 
         return group;
     }
@@ -27,7 +31,12 @@ public static class PipelineEndpoints
             .ToApiResultAsync();
     }
 
-    private static Task<IResult> Preview(Guid id, PipelinePreviewRequest request, IPipelinePreviewService preview, CancellationToken cancellationToken)
+    private static Task<IResult> Preview(
+        Guid id,
+        PipelinePreviewRequest request,
+        IPipelinePreviewService preview,
+        CancellationToken cancellationToken
+    )
     {
         return preview
             .PreviewAsync(id, request, cancellationToken)

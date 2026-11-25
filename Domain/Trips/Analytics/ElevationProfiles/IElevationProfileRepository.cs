@@ -2,7 +2,8 @@
 
 namespace Domain.Trips.Analytics.ElevationProfiles;
 
-public interface IElevationProfileRepository : IRepository<ElevationProfile, Guid> {
-    public Task<Result<ElevationProfile>> GetById(Guid id);
-    public Task<Result<ElevationProfile>> AddAsync(ElevationProfile profile);
+public interface IElevationProfileRepository : IRepository<ElevationProfile, Guid>
+{
+    Task<Result<ElevationProfile>> GetById(Guid id);
+    Task<Result<ElevationProfile>> AddAsync(ElevationProfile profile);
 }

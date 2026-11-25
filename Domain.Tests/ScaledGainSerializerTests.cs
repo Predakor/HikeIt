@@ -3,9 +3,11 @@ using Domain.Common.Geography.ValueObjects;
 
 namespace Domain.Tests;
 
-public class ScaledGainSerializerTests {
+public class ScaledGainSerializerTests
+{
     [Fact]
-    public void SerializeAndDeserialize_ShouldPreserveScaledValues() {
+    public void SerializeAndDeserialize_ShouldPreserveScaledValues()
+    {
         // Arrange
         var originalGains = new[]
         {
@@ -25,7 +27,8 @@ public class ScaledGainSerializerTests {
         // Assert
         Assert.Equal(originalGains.Length, deserialized.Length);
 
-        for (int i = 0; i < originalGains.Length; i++) {
+        for (int i = 0; i < originalGains.Length; i++)
+        {
             var expected = ScaledGainFactory.FromGain(originalGains[i], scale);
             var actual = deserialized[i];
 
@@ -37,18 +40,14 @@ public class ScaledGainSerializerTests {
     }
 
     [Fact]
-    public void SerializedGain_ShouldBeTheSame_AFterDeserialization() {
+    public void SerializedGain_ShouldBeTheSame_AFterDeserialization()
+    {
         var origianalGain = new GpxGain[] { new(10.5f, 2.3f, 1.1f) };
 
         var encodedGain = ScaledGainSerializer.Serialize(origianalGain);
         var decodedGain = ScaledGainSerializer.Deserialize(encodedGain)[0];
 
-        var unscaledGain = new GpxGain(
-            decodedGain.DistanceDelta,
-            decodedGain.ElevationDelta,
-            0,
-            decodedGain.TimeDelta
-        );
+        var unscaledGain = new GpxGain(decodedGain.DistanceDelta, decodedGain.ElevationDelta, 0, decodedGain.TimeDelta);
 
         var orgin = origianalGain[0];
         Assert.Equal(orgin.DistanceDelta, unscaledGain.DistanceDelta);
@@ -57,7 +56,8 @@ public class ScaledGainSerializerTests {
     }
 
     [Fact]
-    public void Serialize_ShouldReturnExpectedByteLength() {
+    public void Serialize_ShouldReturnExpectedByteLength()
+    {
         // Arrange
         var gains = new[] { new GpxGain(1f, 1f, 1f), new GpxGain(2f, 2f, 2f) };
 
@@ -69,7 +69,8 @@ public class ScaledGainSerializerTests {
     }
 
     [Fact]
-    public void Deserialize_WithNonMultipleOfSize_ShouldIgnoreTrailingBytes() {
+    public void Deserialize_WithNonMultipleOfSize_ShouldIgnoreTrailingBytes()
+    {
         // Arrange
         var badBytes = new byte[7]; // Not a multiple of 8
 

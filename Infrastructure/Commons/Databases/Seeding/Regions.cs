@@ -1,8 +1,9 @@
-﻿namespace Infrastructure.Commons.Databases.Seeding;
+﻿using Domain.Locations.Regions;
 
-using Domain.Locations.Regions;
+namespace Infrastructure.Commons.Databases.Seeding;
 
-internal static partial class DataSeed {
+internal static partial class DataSeed
+{
     public static readonly Region[] Regions =
     [
         new() { Id = 1, Name = "Tatry" },
@@ -35,5 +36,3 @@ internal static partial class DataSeed {
         new() { Id = 28, Name = "Masyw Ślęży" },
     ];
 }
-
-

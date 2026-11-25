@@ -1,6 +1,6 @@
+using System.Collections.Concurrent;
 using Application.Trips.Analytics.Dtos;
 using Domain.Common.Abstractions;
-using System.Collections.Concurrent;
 
 namespace Application.Trips.Analytics.Pipeline.Runners;
 
@@ -10,10 +10,7 @@ internal static class StepTimings
 
     public static PipeStageDto.StepTiming Of(IFilterConfig config, TimeSpan elapsed)
     {
-        var name = Names.GetOrAdd(
-            config.GetType(),
-            configType => configType.DeclaringType?.Name ?? configType.Name
-        );
+        var name = Names.GetOrAdd(config.GetType(), configType => configType.DeclaringType?.Name ?? configType.Name);
 
         return new PipeStageDto.StepTiming(name, elapsed.TotalMilliseconds);
     }

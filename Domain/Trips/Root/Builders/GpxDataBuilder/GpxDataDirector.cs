@@ -11,6 +11,7 @@ internal static class GpxDataDirector
     {
         return AnalyticData(points, GpxDataConfigs.GpxFile);
     }
+
     public static AnalyticData AnalyticData(List<GpxPoint> points, IGpxDataProcessingSettings? dataCleanupSettings)
     {
         IGpxDataProcessingSettings config = dataCleanupSettings ?? GpxDataConfigs.GpxFile;
@@ -27,20 +28,15 @@ internal static class GpxDataDirector
         var config = GpxDataConfigs.ElevationProfile;
 
         return new GpxDataBuilder(data.Points)
-            //.DownSample(config.DownsamplingFactor)
-            .Build();
+        //.DownSample(config.DownsamplingFactor)
+        .Build();
     }
 
     public static AnalyticData FromConfig(AnalyticData data, DataProccesConfig.Partial config)
     {
         var builder = new GpxDataBuilder(data.Points);
-        var (
-            MaxElevationSpike,
-            EmaSmoothingAlpha,
-            MedianFilterWindowSize,
-            RoundingDecimalsCount,
-            DownsamplingFactor
-        ) = config;
+        var (MaxElevationSpike, EmaSmoothingAlpha, MedianFilterWindowSize, RoundingDecimalsCount, DownsamplingFactor) =
+            config;
 
         if (MaxElevationSpike != null)
         {

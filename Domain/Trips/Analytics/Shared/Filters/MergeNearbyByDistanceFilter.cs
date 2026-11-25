@@ -13,7 +13,9 @@ public sealed class MergeNearbyByDistanceFilter(MergeNearbyByDistanceFilter.Conf
 
     public override PeakChain Apply(PeakChain chain)
     {
-        chain.Candidates = chain.Candidates.ToList().MergeNearbyPeakByDistance(config.DistanceM);
+        chain.Candidates = chain
+            .Candidates.ToList()
+            .MergeNearbyPeakByDistance(config.DistanceM);
 
         return chain;
     }

@@ -1,6 +1,7 @@
 ﻿namespace Application.Commons.Drafts;
-public interface IDraft {
+
+public interface IDraft
+{
     Guid Id { get; }
     Guid UserId { get; }
-
 };

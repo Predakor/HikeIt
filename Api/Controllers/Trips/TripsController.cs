@@ -47,7 +47,9 @@ public class TripsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Create newTrip)
     {
-        var ctx = CreateTripContext.Create().WithRequest(newTrip);
+        var ctx = CreateTripContext
+            .Create()
+            .WithRequest(newTrip);
         return await _authService
             .WithLoggedUser()
             .MapAsync(ctx.WithUser)
@@ -58,7 +60,9 @@ public class TripsController : ControllerBase
     [HttpPost("form")]
     public async Task<IActionResult> CreateWithFile([FromForm] Create newTrip, IFormFile file)
     {
-        var ctx = CreateTripContext.Create().WithRequest(newTrip);
+        var ctx = CreateTripContext
+            .Create()
+            .WithRequest(newTrip);
         return await _authService
             .WithLoggedUser()
             .MapAsync(ctx.WithUser)

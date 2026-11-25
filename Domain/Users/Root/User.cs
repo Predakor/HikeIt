@@ -9,13 +9,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Users.Root;
 
-public enum Gender {
+public enum Gender
+{
     Male,
     Female,
     Other,
 }
 
-public class User : IdentityUser<Guid>, IEntity<Guid> {
+public class User : IdentityUser<Guid>, IEntity<Guid>
+{
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public DateOnly BirthDay { get; private set; }
@@ -31,58 +33,70 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
     public ICollection<Trip> Trips { get; set; } = [];
     public ICollection<RegionProgress> RegionProgresses { get; set; } = [];
 
-    public User UpdateRegionProgress(UpdateRegionProgress progressUpdate) {
-        var regionToUpdate = RegionProgresses.FirstOrDefault(rp =>
-            rp.RegionId == progressUpdate.RegionId
-        );
+    public User UpdateRegionProgress(UpdateRegionProgress progressUpdate)
+    {
+        var regionToUpdate = RegionProgresses.FirstOrDefault(rp => rp.RegionId == progressUpdate.RegionId);
 
-        if (regionToUpdate is not null) {
+        if (regionToUpdate is not null)
+        {
             regionToUpdate.AddPeakVisits(progressUpdate.PeaksIds);
         }
 
         return this;
     }
 
-    public User UpdatePersonalInfo(PersonalInfoUpdate update) {
-        if (update.FirstName is not null) {
+    public User UpdatePersonalInfo(PersonalInfoUpdate update)
+    {
+        if (update.FirstName is not null)
+        {
             FirstName = update.FirstName;
         }
 
-        if (update.LastName is not null) {
+        if (update.LastName is not null)
+        {
             LastName = update.LastName;
         }
 
-        if (update.Country is not null) {
+        if (update.Country is not null)
+        {
             Country = update.Country;
         }
 
-        if (update.Gender is not null) {
-            if (Enum.TryParse<Gender>(update.Gender, true, out var gender)) {
+        if (update.Gender is not null)
+        {
+            if (Enum.TryParse<Gender>(update.Gender, true, out var gender))
+            {
                 Gender = gender;
             }
         }
 
-        if (update.BirthDay is not null) {
+        if (update.BirthDay is not null)
+        {
             SetBirthday(update.BirthDay);
         }
 
         return this;
     }
 
-    public User SetBirthday(DateOnly? date) {
-        if (date is null) {
+    public User SetBirthday(DateOnly? date)
+    {
+        if (date is null)
+        {
             return this;
         }
 
-        if (date < DateOnly.FromDateTime(DateTime.Now)) {
+        if (date < DateOnly.FromDateTime(DateTime.Now))
+        {
             BirthDay = date.Value;
         }
 
         return this;
     }
 
-    public User SetAvatar(string avatarUrl) {
-        if (avatarUrl is null) {
+    public User SetAvatar(string avatarUrl)
+    {
+        if (avatarUrl is null)
+        {
             return this;
         }
 
@@ -92,7 +106,8 @@ public class User : IdentityUser<Guid>, IEntity<Guid> {
     }
 
     public static User DemoUser =>
-        new() {
+        new()
+        {
             Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             UserName = "defaultuser",
             FirstName = "Default",

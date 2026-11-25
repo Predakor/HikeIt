@@ -12,25 +12,42 @@ public class TripAnalyticConfiguration : IEntityTypeConfiguration<TripAnalytic>
 {
     public void Configure(EntityTypeBuilder<TripAnalytic> builder)
     {
-        builder.OwnsOne(a => a.RouteAnalytics).WithOwner();
-        builder.OwnsOne(a => a.TimeAnalytics).WithOwner();
+        builder
+            .OwnsOne(a => a.RouteAnalytics)
+            .WithOwner();
+        builder
+            .OwnsOne(a => a.TimeAnalytics)
+            .WithOwner();
 
-        builder.HasOne(a => a.ElevationProfile)
-               .WithOne()
-               .HasForeignKey<ElevationProfile>(t => t.Id)
-               .IsRequired(false)
-               .OnDelete(DeleteBehavior.Cascade);
+        builder
+            .HasOne(a => a.ElevationProfile)
+            .WithOne()
+            .HasForeignKey<ElevationProfile>(t => t.Id)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(a => a.PeaksAnalytic)
-               .WithOne()
-               .HasForeignKey<PeaksAnalytic>(t => t.Id)
-               .IsRequired(false)
-               .OnDelete(DeleteBehavior.Cascade);
+        builder
+            .HasOne(a => a.PeaksAnalytic)
+            .WithOne()
+            .HasForeignKey<PeaksAnalytic>(t => t.Id)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(a => a.VisualisationPath)
+        builder
+            .Property(a => a.VisualisationPath)
             .HasConversion(
-                routePath => new GeometryFactory().CreateLineString(routePath.Points.ToCoordinates().ToArray()),
-                lineString => new RoutePath(lineString.Coordinates.ToGeoPoints().AsReadOnly())
-            ).HasColumnType("geography(LineStringZ, 4326)");
+                routePath =>
+                    new GeometryFactory().CreateLineString(
+                        routePath
+                            .Points.ToCoordinates()
+                            .ToArray()
+                    ),
+                lineString => new RoutePath(
+                    lineString
+                        .Coordinates.ToGeoPoints()
+                        .AsReadOnly()
+                )
+            )
+            .HasColumnType("geography(LineStringZ, 4326)");
     }
 }

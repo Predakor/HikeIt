@@ -4,19 +4,25 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Commons.DI;
 
-public static class ServiceCollectionExtensions {
+public static class ServiceCollectionExtensions
+{
     public static IServiceCollection AddDatabase(
         this IServiceCollection services,
         string connectionString,
         bool isDevelopement
-    ) {
+    )
+    {
         Console.WriteLine("Db connection string in production: " + connectionString);
 
-        services.AddDbContext<TripDbContext>(options => {
+        services.AddDbContext<TripDbContext>(options =>
+        {
             options.UseNpgsql(connectionString, x => x.UseNetTopologySuite());
 
-            if (isDevelopement) {
-                options.EnableSensitiveDataLogging().EnableDetailedErrors();
+            if (isDevelopement)
+            {
+                options
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors();
             }
         });
 

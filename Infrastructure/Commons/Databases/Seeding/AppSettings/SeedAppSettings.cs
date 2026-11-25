@@ -29,9 +29,12 @@ internal class SeedAppSettings : ISeeder
     private Task<Result<AppSetting>> SeedIfMissing(AppSettingType type, Func<Task<Result<AppSetting>>> addDefault)
     {
         return repository
-           .GetBySettingTypeAsync(type, CancellationToken.None)
-           .MatchAsync(found => found, error => addDefault())
-           .TapAsync(_ => repository.SaveChangesAsync(CancellationToken.None));
+            .GetBySettingTypeAsync(type, CancellationToken.None)
+            .MatchAsync(
+                found => found,
+                error => addDefault()
+            )
+            .TapAsync(_ => repository.SaveChangesAsync(CancellationToken.None));
     }
 
     private Task<Result<AppSetting>> AddDefaultProcessingSetting()
@@ -46,7 +49,9 @@ internal class SeedAppSettings : ISeeder
 
     private Task<Result<AppSetting>> AddDefaultElevationProfileSetting()
     {
-        return repository.AddAsync(AppSetting.Create(new ElevationProfileSetting(PipelineDefaults.ElevationProfileFilters)));
+        return repository.AddAsync(
+            AppSetting.Create(new ElevationProfileSetting(PipelineDefaults.ElevationProfileFilters))
+        );
     }
 
     private Task<Result<AppSetting>> AddDefaultRouteSetting()

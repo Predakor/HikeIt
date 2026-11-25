@@ -14,8 +14,10 @@ internal static class StagePresenter
         new Dictionary<StageId, Func<Stage.Output, PipelineInput, StageView>>
         {
             [StageId.Cleanup] = PresentCleanup,
-            [StageId.ElevationProfile] = (output, _) => new StageView(output.Data, ((ElevationProfileDto)output.Data).Gains.Length + 1),
-            [StageId.PeakMatching] = (output, _) => new StageView(output.Data, ((StageData.PeakMatching)output.Data).Matched.Count),
+            [StageId.ElevationProfile] = (output, _) =>
+                new StageView(output.Data, ((ElevationProfileDto)output.Data).Gains.Length + 1),
+            [StageId.PeakMatching] = (output, _) =>
+                new StageView(output.Data, ((StageData.PeakMatching)output.Data).Matched.Count),
             [StageId.Route] = (output, _) => new StageView(output.Data, ((RoutePath)output.Data).Points.Count),
             [StageId.Terrain] = (output, _) => new StageView(output.Data, null),
             [StageId.Pace] = (output, _) => new StageView(output.Data, null),

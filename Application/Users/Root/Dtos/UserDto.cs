@@ -7,29 +7,16 @@ public abstract record UserDto(string UserName)
 {
     public sealed record Basic(string UserName, string[] Roles, string Avatar);
 
-    public sealed record Profile(
-        PublicProfile Summary,
-        Personal Personal,
-        AccountState AccountState
-    );
+    public sealed record Profile(PublicProfile Summary, Personal Personal, AccountState AccountState);
 
-    public sealed record Complete(
-        string FirstName,
-        string LastName,
-        string UserName,
-        string Email,
-        DateOnly BirthDay
-    ) : UserDto(UserName);
+    public sealed record Complete(string FirstName, string LastName, string UserName, string Email, DateOnly BirthDay)
+        : UserDto(UserName);
 
-    public sealed record Register(
-        string FirstName,
-        string LastName,
-        string Email,
-        string Password,
-        string UserName
-    ) : UserDto(UserName);
+    public sealed record Register(string FirstName, string LastName, string Email, string Password, string UserName)
+        : UserDto(UserName);
 
     public sealed record Login(string UserName, string Password);
+
     public sealed record ResetPassword(string UserName, string Token, string Password);
 }
 
@@ -81,12 +68,6 @@ public static class UserDtoFactory
 {
     public static UserDto.Complete ToComplete(this User user)
     {
-        return new(
-            user.FirstName,
-            user.LastName,
-            user.UserName ?? "",
-            user.Email ?? "",
-            user.BirthDay
-        );
+        return new(user.FirstName, user.LastName, user.UserName ?? "", user.Email ?? "", user.BirthDay);
     }
 }

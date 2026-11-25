@@ -31,11 +31,9 @@ public static class DependencyInjection
             .AddScoped<ITerrainRunner, TerrainRunner>()
             .AddScoped<IPaceRunner, PaceRunner>()
             .Scan(scan =>
-                scan.FromAssembliesOf(typeof(DependencyInjection))
-                    .AddClasses(
-                        classes => classes.AssignableTo<IPipelineStage>(),
-                        publicOnly: false
-                    )
+                scan
+                    .FromAssembliesOf(typeof(DependencyInjection))
+                    .AddClasses(classes => classes.AssignableTo<IPipelineStage>(), publicOnly: false)
                     .As<IPipelineStage>()
                     .WithScopedLifetime()
             );
@@ -44,11 +42,9 @@ public static class DependencyInjection
     private static IServiceCollection AddDomainEvents(this IServiceCollection services)
     {
         return services.Scan(scan =>
-            scan.FromAssembliesOf(typeof(DependencyInjection))
-                .AddClasses(
-                    classes => classes.AssignableTo(typeof(IDomainEventHandler<>)),
-                    publicOnly: false
-                )
+            scan
+                .FromAssembliesOf(typeof(DependencyInjection))
+                .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
@@ -63,5 +59,4 @@ public static class DependencyInjection
     {
         return services.Decorate<IAppSettingsService, CachedAppSettingsServiceDecorator>();
     }
-
 }

@@ -3,33 +3,36 @@ using Domain.FileReferences.ValueObjects;
 
 namespace Infrastructure.Commons.Storage;
 
-internal class LocalStorage : IFileStorage {
-    const string root = "wwwroot";
+internal class LocalStorage : IFileStorage
+{
+    private const string root = "wwwroot";
 
-    static string GetContainerFolder(BlobContainer container) {
-        return container switch {
+    private static string GetContainerFolder(BlobContainer container)
+    {
+        return container switch
+        {
             BlobContainer.Avatar => "files",
             BlobContainer.File => "avatars",
             _ => throw new Exception("Unsuported container type"),
         };
     }
 
-    static string GetUploadFolder(string path, BlobContainer container) {
+    private static string GetUploadFolder(string path, BlobContainer container)
+    {
         string folder = GetContainerFolder(container);
 
         return Path.Combine(root, folder, path.ToString());
     }
 
-    public Task<Result<Stream>> DownloadAsync(string path, BlobContainer type) {
+    public Task<Result<Stream>> DownloadAsync(string path, BlobContainer type)
+    {
         throw new NotImplementedException();
     }
 
-    public async Task<Result<SaveFileResponse>> UploadAsync(
-        FileContent file,
-        string path,
-        BlobContainer container
-    ) {
-        try {
+    public async Task<Result<SaveFileResponse>> UploadAsync(FileContent file, string path, BlobContainer container)
+    {
+        try
+        {
             var uploadDir = GetUploadFolder(path, container);
 
             Directory.CreateDirectory(uploadDir);
@@ -41,13 +44,15 @@ internal class LocalStorage : IFileStorage {
             await File.WriteAllBytesAsync(fullPath, file.Content);
             return new SaveFileResponse(fullPath, fileName);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             var error = Errors.Unknown($"Could not save file: {ex.Message}");
             return error;
         }
     }
 
-    public Task<Result<bool>> DeleteAsync(string path, BlobContainer type) {
+    public Task<Result<bool>> DeleteAsync(string path, BlobContainer type)
+    {
         throw new NotImplementedException();
     }
 }

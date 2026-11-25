@@ -11,6 +11,28 @@ public class PeakFilterTests
     // 0.0001 degrees of latitude is about 11 m.
     private const double Step = 0.0001;
 
+    private static async Task<IList<PeakCandidate>> Run(
+        IFilter<PeakChain> filter,
+        IList<PeakCandidate> candidates,
+        IPeakSource? source = null
+    )
+    {
+        var chain = await filter.ApplyAsync(new PeakChain(candidates, source ?? new FakePeakSource([])));
+
+        return chain.Candidates;
+    }
+
+    private static List<PeakCandidate> Candidates(params double[] elevations) =>
+        [
+            .. elevations.Select(
+                (ele, i) => new PeakCandidate(new GpxPointWithDistance(new GpxPoint(50 + i * Step, 20, ele), i))
+            ),
+        ];
+
+    private static List<double> Elevations(IEnumerable<PeakCandidate> candidates) => [.. candidates.Select(c => c.Ele)];
+
+    private static Peak PeakAt(double lat, double lon) => Peak.Create("Peak", new GpxPoint(lat, lon, 1000), 1);
+
     [Fact]
     public async Task LocalMaxima_KeepsEveryPointTheTrackRisesIntoAndFallsFrom()
     {
@@ -45,7 +67,10 @@ public class PeakFilterTests
         var close = Candidates(100, 120, 110);
         var far = new PeakCandidate(new GpxPointWithDistance(new GpxPoint(50.01, 20, 105), 0));
 
-        var result = await Run(new MergeNearbyByDistanceFilter(new MergeNearbyByDistanceFilter.Config(50)), [.. close, far]);
+        var result = await Run(
+            new MergeNearbyByDistanceFilter(new MergeNearbyByDistanceFilter.Config(50)),
+            [.. close, far]
+        );
 
         Assert.Equal([120d, 105d], Elevations(result));
     }
@@ -53,7 +78,10 @@ public class PeakFilterTests
     [Fact]
     public async Task MergeNearbyByDistance_ZeroDistance_KeepsEveryCandidate()
     {
-        var result = await Run(new MergeNearbyByDistanceFilter(new MergeNearbyByDistanceFilter.Config(0)), Candidates(100, 120, 110));
+        var result = await Run(
+            new MergeNearbyByDistanceFilter(new MergeNearbyByDistanceFilter.Config(0)),
+            Candidates(100, 120, 110)
+        );
 
         Assert.Equal(3, result.Count);
     }
@@ -61,7 +89,10 @@ public class PeakFilterTests
     [Fact]
     public async Task MergeNearbyByElevation_CollapsesNeighboursWithinTheDeltaToTheHighest()
     {
-        var result = await Run(new MergeNearbyByElevationFilter(new MergeNearbyByElevationFilter.Config(50)), Candidates(100, 110, 300));
+        var result = await Run(
+            new MergeNearbyByElevationFilter(new MergeNearbyByElevationFilter.Config(50)),
+            Candidates(100, 110, 300)
+        );
 
         Assert.Equal([110d, 300d], Elevations(result));
     }
@@ -73,7 +104,10 @@ public class PeakFilterTests
         var farPeak = Candidates(100)[0] with { Peak = PeakAt(50.01, 20) };
         var unmatched = Candidates(100)[0];
 
-        var result = await Run(new MatchWithinDistanceFilter(new MatchWithinDistanceFilter.Config(100)), [near, farPeak, unmatched]);
+        var result = await Run(
+            new MatchWithinDistanceFilter(new MatchWithinDistanceFilter.Config(100)),
+            [near, farPeak, unmatched]
+        );
 
         Assert.Equal([near], result);
     }
@@ -121,24 +155,6 @@ public class PeakFilterTests
         var bounds = source.LastBounds!.Value;
         Assert.True(bounds.MinLat < 50 && bounds.MaxLat > 50 + Step);
     }
-
-    private static async Task<IList<PeakCandidate>> Run(
-        IFilter<PeakChain> filter,
-        IList<PeakCandidate> candidates,
-        IPeakSource? source = null
-    )
-    {
-        var chain = await filter.ApplyAsync(new PeakChain(candidates, source ?? new FakePeakSource([])));
-
-        return chain.Candidates;
-    }
-
-    private static List<PeakCandidate> Candidates(params double[] elevations) =>
-        [.. elevations.Select((ele, i) => new PeakCandidate(new GpxPointWithDistance(new GpxPoint(50 + i * Step, 20, ele), i)))];
-
-    private static List<double> Elevations(IEnumerable<PeakCandidate> candidates) => [.. candidates.Select(c => c.Ele)];
-
-    private static Peak PeakAt(double lat, double lon) => Peak.Create("Peak", new GpxPoint(lat, lon, 1000), 1);
 
     private sealed class FakePeakSource(List<Peak> peaks) : IPeakSource
     {

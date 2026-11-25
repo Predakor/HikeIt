@@ -1,4 +1,5 @@
-﻿using Application.Commons.Mappers.Implementations;
+﻿using System.Collections.Immutable;
+using Application.Commons.Mappers.Implementations;
 using Application.Locations.Peaks;
 using Domain.Common.Geography;
 using Domain.Common.Geography.Factories;
@@ -8,9 +9,31 @@ using Domain.ReachedPeaks.Builders;
 using Infrastructure.Commons.Databases;
 using Infrastructure.Locations.Peaks.Extentions;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 
 namespace Infrastructure.Locations.Peaks.Queries;
+
+internal static class Mapper
+{
+    public static PeakDto.Simple ToSimple(this Peak peak)
+    {
+        return new(peak.Height, peak.Name, peak.RegionID);
+    }
+
+    public static List<PeakDto.Simple> ToSimple(this IEnumerable<Peak> foundPeaks)
+    {
+        return [.. foundPeaks.Select(p => p.ToSimple())];
+    }
+
+    public static PeakDto.Complete ToComplete(this Peak peak)
+    {
+        return new(peak.Height, peak.Name, RegionMapper.MapToCompleteDto(peak.Region));
+    }
+
+    public static List<PeakDto.Complete> ToComplete(this IEnumerable<Peak> foundPeaks)
+    {
+        return [.. foundPeaks.Select(p => p.ToComplete())];
+    }
+}
 
 public class PeaksQueryService : IPeaksQueryService
 {
@@ -24,7 +47,9 @@ public class PeaksQueryService : IPeaksQueryService
 
     public async Task<Result<PeakDto.Complete>> GetByIdAsync(int id)
     {
-        var peak = await Peaks.Include(x => x.Region).FirstOrDefaultAsync(e => e.Id == id);
+        var peak = await Peaks
+            .Include(x => x.Region)
+            .FirstOrDefaultAsync(e => e.Id == id);
 
         if (peak == null)
         {
@@ -62,10 +87,7 @@ public class PeaksQueryService : IPeaksQueryService
         return matchedPeaks;
     }
 
-    public async Task<Result<List<Peak>>> GetPeaksWithinRadius(
-        IEnumerable<GpxPoint> points,
-        float radius
-    )
+    public async Task<Result<List<Peak>>> GetPeaksWithinRadius(IEnumerable<GpxPoint> points, float radius)
     {
         var multipoint = GeoFactory.CreateMultiPoint(points.ToGpxPoints());
 
@@ -86,7 +108,9 @@ public class PeaksQueryService : IPeaksQueryService
     {
         var box = GeoFactory.CreateBox(bounds);
 
-        return await Peaks.Where(peak => peak.Location.Intersects(box)).ToListAsync();
+        return await Peaks
+            .Where(peak => peak.Location.Intersects(box))
+            .ToListAsync();
     }
 
     public async Task<Result<Peak>> GetPeakWithNameFromRegion(string name, int regionId)
@@ -101,28 +125,5 @@ public class PeaksQueryService : IPeaksQueryService
         }
 
         return result;
-    }
-}
-
-internal static class Mapper
-{
-    public static PeakDto.Simple ToSimple(this Peak peak)
-    {
-        return new(peak.Height, peak.Name, peak.RegionID);
-    }
-
-    public static List<PeakDto.Simple> ToSimple(this IEnumerable<Peak> foundPeaks)
-    {
-        return [.. foundPeaks.Select(p => p.ToSimple())];
-    }
-
-    public static PeakDto.Complete ToComplete(this Peak peak)
-    {
-        return new(peak.Height, peak.Name, RegionMapper.MapToCompleteDto(peak.Region));
-    }
-
-    public static List<PeakDto.Complete> ToComplete(this IEnumerable<Peak> foundPeaks)
-    {
-        return [.. foundPeaks.Select(p => p.ToComplete())];
     }
 }

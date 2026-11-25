@@ -1,9 +1,9 @@
-﻿using Application.AppSettings.DTOs;
+﻿using System.Text.Json;
+using Application.AppSettings.DTOs;
 using Core.Serialization;
 using Domain.AppSettings.Interfaces;
 using Domain.AppSettings.Root;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace Application.AppSettings;
 
@@ -13,7 +13,11 @@ internal sealed class AppSettingsService : IAppSettingsService
     private readonly TimeProvider dateTimeProvider;
     private readonly ILogger<AppSettingsService> logger;
 
-    public AppSettingsService(IAppSettingsRepository repository, TimeProvider dateTimeProvider, ILogger<AppSettingsService> logger)
+    public AppSettingsService(
+        IAppSettingsRepository repository,
+        TimeProvider dateTimeProvider,
+        ILogger<AppSettingsService> logger
+    )
     {
         this.repository = repository;
         this.dateTimeProvider = dateTimeProvider;
@@ -59,7 +63,8 @@ internal sealed class AppSettingsService : IAppSettingsService
 
     public Task<Result<AppSettingDto>> Update(int id, JsonDocument? jsonSetting, CancellationToken ct)
     {
-        return repository.GetByIdAsync(id, ct)
+        return repository
+            .GetByIdAsync(id, ct)
             .BindAsync(s =>
             {
                 if (jsonSetting is null)
@@ -74,15 +79,12 @@ internal sealed class AppSettingsService : IAppSettingsService
                 {
                     var deserialized = source.FromJson(type);
                     return s.SetSetting(deserialized, type);
-
                 }
                 catch (Exception ex)
                 {
                     logger.LogError(ex, "Error deserializing setting with id {Id} and type {Type}", id, type);
                     return Result<AppSetting>.Failure(Errors.ParsingError(source, type));
-
                 }
-
             })
             .MapAsync(AppSettingDto.FromAppSetting)
             .TapAsync(_ => repository.SaveChangesAsync(ct));
@@ -95,5 +97,4 @@ internal sealed class AppSettingsService : IAppSettingsService
             .TapAsync(e => e.Delete(dateTimeProvider.GetUtcNow()))
             .TapAsync(_ => repository.SaveChangesAsync(ct));
     }
-
 }

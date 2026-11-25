@@ -1,6 +1,7 @@
 ﻿namespace Domain.Common.Geography.ValueObjects;
 
-public interface IGeoPoint {
+public interface IGeoPoint
+{
     double Lat { get; }
     double Lon { get; }
     double Ele { get; }
@@ -10,7 +11,8 @@ public record GpxPoint(double Lat, double Lon, double Ele, DateTime? Time = null
 
 public record GpxPointWithTime(double Lat, double Lon, double Ele, DateTime Time) : IGeoPoint;
 
-public record GpxPointWithDistance(GpxPoint BasePoint, float DistanceFromStart) : IGeoPoint {
+public record GpxPointWithDistance(GpxPoint BasePoint, float DistanceFromStart) : IGeoPoint
+{
     public double Lat => BasePoint.Lat;
     public double Lon => BasePoint.Lon;
     public double Ele => BasePoint.Ele;

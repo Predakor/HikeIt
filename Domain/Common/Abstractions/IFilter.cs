@@ -1,9 +1,9 @@
+using System.Text.Json.Serialization;
 using Domain.Trips.Analytics.Route.Filters;
 using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Analytics.Time.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
-using System.Text.Json.Serialization;
 
 namespace Domain.Common.Abstractions;
 

@@ -1,139 +1,12 @@
-﻿using Api.Commons.Extentions;
+﻿using System.ComponentModel.DataAnnotations;
+using Api.Commons.Extentions;
 using Application.Commons.Services.Auth;
 using Application.Users.Root.Dtos;
 using Domain.Users.Root;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Api.Controllers.Auth;
-
-[Route("api/[controller]")]
-[ApiController]
-public class AuthController : ControllerBase
-{
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly IAuthService _authService;
-
-    public AuthController(
-        UserManager<User> userManager,
-        SignInManager<User> signInManager,
-        IAuthService authService
-    )
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _authService = authService;
-    }
-
-    [HttpGet("me")]
-    public async Task<IActionResult> Me()
-    {
-        return await _authService.WithLoggedUser().BindAsync(AttachRoles).ToActionResultAsync();
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(UserDto.Login dto)
-    {
-        return await _authService
-            .GetByLoginOrEmail(dto.UserName)
-            .BindAsync(user => TryLogin(user, dto.Password))
-            .ToActionResultAsync();
-    }
-
-    [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        return Ok();
-    }
-
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] UserDto.Register dto)
-    {
-        return await ValidateEmail(dto.Email)
-            .BindAsync(user => CreateUser(dto))
-            .ToActionResultAsync(ResultType.created);
-    }
-
-    [HttpPost("forgot-password")]
-    public async Task<IActionResult> ForgotPassword(string email)
-    {
-        return await _authService
-            .ForgotPassword(email)
-            .ToActionResultAsync();
-    }
-
-    [HttpPost("reset-password")]
-    public Task<IActionResult> ResetPassword([FromBody] UserDto.ResetPassword dto)
-    {
-        return _authService.ResetPassword(dto).ToActionResultAsync();
-    }
-
-    private async Task<Result<bool>> TryLogin(User user, string password)
-    {
-        var loginAttempt = await _signInManager.PasswordSignInAsync(
-            user,
-            password,
-            isPersistent: true,
-            lockoutOnFailure: false
-        );
-
-        return loginAttempt.Succeeded
-            ? loginAttempt.Succeeded
-            : Errors.InvalidCredentials();
-    }
-
-    private async Task<Result<Guid>> CreateUser(UserDto.Register dto)
-    {
-        var userId = Guid.NewGuid();
-
-        var user = new User
-        {
-            Id = userId,
-            UserName = dto.UserName,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email,
-        };
-
-        return await CreateNewUser(user, dto.Password).BindAsync(AsignUserRole).MapAsync(u => u.Id);
-    }
-
-    private async Task<Result<User>> CreateNewUser(User user, string password)
-    {
-        var result = await _userManager.CreateAsync(user, password);
-        if (result.Errors.Any())
-        {
-            return Errors.BadRequest(result.Errors.First().Description);
-        }
-        return user;
-    }
-
-    private async Task<Result<User>> AsignUserRole(User user)
-    {
-        var result = await _userManager.AddToRoleAsync(user, "User");
-        if (result.Errors.Any())
-        {
-            return Errors.Unknown(result.Errors.First().Description);
-        }
-        return user;
-    }
-
-    private async Task<Result<bool>> ValidateEmail(string email)
-    {
-        return await EmailValidation
-            .IsValid(email)
-            .BindAsync(_ => EmailValidation.IsUnique(email, _userManager));
-    }
-
-    private async Task<Result<UserDto.Basic>> AttachRoles(User user)
-    {
-        var roles = await _userManager.GetRolesAsync(user);
-        return user.ToBasic([.. roles]);
-    }
-}
 
 internal static class EmailValidation
 {
@@ -177,5 +50,135 @@ internal static class EmailValidation
 
             return true;
         }
+    }
+}
+
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
+{
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IAuthService _authService;
+
+    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IAuthService authService)
+    {
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _authService = authService;
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> Me()
+    {
+        return await _authService
+            .WithLoggedUser()
+            .BindAsync(AttachRoles)
+            .ToActionResultAsync();
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(UserDto.Login dto)
+    {
+        return await _authService
+            .GetByLoginOrEmail(dto.UserName)
+            .BindAsync(user => TryLogin(user, dto.Password))
+            .ToActionResultAsync();
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return Ok();
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] UserDto.Register dto)
+    {
+        return await ValidateEmail(dto.Email)
+            .BindAsync(user => CreateUser(dto))
+            .ToActionResultAsync(ResultType.created);
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(string email)
+    {
+        return await _authService
+            .ForgotPassword(email)
+            .ToActionResultAsync();
+    }
+
+    [HttpPost("reset-password")]
+    public Task<IActionResult> ResetPassword([FromBody] UserDto.ResetPassword dto)
+    {
+        return _authService
+            .ResetPassword(dto)
+            .ToActionResultAsync();
+    }
+
+    private async Task<Result<bool>> TryLogin(User user, string password)
+    {
+        var loginAttempt = await _signInManager.PasswordSignInAsync(
+            user,
+            password,
+            isPersistent: true,
+            lockoutOnFailure: false
+        );
+
+        return loginAttempt.Succeeded
+            ? loginAttempt.Succeeded
+            : Errors.InvalidCredentials();
+    }
+
+    private async Task<Result<Guid>> CreateUser(UserDto.Register dto)
+    {
+        var userId = Guid.NewGuid();
+
+        var user = new User
+        {
+            Id = userId,
+            UserName = dto.UserName,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Email = dto.Email,
+        };
+
+        return await CreateNewUser(user, dto.Password)
+            .BindAsync(AsignUserRole)
+            .MapAsync(u => u.Id);
+    }
+
+    private async Task<Result<User>> CreateNewUser(User user, string password)
+    {
+        var result = await _userManager.CreateAsync(user, password);
+        if (result.Errors.Any())
+        {
+            return Errors.BadRequest(result.Errors.First().Description);
+        }
+        return user;
+    }
+
+    private async Task<Result<User>> AsignUserRole(User user)
+    {
+        var result = await _userManager.AddToRoleAsync(user, "User");
+        if (result.Errors.Any())
+        {
+            return Errors.Unknown(result.Errors.First().Description);
+        }
+        return user;
+    }
+
+    private async Task<Result<bool>> ValidateEmail(string email)
+    {
+        return await EmailValidation
+            .IsValid(email)
+            .BindAsync(_ => EmailValidation.IsUnique(email, _userManager));
+    }
+
+    private async Task<Result<UserDto.Basic>> AttachRoles(User user)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+        return user.ToBasic([.. roles]);
     }
 }

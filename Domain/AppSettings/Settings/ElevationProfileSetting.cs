@@ -5,11 +5,12 @@ using Domain.Trips.Analytics.Shared;
 
 namespace Domain.AppSettings.Settings;
 
-public sealed record ElevationProfileSetting(
-    IReadOnlyList<IPointFilterConfig> Filters
-) : IAppSetting<ElevationProfileSetting>, IFilterSetting<IPointFilterConfig>
+public sealed record ElevationProfileSetting(IReadOnlyList<IPointFilterConfig> Filters)
+    : IAppSetting<ElevationProfileSetting>,
+        IFilterSetting<IPointFilterConfig>
 {
     public static AppSettingType SettingFor => AppSettingType.ElevationProfile;
+
     public static ElevationProfileSetting GetDefault() => new(PipelineDefaults.ElevationProfileFilters);
 
     public IEnumerable<string> Validate() => PointFilterValidation.Validate(Filters);

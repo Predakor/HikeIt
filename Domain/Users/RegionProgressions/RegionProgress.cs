@@ -4,6 +4,14 @@ using Domain.Users.Root;
 
 namespace Domain.Users.RegionProgressions;
 
+internal static class Extentions
+{
+    public static short Decrement(this short value, int decrement = 1)
+    {
+        return (short)Math.Max(value - decrement, 0);
+    }
+}
+
 public class RegionProgress : IEntity<Guid>
 {
     public Guid Id { get; init; }
@@ -70,13 +78,5 @@ public class RegionProgress : IEntity<Guid>
             PeakVisits[peakId] = visits.Decrement();
         }
         return this;
-    }
-}
-
-internal static class Extentions
-{
-    public static short Decrement(this short value, int decrement = 1)
-    {
-        return (short)Math.Max(value - decrement, 0);
     }
 }

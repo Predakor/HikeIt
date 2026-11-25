@@ -4,19 +4,20 @@ using Domain.Trips.Root.Events;
 
 namespace Application.Trips.GpxFile.EventHandlers;
 
-internal class TripDeleted_RemoveGpxFileHandler : IDomainEventHandler<TripRemovedEvent> {
-    readonly IGpxFileService _fileService;
+internal class TripDeleted_RemoveGpxFileHandler : IDomainEventHandler<TripRemovedEvent>
+{
+    private readonly IGpxFileService _fileService;
 
-    public TripDeleted_RemoveGpxFileHandler(IGpxFileService fileService) {
+    public TripDeleted_RemoveGpxFileHandler(IGpxFileService fileService)
+    {
         _fileService = fileService;
     }
 
-    public async Task Handle(
-        TripRemovedEvent domainEvent,
-        CancellationToken cancellationToken = default
-    ) {
+    public async Task Handle(TripRemovedEvent domainEvent, CancellationToken cancellationToken = default)
+    {
         var filePath = domainEvent?.Trip?.GpxFile?.StorageName;
-        if (filePath is null) {
+        if (filePath is null)
+        {
             Console.WriteLine("No path to file can't delete");
             await Task.CompletedTask;
             return;

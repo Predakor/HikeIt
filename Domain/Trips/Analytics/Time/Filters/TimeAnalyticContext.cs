@@ -33,7 +33,10 @@ public sealed class TimeAnalyticContext
     public DateTime End { get; }
 
     // Unclaimed segments are flat.
-    public IReadOnlyList<SegmentClass> Classes => _claimed.Select(claimed => claimed ?? SegmentClass.Flat).ToList();
+    public IReadOnlyList<SegmentClass> Classes =>
+        _claimed
+            .Select(claimed => claimed ?? SegmentClass.Flat)
+            .ToList();
 
     public double? FastestSpeedKph { get; set; }
     public double? SlowestSpeedKph { get; set; }
@@ -53,7 +56,19 @@ public sealed class TimeAnalyticContext
 
         var pointsWithTime = points.MapToTimed();
 
-        return new TimeAnalyticContext(route, pointsWithTime.ToGains(), pointsWithTime.First().Time, pointsWithTime.Last().Time);
+        return new TimeAnalyticContext(
+            route,
+            pointsWithTime.ToGains(),
+            pointsWithTime.First().Time,
+            pointsWithTime.Last().Time
+        );
+    }
+
+    private static double ToKph(TimeSpan time, double distanceMeters)
+    {
+        return time.TotalHours > 0
+            ? distanceMeters / 1000 / time.TotalHours
+            : 0;
     }
 
     public bool IsClaimed(int index) => _claimed[index].HasValue;
@@ -101,11 +116,6 @@ public sealed class TimeAnalyticContext
             FastestSpeedKph = FastestSpeedKph,
             SlowestSpeedKph = SlowestSpeedKph,
         };
-    }
-
-    private static double ToKph(TimeSpan time, double distanceMeters)
-    {
-        return time.TotalHours > 0 ? distanceMeters / 1000 / time.TotalHours : 0;
     }
 }
 

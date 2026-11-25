@@ -3,7 +3,7 @@
 set -e
 cd "$(git rev-parse --show-toplevel)"
 
-cs_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.cs')
+cs_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.cs' ':!Infrastructure/Migrations' ':!*.Designer.cs' ':!*ModelSnapshot.cs')
 fe_files=$(git diff --cached --name-only --diff-filter=ACM -- 'Frontend/src/*.ts' 'Frontend/src/*.tsx')
 all_files=$(git diff --cached --name-only --diff-filter=ACM)
 

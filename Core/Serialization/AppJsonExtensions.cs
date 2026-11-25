@@ -9,10 +9,7 @@ public static class AppJsonExtensions
 {
     private static JsonSerializerOptions Options => JsonSerializerOptions.Web;
 
-    private static readonly JsonSchemaExporterOptions SchemaOptions = new()
-    {
-        TreatNullObliviousAsNonNullable = true,
-    };
+    private static readonly JsonSchemaExporterOptions SchemaOptions = new() { TreatNullObliviousAsNonNullable = true };
 
     public static string ToJson<T>(this T value) => JsonSerializer.Serialize(value, Options);
 
@@ -20,7 +17,8 @@ public static class AppJsonExtensions
 
     public static JsonDocument ToJsonDocument<T>(this T value) => JsonSerializer.SerializeToDocument(value, Options);
 
-    public static JsonDocument ToJsonDocument(this object value, Type type) => JsonSerializer.SerializeToDocument(value, type, Options);
+    public static JsonDocument ToJsonDocument(this object value, Type type) =>
+        JsonSerializer.SerializeToDocument(value, type, Options);
 
     public static T? FromJson<T>(this string json) => JsonSerializer.Deserialize<T>(json, Options);
 

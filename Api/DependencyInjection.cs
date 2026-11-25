@@ -15,8 +15,8 @@ internal static class DependencyInjection
 
     public static WebApplicationBuilder AddLogger(this WebApplicationBuilder builder)
     {
-        builder.Logging
-            .ClearProviders()
+        builder
+            .Logging.ClearProviders()
             .AddConsole()
             .AddDebug();
 

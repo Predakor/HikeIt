@@ -14,7 +14,10 @@ namespace Infrastructure.Users.Stats;
 internal sealed class UserQueryService(TripDbContext _dbContext) : IUserQueryService
 {
     private IQueryable<User> Users => _dbContext.Users.AsNoTracking();
-    private IQueryable<RegionProgress> RegionProgresses => _dbContext.Set<RegionProgress>().AsNoTracking();
+    private IQueryable<RegionProgress> RegionProgresses =>
+        _dbContext
+            .Set<RegionProgress>()
+            .AsNoTracking();
 
     public Task<Result<UserStatsDto.All>> GetStats(Guid userId)
     {
@@ -40,7 +43,6 @@ internal sealed class UserQueryService(TripDbContext _dbContext) : IUserQuerySer
                 )
             ))
             .FirstOrFailureAsync(userId, nameof(User), CancellationToken.None);
-
     }
 
     public Task<Result<UserDto.Profile>> GetProfile(Guid userId, CancellationToken ct)
@@ -52,7 +54,10 @@ internal sealed class UserQueryService(TripDbContext _dbContext) : IUserQuerySer
                 {
                     UserName = u.UserName!,
                     Avatar = u.Avatar,
-                    Rank = u.Rank != null ? u.Rank.Name : "Novice Hiker",
+                    Rank =
+                        u.Rank != null
+                            ? u.Rank.Name
+                            : "Novice Hiker",
                     Peaks = u.Stats.TotalPeaks,
                     Trips = u.Stats.TotalTrips,
                     Traveled = u.Stats.TotalDistanceMeters,
@@ -86,7 +91,5 @@ internal sealed class UserQueryService(TripDbContext _dbContext) : IUserQuerySer
                 rp.TotalPeaksInRegion
             ))
             .ToResultArrayAsync("region progresses", CancellationToken.None);
-
     }
 }
-

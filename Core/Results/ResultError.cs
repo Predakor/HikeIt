@@ -13,16 +13,12 @@ public static class Errors
     public static ResultError NotFound<T>(string resourceName, string filterName, T filterValue) =>
         new ResultError.NotFound($"{resourceName} with {filterName}: {filterValue}");
 
-    public static ResultError NotFound<T>(
-        string resourceName,
-        T filterValue,
-        string filterName = "id"
-    ) => new ResultError.NotFound($"{resourceName} with {filterName}: {filterValue}");
+    public static ResultError NotFound<T>(string resourceName, T filterValue, string filterName = "id") =>
+        new ResultError.NotFound($"{resourceName} with {filterName}: {filterValue}");
 
     public static ResultError BadRequest(string message) => new ResultError.BadRequest(message);
 
-    public static ResultError EmptyCollection(string message) =>
-        new ResultError.EmptyCollection(message);
+    public static ResultError EmptyCollection(string message) => new ResultError.EmptyCollection(message);
 
     public static ResultError RuleViolation(IRuleBase rule) => new ResultError.RuleViolation(rule);
 
@@ -59,8 +55,7 @@ public enum ErrorCode
 
 public record ResultError(ErrorCode Code, string Message)
 {
-    public sealed record NotFound(string Target)
-        : ResultError(ErrorCode.not_found, $"{Target} was not found.");
+    public sealed record NotFound(string Target) : ResultError(ErrorCode.not_found, $"{Target} was not found.");
 
     public sealed record BadRequest(string Reason) : ResultError(ErrorCode.bad_request, Reason);
 
@@ -77,17 +72,12 @@ public record ResultError(ErrorCode Code, string Message)
         : ResultError(ErrorCode.file, Detail ?? "Something went wrong while processing your file.");
 
     public sealed record RuleViolation(IRuleBase Rule)
-        : ResultError(
-            ErrorCode.rule_violation,
-            $"{Rule.Name}: {Rule.Message}" ?? "Rule Violation error."
-        );
+        : ResultError(ErrorCode.rule_violation, $"{Rule.Name}: {Rule.Message}" ?? "Rule Violation error.");
 
     public sealed record NotAuthorized()
         : ResultError(ErrorCode.not_authorized, "You're not authorized to do this. Please log in.");
 
-    public sealed record InvalidCredentials()
-        : ResultError(ErrorCode.invalid_credentials, "Invalid login or password");
+    public sealed record InvalidCredentials() : ResultError(ErrorCode.invalid_credentials, "Invalid login or password");
 
-    public sealed record NotUnique(string ItemName)
-        : ResultError(ErrorCode.not_unique, $"{ItemName} already exists");
+    public sealed record NotUnique(string ItemName) : ResultError(ErrorCode.not_unique, $"{ItemName} already exists");
 }

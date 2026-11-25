@@ -14,27 +14,11 @@ internal class RemovedReachedPeaks_UpdateStatsHandler : IDomainEventHandler<Remo
         _userRepository = userRepository;
     }
 
-    public async Task Handle(
-        RemovedReachedPeaksEvent domainEvent,
-        CancellationToken cancellationToken = default
-    )
-    {
-        await _userRepository
-            .GetWithRegionProgresses(domainEvent.UserId)
-            .MapAsync(ProgressionsContext.FromUser)
-            .MapAsync(ctx => ctx.AddRegionUpdates(domainEvent.RemovedPeaks))
-            .MapAsync(UpdateUserRegionsSummaries)
-            .MapAsync(RemoveEmptyRegionProgressions)
-            .MapAsync(_ => _userRepository.SaveChangesAsync(CancellationToken.None));
-    }
-
     internal static ProgressionsContext UpdateUserRegionsSummaries(ProgressionsContext ctx)
     {
         foreach (var regionUpdate in ctx.RegionUpdates)
         {
-            var regionToUpdate = ctx.RegionProgressions.FirstOrDefault(p =>
-                p.RegionId == regionUpdate.Key
-            );
+            var regionToUpdate = ctx.RegionProgressions.FirstOrDefault(p => p.RegionId == regionUpdate.Key);
 
             if (regionToUpdate is null)
             {
@@ -59,6 +43,17 @@ internal class RemovedReachedPeaks_UpdateStatsHandler : IDomainEventHandler<Remo
 
         return ctx;
     }
+
+    public async Task Handle(RemovedReachedPeaksEvent domainEvent, CancellationToken cancellationToken = default)
+    {
+        await _userRepository
+            .GetWithRegionProgresses(domainEvent.UserId)
+            .MapAsync(ProgressionsContext.FromUser)
+            .MapAsync(ctx => ctx.AddRegionUpdates(domainEvent.RemovedPeaks))
+            .MapAsync(UpdateUserRegionsSummaries)
+            .MapAsync(RemoveEmptyRegionProgressions)
+            .MapAsync(_ => _userRepository.SaveChangesAsync(CancellationToken.None));
+    }
 }
 
 internal class ProgressionsContext
@@ -73,12 +68,6 @@ internal class ProgressionsContext
         RegionProgressions = user.RegionProgresses.ToList();
     }
 
-    public ProgressionsContext AddRegionUpdates(PeakUpdateData[] removedPeaks)
-    {
-        RegionUpdates = MergeRegionUpdates(removedPeaks);
-        return this;
-    }
-
     public static ProgressionsContext FromUser(User user)
     {
         return new ProgressionsContext(user);
@@ -86,6 +75,17 @@ internal class ProgressionsContext
 
     private static Dictionary<int, PeakUpdateData[]> MergeRegionUpdates(PeakUpdateData[] removedPeaks)
     {
-        return removedPeaks.GroupBy(ru => ru.RegionId).ToDictionary(g => g.Key, g => g.ToArray());
+        return removedPeaks
+            .GroupBy(ru => ru.RegionId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.ToArray()
+            );
+    }
+
+    public ProgressionsContext AddRegionUpdates(PeakUpdateData[] removedPeaks)
+    {
+        RegionUpdates = MergeRegionUpdates(removedPeaks);
+        return this;
     }
 }

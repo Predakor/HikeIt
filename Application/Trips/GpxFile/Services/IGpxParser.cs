@@ -2,6 +2,7 @@
 
 namespace Application.Trips.GpxFile.Services;
 
-public interface IGpxParser {
+public interface IGpxParser
+{
     Task<AnalyticData> ParseAsync(Stream stream);
 }

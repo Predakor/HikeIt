@@ -21,17 +21,6 @@ public class Peak : AggregateRoot<int, Peak>, IGeoPoint
     //navigation prop
     public Region Region { get; set; } = default!;
 
-    public Peak UpdateRegion(int regionID)
-    {
-        if (regionID != RegionID)
-        {
-            RegionID = regionID;
-            //emit region change event so region progression can update
-        }
-
-        return this;
-    }
-
     public static Peak Create(string name, IGeoPoint point, int regionId)
     {
         return new Peak()
@@ -44,4 +33,14 @@ public class Peak : AggregateRoot<int, Peak>, IGeoPoint
         };
     }
 
+    public Peak UpdateRegion(int regionID)
+    {
+        if (regionID != RegionID)
+        {
+            RegionID = regionID;
+            //emit region change event so region progression can update
+        }
+
+        return this;
+    }
 }

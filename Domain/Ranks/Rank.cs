@@ -2,7 +2,8 @@
 
 namespace Domain.Ranks;
 
-public class Rank : IEntity<int> {
+public class Rank : IEntity<int>
+{
     public int Id { get; init; }
     public required string Name { get; set; }
     public required string Description { get; set; }

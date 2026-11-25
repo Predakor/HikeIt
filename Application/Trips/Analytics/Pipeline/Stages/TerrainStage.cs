@@ -7,14 +7,14 @@ using Domain.Trips.Analytics.Route;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class TerrainStage(ITerrainRunner runner)
-    : FilterListStageBase<ITerrainFilterConfig>
+public sealed class TerrainStage(ITerrainRunner runner) : FilterListStageBase<ITerrainFilterConfig>
 {
     public override StageId Id => StageId.Terrain;
 
-    protected override IReadOnlyList<ITerrainFilterConfig>? RequestFilters(PipelineConfig config)
+    internal static RouteAnalytic RouteFrom(Stage.Context context)
     {
-        return config.Terrain?.Filters;
+        return context.Upstream[StageId.Terrain].Data as RouteAnalytic
+            ?? throw new InvalidOperationException("Route analytics output is missing its route analytic.");
     }
 
     public override Task<Result<Stage.Output>> RunAsync(
@@ -33,9 +33,8 @@ public sealed class TerrainStage(ITerrainRunner runner)
             .MapAsync(route => new Stage.Output(route, steps));
     }
 
-    internal static RouteAnalytic RouteFrom(Stage.Context context)
+    protected override IReadOnlyList<ITerrainFilterConfig>? RequestFilters(PipelineConfig config)
     {
-        return context.Upstream[StageId.Terrain].Data as RouteAnalytic
-            ?? throw new InvalidOperationException("Route analytics output is missing its route analytic.");
+        return config.Terrain?.Filters;
     }
 }

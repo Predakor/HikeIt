@@ -7,9 +7,11 @@ using Domain.Trips.Analytics.Shared;
 namespace Domain.AppSettings.Settings;
 
 public sealed record TerrainSetting(IReadOnlyList<ITerrainFilterConfig> Filters)
-    : IAppSetting<TerrainSetting>, IFilterSetting<ITerrainFilterConfig>
+    : IAppSetting<TerrainSetting>,
+        IFilterSetting<ITerrainFilterConfig>
 {
     public static AppSettingType SettingFor => AppSettingType.Terrain;
+
     public static TerrainSetting GetDefault() => new(PipelineDefaults.TerrainFilters);
 
     public IEnumerable<string> Validate()

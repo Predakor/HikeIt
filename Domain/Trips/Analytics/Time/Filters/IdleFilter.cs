@@ -21,6 +21,8 @@ public sealed class IdleFilter(IdleFilter.Config config) : TimeAnalyticFilter
 
         double speedKph = gain.DistanceDelta / gain.TimeDelta * 3.6;
 
-        return speedKph < config.SpeedKph ? SegmentClass.Idle : null;
+        return speedKph < config.SpeedKph
+            ? SegmentClass.Idle
+            : null;
     }
 }

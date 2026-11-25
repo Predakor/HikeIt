@@ -1,8 +1,8 @@
+using System.Text.Json;
 using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
-using System.Text.Json;
 
 namespace Domain.Tests.Pipeline;
 
@@ -10,6 +10,20 @@ namespace Domain.Tests.Pipeline;
 public class RouteFilterTests
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+
+    private static IPointFilterConfig CreateConfig(string json) =>
+        JsonSerializer.Deserialize<IPointFilterConfig>(json, Json)!;
+
+    private static IFilter<IList<MutableGpxPoint>> CreateFilter(string json) =>
+        CreateConfig(json)
+            .CreateFilter();
+
+    private static IList<MutableGpxPoint> Simplify(IList<MutableGpxPoint> points, double toleranceM) =>
+        new SimplifyFilter(new SimplifyFilter.Config(toleranceM)).Apply(points);
+
+    // Points ~11m apart along a straight line, so equal elevation steps give a straight 3D line.
+    private static List<MutableGpxPoint> Track(params double[] elevations) =>
+        [.. elevations.Select((e, i) => new MutableGpxPoint(50 + i * 0.0001, 20, e))];
 
     [Fact]
     public void Simplify_StraightTrack_CollapsesToEndpoints()
@@ -82,7 +96,8 @@ public class RouteFilterTests
         var points = Track(100, 110, 130, 120, 110, 100);
         points[2].Pinned = true;
 
-        await CreateFilter("""{"filterType":"MaxSpikeFilter","MaxSpike":5}""").ApplyAsync(points);
+        await CreateFilter("""{"filterType":"MaxSpikeFilter","MaxSpike":5}""")
+            .ApplyAsync(points);
 
         Assert.True(points[2].Pinned);
     }
@@ -104,15 +119,4 @@ public class RouteFilterTests
 
         Assert.Equal(3, config.ToleranceM);
     }
-
-    private static IPointFilterConfig CreateConfig(string json) => JsonSerializer.Deserialize<IPointFilterConfig>(json, Json)!;
-
-    private static IFilter<IList<MutableGpxPoint>> CreateFilter(string json) => CreateConfig(json).CreateFilter();
-
-    private static IList<MutableGpxPoint> Simplify(IList<MutableGpxPoint> points, double toleranceM) =>
-        new SimplifyFilter(new SimplifyFilter.Config(toleranceM)).Apply(points);
-
-    // Points ~11m apart along a straight line, so equal elevation steps give a straight 3D line.
-    private static List<MutableGpxPoint> Track(params double[] elevations) =>
-        [.. elevations.Select((e, i) => new MutableGpxPoint(50 + i * 0.0001, 20, e))];
 }

@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Users;
 
-internal class UserAggregateConfiguration {
-    public static ModelBuilder Apply(ModelBuilder modelBuilder) {
+internal class UserAggregateConfiguration
+{
+    public static ModelBuilder Apply(ModelBuilder modelBuilder)
+    {
         return modelBuilder
             .ApplyConfiguration(new UserConfiguration())
             .ApplyConfiguration(new UserStatsConfiguration())

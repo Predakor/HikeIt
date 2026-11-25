@@ -7,15 +7,9 @@ using Domain.Common.Geography.ValueObjects;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class ElevationProfileStage(IPointsFilterRunner runner)
-    : FilterListStageBase<IPointFilterConfig>
+public sealed class ElevationProfileStage(IPointsFilterRunner runner) : FilterListStageBase<IPointFilterConfig>
 {
     public override StageId Id => StageId.ElevationProfile;
-
-    protected override IReadOnlyList<IPointFilterConfig>? RequestFilters(PipelineConfig config)
-    {
-        return config.ElevationProfile?.Filters;
-    }
 
     public override Task<Result<Stage.Output>> RunAsync(
         Stage.Context context,
@@ -29,5 +23,10 @@ public sealed class ElevationProfileStage(IPointsFilterRunner runner)
         return runner
             .ApplyAsync(cleanedPoints, Id, RequestFilters(config), steps, cancellationToken)
             .MapAsync(points => new Stage.Output(new AnalyticData(points).ToElevationProfileDto(), steps));
+    }
+
+    protected override IReadOnlyList<IPointFilterConfig>? RequestFilters(PipelineConfig config)
+    {
+        return config.ElevationProfile?.Filters;
     }
 }

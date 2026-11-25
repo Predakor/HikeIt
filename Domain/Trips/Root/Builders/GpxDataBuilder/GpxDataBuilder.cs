@@ -12,7 +12,6 @@ public sealed class MutableGpxPoint(double lat, double lon, double ele, DateTime
 
     // Pinned points (e.g. local maxima) must survive point-removing filters such as SimplifyFilter.
     public bool Pinned { get; set; }
-
 }
 
 internal class GpxDataBuilder(List<GpxPoint> points)
@@ -51,7 +50,11 @@ internal class GpxDataBuilder(List<GpxPoint> points)
 
     public AnalyticData Build()
     {
-        return new(_gpxPoints.Select(p => p.ToGpxPoint()).ToList());
+        return new(
+            _gpxPoints
+                .Select(p => p.ToGpxPoint())
+                .ToList()
+        );
     }
 }
 
@@ -65,7 +68,9 @@ internal class Helpers
 
     public static IEnumerable<T> GetWindow<T>(List<T> data, int start, int end)
     {
-        return data.Skip(start).Take(end - start + 1);
+        return data
+            .Skip(start)
+            .Take(end - start + 1);
     }
 
     public static (int, int) GetWindowBounds<T>(List<T> arr, int center, int size)

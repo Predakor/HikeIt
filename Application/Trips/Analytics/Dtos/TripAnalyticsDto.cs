@@ -11,12 +11,8 @@ public record AnalyticsPresence(Uri? HasPeakAnalytics, Uri? HasElevationProfile)
 
 public abstract record TripAnalyticsDto
 {
-    public record Linked(
-        Uri? RouteAnalytics,
-        Uri? TimeAnalytics,
-        Uri? PeakAnalytics,
-        Uri? ElevationProfile
-    ) : TripAnalyticsDto;
+    public record Linked(Uri? RouteAnalytics, Uri? TimeAnalytics, Uri? PeakAnalytics, Uri? ElevationProfile)
+        : TripAnalyticsDto;
 
     public record Basic(RouteAnalytic Route, TimeAnalytic? Time, Uri? Peaks, Uri? Elevation, Uri? Visualisation)
         : TripAnalyticsDto;

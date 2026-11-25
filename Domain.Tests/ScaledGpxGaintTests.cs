@@ -4,7 +4,8 @@ using Domain.Common.Geography.ValueObjects;
 
 namespace Domain.Tests;
 
-public class ScaledGainTests {
+public class ScaledGainTests
+{
     // Sample GpxGain input data
     public static IEnumerable<object[]> GainData => data.Select(g => new object[] { g });
 
@@ -18,25 +19,19 @@ public class ScaledGainTests {
 
     [Theory]
     [MemberData(nameof(GainData))]
-    public void ScaledGain_Scaling_RoundTrip(GpxGain gain) {
+    public void ScaledGain_Scaling_RoundTrip(GpxGain gain)
+    {
         var scaled = gain.ToScaled();
         float tolerance = 0.01f;
 
-        Assert.InRange(
-            scaled.DistanceDelta,
-            gain.DistanceDelta - tolerance,
-            gain.DistanceDelta + tolerance
-        );
-        Assert.InRange(
-            scaled.ElevationDelta,
-            gain.ElevationDelta - tolerance,
-            gain.ElevationDelta + tolerance
-        );
+        Assert.InRange(scaled.DistanceDelta, gain.DistanceDelta - tolerance, gain.DistanceDelta + tolerance);
+        Assert.InRange(scaled.ElevationDelta, gain.ElevationDelta - tolerance, gain.ElevationDelta + tolerance);
         Assert.Equal(gain.TimeDelta ?? 0, scaled.TimeDelta);
     }
 
     [Fact]
-    public void ScaledGainSerializer_Should_SerializeAndDeserialize() {
+    public void ScaledGainSerializer_Should_SerializeAndDeserialize()
+    {
         var gains = data.ToArray();
 
         var bytes = ScaledGainSerializer.Serialize(gains);
@@ -44,7 +39,8 @@ public class ScaledGainTests {
 
         Assert.Equal(gains.Length, deserialized.Length);
 
-        for (int i = 0; i < gains.Length; i++) {
+        for (int i = 0; i < gains.Length; i++)
+        {
             Assert.InRange(
                 deserialized[i].DistanceDelta,
                 gains[i].DistanceDelta - 0.01f,
@@ -60,7 +56,8 @@ public class ScaledGainTests {
     }
 
     [Fact]
-    public void ScaledGain_ShouldHave_DefaultTime() {
+    public void ScaledGain_ShouldHave_DefaultTime()
+    {
         GpxGain gain = new(1, 1, 1);
         var scaledGain = gain.ToScaled();
 
@@ -68,7 +65,8 @@ public class ScaledGainTests {
     }
 
     [Fact]
-    public void DeserializedSerializedValue_ShouldBe_TheSameAS_Original() {
+    public void DeserializedSerializedValue_ShouldBe_TheSameAS_Original()
+    {
         GpxGain original = new(1, 1, 1);
 
         var bytes = ScaledGainSerializer.Serialize([original]);
@@ -80,5 +78,4 @@ public class ScaledGainTests {
         Assert.Equal(serialized[0].ElevationDelta, original.ElevationDelta);
         Assert.Equal(serialized[0].TimeDelta, original.TimeDelta);
     }
-
 }

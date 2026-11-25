@@ -1,0 +1,9 @@
+Infrastructure/Migrations/
+**/*.Designer.cs
+**/*ModelSnapshot.cs
+**/*.g.cs
+**/*.csproj
+**/*.props
+**/*.targets
+**/bin/
+**/obj/

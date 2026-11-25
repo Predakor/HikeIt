@@ -5,11 +5,8 @@ namespace Application.Users.RegionProgressions.Dtos;
 
 public abstract record RegionProgressDto
 {
-    public sealed record Summary(
-        RegionDto.Complete Region,
-        short UniqueReachedPeaks,
-        short TotalPeaksInRegion
-    ) : RegionProgressDto;
+    public sealed record Summary(RegionDto.Complete Region, short UniqueReachedPeaks, short TotalPeaksInRegion)
+        : RegionProgressDto;
 
     public sealed record Full(
         RegionDto.Complete Region,
@@ -20,9 +17,5 @@ public abstract record RegionProgressDto
         PeakDto.WithReachStatus[] Peaks
     ) : RegionProgressDto;
 
-    public sealed record TabDataLinked(
-        Full Progress,
-        Uri? Trips,
-        Uri? Visualizations
-    );
+    public sealed record TabDataLinked(Full Progress, Uri? Trips, Uri? Visualizations);
 }

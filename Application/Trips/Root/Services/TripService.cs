@@ -96,7 +96,9 @@ public class TripService : ITripService
 
     private async Task<Result<Trip>> SaveTripChanges(CreateTripContext ctx)
     {
-        return await _unitOfWork.SaveChangesAsync().MapAsync(_ => ctx.Trip);
+        return await _unitOfWork
+            .SaveChangesAsync()
+            .MapAsync(_ => ctx.Trip);
     }
 
     private async Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx)
@@ -141,6 +143,8 @@ public class TripService : ITripService
             trip.ChangeRegion(ctx.Request.RegionId);
         }
 
-        return _unitOfWork.TripRepository.Add(trip).Map(ctx.WithTrip);
+        return _unitOfWork
+            .TripRepository.Add(trip)
+            .Map(ctx.WithTrip);
     }
 }

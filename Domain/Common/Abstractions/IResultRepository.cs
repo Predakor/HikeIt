@@ -1,4 +1,5 @@
 ﻿namespace Domain.Common.Abstractions;
+
 public interface IReadResultRepository<TEntity, TKey> : IRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey>
 {
@@ -18,5 +19,4 @@ public interface IWriteResultRepository<TEntity, TKey> : IRepository<TEntity, TK
 public interface ICrudResultRepository<TEntity, TKey>
     : IReadResultRepository<TEntity, TKey>,
         IWriteResultRepository<TEntity, TKey>
-    where TEntity : class, IEntity<TKey>
-{ }
+    where TEntity : class, IEntity<TKey> { }

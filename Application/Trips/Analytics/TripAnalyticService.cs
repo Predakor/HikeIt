@@ -59,9 +59,12 @@ public class TripAnalyticService : ITripAnalyticService
             .BindAsync(route => GenerateTimeAnalytics(route, points))
             .TapAsync(time => builder.WithTimeAnalytic(time));
 
-        await GeneratePeaksAnalytics(ctx).TapAsync(t => builder.WithPeaksAnalytic(t));
-        await GenerateElevationProfile(ctx).TapAsync(t => builder.WithElevationProfile(t));
-        await GenerateRouteVisualization(points).TapAsync(path => builder.WithVisualisation(path));
+        await GeneratePeaksAnalytics(ctx)
+            .TapAsync(t => builder.WithPeaksAnalytic(t));
+        await GenerateElevationProfile(ctx)
+            .TapAsync(t => builder.WithElevationProfile(t));
+        await GenerateRouteVisualization(points)
+            .TapAsync(path => builder.WithVisualisation(path));
 
         return builder.Build();
     }
@@ -83,7 +86,9 @@ public class TripAnalyticService : ITripAnalyticService
 
     private Task<Result<ElevationProfile>> GenerateElevationProfile(CreateTripContext ctx)
     {
-        return _elevationProfileService.Create(ctx).BindAsync(_unitOfWork.Elevations.AddAsync);
+        return _elevationProfileService
+            .Create(ctx)
+            .BindAsync(_unitOfWork.Elevations.AddAsync);
     }
 
     private Task<Result<List<ReachedPeak>>> GenerateReachedPeaks(CreateTripContext ctx)
@@ -96,7 +101,11 @@ public class TripAnalyticService : ITripAnalyticService
     private Task<Result<PeaksAnalytic>> GeneratePeaksAnalytics(CreateTripContext ctx)
     {
         return GenerateReachedPeaks(ctx)
-            .BindAsync(rp => CreatePeakAnalyticsCommand.Create(ctx.Trip.Id, rp).Execute())
+            .BindAsync(rp =>
+                CreatePeakAnalyticsCommand
+                    .Create(ctx.Trip.Id, rp)
+                    .Execute()
+            )
             .BindAsync(_unitOfWork.PeakAnalytics.AddAsync);
     }
 }

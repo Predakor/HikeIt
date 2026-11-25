@@ -14,40 +14,6 @@ public sealed class SimplifyFilter(SimplifyFilter.Config config) : SyncFilter<IL
 
     private const double EarthRadiusM = 6_371_000d;
 
-    public override IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
-    {
-        if (values.Count < 3)
-        {
-            return values;
-        }
-
-        var planePoints = ToLocalPlane(values);
-        var keep = new bool[values.Count];
-
-        // Pinned points and the endpoints split the track into independent segments.
-        var anchors = new List<int> { 0 };
-        for (int i = 1; i < values.Count - 1; i++)
-        {
-            if (values[i].Pinned)
-            {
-                anchors.Add(i);
-            }
-        }
-        anchors.Add(values.Count - 1);
-
-        foreach (var anchor in anchors)
-        {
-            keep[anchor] = true;
-        }
-
-        for (int a = 0; a < anchors.Count - 1; a++)
-        {
-            KeepSignificantPoints(planePoints, anchors[a], anchors[a + 1], config.ToleranceM, keep);
-        }
-
-        return [.. values.Where((_, i) => keep[i])];
-    }
-
     // Iterative Ramer-Douglas-Peucker over [first, last] so long tracks cannot overflow the stack.
     private static void KeepSignificantPoints(Point3[] points, int first, int last, double toleranceM, bool[] keep)
     {
@@ -98,7 +64,10 @@ public sealed class SimplifyFilter(SimplifyFilter.Config config) : SyncFilter<IL
         var (px, py, pz) = (p.X - a.X, p.Y - a.Y, p.Z - a.Z);
 
         var lengthSquared = (dx * dx) + (dy * dy) + (dz * dz);
-        var t = lengthSquared == 0 ? 0 : Math.Clamp(((px * dx) + (py * dy) + (pz * dz)) / lengthSquared, 0, 1);
+        var t =
+            lengthSquared == 0
+                ? 0
+                : Math.Clamp(((px * dx) + (py * dy) + (pz * dz)) / lengthSquared, 0, 1);
 
         var (ex, ey, ez) = (px - (t * dx), py - (t * dy), pz - (t * dz));
         return Math.Sqrt((ex * ex) + (ey * ey) + (ez * ez));
@@ -111,11 +80,48 @@ public sealed class SimplifyFilter(SimplifyFilter.Config config) : SyncFilter<IL
         var metersPerDegreeLat = EarthRadiusM * Math.PI / 180d;
         var metersPerDegreeLon = metersPerDegreeLat * Math.Cos(origin.Lat * Math.PI / 180d);
 
-        return [.. values.Select(p => new Point3(
-            (p.Lon - origin.Lon) * metersPerDegreeLon,
-            (p.Lat - origin.Lat) * metersPerDegreeLat,
-            p.Ele
-        ))];
+        return
+        [
+            .. values.Select(p => new Point3(
+                (p.Lon - origin.Lon) * metersPerDegreeLon,
+                (p.Lat - origin.Lat) * metersPerDegreeLat,
+                p.Ele
+            )),
+        ];
+    }
+
+    public override IList<MutableGpxPoint> Apply(IList<MutableGpxPoint> values)
+    {
+        if (values.Count < 3)
+        {
+            return values;
+        }
+
+        var planePoints = ToLocalPlane(values);
+        var keep = new bool[values.Count];
+
+        // Pinned points and the endpoints split the track into independent segments.
+        var anchors = new List<int> { 0 };
+        for (int i = 1; i < values.Count - 1; i++)
+        {
+            if (values[i].Pinned)
+            {
+                anchors.Add(i);
+            }
+        }
+        anchors.Add(values.Count - 1);
+
+        foreach (var anchor in anchors)
+        {
+            keep[anchor] = true;
+        }
+
+        for (int a = 0; a < anchors.Count - 1; a++)
+        {
+            KeepSignificantPoints(planePoints, anchors[a], anchors[a + 1], config.ToleranceM, keep);
+        }
+
+        return [.. values.Where((_, i) => keep[i])];
     }
 
     private readonly record struct Point3(double X, double Y, double Z);

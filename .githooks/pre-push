@@ -13,8 +13,12 @@ if echo "$changed" | grep -qE '\.(cs|csproj|props)$'; then
 fi
 
 if echo "$changed" | grep -q '^Frontend/'; then
-  echo "pre-push: frontend typecheck + lint"
-  (cd Frontend && pnpm exec tsc --b && pnpm lint)
+  echo "pre-push: frontend typecheck + lint (changed files only)"
+  changed_fe=$(git diff --name-only "$upstream"...HEAD --diff-filter=ACM -- 'Frontend/src/*.ts' 'Frontend/src/*.tsx' | sed 's#^Frontend/##')
+  (cd Frontend && pnpm exec tsc --b)
+  if [ -n "$changed_fe" ]; then
+    (cd Frontend && echo "$changed_fe" | tr '\n' '\0' | xargs -0 pnpm exec eslint)
+  fi
 fi
 
 cr=$(printf '\r')

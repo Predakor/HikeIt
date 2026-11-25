@@ -8,12 +8,51 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Locations.Regions;
 
+internal static class Mappers
+{
+    public static RegionDto.WithPeaks ToRegionWithPeaks(this RegionDto.Complete region, List<Peak> peaks)
+    {
+        var mappedPeaks = peaks
+            .Select(p => new PeakDto.Base(p.Height, p.Name, p.Id))
+            .ToList();
+
+        return new RegionDto.WithPeaks(region, mappedPeaks);
+    }
+
+    public static RegionDto.WithDetailedPeaks ToRegionWithDetailedPeaks(
+        this RegionDto.Complete region,
+        List<Peak> peaks
+    )
+    {
+        return new RegionDto.WithDetailedPeaks(region, peaks.ToPeaksWithLocation());
+    }
+
+    public static PeakDto.WithLocation ToWithLocation(this Peak peak)
+    {
+        return new(peak.Id, peak.Height, peak.Name, peak.Location.Y, peak.Location.X);
+    }
+
+    public static List<PeakDto.WithLocation> ToPeaksWithLocation(this IEnumerable<Peak> peaks)
+    {
+        return [.. peaks.Select(ToWithLocation)];
+    }
+
+    public static RegionDto.Complete ToComplete(this Region region)
+    {
+        return RegionMapper.MapToCompleteDto(region);
+    }
+
+    public static List<RegionDto.Complete> ToComplete(this IEnumerable<Region> regions)
+    {
+        return [.. regions.Select(ToComplete)];
+    }
+}
+
 public class RegionQueryService : IRegionQueryService
 {
     private readonly TripDbContext _context;
 
-    private IQueryable<Region> RegionsQuery
-        => _context.Regions.AsNoTracking();
+    private IQueryable<Region> RegionsQuery => _context.Regions.AsNoTracking();
     private IQueryable<Peak> PeaksQuery => _context.Peaks.AsNoTracking();
 
     public RegionQueryService(TripDbContext context)
@@ -59,12 +98,16 @@ public class RegionQueryService : IRegionQueryService
 
     public async Task<Result<int>> GetPeakCount(int regionId)
     {
-        return await PeaksQuery.Where(r => r.RegionID == regionId).CountAsync();
+        return await PeaksQuery
+            .Where(r => r.RegionID == regionId)
+            .CountAsync();
     }
 
     public async Task<Result<RegionDto.WithPeaks>> AllPeaksFromRegion(RegionDto.Complete region)
     {
-        var peaksFromRegion = await PeaksQuery.Where(p => p.RegionID == region.Id).ToListAsync();
+        var peaksFromRegion = await PeaksQuery
+            .Where(p => p.RegionID == region.Id)
+            .ToListAsync();
 
         if (peaksFromRegion.Count == 0)
         {
@@ -74,9 +117,7 @@ public class RegionQueryService : IRegionQueryService
         return region.ToRegionWithPeaks(peaksFromRegion);
     }
 
-    public async Task<Result<RegionDto.WithDetailedPeaks>> AllDetailedPeaksFromRegion(
-        RegionDto.Complete region
-    )
+    public async Task<Result<RegionDto.WithDetailedPeaks>> AllDetailedPeaksFromRegion(RegionDto.Complete region)
     {
         var peaksFromRegion = await PeaksQuery
             .Where(p => p.RegionID == region.Id)
@@ -88,46 +129,5 @@ public class RegionQueryService : IRegionQueryService
         }
 
         return region.ToRegionWithDetailedPeaks(peaksFromRegion);
-    }
-}
-
-internal static class Mappers
-{
-    public static RegionDto.WithPeaks ToRegionWithPeaks(
-        this RegionDto.Complete region,
-        List<Peak> peaks
-    )
-    {
-        var mappedPeaks = peaks.Select(p => new PeakDto.Base(p.Height, p.Name, p.Id)).ToList();
-
-        return new RegionDto.WithPeaks(region, mappedPeaks);
-    }
-
-    public static RegionDto.WithDetailedPeaks ToRegionWithDetailedPeaks(
-        this RegionDto.Complete region,
-        List<Peak> peaks
-    )
-    {
-        return new RegionDto.WithDetailedPeaks(region, peaks.ToPeaksWithLocation());
-    }
-
-    public static PeakDto.WithLocation ToWithLocation(this Peak peak)
-    {
-        return new(peak.Id, peak.Height, peak.Name, peak.Location.Y, peak.Location.X);
-    }
-
-    public static List<PeakDto.WithLocation> ToPeaksWithLocation(this IEnumerable<Peak> peaks)
-    {
-        return [.. peaks.Select(ToWithLocation)];
-    }
-
-    public static RegionDto.Complete ToComplete(this Region region)
-    {
-        return RegionMapper.MapToCompleteDto(region);
-    }
-
-    public static List<RegionDto.Complete> ToComplete(this IEnumerable<Region> regions)
-    {
-        return [.. regions.Select(ToComplete)];
     }
 }

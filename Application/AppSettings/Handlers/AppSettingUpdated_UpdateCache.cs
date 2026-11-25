@@ -12,11 +12,15 @@ internal sealed class AppSettingUpdated_UpdateCache : IDomainEventHandler<AppSet
     {
         this.cache = cache;
     }
-    public async Task Handle(AppSettingEvents.JsonValueUpdated domainEvent, CancellationToken cancellationToken = default)
+
+    public async Task Handle(
+        AppSettingEvents.JsonValueUpdated domainEvent,
+        CancellationToken cancellationToken = default
+    )
     {
         await Task.WhenAll(
-           cache.RemoveAsync(CachedAppSettingsServiceDecorator.GetKey(domainEvent.SettingFor), cancellationToken),
-           cache.RemoveAsync(CachedAppSettingsServiceDecorator.GetAllKey, cancellationToken)
+            cache.RemoveAsync(CachedAppSettingsServiceDecorator.GetKey(domainEvent.SettingFor), cancellationToken),
+            cache.RemoveAsync(CachedAppSettingsServiceDecorator.GetAllKey, cancellationToken)
         );
     }
 }

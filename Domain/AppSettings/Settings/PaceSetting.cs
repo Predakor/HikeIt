@@ -7,9 +7,11 @@ using Domain.Trips.Analytics.Time.Filters;
 namespace Domain.AppSettings.Settings;
 
 public sealed record PaceSetting(IReadOnlyList<IPaceFilterConfig> Filters)
-    : IAppSetting<PaceSetting>, IFilterSetting<IPaceFilterConfig>
+    : IAppSetting<PaceSetting>,
+        IFilterSetting<IPaceFilterConfig>
 {
     public static AppSettingType SettingFor => AppSettingType.Pace;
+
     public static PaceSetting GetDefault() => new(PipelineDefaults.PaceFilters);
 
     public IEnumerable<string> Validate()

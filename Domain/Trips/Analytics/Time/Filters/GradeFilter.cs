@@ -1,6 +1,6 @@
+using System.Text.Json.Serialization;
 using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
-using System.Text.Json.Serialization;
 
 namespace Domain.Trips.Analytics.Time.Filters;
 
@@ -32,6 +32,8 @@ public sealed class GradeFilter(GradeFilter.Config config) : TimeAnalyticFilter
 
         bool isDescent = config.Targets.HasFlag(GradeTargets.Descent) && gain.Slope < -config.MinGradePercent;
 
-        return isDescent ? SegmentClass.Descent : null;
+        return isDescent
+            ? SegmentClass.Descent
+            : null;
     }
 }

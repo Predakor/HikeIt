@@ -8,7 +8,8 @@ public interface IAggregateRoot
     void ClearDomainEvents();
 }
 
-public class AggregateRoot<TId, TEntity> : IEntity<TId>, IAggregateRoot, ISoftDeletable<TEntity> where TEntity : AggregateRoot<TId, TEntity>
+public class AggregateRoot<TId, TEntity> : IEntity<TId>, IAggregateRoot, ISoftDeletable<TEntity>
+    where TEntity : AggregateRoot<TId, TEntity>
 {
     public required TId Id { get; init; }
 
@@ -19,14 +20,6 @@ public class AggregateRoot<TId, TEntity> : IEntity<TId>, IAggregateRoot, ISoftDe
     public bool IsDeleted { get; protected set; }
     public DateTimeOffset? DeletedAt { get; protected set; }
 
-    protected void AddDomainEvent(IDomainEvent domainEvent)
-    {
-        _events.Add(domainEvent);
-        Console.WriteLine("adding Domain event, total count:" + Events.Count);
-    }
-
-    protected void RemoveDomainEvent(IDomainEvent domainEvent) => _events.Remove(domainEvent);
-
     public void ClearDomainEvents() => _events.Clear();
 
     public virtual TEntity Delete(DateTimeOffset time)
@@ -35,4 +28,12 @@ public class AggregateRoot<TId, TEntity> : IEntity<TId>, IAggregateRoot, ISoftDe
         DeletedAt = time;
         return (TEntity)this;
     }
+
+    protected void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        _events.Add(domainEvent);
+        Console.WriteLine("adding Domain event, total count:" + Events.Count);
+    }
+
+    protected void RemoveDomainEvent(IDomainEvent domainEvent) => _events.Remove(domainEvent);
 }

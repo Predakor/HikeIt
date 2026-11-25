@@ -6,8 +6,9 @@ namespace Infrastructure.Locations.Peaks.Extentions;
 
 internal static class GpxPointExtentions
 {
-    private static readonly GeometryFactory geometryFactory =
-        NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+    private static readonly GeometryFactory geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(
+        srid: 4326
+    );
 
     public static Point ToTopologyPoint(this GpxPoint point)
     {

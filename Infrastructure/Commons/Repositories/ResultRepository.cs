@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Commons.Repositories;
 
-public abstract class ResultRepository<T, TKey>
-    : BaseRepository<T, TKey>,
-        IReadResultRepository<T, TKey>
+public abstract class ResultRepository<T, TKey> : BaseRepository<T, TKey>, IReadResultRepository<T, TKey>
     where T : class, IEntity<TKey>
 {
     protected ResultRepository(TripDbContext context)
@@ -39,12 +37,9 @@ public abstract class ResultRepository<T, TKey>
 
         return res!;
     }
-
 }
 
-public class CrudResultRepository<T, TKey>
-    : ResultRepository<T, TKey>,
-        ICrudResultRepository<T, TKey>
+public class CrudResultRepository<T, TKey> : ResultRepository<T, TKey>, ICrudResultRepository<T, TKey>
     where T : class, IEntity<TKey>
 {
     protected CrudResultRepository(TripDbContext context)

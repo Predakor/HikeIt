@@ -5,9 +5,7 @@ using Infrastructure.Commons.Repositories;
 
 namespace Infrastructure.FileReferences;
 
-internal class FileReferencesRepository
-    : ResultRepository<FileReference, Guid>,
-        IFileReferenceRepository
+internal class FileReferencesRepository : ResultRepository<FileReference, Guid>, IFileReferenceRepository
 {
     private readonly ICache _cache;
 
@@ -19,10 +17,6 @@ internal class FileReferencesRepository
 
     public override Task<Result<FileReference>> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-        return _cache.GetOrCreateAsync(
-            $"file-{id}",
-            () => base.GetByIdAsync(id),
-            ct: ct
-        );
+        return _cache.GetOrCreateAsync($"file-{id}", () => base.GetByIdAsync(id), ct: ct);
     }
 }

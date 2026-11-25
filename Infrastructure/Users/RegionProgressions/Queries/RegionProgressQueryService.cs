@@ -14,8 +14,8 @@ internal class RegionProgressQueryService(TripDbContext dbContext) : IUserRegion
 {
     public Task<Result<RoutePath[]>> GetRouteVisualizations(Guid userId, int regionId, CancellationToken ct)
     {
-        return dbContext.Trips
-            .Where(x => x.RegionId == regionId)
+        return dbContext
+            .Trips.Where(x => x.RegionId == regionId)
             .Where(x => x.UserId == userId)
             .Where(x => x.Analytics != null && x.Analytics.VisualisationPath != null)
             .Select(x => x.Analytics!.VisualisationPath!)
@@ -24,8 +24,8 @@ internal class RegionProgressQueryService(TripDbContext dbContext) : IUserRegion
 
     public Task<Result<IUserRegionsQueries.RegionTrip[]>> GetTrips(Guid userId, int regionId, CancellationToken ct)
     {
-        return dbContext.Trips
-            .Where(t => t.UserId == userId)
+        return dbContext
+            .Trips.Where(t => t.UserId == userId)
             .Where(t => t.RegionId == regionId)
             .Where(t => t.Analytics != null)
             .Include(t => t.Region)
@@ -35,15 +35,15 @@ internal class RegionProgressQueryService(TripDbContext dbContext) : IUserRegion
                 t.Name,
                 t.TripDay,
                 (int?)t.Analytics!.RouteAnalytics!.TotalDistanceMeters,
-                t.Analytics!.TimeAnalytics!.Duration)
-            )
+                t.Analytics!.TimeAnalytics!.Duration
+            ))
             .ToResultArrayAsync("trips", ct);
     }
 
     public async Task<Result<RegionData>> GetRegionProgress(Guid userId, int RegionId, CancellationToken ct)
     {
-        var region = await dbContext.Regions
-            .AsNoTracking()
+        var region = await dbContext
+            .Regions.AsNoTracking()
             .Where(x => x.Id == RegionId)
             .Include(x => x.Peaks)
             .FirstOrDefaultAsync(ct);
@@ -53,17 +53,23 @@ internal class RegionProgressQueryService(TripDbContext dbContext) : IUserRegion
             return Errors.NotFound("region");
         }
 
-        var regionPeakIdList = region.Peaks.Select(x => x.Id).ToList();
+        var regionPeakIdList = region
+            .Peaks.Select(x => x.Id)
+            .ToList();
 
-        var userPeaksFromRegion = await dbContext.ReachedPeaks
-            .Include(x => x.Trip)
+        var userPeaksFromRegion = await dbContext
+            .ReachedPeaks.Include(x => x.Trip)
             .Where(x => x.UserId == userId)
             .Where(x => regionPeakIdList.Contains(x.PeakId))
             .Select(x => new { x.PeakId, x.TripId })
             .ToListAsync(ct);
 
-        var userPeakIdList = userPeaksFromRegion.Select(x => x.PeakId).ToList();
-        var userTripIdList = userPeaksFromRegion.Select(x => x.TripId).ToList();
+        var userPeakIdList = userPeaksFromRegion
+            .Select(x => x.PeakId)
+            .ToList();
+        var userTripIdList = userPeaksFromRegion
+            .Select(x => x.TripId)
+            .ToList();
 
         var highestPeak = region.Peaks.MaxBy(p => p.Height)!;
 
@@ -72,26 +78,22 @@ internal class RegionProgressQueryService(TripDbContext dbContext) : IUserRegion
             regionDto,
             region.Peaks.Count,
             userPeaksFromRegion.Count,
-            userPeaksFromRegion.Distinct().Count(),
+            userPeaksFromRegion
+                .Distinct()
+                .Count(),
             new(highestPeak.Height, highestPeak.Name, highestPeak.Id),
-            region.Peaks.Select(x => new PeakDto.WithReachStatus(
-                x.Id,
-                x.Name,
-                x.Height,
-                userPeakIdList.Contains(x.Id)))
-            .ToArray()
+            region
+                .Peaks.Select(x => new PeakDto.WithReachStatus(x.Id, x.Name, x.Height, userPeakIdList.Contains(x.Id)))
+                .ToArray()
         );
 
         var hasTrips = userPeakIdList.Count != 0;
-        var linkedDataState = hasTrips && await dbContext.TripAnalytics
-            .Where(x => userTripIdList.Contains(x.Id))
-            .AnyAsync(x => x.VisualisationPath != null, ct);
+        var linkedDataState =
+            hasTrips
+            && await dbContext
+                .TripAnalytics.Where(x => userTripIdList.Contains(x.Id))
+                .AnyAsync(x => x.VisualisationPath != null, ct);
 
-        return new RegionData(
-            Progress: regionProgessData,
-            HasTrips: hasTrips,
-            HasVisualizations: linkedDataState
-        );
-
+        return new RegionData(Progress: regionProgessData, HasTrips: hasTrips, HasVisualizations: linkedDataState);
     }
 }

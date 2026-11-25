@@ -1,6 +1,7 @@
 ﻿namespace Domain.Users.Root.ValueObjects;
 
-public sealed record PersonalInfoUpdate {
+public sealed record PersonalInfoUpdate
+{
     public string? FirstName { get; init; }
     public string? LastName { get; init; }
     public DateOnly? BirthDay { get; init; }

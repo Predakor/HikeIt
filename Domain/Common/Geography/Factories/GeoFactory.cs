@@ -8,9 +8,7 @@ public static class GeoFactory
 {
     private const int Srid = 4326;
 
-    private static readonly GeometryFactory Factory = NtsGeometryServices.Instance.CreateGeometryFactory(
-        srid: 4326
-    );
+    private static readonly GeometryFactory Factory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
 
     public static MultiPoint CreateMultiPoint(IEnumerable<Point> points)
     {

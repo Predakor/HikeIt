@@ -1,13 +1,14 @@
 ﻿namespace Domain.Common.Abstractions;
+
 public interface IEntity { };
+
 public interface IEntity<out TKey> : IEntity
 {
     TKey Id { get; }
 }
 
 public interface IRepository<TEntity, TKey>
-    where TEntity : class, IEntity<TKey>
-{ }
+    where TEntity : class, IEntity<TKey> { }
 
 public interface IReadRepository<TEntity, TKey> : IRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey>
@@ -25,8 +26,5 @@ public interface IWriteRepository<TEntity, TKey> : IRepository<TEntity, TKey>
     Task<bool> SaveChangesAsync();
 }
 
-public interface ICrudRepository<TEntity, TKey>
-    : IReadRepository<TEntity, TKey>,
-        IWriteRepository<TEntity, TKey>
-    where TEntity : class, IEntity<TKey>
-{ }
+public interface ICrudRepository<TEntity, TKey> : IReadRepository<TEntity, TKey>, IWriteRepository<TEntity, TKey>
+    where TEntity : class, IEntity<TKey> { }

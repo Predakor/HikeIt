@@ -8,7 +8,6 @@ internal static partial class DIextentions
 {
     public static IServiceCollection InjectIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-
         services
             .AddIdentity<User, IdentityRole<Guid>>(options =>
             {
@@ -32,10 +31,7 @@ internal static partial class DIextentions
 
             options.Events.OnRedirectToLogin = ctx =>
             {
-                if (
-                    ctx.Request.Path.StartsWithSegments("/api")
-                    && ctx.Response.StatusCode == StatusCodes.Status200OK
-                )
+                if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == StatusCodes.Status200OK)
                 {
                     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return Task.CompletedTask;
