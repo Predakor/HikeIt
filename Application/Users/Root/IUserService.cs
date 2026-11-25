@@ -4,7 +4,8 @@ using Domain.Users.Root.ValueObjects;
 
 namespace Application.Users.Root;
 
-public interface IUserService {
+public interface IUserService : IService
+{
     Task<Result<UserDto.Complete>> GetMe();
     Task<Result<UserDataDto.PublicProfile>> GetUserAsync(Guid id);
     Task<Result<bool>> UpdatePersonalInfo(User user, PersonalInfoUpdate update);

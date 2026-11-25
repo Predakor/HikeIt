@@ -4,7 +4,7 @@ using Domain.Trips.Root;
 
 namespace Application.Trips.Root.Services;
 
-public interface ITripService
+public interface ITripService : IService
 {
     Task<Result<Trip>> CreateAsync(Trip trip);
     Task<Result<Trip>> CreateAsync(CreateTripContext ctx);

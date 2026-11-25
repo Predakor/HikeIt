@@ -12,20 +12,20 @@ var isDevelopment = builder.Environment.IsDevelopment();
 
 builder.InjectAppConfig();
 
-builder.Services
-    .AddApi(builder.Configuration)
+builder
+    .Services.AddApi(builder.Configuration)
     .AddInfrastructure(builder.Configuration, isDevelopment)
     .AddAplication()
+    .DecorateMarkedServices()
     .AddControllers();
 
 builder.AddLogger();
 
 var app = builder.Build();
 
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
+app.UseForwardedHeaders(
+    new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto }
+);
 
 await DbHelpers.TryMigrationAndSeeding(app.Services, app.Configuration);
 
@@ -42,8 +42,11 @@ if (app.Environment.IsDevelopment())
 }
 
 var allowedOrigins =
-    app.Configuration.GetSection("Cors:AllowedOrigins").Get<string>().Split(",").ToArray()
-    ?? throw new Exception("allowed origins are undefined");
+    app
+        .Configuration.GetSection("Cors:AllowedOrigins")
+        .Get<string>()
+        .Split(",")
+        .ToArray() ?? throw new Exception("allowed origins are undefined");
 Console.WriteLine($"Allowed Origins: {string.Join(",", allowedOrigins)}");
 
 app.UseHttpsRedirection();

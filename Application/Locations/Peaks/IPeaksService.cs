@@ -2,7 +2,7 @@
 
 namespace Application.Locations.Peaks;
 
-public interface IPeaksService
+public interface IPeaksService : IService
 {
     Task<Result<Peak>> Add(PeakDto.CreateNew newPeak);
     Task<Result<Peak>> Update(int peakId, PeakDto.Update newPeak);

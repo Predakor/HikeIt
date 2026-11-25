@@ -21,7 +21,7 @@ Validators are optional decorators over the service they guard, so the service s
 internal sealed class TripServiceValidator(ITripService inner) : ITripService, IValidatable<ITripService>
 ```
 
-`DependencyInjection.DecorateMarked` finds every class carrying the marker and applies it with Scrutor's `Decorate`, so there is no registration code per validator.
+`DecorateMarked` (`Api/Commons/DI/DecorateServices.cs`, run last in `Program.cs`) finds every class carrying the marker in any project and applies it with Scrutor's `Decorate`, so there is no registration code per validator or cache.
 
 `ICacheable<TService>` works the same way for caching decorators. Caches are applied first and validators last, so validation runs outermost, before a cache lookup. `IValidatable` and `ICacheable` both extend `IDecorator<TService>`. Older decorators (`CachedAppSettingsServiceDecorator`, `CachedFileStorageDecorator`, the logged event dispatcher) are still registered by hand; move them to the markers when they're touched.
 

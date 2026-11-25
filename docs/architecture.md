@@ -47,6 +47,12 @@ Adding a filter: implement `IFilter<TState>` (or `SyncFilter<TState>`) with a ne
 
 Heavy or optional sub-resources are returned as URLs rather than inlined or referenced by id. The trip analytics DTO has `Linked`, `Basic` and `Full` shapes, and `Linked` carries URLs like `trips/{id}/analytics/peaks`. The client fetches them lazily with `useResourceLink`.
 
+## Reads and writes
+
+- **Writes** go through aggregates. Repository interfaces live in Domain (`ITripRepository`, ...) and are implemented in Infrastructure.
+- **Reads** skip the aggregates and return flat DTOs. The query interface and its DTOs live in Application (`IPeaksQueryService`), and the implementation lives in Infrastructure (`PeaksQueryService`), because it uses `TripDbContext` directly. Application never references EF.
+- A query service may also implement a Domain port, for example `PeaksQueryService` implements `IPeakSource`, which the pipeline's peak matching depends on. Services are registered under every interface they implement, so such ports need no extra registration.
+
 ## Persistence
 
 EF Core with PostgreSQL. Migrations are applied and seed data inserted at startup (`DbHelpers.TryMigrationAndSeeding`). Create migrations with the `ef-migration` skill. Locally the DB is the `postgres_db` container; see the gotchas in `CLAUDE.md`.

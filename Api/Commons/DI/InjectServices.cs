@@ -1,15 +1,20 @@
-﻿using Application.Commons.Mappers.Implementations;
+﻿using System.Reflection;
+using Api.Commons.Extentions;
+using Application.Commons.Mappers.Implementations;
 using Application.Trips.GpxFile.Services;
 using Infrastructure.Commons.Parsers;
-using System.Reflection;
 
 namespace Api.DI;
 
-internal static partial class DIextentions {
-    static readonly string[] sourceArray = ["Application", "Infrastructure", "Domain", "Api"];
+internal static partial class DIextentions
+{
+    private static readonly string[] sourceArray = ["Application", "Infrastructure", "Domain", "Api"];
 
-    public static IServiceCollection InjectServices(this IServiceCollection services) {
-        var assemblies = sourceArray.Select(Assembly.Load).ToArray();
+    public static IServiceCollection InjectServices(this IServiceCollection services)
+    {
+        var assemblies = sourceArray
+            .Select(Assembly.Load)
+            .ToArray();
 
         return services
             .AddHttpContextAccessor()
@@ -18,31 +23,45 @@ internal static partial class DIextentions {
             .InjectParsers();
     }
 
-    static IServiceCollection InjectParsers(this IServiceCollection services) {
+    private static IServiceCollection InjectParsers(this IServiceCollection services)
+    {
         return services.AddScoped<IGpxParser, GpxParser>();
     }
 
-    static IServiceCollection InjectMappers(this IServiceCollection services) {
+    private static IServiceCollection InjectMappers(this IServiceCollection services)
+    {
         services.AddScoped<PeakMapper>();
         services.AddScoped<RegionMapper>();
         return services;
     }
 
-    static IServiceCollection InjectServices(
-        this IServiceCollection services,
-        Assembly[] targetAssemblies
-    ) {
+    private static IServiceCollection InjectServices(this IServiceCollection services, Assembly[] targetAssemblies)
+    {
         return services.Scan(scan =>
-            scan.FromAssemblies(targetAssemblies)
+        {
+            scan
+                .FromAssemblies(targetAssemblies)
                 .AddClasses(
                     classes =>
-                        classes.Where(t =>
-                            t.Name.EndsWith("Service") && t.IsClass && !t.IsAbstract
-                        ),
+                        classes
+                            .AssignableTo<IService>()
+                            .WithoutDecorators(),
                     publicOnly: false
                 )
-                .AsImplementedInterfaces()
-                .WithScopedLifetime()
-        );
+                .As(type => type.GetServiceInterfaces())
+                .WithScopedLifetime();
+
+            scan
+                .FromAssemblies(targetAssemblies)
+                .AddClasses(
+                    classes =>
+                        classes
+                            .AssignableTo<ISingletonService>()
+                            .WithoutDecorators(),
+                    publicOnly: false
+                )
+                .As(type => type.GetServiceInterfaces())
+                .WithSingletonLifetime();
+        });
     }
 }

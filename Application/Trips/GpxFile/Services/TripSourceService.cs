@@ -6,7 +6,7 @@ using Domain.FileReferences.ValueObjects;
 
 namespace Application.Trips.GpxFile.Services;
 
-public interface ITripSourceService
+public interface ITripSourceService : IService
 {
     Task<Result<AnalyticData>> GetStoredAsync(Guid tripId, CancellationToken cancellationToken = default);
 

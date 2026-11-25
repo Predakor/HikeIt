@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Trips.GpxFile.Services;
 
-public interface IGpxService {
+public interface IGpxService : IService
+{
     Task<Result<AnalyticData>> ExtractGpxData(FileContent file);
     Task<Result<AnalyticData>> ExtractGpxData(IFormFile file);
     Task<Result<AnalyticData>> ExtractGpxData(Stream stream);

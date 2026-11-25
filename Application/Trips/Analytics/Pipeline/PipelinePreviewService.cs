@@ -6,7 +6,7 @@ using Domain.Trips.Analytics.Shared;
 
 namespace Application.Trips.Analytics.Pipeline;
 
-public interface IPipelinePreviewService
+public interface IPipelinePreviewService : IService
 {
     Task<Result<PipelinePreviewDto>> PreviewAsync(
         Guid tripId,
@@ -107,8 +107,7 @@ public sealed class PipelinePreviewService(
         foreach (var stage in setup.Plan)
         {
             var failedUpstream = _stagesById[stage]
-                .DependsOn
-                .Where(dependency => !runs[dependency].Result.Ok)
+                .DependsOn.Where(dependency => !runs[dependency].Result.Ok)
                 .Select(dependency => (StageId?)dependency)
                 .FirstOrDefault();
 
@@ -135,11 +134,10 @@ public sealed class PipelinePreviewService(
         try
         {
             var handler = _stagesById[stage];
-            var upstream = handler.DependsOn
-                .ToDictionary(
-                    dependency => dependency,
-                    dependency => upstreamRuns[dependency].Output!
-                );
+            var upstream = handler.DependsOn.ToDictionary(
+                dependency => dependency,
+                dependency => upstreamRuns[dependency].Output!
+            );
 
             var context = new Stage.Context(setup.Input, upstream);
 

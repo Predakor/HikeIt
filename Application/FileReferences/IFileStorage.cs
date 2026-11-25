@@ -2,7 +2,8 @@
 
 namespace Application.FileReferences;
 
-public interface IFileStorage {
+public interface IFileStorage : ISingletonService
+{
     Task<Result<Stream>> DownloadAsync(string path, BlobContainer type);
     Task<Result<SaveFileResponse>> UploadAsync(FileContent file, string path, BlobContainer type);
     Task<Result<bool>> DeleteAsync(string path, BlobContainer type);
@@ -10,7 +11,8 @@ public interface IFileStorage {
 
 public record FileCreationInfo(string Path, string Name);
 
-public enum BlobContainer {
+public enum BlobContainer
+{
     Avatar,
     File,
 }

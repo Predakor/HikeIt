@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Users.Avatar;
-public interface IUserAvatarFileService {
+
+public interface IUserAvatarFileService : IService
+{
     Task<Result<string>> Upload(IFormFile file, User user);
     Task<Result<bool>> Delete(User user);
 }
