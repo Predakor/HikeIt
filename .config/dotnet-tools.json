@@ -1,0 +1,13 @@
+{
+  "isRoot": true,
+  "tools": {
+    "csharpier": {
+      "version": "1.0.1-expanded.1",
+      "commands": [
+        "csharpier"
+      ],
+      "rollForward": false
+    }
+  },
+  "version": 1
+}

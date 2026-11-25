@@ -22,3 +22,10 @@ if git diff "$upstream"...HEAD -- . ':!*.bat' ':!*.cmd' | grep -q "^+.*$cr"; the
   echo "pre-push: CRLF found in pushed changes (the repo is LF). Normalize with 'git add --renormalize .' and amend."
   exit 1
 fi
+
+changed_cs=$(git diff --name-only "$upstream"...HEAD --diff-filter=ACM -- '*.cs')
+if [ -n "$changed_cs" ]; then
+  echo "pre-push: csharpier check"
+  sh .githooks/restore-tools.sh > /dev/null
+  echo "$changed_cs" | tr '\n' '\0' | xargs -0 dotnet csharpier check
+fi

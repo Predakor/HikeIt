@@ -24,7 +24,9 @@ pnpm build      # tsc --b && vite build
 pnpm lint
 ```
 
-Frontend env: `.env` with `VITE_API_ORIGIN=http://localhost:5063` and `VITE_API_PREFIX=api`. Backend secrets (connection string, storage, seeding admin) go in user secrets / env vars; see README.
+Frontend env: `.env` with `VITE_API_ORIGIN=http://localhost:5063` and `VITE_API_PREFIX=api`; the Vite dev server runs on port 54840. Backend secrets (connection string, CORS, storage, seeding) go in user secrets / env vars. First-time setup of a clone, including the hooks and the local database container: `docs/getting-started.md`.
+
+Formatting: C# is formatted with CSharpier (`dotnet csharpier format <path>`), the frontend with prettier. The pre-commit hook does both on staged files, and CSharpier is a pinned fork (see `docs/conventions.md`), so don't swap in a stock version or run another C# formatter.
 
 Migrations: use the `ef-migration` skill; never call `dotnet ef migrations add` directly or hand-write migrations.
 
@@ -68,7 +70,7 @@ Full rules and rationale: `docs/conventions.md`. Architecture detail (pipeline, 
 - **Errors are `Result<T>`, not exceptions.** Throw only for states that should never happen (programmer errors); anything a user, file or missing row can cause returns an `Errors.*` result.
 - Validate with rules (`IRule`, `AbstractValidator`) where possible; put them in a decorator that implements the service interface plus the `IValidatable<TService>` marker (`ICacheable<TService>` for caches); `DecorateMarked` applies them automatically. Don't use the `ICommand` pattern for new code, it's considered the wrong abstraction.
 - Services register through a marker on the interface: `IService` (scoped) or `ISingletonService`. An interface without the marker is not registered; decorators are applied via `IValidatable` / `ICacheable`, not registered.
-- Run `sh .githooks/setup.sh` once per clone for the pre-commit (format) and pre-push (build, test, lint) hooks.
+- Run `sh .githooks/setup.sh` once per clone to install the hooks and restore tools: pre-commit formats (CSharpier for C#, prettier for the frontend), pre-push builds, tests and lints.
 - Vertical slices: put new features in their own folder per layer, not into shared buckets.
 - All JSON work goes through `Core.Serialization`; add missing helpers there, no local converters or naming policies.
 - Explicit access modifiers everywhere. Primary constructor parameters stay camelCase; `_` prefix only on declared private fields.

@@ -65,13 +65,22 @@ Endpoints return resource URLs (`Uri?`) instead of ids or embedded payloads for 
 
 Run `sh .githooks/setup.sh` once per clone. It sets `core.hooksPath=.githooks`.
 
-- **pre-commit**: formats the staged files (`dotnet format` for `.cs`, prettier + eslint `--fix` for `Frontend/src`), re-stages them, and converts any CRLF in staged text files to LF (working tree and index). It refuses to run when a staged `.cs` or frontend file also has unstaged changes, so formatting can't sweep unrelated edits into the commit.
-- **pre-push**: when C# changed, `dotnet build` (analyzers run) and `dotnet test`; when `Frontend/` changed, `tsc --b` and `pnpm lint`. It also fails if the pushed changes add CRLF lines, which catches commits made with `--no-verify`.
+- **pre-commit**: formats the staged files (`dotnet format style`, then CSharpier for `.cs`, prettier + eslint `--fix` for `Frontend/src`), re-stages them, and converts any CRLF in staged text files to LF (working tree and index). It refuses to run when a staged `.cs` or frontend file also has unstaged changes, so formatting can't sweep unrelated edits into the commit.
+- **pre-push**: when C# changed, `dotnet build` (analyzers run) and `dotnet test`; when `Frontend/` changed, `tsc --b` and `pnpm lint`. It also fails if the pushed changes add CRLF lines, which catches commits made with `--no-verify`. For C#, it also runs `csharpier check` on the files changed in the push.
 
 Line endings: LF everywhere, in the repo and the working tree, enforced by `* text=auto eol=lf` in `.gitattributes` (plus `end_of_line = lf` in `.editorconfig`), so no local `autocrlf` setting is needed. Only `.bat`/`.cmd` are CRLF. Editors and AI tools sometimes still write CRLF, which is why `pre-commit` normalizes staged files and `pre-push` checks the diff.
 
-The solution has existing format and analyzer debt (brace style, final newlines, many Sonar warnings), so the hooks only touch staged files and don't gate on warnings. A touched legacy file gets reformatted whole. Clean the baseline in its own commit with `dotnet format HikeIt.sln` before relying on the gate.
+CSharpier (a local fork, `1.0.1-expanded.1`, pinned in `.config/dotnet-tools.json` and restored by `.githooks/restore-tools.sh`) owns C# layout: wrapping, braces, spacing, `using` order. `dotnet format style` only applies the code-style rules from `.editorconfig`, and there is deliberately no `dotnet format whitespace` step, so the two never fight. Sonar and the CA analyzers still run on every build. Existing files are not formatted yet, so a touched legacy file is reformatted whole; clean the baseline in its own commit with `dotnet csharpier format .` before relying on the gate. Run it by hand with `dotnet csharpier format <path>`.
 
 ## Tests
 
 Test business logic: filter outputs, analytics, pipeline results (`Domain.Tests`). Don't test casing, DI wiring, serialization naming or config plumbing. Pipeline filters get a test with a small hand-built input and an exact expected output.
+
+### CSharpier fork
+
+CSharpier here is [Predakor/csharpier-expanded](https://github.com/Predakor/csharpier-expanded), a fork of upstream 1.0.1 (default branch `expanded`; `main` mirrors upstream). The package ID and command stay `CSharpier` / `csharpier`. Changes from upstream are listed in the fork's `FORK.md`; currently one: any member chain with two or more calls always breaks, one call per line, with the receiver on its own line. Upstream collapses every chain that fits the print width and has no option to change that.
+
+- **Versions:** `<upstream version>-expanded.<revision>`, for example `1.0.1-expanded.1`, pinned in `.config/dotnet-tools.json`. Each version is a GitHub Release on the fork with `CSharpier.<version>.nupkg` attached.
+- **Setup:** `sh .githooks/setup.sh` downloads the pinned package from the Release into `~/.csharpier-expanded`, restores the tool, and registers that folder as a machine-level NuGet source called `csharpier-expanded`. The Visual Studio extension installs the pinned version from NuGet sources, so without that source it fails with "CSharpier could not be set up properly". There is deliberately no `nuget.config` in the repo, since a source that only exists on some machines would break `dotnet restore` in the Docker build.
+- **New version:** build with `dotnet pack Src/CSharpier.Cli -c Release -p:Version=<version> -p:NuGetAudit=false -p:TreatWarningsAsErrors=false -o nupkg` in the fork, publish a Release `v<version>` with the package, then bump the manifest and re-run `setup.sh`.
+- **Fallback:** set the manifest to a stock CSharpier version. The only visible difference is collapsed short chains.

@@ -99,6 +99,7 @@ No signup required — just click **“Login as Demo User”** on the login scre
 ---
 
 ## 🐳 How To Run
+> This section is outdated (it describes Supabase and .NET 8). For the current first-time setup see [docs/getting-started.md](docs/getting-started.md).
 
 ### ⚙️ 1. Requirements
  Make sure you have all of the bellow on your machine

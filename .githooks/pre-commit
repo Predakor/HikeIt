@@ -19,8 +19,10 @@ if [ -n "$partially_staged" ]; then
 fi
 
 if [ -n "$cs_files" ]; then
-  echo "pre-commit: dotnet format (staged .cs)"
-  dotnet format HikeIt.sln --no-restore --include $cs_files
+  echo "pre-commit: dotnet format style, then csharpier (staged .cs)"
+  dotnet format style HikeIt.sln --no-restore --include $cs_files
+  sh .githooks/restore-tools.sh > /dev/null
+  dotnet csharpier format $cs_files
   git add $cs_files
 fi
 
