@@ -1,4 +1,4 @@
-using System.Text.Json;
+using Core.Serialization;
 using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Shared;
 using Domain.Trips.Analytics.Shared.Filters;
@@ -8,8 +8,6 @@ namespace Domain.Tests.Pipeline;
 
 public class EmaSmoothingFilterTests
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
-
     private const double StraightLat = 50;
 
     private static double TotalDeviation(IEnumerable<MutableGpxPoint> points) =>
@@ -27,7 +25,7 @@ public class EmaSmoothingFilterTests
                                 ? 0.00005
                                 : -0.00005
                         ),
-                    20 + i * 0.0001,
+                    20 + (i * 0.0001),
                     100 + i
                 )),
         ];
@@ -36,7 +34,7 @@ public class EmaSmoothingFilterTests
         [
             .. Enumerable
                 .Range(0, count)
-                .Select(i => new MutableGpxPoint(StraightLat, 20 + i * 0.0001, 100 + i)),
+                .Select(i => new MutableGpxPoint(StraightLat, 20 + (i * 0.0001), 100 + i)),
         ];
 
     [Fact]
@@ -180,10 +178,7 @@ public class EmaSmoothingFilterTests
     [Fact]
     public void Json_WithoutTargets_DeserialisesAsElevation()
     {
-        var config = JsonSerializer.Deserialize<IPointFilterConfig>(
-            """{"filterType":"EmaSmoothingFilter","Alpha":0.5}""",
-            Json
-        );
+        var config = """{"filterType":"EmaSmoothingFilter","Alpha":0.5}""".FromJson<IPointFilterConfig>();
 
         Assert.IsType<EmaSmoothingFilter.Config>(config);
         Assert.Equal(PointFields.Elevation, ((EmaSmoothingFilter.Config)config!).Targets);
@@ -192,10 +187,8 @@ public class EmaSmoothingFilterTests
     [Fact]
     public void Json_WithCoordinatesTargets_DeserialisesAsCoordinates()
     {
-        var config = JsonSerializer.Deserialize<IPointFilterConfig>(
-            """{"filterType":"EmaSmoothingFilter","Alpha":0.5,"Targets":"Coordinates"}""",
-            Json
-        );
+        var config =
+            """{"filterType":"EmaSmoothingFilter","Alpha":0.5,"Targets":"Coordinates"}""".FromJson<IPointFilterConfig>();
 
         Assert.Equal(PointFields.Coordinates, ((EmaSmoothingFilter.Config)config!).Targets);
     }

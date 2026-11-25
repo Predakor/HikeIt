@@ -1,4 +1,4 @@
-using System.Text.Json;
+using Core.Serialization;
 using Domain.Common.Abstractions;
 using Domain.Common.Geography.ValueObjects;
 using Domain.Trips.Analytics.Shared.Filters;
@@ -9,10 +9,7 @@ namespace Domain.Tests.Pipeline;
 // Phase 0 tests for BE-2. They fail until PinLocalMaxima, Simplify and the CreateVisualization fix are implemented.
 public class RouteFilterTests
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
-
-    private static IPointFilterConfig CreateConfig(string json) =>
-        JsonSerializer.Deserialize<IPointFilterConfig>(json, Json)!;
+    private static IPointFilterConfig CreateConfig(string json) => json.FromJson<IPointFilterConfig>()!;
 
     private static IFilter<IList<MutableGpxPoint>> CreateFilter(string json) =>
         CreateConfig(json)
