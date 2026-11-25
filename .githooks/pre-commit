@@ -1,5 +1,5 @@
 #!/bin/sh
-# Formats staged C#/frontend files, re-stages them, and rejects CRLF in the index.
+# Formats staged C#/frontend files, orders C# members, re-stages them, and fixes CRLF.
 set -e
 cd "$(git rev-parse --show-toplevel)"
 
@@ -19,15 +19,21 @@ if [ -n "$partially_staged" ]; then
 fi
 
 if [ -n "$cs_files" ]; then
-  echo "pre-commit: dotnet format style, then csharpier (staged .cs)"
-  dotnet format style HikeIt.sln --no-restore --include $cs_files
+  cs_count=$(echo "$cs_files" | wc -l)
+  echo "pre-commit [1/2] style rules and member order (dotnet format) on $cs_count staged .cs file(s), loads the solution so it takes a while..."
+  # One load for style + member order; the explicit list keeps CA/Sonar code fixes out. Add an ID here when .editorconfig gets a new warning-level style rule.
+  dotnet format HikeIt.sln --no-restore --verbosity minimal --severity warn \
+    --diagnostics IDE0003 IDE0009 IDE0011 IDE0040 IDE0065 IDE0161 IDE1006 IDE2000 SA1202 SA1203 SA1204 \
+    --include $cs_files
+  echo "pre-commit [2/2] csharpier layout..."
   sh .githooks/restore-tools.sh > /dev/null
   dotnet csharpier format $cs_files
   git add $cs_files
+  echo "pre-commit: C# done"
 fi
 
 if [ -n "$fe_files" ]; then
-  echo "pre-commit: prettier + eslint (staged frontend)"
+  echo "pre-commit: prettier + eslint on staged frontend files..."
   frontend_paths=$(echo "$fe_files" | sed 's#^Frontend/##')
   (cd Frontend && pnpm exec prettier --write $frontend_paths && pnpm exec eslint --fix $frontend_paths)
   git add $fe_files

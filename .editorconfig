@@ -286,3 +286,34 @@ dotnet_style_qualification_for_field = false:warning
 dotnet_style_qualification_for_property = false:warning
 dotnet_style_qualification_for_method = false:warning
 dotnet_style_qualification_for_event = false:warning
+# StyleCop: only the SA1202 to SA1204 ordering rules, as warnings (the pre-commit hook fixes them). Order criteria live in stylecop.json.
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.NamingRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpacingRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpecialRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.OrderingRules.severity = none
+# SA1201 fixes the kind order (constructor before properties), which we do not follow.
+dotnet_diagnostic.SA1201.severity = none
+dotnet_diagnostic.SA1202.severity = warning
+dotnet_diagnostic.SA1203.severity = warning
+dotnet_diagnostic.SA1204.severity = warning
+dotnet_diagnostic.SA0001.severity = none
+
+
+# Static factories on generic types (Result<T>.Success) are intended here.
+dotnet_diagnostic.CA1000.severity = none
+
+# Same lines as CA2201 (general exception types).
+dotnet_diagnostic.S112.severity = none
+
+# Interface files (IName.cs): marker interfaces use a type parameter only as a tag.
+[**/I[A-Z]*.cs]
+dotnet_diagnostic.S2326.severity = none
+
+
+# Test names use underscores (Method_Should_Do); production code keeps CA1707.
+[{Core.Tests,Domain.Tests}/**.cs]
+dotnet_diagnostic.CA1707.severity = none

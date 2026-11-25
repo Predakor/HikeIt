@@ -47,6 +47,7 @@ Endpoints return resource URLs (`Uri?`) instead of ids or embedded payloads for 
 
 - Vertical slices: a feature gets its own folder in each layer, not a shared bucket.
 - All JSON through `Core.Serialization`. Missing helper? Add it there; no local converters or naming policies.
+- Member order: properties before the constructor, and within a kind static before instance and public before private. StyleCop's SA1202 to SA1204 (configured in `stylecop.json`) report deviations from the last two as warnings, and the pre-commit hook fixes them. SA1201 (kind order) is off, because it wants the constructor before properties; no other StyleCop rule is on. Prefer primary constructors.
 - Explicit access modifiers. Primary constructor parameters stay camelCase; `_` only on declared private fields (CA1707).
 - Type parameters are `T` + name: `TFilter`, `TStage`, `TState`. Never bare `F`/`S`/`K`.
 - Dispatching on a key to behavior: use a handler map. A plain `switch` is fine for simple cases.
@@ -65,7 +66,7 @@ Endpoints return resource URLs (`Uri?`) instead of ids or embedded payloads for 
 
 Run `sh .githooks/setup.sh` once per clone. It sets `core.hooksPath=.githooks`.
 
-- **pre-commit**: formats the staged files (`dotnet format style`, then CSharpier for `.cs`, prettier + eslint `--fix` for `Frontend/src`), re-stages them, and converts any CRLF in staged text files to LF (working tree and index). It refuses to run when a staged `.cs` or frontend file also has unstaged changes, so formatting can't sweep unrelated edits into the commit.
+- **pre-commit**: formats the staged files (one `dotnet format` call for the warning-level style rules and the member-order fixes SA1202 to SA1204, with an explicit `--diagnostics` list in the hook, then CSharpier for `.cs`, prettier + eslint `--fix` for `Frontend/src`), re-stages them, and converts any CRLF in staged text files to LF (working tree and index). It refuses to run when a staged `.cs` or frontend file also has unstaged changes, so formatting can't sweep unrelated edits into the commit.
 - **pre-push**: when C# changed, `dotnet build` (analyzers run) and `dotnet test`; when `Frontend/` changed, `tsc --b` and `pnpm lint`. It also fails if the pushed changes add CRLF lines, which catches commits made with `--no-verify`. For C#, it also runs `csharpier check` on the files changed in the push.
 
 Line endings: LF everywhere, in the repo and the working tree, enforced by `* text=auto eol=lf` in `.gitattributes` (plus `end_of_line = lf` in `.editorconfig`), so no local `autocrlf` setting is needed. Only `.bat`/`.cmd` are CRLF. Editors and AI tools sometimes still write CRLF, which is why `pre-commit` normalizes staged files and `pre-push` checks the diff.
