@@ -6,16 +6,21 @@ using Domain.Trips.Analytics.Shared.Filters;
 
 namespace Domain.AppSettings.Settings;
 
-public sealed record PeakMatchingSetting(IReadOnlyList<IPeakFilterConfig> Filters) : IAppSetting<PeakMatchingSetting>, IFilterSetting<IPeakFilterConfig>
+public sealed record PeakMatchingSetting(IReadOnlyList<IPeakFilterConfig> Filters)
+    : IAppSetting<PeakMatchingSetting>,
+        IFilterSetting<IPeakFilterConfig>
 {
     public static AppSettingType SettingFor => AppSettingType.PeakMatching;
+
     public static PeakMatchingSetting GetDefault() => new(PipelineDefaults.PeakFilters);
 
     public IEnumerable<string> Validate()
     {
         var filters = Filters ?? [];
 
-        int localMaximaIndex = filters.ToList().FindIndex(filter => filter is LocalMaximaFilter.Config);
+        int localMaximaIndex = filters
+            .ToList()
+            .FindIndex(filter => filter is LocalMaximaFilter.Config);
         bool localMaximaNotFirst = localMaximaIndex > 0;
         if (localMaximaNotFirst)
         {
@@ -45,9 +50,18 @@ public sealed record PeakMatchingSetting(IReadOnlyList<IPeakFilterConfig> Filter
             }
         }
 
-        var lookupOffset = filters.OfType<PeakLookupFilter.Config>().Select(lookup => lookup.OffsetM).DefaultIfEmpty().Max();
-        var largestMatchDistance = filters.OfType<MatchWithinDistanceFilter.Config>().Select(match => match.MaxDistanceM).DefaultIfEmpty().Max();
-        bool lookupBoxTooSmall = filters.Any(filter => filter is PeakLookupFilter.Config) && lookupOffset < largestMatchDistance;
+        var lookupOffset = filters
+            .OfType<PeakLookupFilter.Config>()
+            .Select(lookup => lookup.OffsetM)
+            .DefaultIfEmpty()
+            .Max();
+        var largestMatchDistance = filters
+            .OfType<MatchWithinDistanceFilter.Config>()
+            .Select(match => match.MaxDistanceM)
+            .DefaultIfEmpty()
+            .Max();
+        bool lookupBoxTooSmall =
+            filters.Any(filter => filter is PeakLookupFilter.Config) && lookupOffset < largestMatchDistance;
         if (lookupBoxTooSmall)
         {
             yield return "PeakLookupFilter OffsetM must be at least MatchWithinDistanceFilter MaxDistanceM, or peaks inside the match distance can be missed.";

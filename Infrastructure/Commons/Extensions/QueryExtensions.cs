@@ -10,11 +10,11 @@ public static class TypeNameCache<TType>
 
 public static class QueryExtensions
 {
-
     public static async Task<Result<T[]>> ToResultArrayAsync<T>(
         this IQueryable<T> query,
         string emptyCollectionMessage,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var items = await query.ToArrayAsync(ct);
         return items.NullOrEmpty()
@@ -25,7 +25,8 @@ public static class QueryExtensions
     public static async Task<Result<List<T>>> ToResultListAsync<T>(
         this IQueryable<T> query,
         string emptyCollectionMessage,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var items = await query.ToListAsync(ct);
         return items.NullOrEmpty()
@@ -40,7 +41,8 @@ public static class QueryExtensions
     public static async Task<Result<T>> FirstOrFailureAsync<T, TValue>(
         this IQueryable<T> query,
         TValue filterValue,
-        CancellationToken ct)
+        CancellationToken ct
+    )
         where T : class, IEntity
     {
         return await query.FirstOrFailureAsync(filterValue, TypeNameCache<T>.Name, ct);
@@ -54,7 +56,8 @@ public static class QueryExtensions
         this IQueryable<T> query,
         TValue filterValue,
         string entityName,
-        CancellationToken ct)
+        CancellationToken ct
+    )
         where T : class
     {
         return await query.FirstOrFailureAsync(filterValue, entityName, "id", ct);
@@ -69,8 +72,9 @@ public static class QueryExtensions
         TValue filterValue,
         string entityName,
         string filterName,
-        CancellationToken ct)
-    where T : class
+        CancellationToken ct
+    )
+        where T : class
     {
         var item = await query.FirstOrDefaultAsync(ct);
         return item is null

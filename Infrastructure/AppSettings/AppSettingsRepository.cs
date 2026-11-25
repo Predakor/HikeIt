@@ -11,10 +11,7 @@ internal class AppSettingsRepository : CrudResultRepository<AppSetting, int>, IA
     public AppSettingsRepository(TripDbContext context)
         : base(context) { }
 
-    public async Task<Result<AppSetting>> GetBySettingTypeAsync(
-        AppSettingType settingType,
-        CancellationToken ct
-    )
+    public async Task<Result<AppSetting>> GetBySettingTypeAsync(AppSettingType settingType, CancellationToken ct)
     {
         var result = await DbSet
             .Where(s => s.SettingType == settingType)

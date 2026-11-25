@@ -8,7 +8,7 @@ const App = lazy(() => import("./App"));
 createRoot(document.getElementById("root")!).render(
   <Suspense fallback={<SplashScreen />}>
     <App />
-  </Suspense>
+  </Suspense>,
 );
 
 function SplashScreen() {

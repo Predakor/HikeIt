@@ -7,11 +7,7 @@ interface Props {
 
 export function PeakBadge({ text, color }: Props) {
   return (
-    <Badge
-      size={{ base: "xs", lg: "lg" }}
-      colorPalette={color || "blue"}
-      truncate
-    >
+    <Badge size={{ base: "xs", lg: "lg" }} colorPalette={color || "blue"} truncate>
       {text}
     </Badge>
   );

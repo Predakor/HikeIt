@@ -10,6 +10,7 @@ public class TimeAnalyticFilterTests
 {
     // 10 m in 10 s is 3.6 km/h, 0.1 m in 10 s is 0.036 km/h.
     private static GpxGainWithTime Moving(float slope) => new(10, slope / 10, slope, 10);
+
     private static GpxGainWithTime Standing(float slope) => new(0.1f, slope / 10, slope, 10);
 
     private static readonly RouteAnalytic EmptyRoute = new()
@@ -31,11 +32,18 @@ public class TimeAnalyticFilterTests
     private static async Task<TimeAnalyticContext> Run(IEnumerable<GpxGainWithTime> gains, IPaceFilterConfig[] pipe)
     {
         var gainList = gains.ToList();
-        var context = new TimeAnalyticContext(EmptyRoute, gainList, Start, Start.AddSeconds(gainList.Sum(gain => gain.TimeDelta)));
+        var context = new TimeAnalyticContext(
+            EmptyRoute,
+            gainList,
+            Start,
+            Start.AddSeconds(gainList.Sum(gain => gain.TimeDelta))
+        );
 
         foreach (var config in pipe)
         {
-            await config.CreateFilter().ApplyAsync(context);
+            await config
+                .CreateFilter()
+                .ApplyAsync(context);
         }
 
         return context;
@@ -97,7 +105,10 @@ public class TimeAnalyticFilterTests
         // 50 m in 10 s is 18 km/h, 50 m in 50 s is 3.6 km/h.
         var gains = new List<GpxGainWithTime>
         {
-            new(50, 0, 0, 10), new(50, 0, 0, 10), new(50, 0, 0, 50), new(50, 0, 0, 50),
+            new(50, 0, 0, 10),
+            new(50, 0, 0, 10),
+            new(50, 0, 0, 50),
+            new(50, 0, 0, 50),
         };
 
         var context = await Run(gains, Pipe(new SpeedSegmentFilter.Config(100)));

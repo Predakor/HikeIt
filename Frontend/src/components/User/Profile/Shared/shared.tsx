@@ -9,9 +9,7 @@ interface Props {
 export function MapStats({ stats }: { stats: object }) {
   const mappedObject = ObjectToArray(stats);
 
-  return mappedObject.map(([key, data]) => (
-    <InfoField label={key} value={data} />
-  ));
+  return mappedObject.map(([key, data]) => <InfoField label={key} value={data} />);
 }
 
 function InfoField({ label, value }: Props) {

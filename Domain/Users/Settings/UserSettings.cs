@@ -1,3 +1,3 @@
 ﻿namespace Domain.Users.Settings;
-internal class UserSettings {
-}
+
+internal class UserSettings { }

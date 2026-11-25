@@ -1,7 +1,7 @@
-﻿using Domain.Common.Abstractions;
-using Domain.Peaks;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using Domain.Common.Abstractions;
+using Domain.Peaks;
 
 namespace Domain.Locations.Regions;
 

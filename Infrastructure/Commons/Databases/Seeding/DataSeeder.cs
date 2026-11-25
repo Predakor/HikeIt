@@ -46,9 +46,7 @@ internal class DataSeeder
             var resourcePath = _options.PeaksUrl;
             Console.WriteLine("Seeding from: " + resourcePath);
 
-            await new InsertMountainPeaks(await PeakCsvLoader.LoadFromLink(resourcePath)).Seed(
-                context
-            );
+            await new InsertMountainPeaks(await PeakCsvLoader.LoadFromLink(resourcePath)).Seed(context);
         }
 
         await new InsertRoles(_roleManager).Seed(context);

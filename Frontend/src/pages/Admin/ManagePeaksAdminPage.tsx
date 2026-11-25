@@ -9,9 +9,7 @@ export default function ManagePeaksAdminPage() {
   const getPeaks = usePeaks();
   return (
     <AdminLayout title="Manage Peaks">
-      <FetchWrapper request={getPeaks}>
-        {(peaks) => <PeakList peaks={peaks} />}
-      </FetchWrapper>
+      <FetchWrapper request={getPeaks}>{(peaks) => <PeakList peaks={peaks} />}</FetchWrapper>
     </AdminLayout>
   );
 }

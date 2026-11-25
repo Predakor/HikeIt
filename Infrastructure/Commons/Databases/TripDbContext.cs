@@ -37,13 +37,6 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<ElevationProfile> ElevationProfiles { get; set; }
     public DbSet<PeaksAnalytic> PeaksAnalytics { get; set; }
     public DbSet<AppSetting> AppSettings { get; set; }
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
-
-        builder.ApplyAggregatesConfigurations();
-        builder.AllEntitiesToUtcTimes();
-    }
 
     public override async Task<int> SaveChangesAsync(
         bool acceptAllChangesOnSuccess,
@@ -54,6 +47,14 @@ public class TripDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
         var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         await _eventPublisher.PublishAsync(events, cancellationToken);
         return result;
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.ApplyAggregatesConfigurations();
+        builder.AllEntitiesToUtcTimes();
     }
 
     private List<IDomainEvent> GatherEvents()

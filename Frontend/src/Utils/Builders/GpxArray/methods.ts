@@ -21,12 +21,7 @@ export function calculatePointToPointGains(array: GpxArray) {
     const prev = array[i - 1];
 
     const eleDelta = curr.ele - prev.ele;
-    const horizontalDist = haversineDistance(
-      prev.lat,
-      prev.lon,
-      curr.lat,
-      curr.lon
-    );
+    const horizontalDist = haversineDistance(prev.lat, prev.lon, curr.lat, curr.lon);
 
     const slope = (eleDelta / horizontalDist) * 100;
 

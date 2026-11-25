@@ -27,22 +27,13 @@ function ProgressedRegion({ progressSummary }: Props) {
         }
         Description={
           <Stack direction={{ base: "column", lg: "row" }}>
-            <RowStat
-              value={uniqueReachedPeaks}
-              label={"Unique peaks reached"}
-            />
-            <RowStat
-              value={totalPeaksInRegion}
-              label={"Total peaks in region"}
-            />
+            <RowStat value={uniqueReachedPeaks} label={"Unique peaks reached"} />
+            <RowStat value={totalPeaksInRegion} label={"Total peaks in region"} />
           </Stack>
         }
         Footer={
           <Box w="100%">
-            <RegionProgress
-              total={totalPeaksInRegion}
-              finished={uniqueReachedPeaks}
-            />
+            <RegionProgress total={totalPeaksInRegion} finished={uniqueReachedPeaks} />
           </Box>
         }
       />

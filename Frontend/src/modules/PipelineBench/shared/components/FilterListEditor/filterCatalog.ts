@@ -10,7 +10,11 @@ import type { BooleanField } from "./Inputs/SwitchInput";
 import type { PointFieldsField } from "./Inputs/TargetsInput";
 
 export type FilterKind = "point" | "peak" | "pace" | "terrain";
-export type FilterItem = PointFilterConfig | PeakFilterConfig | PaceFilterConfig | TerrainFilterConfig;
+export type FilterItem =
+  | PointFilterConfig
+  | PeakFilterConfig
+  | PaceFilterConfig
+  | TerrainFilterConfig;
 
 export type FilterField = NumberField | BooleanField | PointFieldsField | GradeTargetsField;
 export type FilterFieldValue = number | boolean | string;

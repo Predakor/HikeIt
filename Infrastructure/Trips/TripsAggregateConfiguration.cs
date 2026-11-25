@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Trips;
 
-internal static class TripsAggregateConfiguration {
-    public static ModelBuilder Apply(ModelBuilder modelBuilder) {
+internal static class TripsAggregateConfiguration
+{
+    public static ModelBuilder Apply(ModelBuilder modelBuilder)
+    {
         return modelBuilder
             .ApplyConfiguration(new TripConfiguration())
             .ApplyConfiguration(new ReachedPeakConfiguration())

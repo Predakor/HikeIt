@@ -1,7 +1,4 @@
-import {
-  GenericFormatter,
-  KeyToLabelFormatter,
-} from "@/Utils/Formatters/valueFormatter";
+import { GenericFormatter, KeyToLabelFormatter } from "@/Utils/Formatters/valueFormatter";
 import RowStat from "@/components/Stats/RowStat";
 import { For } from "@chakra-ui/react";
 

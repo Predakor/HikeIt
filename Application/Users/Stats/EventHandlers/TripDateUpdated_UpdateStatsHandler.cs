@@ -13,10 +13,7 @@ internal sealed class TripDateUpdated_UpdateStatsHandler : IDomainEventHandler<T
         _userRepository = userRepository;
     }
 
-    public async Task Handle(
-        TripDateUpdatedEvent domainEvent,
-        CancellationToken cancellationToken = default
-    )
+    public async Task Handle(TripDateUpdatedEvent domainEvent, CancellationToken cancellationToken = default)
     {
         await _userRepository
             .GetUserStats(domainEvent.Trip.UserId)

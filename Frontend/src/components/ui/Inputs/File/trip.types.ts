@@ -3,7 +3,6 @@ export interface GraphData {
   lat: number;
   lon: number;
 }
-[];
 
 export interface ReachedPeak {
   name: string;

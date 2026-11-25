@@ -27,4 +27,7 @@
   <ItemGroup>
     <Folder Include="Controllers\UserRegions\" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Architecture.Tests" />
+  </ItemGroup>
 </Project>

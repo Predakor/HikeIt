@@ -15,8 +15,8 @@ internal static class FilterChain
     {
         foreach (var config in configs)
         {
-            var (elapsed, next) = await Timed
-                .RunAsync(() => config
+            var (elapsed, next) = await Timed.RunAsync(() =>
+                config
                     .CreateFilter()
                     .ApplyAsync(state)
             );

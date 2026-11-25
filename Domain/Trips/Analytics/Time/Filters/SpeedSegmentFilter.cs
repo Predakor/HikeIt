@@ -36,8 +36,12 @@ public sealed class SpeedSegmentFilter(SpeedSegmentFilter.Config config) : SyncF
 
             double speedKph = (distance[end] - distance[start]) / elapsed * 3.6;
 
-            fastest = fastest is null ? speedKph : Math.Max(fastest.Value, speedKph);
-            slowest = slowest is null ? speedKph : Math.Min(slowest.Value, speedKph);
+            fastest = fastest is null
+                ? speedKph
+                : Math.Max(fastest.Value, speedKph);
+            slowest = slowest is null
+                ? speedKph
+                : Math.Min(slowest.Value, speedKph);
         }
 
         context.FastestSpeedKph = fastest;

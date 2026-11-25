@@ -5,19 +5,13 @@ public static class AsyncResultExtentios
     #region Bind
 
     //async result
-    public static async Task<Result<T2>> BindAsync<T1, T2>(
-        this Task<Result<T1>> result,
-        Func<T1, Result<T2>> bind
-    )
+    public static async Task<Result<T2>> BindAsync<T1, T2>(this Task<Result<T1>> result, Func<T1, Result<T2>> bind)
     {
         return (await result).Bind(bind);
     }
 
     //async func
-    public static async Task<Result<T2>> BindAsync<T1, T2>(
-        this Result<T1> result,
-        Func<T1, Task<Result<T2>>> bindAsync
-    )
+    public static async Task<Result<T2>> BindAsync<T1, T2>(this Result<T1> result, Func<T1, Task<Result<T2>>> bindAsync)
     {
         return result.IsSuccess
             ? await bindAsync(result.Value!)
@@ -114,38 +108,26 @@ public static class AsyncResultExtentios
     #endregion
 
     #region map
-    public static async Task<Result<TOut>> MapAsync<TIn, TOut>(
-        this Task<Result<TIn>> result,
-        Func<TIn, TOut> map
-    )
+    public static async Task<Result<TOut>> MapAsync<TIn, TOut>(this Task<Result<TIn>> result, Func<TIn, TOut> map)
     {
         return (await result).Map(map);
     }
 
-    public static async Task<Result<T2>> MapAsync<T1, T2>(
-        this Result<T1> result,
-        Func<T1, Task<T2>> mapAsync
-    )
+    public static async Task<Result<T2>> MapAsync<T1, T2>(this Result<T1> result, Func<T1, Task<T2>> mapAsync)
     {
         return result.IsSuccess
             ? Result<T2>.Success(await mapAsync(result.Value!))
             : Result<T2>.Failure(result.Error!);
     }
 
-    public static async Task<Result<T2>> MapAsync<T1, T2>(
-        this Task<Result<T1>> result,
-        Func<T1, Task<T2>> mapAsync
-    )
+    public static async Task<Result<T2>> MapAsync<T1, T2>(this Task<Result<T1>> result, Func<T1, Task<T2>> mapAsync)
     {
         return await (await result).MapAsync(mapAsync);
     }
     #endregion
 
     #region tap
-    public static async Task<Result<T>> TapAsync<T>(
-        this Result<T> result,
-        Func<T, Task> actionAsync
-    )
+    public static async Task<Result<T>> TapAsync<T>(this Result<T> result, Func<T, Task> actionAsync)
     {
         if (result.IsSuccess && result.Value is not null)
         {
@@ -155,10 +137,7 @@ public static class AsyncResultExtentios
         return result;
     }
 
-    public static async Task<Result<T>> TapAsync<T>(
-        this Task<Result<T>> resultTask,
-        Func<T, Task> actionAsync
-    )
+    public static async Task<Result<T>> TapAsync<T>(this Task<Result<T>> resultTask, Func<T, Task> actionAsync)
     {
         var result = await resultTask;
         if (result.IsSuccess && result.Value is not null)
@@ -168,10 +147,7 @@ public static class AsyncResultExtentios
         return result;
     }
 
-    public static async Task<Result<T>> TapAsync<T>(
-        this Task<Result<T>> resultTask,
-        Action<T> actionAsync
-    )
+    public static async Task<Result<T>> TapAsync<T>(this Task<Result<T>> resultTask, Action<T> actionAsync)
     {
         var result = await resultTask;
         if (result.IsSuccess && result.Value is not null)

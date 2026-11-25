@@ -1,10 +1,5 @@
 import { ToTitleCase } from "@/Utils/ObjectToArray";
-import {
-  Button,
-  Dialog as ChakraDialog,
-  Portal,
-  type DialogRootProps,
-} from "@chakra-ui/react";
+import { Button, Dialog as ChakraDialog, Portal, type DialogRootProps } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import { CloseModal } from "./Common/CloseModal";
 import { DialogTitle } from "./Common/DialogTitle";
@@ -15,8 +10,7 @@ export type AlertConfig = {
   warningDescription?: ReactNode;
 };
 
-export interface AlertDialogProps
-  extends Pick<DialogRootProps, "open" | "onOpenChange"> {
+export interface AlertDialogProps extends Pick<DialogRootProps, "open" | "onOpenChange"> {
   onConfirm: () => void;
   config?: AlertConfig;
 }
@@ -25,12 +19,7 @@ export default function AlertDialog(props: AlertDialogProps) {
   const { config, onConfirm, ...rest } = props;
 
   return (
-    <ChakraDialog.Root
-      size={"lg"}
-      {...rest}
-      role="alertdialog"
-      motionPreset={"scale"}
-    >
+    <ChakraDialog.Root size={"lg"} {...rest} role="alertdialog" motionPreset={"scale"}>
       <ChakraDialog.Trigger />
 
       <Portal>
@@ -44,8 +33,7 @@ export default function AlertDialog(props: AlertDialogProps) {
             </ChakraDialog.Header>
 
             <ChakraDialog.Body fontSize={{ base: "lg" }}>
-              {config?.warningDescription ??
-                "This action can't be reverted are you sure"}
+              {config?.warningDescription ?? "This action can't be reverted are you sure"}
             </ChakraDialog.Body>
 
             <ChakraDialog.Footer>
@@ -54,11 +42,7 @@ export default function AlertDialog(props: AlertDialogProps) {
                   Cancel
                 </Button>
               </ChakraDialog.ActionTrigger>
-              <Button
-                onClick={onConfirm}
-                size={{ base: "lg", lg: "xl" }}
-                colorPalette="red"
-              >
+              <Button onClick={onConfirm} size={{ base: "lg", lg: "xl" }} colorPalette="red">
                 {ToTitleCase(config?.confirmButtonText ?? "delete")}
               </Button>
             </ChakraDialog.Footer>

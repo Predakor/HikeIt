@@ -51,11 +51,7 @@ export default function UpdatePersonalInformationsForm(props: Props) {
           />
         </Stack>
         <Separator />
-        <PrimaryButton
-          type="submit"
-          loading={personalInfo.isPending}
-          loadingText={"Loading"}
-        >
+        <PrimaryButton type="submit" loading={personalInfo.isPending} loadingText={"Loading"}>
           Upload
         </PrimaryButton>
       </Stack>

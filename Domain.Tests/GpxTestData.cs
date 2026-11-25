@@ -2,7 +2,8 @@
 
 namespace Domain.Tests;
 
-public static class GpxTestData {
+public static class GpxTestData
+{
     public static readonly AnalyticData JitteryTripMockup = new(
         [
             new(50.0000, 19.0000, 12),
@@ -39,6 +40,5 @@ public static class GpxTestData {
         ]
     );
 
-    public static TheoryData<AnalyticData> AllTripData { get; } =
-        [JitteryTripMockup, DownUpPath];
+    public static TheoryData<AnalyticData> AllTripData { get; } = [JitteryTripMockup, DownUpPath];
 }

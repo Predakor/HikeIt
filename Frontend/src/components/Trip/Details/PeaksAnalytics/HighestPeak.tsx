@@ -8,9 +8,7 @@ export function HighestPeak({ highest }: { highest: ReachedPeakWithBadges }) {
       <RowStat value={highest.name} label={"name"} />
       <RowStat value={highest.height} addons={{ unit: "m" }} label={"height"} />
 
-      {highest.reachedAt && (
-        <RowStat value={highest.reachedAt} label={"reached at"} />
-      )}
+      {highest.reachedAt && <RowStat value={highest.reachedAt} label={"reached at"} />}
     </SimpleGrid>
   );
 }

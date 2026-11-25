@@ -1,5 +1,8 @@
 import { GenerateChartData } from "@/components/Trip/Details/TripGraph/GenerateChartData";
-import type { PipeStageResult, PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
+import type {
+  PipeStageResult,
+  PipeStageResults,
+} from "@/modules/PipelineBench/shared/types/PipeStageDto";
 import type { StageDataMap } from "@/modules/PipelineBench/shared/types/StageData";
 import { allStageIds, type StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import type { TimeSpanString } from "@/types/Api/types";

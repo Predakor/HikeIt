@@ -6,17 +6,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.ReachedPeaks.Queries;
 
-public class ReachedPeaksQueryService : IReachedPeaksQureryService {
-    readonly TripDbContext _tripDbContext;
+public class ReachedPeaksQueryService : IReachedPeaksQureryService
+{
+    private readonly TripDbContext _tripDbContext;
 
-    IQueryable<ReachedPeak> ReachedPeaks => _tripDbContext.ReachedPeaks.AsNoTracking();
+    private IQueryable<ReachedPeak> ReachedPeaks => _tripDbContext.ReachedPeaks.AsNoTracking();
 
-    public ReachedPeaksQueryService(TripDbContext tripDbContext) {
+    public ReachedPeaksQueryService(TripDbContext tripDbContext)
+    {
         _tripDbContext = tripDbContext;
     }
 
-    public async Task<List<Peak>> ReachedByUserBefore(Guid userId, IEnumerable<int> peakIds) {
-        if (peakIds.NullOrEmpty()) {
+    public async Task<List<Peak>> ReachedByUserBefore(Guid userId, IEnumerable<int> peakIds)
+    {
+        if (peakIds.NullOrEmpty())
+        {
             return [];
         }
 
@@ -28,13 +32,15 @@ public class ReachedPeaksQueryService : IReachedPeaksQureryService {
             .ToListAsync();
     }
 
-    public async Task<Result<List<ReachedPeak>>> ReachedOnTrip(Guid tripId) {
+    public async Task<Result<List<ReachedPeak>>> ReachedOnTrip(Guid tripId)
+    {
         var query = await ReachedPeaks
             .Include(rp => rp.Peak)
             .Where(rp => rp.TripId == tripId)
             .ToListAsync();
 
-        if (query.NullOrEmpty()) {
+        if (query.NullOrEmpty())
+        {
             return Errors.EmptyCollection("reached peaks");
         }
 

@@ -14,9 +14,7 @@ function RenderRoutes() {
             </Route>
           );
         }
-        return (
-          <Route path={entry.path} element={<entry.Page />} key={entry.path} />
-        );
+        return <Route path={entry.path} element={<entry.Page />} key={entry.path} />;
       })}
     </Routes>
   );

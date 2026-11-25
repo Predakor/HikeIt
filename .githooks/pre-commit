@@ -1,0 +1,53 @@
+#!/bin/sh
+# Formats staged C#/frontend files, orders C# members, re-stages them, and fixes CRLF.
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+cs_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.cs' ':!Infrastructure/Migrations' ':!*.Designer.cs' ':!*ModelSnapshot.cs')
+fe_files=$(git diff --cached --name-only --diff-filter=ACM -- 'Frontend/src/*.ts' 'Frontend/src/*.tsx')
+all_files=$(git diff --cached --name-only --diff-filter=ACM)
+
+formatted_files="$cs_files $fe_files"
+partially_staged=""
+if [ -n "$cs_files$fe_files" ]; then
+  partially_staged=$(git diff --name-only -- $formatted_files)
+fi
+if [ -n "$partially_staged" ]; then
+  echo "pre-commit: these files have unstaged changes, stage or stash them first so formatting can't sweep them in:"
+  echo "$partially_staged"
+  exit 1
+fi
+
+if [ -n "$cs_files" ]; then
+  cs_count=$(echo "$cs_files" | wc -l)
+  echo "pre-commit [1/2] style rules and member order (dotnet format) on $cs_count staged .cs file(s), loads the solution so it takes a while..."
+  # One load for style + member order; the explicit list keeps CA/Sonar code fixes out. Add an ID here when .editorconfig gets a new warning-level style rule.
+  dotnet format HikeIt.sln --no-restore --verbosity minimal --severity warn \
+    --diagnostics IDE0003 IDE0009 IDE0011 IDE0040 IDE0065 IDE0161 IDE1006 IDE2000 SA1202 SA1203 SA1204 \
+    --include $cs_files
+  echo "pre-commit [2/2] csharpier layout..."
+  sh .githooks/restore-tools.sh > /dev/null
+  dotnet csharpier format $cs_files
+  git add $cs_files
+  echo "pre-commit: C# done"
+fi
+
+if [ -n "$fe_files" ]; then
+  echo "pre-commit: prettier + eslint on staged frontend files..."
+  frontend_paths=$(echo "$fe_files" | sed 's#^Frontend/##')
+  (cd Frontend && pnpm exec prettier --write $frontend_paths && pnpm exec eslint --fix $frontend_paths)
+  git add $fe_files
+fi
+
+# Tools (and AI agents) sometimes write CRLF; the repo is LF everywhere except .bat/.cmd.
+crlf_files=$(git ls-files --eol -- $all_files | awk -F'\t' '$1 ~ /w\/(crlf|mixed)/ && $1 !~ /eol=crlf|-text/ {print $2}')
+if [ -n "$crlf_files" ]; then
+  echo "pre-commit: converting CRLF to LF in:"
+  echo "$crlf_files"
+  echo "$crlf_files" | tr '\n' '\0' | xargs -0 sed -i 's/\r$//'
+  echo "$crlf_files" | while IFS= read -r file; do
+    if [ -z "$(git diff --name-only -- "$file")" ]; then
+      git add -- "$file"
+    fi
+  done
+fi

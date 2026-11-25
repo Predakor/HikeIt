@@ -3,7 +3,7 @@ using Domain.Users.Root;
 
 namespace Application.Commons.Services.Auth;
 
-public interface IAuthService
+public interface IAuthService : IService
 {
     Task<Result<User>> WithLoggedUser();
     Task<Result<Guid>> WithLoggedUserId();
@@ -11,5 +11,4 @@ public interface IAuthService
     Task<Result<User>> GetByLoginOrEmail(string loginOrEmail);
     Task<Result<bool>> ResetPassword(UserDto.ResetPassword request);
     Task<Result<string>> ForgotPassword(string email);
-
 }

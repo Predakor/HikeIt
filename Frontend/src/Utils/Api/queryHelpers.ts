@@ -5,9 +5,7 @@ type RequestState = {
 };
 
 export function isPendingOrNotFetched(requestState: RequestState) {
-  return (
-    requestState.isPending || (!requestState.isSuccess && !requestState.isError)
-  );
+  return requestState.isPending || (!requestState.isSuccess && !requestState.isError);
 }
 
 export function isNotFetched(requestState: RequestState) {

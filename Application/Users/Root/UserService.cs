@@ -20,7 +20,9 @@ public class UserService(IUserRepository repository, IAuthService authService) :
 
     public async Task<Result<UserDataDto.PublicProfile>> GetUserAsync(Guid id)
     {
-        return await _repository.GetByIdAsync(id).MapAsync(u => u.ToPublicProfile());
+        return await _repository
+            .GetByIdAsync(id)
+            .MapAsync(u => u.ToPublicProfile());
     }
 
     public async Task<Result<bool>> UpdatePersonalInfo(User user, PersonalInfoUpdate update)

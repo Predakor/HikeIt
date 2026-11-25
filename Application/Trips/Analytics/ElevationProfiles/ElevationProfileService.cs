@@ -20,6 +20,10 @@ public class ElevationProfileService : IElevationProfileService
     {
         return _pointsRunner
             .ApplyAsync(ctx.AnalyticData.Points, StageId.ElevationProfile)
-            .BindAsync(points => CreateElevationProfileCommand.Create(new AnalyticData(points), ctx.Trip.Id).Execute());
+            .BindAsync(points =>
+                CreateElevationProfileCommand
+                    .Create(new AnalyticData(points), ctx.Trip.Id)
+                    .Execute()
+            );
     }
 }

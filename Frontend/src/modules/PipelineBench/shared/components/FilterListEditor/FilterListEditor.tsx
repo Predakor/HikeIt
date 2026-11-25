@@ -38,7 +38,8 @@ const emptyTextByKind: Record<FilterKind, string> = {
   point: "No filters: points pass through unchanged.",
   peak: "No filters: points pass through unchanged.",
   pace: "No filters: every segment counts as flat and the ascent, descent and idle times are not split out.",
-  terrain: "No filters: ascent and descent are plain sums, and the steepest and longest segments are not computed.",
+  terrain:
+    "No filters: ascent and descent are plain sums, and the steepest and longest segments are not computed.",
 };
 
 // Only the list of filters scrolls; the header, the add / reset / apply row and the result info stay in view.

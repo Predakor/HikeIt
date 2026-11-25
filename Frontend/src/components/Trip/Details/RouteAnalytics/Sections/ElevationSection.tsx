@@ -1,9 +1,4 @@
-import {
-  IconArrowDown,
-  IconArrowUp,
-  IconTrendDown,
-  IconTrendUp,
-} from "@/Icons/Icons";
+import { IconArrowDown, IconArrowUp, IconTrendDown, IconTrendUp } from "@/Icons/Icons";
 import { GenericFormatter } from "@/Utils/Formatters/valueFormatter";
 import { ComparedStat } from "@/components/Stats";
 import RowStat from "@/components/Stats/RowStat";
@@ -82,16 +77,8 @@ export function ElevationSection({ data }: RouteAnalyticsProps) {
           textAlign={"center"}
           gapY={4}
         >
-          <ComparedStat
-            title="Aseneded"
-            stat={data.totalAscentMeters}
-            {...sharedComparedStats}
-          />
-          <ComparedStat
-            title="Descended"
-            stat={data.totalDescentMeters}
-            {...sharedComparedStats}
-          />
+          <ComparedStat title="Aseneded" stat={data.totalAscentMeters} {...sharedComparedStats} />
+          <ComparedStat title="Descended" stat={data.totalDescentMeters} {...sharedComparedStats} />
         </Stack>
         <Text
           fontSize={"lg"}
@@ -103,8 +90,7 @@ export function ElevationSection({ data }: RouteAnalyticsProps) {
         >
           <span>From lowest to highest point</span>
           <br />
-          ascended <Strong>{elevation.delta.toFixed()}</Strong> meters that's
-          about
+          ascended <Strong>{elevation.delta.toFixed()}</Strong> meters that's about
           <br />
           <span>
             <Strong>{toFloors(elevation.delta)}</Strong> floors or{" "}
@@ -116,11 +102,9 @@ export function ElevationSection({ data }: RouteAnalyticsProps) {
   );
 }
 
-const toBurhKhalifas = (elvation: number) =>
-  (toFloors(elvation) / burjKhalifaFloors).toFixed(2);
+const toBurhKhalifas = (elvation: number) => (toFloors(elvation) / burjKhalifaFloors).toFixed(2);
 
-const toFloors = (elevation: number) =>
-  Math.round(elevation / averageFloorHeight);
+const toFloors = (elevation: number) => Math.round(elevation / averageFloorHeight);
 
 const averageFloorHeight = 3;
 const burjKhalifaFloors = 163;

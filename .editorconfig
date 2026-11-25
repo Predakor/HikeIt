@@ -1,6 +1,9 @@
 # Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
 
+[*]
+end_of_line = lf
+
 # C# files
 [*.cs]
 
@@ -10,9 +13,10 @@ root = true
 indent_size = 4
 indent_style = space
 tab_width = 4
+max_line_length = 120
 
 # New line preferences
-end_of_line = crlf
+end_of_line = lf
 insert_final_newline = false
 
 #### .NET Code Actions ####
@@ -29,7 +33,7 @@ dotnet_search_reference_assemblies = true
 
 # Organize usings
 dotnet_separate_import_directive_groups = false
-dotnet_sort_system_directives_first = false
+dotnet_sort_system_directives_first = true
 file_header_template = unset
 
 # this. and Me. preferences
@@ -250,7 +254,7 @@ dotnet_naming_style.begins_with_i.capitalization = pascal_case
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
 indent_size = 4
-end_of_line = crlf
+end_of_line = lf
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
@@ -282,3 +286,34 @@ dotnet_style_qualification_for_field = false:warning
 dotnet_style_qualification_for_property = false:warning
 dotnet_style_qualification_for_method = false:warning
 dotnet_style_qualification_for_event = false:warning
+# StyleCop: only the SA1202 to SA1204 ordering rules, as warnings (the pre-commit hook fixes them). Order criteria live in stylecop.json.
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.NamingRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpacingRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpecialRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.OrderingRules.severity = none
+# SA1201 fixes the kind order (constructor before properties), which we do not follow.
+dotnet_diagnostic.SA1201.severity = none
+dotnet_diagnostic.SA1202.severity = warning
+dotnet_diagnostic.SA1203.severity = warning
+dotnet_diagnostic.SA1204.severity = warning
+dotnet_diagnostic.SA0001.severity = none
+
+
+# Static factories on generic types (Result<T>.Success) are intended here.
+dotnet_diagnostic.CA1000.severity = none
+
+# Same lines as CA2201 (general exception types).
+dotnet_diagnostic.S112.severity = none
+
+# Interface files (IName.cs): marker interfaces use a type parameter only as a tag.
+[**/I[A-Z]*.cs]
+dotnet_diagnostic.S2326.severity = none
+
+
+# Test names use underscores (Method_Should_Do); production code keeps CA1707.
+[{Core.Tests,Domain.Tests,Architecture.Tests}/**.cs]
+dotnet_diagnostic.CA1707.severity = none

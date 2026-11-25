@@ -6,8 +6,5 @@ namespace Infrastructure.Locations.Regions;
 
 internal class RegionConfiguration : IEntityTypeConfiguration<Region>
 {
-    public void Configure(EntityTypeBuilder<Region> builder)
-    {
-
-    }
+    public void Configure(EntityTypeBuilder<Region> builder) { }
 }

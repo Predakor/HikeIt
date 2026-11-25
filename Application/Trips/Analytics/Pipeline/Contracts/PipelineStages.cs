@@ -1,6 +1,6 @@
+using System.Text.Json.Serialization;
 using Application.Trips.Analytics.Dtos;
 using Core.Serialization;
-using System.Text.Json.Serialization;
 
 namespace Application.Trips.Analytics.Pipeline.Contracts;
 

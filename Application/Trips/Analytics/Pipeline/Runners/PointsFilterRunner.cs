@@ -31,10 +31,16 @@ public sealed class PointsFilterRunner(IPipelineSettingsService settings) : IPoi
     {
         configs ??= await settings.GetFiltersAsync<IPointFilterConfig>(stage, cancellationToken);
 
-        IList<MutableGpxPoint> mutablePoints = points.Select(point => point.ToMutable()).ToList();
+        IList<MutableGpxPoint> mutablePoints = points
+            .Select(point => point.ToMutable())
+            .ToList();
 
         return await FilterChain
             .RunAsync(mutablePoints, configs, steps)
-            .MapAsync(filtered => filtered.Select(point => point.ToGpxPoint()).ToList());
+            .MapAsync(filtered =>
+                filtered
+                    .Select(point => point.ToGpxPoint())
+                    .ToList()
+            );
     }
 }

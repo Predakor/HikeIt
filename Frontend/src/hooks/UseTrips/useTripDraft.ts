@@ -11,26 +11,8 @@ interface TripUpdate {
 }
 
 export function useTripDraft(file?: File) {
-  if (!file) {
-    return;
-  }
-
   const { invalidateTripCachces, prefetchAndCache } = useTripCache();
   const drafInstance = useRef<string>("");
-
-  useEffect(() => {
-    const getDraftInstance = async () => {
-      const request = await getDraft.mutateAsync();
-
-      if (request) {
-        attachFile.mutateAsync(file);
-      }
-    };
-
-    if (!getDraft.isPending) {
-      getDraftInstance();
-    }
-  }, []);
 
   const getDraft = useMutation({
     mutationFn: () => api.post(`trips/drafts/new`, null, resolveCreated),
@@ -61,8 +43,7 @@ export function useTripDraft(file?: File) {
   });
 
   const submit = useMutation({
-    mutationFn: () =>
-      api.post(`${drafInstance.current}/submit`, {}, resolveCreated),
+    mutationFn: () => api.post(`${drafInstance.current}/submit`, {}, resolveCreated),
     onSuccess: async ({ location }) => {
       invalidateTripCachces();
       if (location) {
@@ -70,6 +51,29 @@ export function useTripDraft(file?: File) {
       }
     },
   });
+
+  const { mutateAsync: createDraft } = getDraft;
+  const { mutateAsync: attachDraftFile } = attachFile;
+
+  useEffect(() => {
+    if (!file) {
+      return;
+    }
+
+    const createDraftWithFile = async () => {
+      const request = await createDraft();
+
+      if (request) {
+        attachDraftFile(file);
+      }
+    };
+
+    createDraftWithFile();
+  }, [file, createDraft, attachDraftFile]);
+
+  if (!file) {
+    return;
+  }
 
   return { getDraft, update, attachFile, submit };
 }

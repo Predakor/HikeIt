@@ -1,5 +1,11 @@
-import type { PipeStageResult, PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
-import type { ComparisonTarget, PipelineConfig } from "@/modules/PipelineBench/shared/types/PipelineConfig";
+import type {
+  PipeStageResult,
+  PipeStageResults,
+} from "@/modules/PipelineBench/shared/types/PipeStageDto";
+import type {
+  ComparisonTarget,
+  PipelineConfig,
+} from "@/modules/PipelineBench/shared/types/PipelineConfig";
 import { allStageIds, type StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePipelinePreview } from "../api/usePipelinePreview";
@@ -52,9 +58,12 @@ export function usePipelineBench(
   const { mutateAsync } = usePipelinePreview(tripId);
   const [state, setState] = useState<BenchState>(initialState);
   const includeStepsRef = useRef(includeSteps);
-  includeStepsRef.current = includeSteps;
   const targetRef = useRef(target);
-  targetRef.current = target;
+
+  useEffect(() => {
+    includeStepsRef.current = includeSteps;
+    targetRef.current = target;
+  }, [includeSteps, target]);
 
   // Refs hold the latest state for the async and debounced paths, so they never read a stale closure.
   const stateRef = useRef<BenchState>(initialState);
@@ -209,8 +218,7 @@ export function usePipelineBench(
     previousTargetRef.current = target;
     const missing = allStageIds.filter(
       (stage) =>
-        stage !== "peakMatching" &&
-        stateRef.current.comparisons[target][stage] === undefined,
+        stage !== "peakMatching" && stateRef.current.comparisons[target][stage] === undefined,
     );
 
     void runStages(missing);

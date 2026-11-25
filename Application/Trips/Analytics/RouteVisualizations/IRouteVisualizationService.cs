@@ -4,8 +4,11 @@ using Domain.Trips.Analytics.Root;
 
 namespace Application.Trips.Analytics.RouteVisualizations;
 
-public interface IRouteVisualizationService
+public interface IRouteVisualizationService : IService
 {
     Task<Result<RoutePath>> GetRouteVisualizationAsync(IEnumerable<GpxPoint> points);
-    Task<Result<RoutePath>> GetRouteVisualizationAsync(IEnumerable<GpxPoint> points, IReadOnlyList<IPointFilterConfig> configs);
+    Task<Result<RoutePath>> GetRouteVisualizationAsync(
+        IEnumerable<GpxPoint> points,
+        IReadOnlyList<IPointFilterConfig> configs
+    );
 }

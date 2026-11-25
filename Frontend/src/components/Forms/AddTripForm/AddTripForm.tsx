@@ -45,10 +45,7 @@ function AddTripForm({ initData, file, resetForm }: Props) {
   return (
     <Stack>
       {draft?.submit.isSuccess && (
-        <TripAddedSucces
-          tripLocation={draft.submit.data.location}
-          resetForm={resetForm}
-        />
+        <TripAddedSucces tripLocation={draft.submit.data.location} resetForm={resetForm} />
       )}
 
       {!draft?.submit.data && (

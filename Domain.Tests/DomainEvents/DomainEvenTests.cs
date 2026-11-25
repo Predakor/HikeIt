@@ -7,6 +7,7 @@ namespace Domain.Tests.DomainEvents;
 public class DomainEvenTests
 {
     private static DummyAggregate GetDummyAggregate => DummyAggregate.Create(Guid.NewGuid(), "");
+
     [Fact]
     public void AddDomainEventShouldAddEvent()
     {
@@ -51,7 +52,9 @@ public class DomainEvenTests
         var postId = Guid.NewGuid();
         var post = DomainEvents.DummyAggregate.Create(postId, "Hello World");
 
-        var domainEvent = post.Events.OfType<DummyDomainEvent>().SingleOrDefault();
+        var domainEvent = post
+            .Events.OfType<DummyDomainEvent>()
+            .SingleOrDefault();
 
         Assert.NotNull(domainEvent);
         Assert.Equal(postId, domainEvent!.PostId);
@@ -75,6 +78,7 @@ internal class DummyAggregate : AggregateRoot<Guid, DummyAggregate>
 
     // Only for testing, exposes protected AddDomainEvent
     public void TestAddDomainEvent(IDomainEvent domainEvent) => base.AddDomainEvent(domainEvent);
+
     public void TestRemoveDomainEvent(IDomainEvent domainEvent) => base.RemoveDomainEvent(domainEvent);
 }
 

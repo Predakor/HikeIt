@@ -17,9 +17,7 @@ export function TimeInDaySlider({ start, end }: Props) {
   });
 
   const endsInNewDay = end.toMinutes() < start.toMinutes();
-  const [sliderColor, backgroundColor] = endsInNewDay
-    ? colors.reversed
-    : colors.normal;
+  const [sliderColor, backgroundColor] = endsInNewDay ? colors.reversed : colors.normal;
 
   return (
     <Slider.Root

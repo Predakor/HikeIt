@@ -4,16 +4,19 @@ using Domain.FileReferences.ValueObjects;
 
 namespace Infrastructure.Commons.Storage.Decorators;
 
-internal class CachedFileStorageDecorator : IFileStorage, IDecorator<IFileStorage> {
-    readonly IFileStorage _inner;
-    readonly ICache _cache;
+internal class CachedFileStorageDecorator : IFileStorage, ICacheable<IFileStorage>
+{
+    private readonly IFileStorage _inner;
+    private readonly ICache _cache;
 
-    public CachedFileStorageDecorator(IFileStorage inner, ICache cacheService) {
+    public CachedFileStorageDecorator(IFileStorage inner, ICache cacheService)
+    {
         _cache = cacheService;
         _inner = inner;
     }
 
-    public async Task<Result<Stream>> DownloadAsync(string path, BlobContainer type) {
+    public async Task<Result<Stream>> DownloadAsync(string path, BlobContainer type)
+    {
         return await _cache
             .GetAsync<byte[]>(path)
             .MatchAsync(
@@ -22,22 +25,22 @@ internal class CachedFileStorageDecorator : IFileStorage, IDecorator<IFileStorag
             );
     }
 
-    public Task<Result<bool>> DeleteAsync(string path, BlobContainer type) {
+    public Task<Result<bool>> DeleteAsync(string path, BlobContainer type)
+    {
         return _inner.DeleteAsync(path, type);
     }
 
-    public Task<Result<SaveFileResponse>> UploadAsync(
-        FileContent file,
-        string path,
-        BlobContainer type
-    ) {
+    public Task<Result<SaveFileResponse>> UploadAsync(FileContent file, string path, BlobContainer type)
+    {
         return _inner.UploadAsync(file, path, type);
     }
 
-    async Task<Result<Stream>> DownloadAndCache(string path, BlobContainer type) {
+    private async Task<Result<Stream>> DownloadAndCache(string path, BlobContainer type)
+    {
         var result = await _inner.DownloadAsync(path, type);
 
-        if (!result.IsSuccess) {
+        if (!result.IsSuccess)
+        {
             return result;
         }
         Console.WriteLine("Loading to cache");

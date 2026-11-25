@@ -1,3 +1,3 @@
 ﻿namespace Application.Commons.Abstractions.Queries;
 
-public interface IQueryService { }
+public interface IQueryService : IService { }

@@ -16,7 +16,6 @@ public static class GpxDataFactory
 
     public static AnalyticData CreateFromConfig(ElevationDataWithConfig data)
     {
-
         var points = data.Data.Points;
 
         return data switch

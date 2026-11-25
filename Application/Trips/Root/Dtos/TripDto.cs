@@ -6,6 +6,7 @@ using Domain.Trips.Analytics.Root;
 namespace Application.Trips.Root.Dtos;
 
 public record TripBase(string Name, DateOnly TripDay);
+
 public abstract record TripDto(TripBase Base)
 {
     public sealed record Summary(Guid Id, string Name, DateOnly TripDay, Region Region)
@@ -19,13 +20,8 @@ public abstract record TripDto(TripBase Base)
     // For the admin trip picker: just enough to identify a trip, regardless of whose it is.
     public sealed record AdminSearchResult(Guid Id, string Name, string Owner);
 
-    public record Partial(
-        Guid Id,
-        TripAnalytic? TrackAnalytic,
-        FileReference? GpxFile,
-        Region? Region,
-        TripBase Base
-    ) : TripDto(Base);
+    public record Partial(Guid Id, TripAnalytic? TrackAnalytic, FileReference? GpxFile, Region? Region, TripBase Base)
+        : TripDto(Base);
 
     public record Request(Guid Id, TripBase Base) : TripDto(Base)
     {

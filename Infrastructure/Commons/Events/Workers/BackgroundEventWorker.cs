@@ -6,26 +6,28 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Commons.Events.Workers;
 
-internal class BackgroundEventWorker : BackgroundService {
-    readonly ILogger<IEvent> _logger;
-    readonly IBackgroundQueue _queue;
-    readonly IServiceProvider _services;
+internal class BackgroundEventWorker : BackgroundService
+{
+    private readonly ILogger<IEvent> _logger;
+    private readonly IBackgroundQueue _queue;
+    private readonly IServiceProvider _services;
 
-    public BackgroundEventWorker(
-        IBackgroundQueue queue,
-        IServiceProvider services,
-        ILogger<IEvent> logger
-    ) {
+    public BackgroundEventWorker(IBackgroundQueue queue, IServiceProvider services, ILogger<IEvent> logger)
+    {
         _services = services;
         _logger = logger;
         _queue = queue;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
-        while (!stoppingToken.IsCancellationRequested) {
-            try {
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
                 var @event = await _queue.DequeueAsync(stoppingToken);
-                if (@event is null) {
+                if (@event is null)
+                {
                     continue;
                 }
 
@@ -35,10 +37,12 @@ internal class BackgroundEventWorker : BackgroundService {
 
                 await dispatcher.DispatchAsync((IDomainEvent)@event, stoppingToken);
             }
-            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) {
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
                 // graceful shutdown
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.LogError("{ message}", ex.Message);
             }
         }

@@ -2,19 +2,19 @@
 
 namespace Domain.Tests.User;
 
-public class UserRegionProgressTests {
-    const int MockRegionId = 1;
+public class UserRegionProgressTests
+{
+    private const int MockRegionId = 1;
 
-    static readonly Guid MockupGuid = new();
-    static RegionProgress MockProggress => RegionProgress.Create(MockupGuid, MockRegionId, 2);
-
+    private static readonly Guid MockupGuid = new();
+    private static RegionProgress MockProggress => RegionProgress.Create(MockupGuid, MockRegionId, 2);
 
     [Fact]
-    public void Create_ShouldInitializeWithEmptyVisits() {
+    public void Create_ShouldInitializeWithEmptyVisits()
+    {
         var userId = Guid.NewGuid();
 
         var progress = RegionProgress.Create(userId, MockRegionId, 2);
-
 
         Assert.Equal(userId, progress.UserId);
         Assert.Equal(MockRegionId, progress.RegionId);
@@ -22,21 +22,24 @@ public class UserRegionProgressTests {
     }
 
     [Fact]
-    public void AddPeakVisits_ShouldAddNewPeaksWithCountOne() {
+    public void AddPeakVisits_ShouldAddNewPeaksWithCountOne()
+    {
         var progress = MockProggress;
 
         int[] peaks = [1, 2, 3];
         progress.AddPeakVisits(peaks);
 
         Assert.Equal(3, progress.PeakVisits.Count);
-        foreach (var peakId in peaks) {
+        foreach (var peakId in peaks)
+        {
             Assert.True(progress.PeakVisits.ContainsKey(peakId));
             Assert.Equal(1, progress.PeakVisits[peakId]);
         }
     }
 
     [Fact]
-    public void AddPeakVisits_ShouldIncrementVisitCountForExistingPeaks() {
+    public void AddPeakVisits_ShouldIncrementVisitCountForExistingPeaks()
+    {
         var progress = MockProggress;
 
         progress.AddPeakVisits([1, 2]);
@@ -48,7 +51,8 @@ public class UserRegionProgressTests {
     }
 
     [Fact]
-    public void RemovePeakVisits_ShouldDecrementVisitCount() {
+    public void RemovePeakVisits_ShouldDecrementVisitCount()
+    {
         var progress = MockProggress;
 
         progress.AddPeakVisits([1, 1, 2]);
@@ -59,7 +63,8 @@ public class UserRegionProgressTests {
     }
 
     [Fact]
-    public void RemovePeakVisits_ShouldRemovePeakIfVisitCountReachesZero() {
+    public void RemovePeakVisits_ShouldRemovePeakIfVisitCountReachesZero()
+    {
         var progress = MockProggress;
 
         progress.AddPeakVisits([1]);
@@ -69,7 +74,8 @@ public class UserRegionProgressTests {
     }
 
     [Fact]
-    public void RemovePeakVisits_ShouldIgnorePeaksNotInDictionary() {
+    public void RemovePeakVisits_ShouldIgnorePeaksNotInDictionary()
+    {
         var progress = MockProggress;
 
         progress.AddPeakVisits([1]);

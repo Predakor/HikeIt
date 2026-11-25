@@ -13,7 +13,9 @@ public sealed class MatchWithinDistanceFilter(MatchWithinDistanceFilter.Config c
 
     public override PeakChain Apply(PeakChain chain)
     {
-        chain.Candidates = chain.Candidates.Where(IsWithinDistance).ToList();
+        chain.Candidates = chain
+            .Candidates.Where(IsWithinDistance)
+            .ToList();
 
         return chain;
     }

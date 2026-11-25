@@ -12,7 +12,11 @@ public class AuthService : IAuthService
     private readonly ILogger<AuthService> _logger;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager, ILogger<AuthService> logger)
+    public AuthService(
+        IHttpContextAccessor httpContextAccessor,
+        UserManager<User> userManager,
+        ILogger<AuthService> logger
+    )
     {
         _httpContextAccessor = httpContextAccessor;
         _userManager = userManager;
@@ -65,7 +69,9 @@ public class AuthService : IAuthService
         var user = await query;
         if (user == null)
         {
-            var credentialType = isEmail ? "email" : "username";
+            var credentialType = isEmail
+                ? "email"
+                : "username";
             return Errors.NotFound($"user with {credentialType}: {loginOrEmail}");
         }
 
@@ -87,14 +93,14 @@ public class AuthService : IAuthService
         return await GetByLoginOrEmail(request.UserName)
             .MapAsync(u => _userManager.ResetPasswordAsync(u, request.Token, request.Password))
             .MapAsync(r => r.Succeeded);
-
     }
 
     public async Task<Result<string>> ForgotPassword(string email)
     {
-        var token = await GetByLoginOrEmail(email).MatchAsync(
-            u => _userManager.GeneratePasswordResetTokenAsync(u),
-            e => Task.FromResult("")
+        var token = await GetByLoginOrEmail(email)
+            .MatchAsync(
+                u => _userManager.GeneratePasswordResetTokenAsync(u),
+                e => Task.FromResult("")
             );
 
         if (!string.IsNullOrEmpty(token))
@@ -104,5 +110,4 @@ public class AuthService : IAuthService
 
         return "Email Sent";
     }
-
 }

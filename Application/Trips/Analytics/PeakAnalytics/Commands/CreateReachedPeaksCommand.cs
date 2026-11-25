@@ -4,15 +4,23 @@ using Domain.ReachedPeaks;
 
 namespace Application.Trips.Analytics.PeakAnalytics.Commands;
 
-record CommandData(List<PeakDto.Reached> ReachedPeaks, Guid TripId, Guid UserId);
+internal record CommandData(List<PeakDto.Reached> ReachedPeaks, Guid TripId, Guid UserId);
 
-internal class CreateReachedPeaksCommand(CommandData data) : ICommand<List<ReachedPeak>> {
-    readonly List<PeakDto.Reached> _reachedPeaks = data.ReachedPeaks;
-    readonly Guid _tripId = data.TripId;
-    readonly Guid _userId = data.UserId;
+internal class CreateReachedPeaksCommand(CommandData data) : ICommand<List<ReachedPeak>>
+{
+    private readonly List<PeakDto.Reached> _reachedPeaks = data.ReachedPeaks;
+    private readonly Guid _tripId = data.TripId;
+    private readonly Guid _userId = data.UserId;
 
-    public Result<List<ReachedPeak>> Execute() {
-        if (_reachedPeaks.Count == 0) {
+    public static ICommand<List<ReachedPeak>> Create(CommandData data)
+    {
+        return new CreateReachedPeaksCommand(data);
+    }
+
+    public Result<List<ReachedPeak>> Execute()
+    {
+        if (_reachedPeaks.Count == 0)
+        {
             return Errors.Unknown("Passed empty array");
         }
 
@@ -22,9 +30,4 @@ internal class CreateReachedPeaksCommand(CommandData data) : ICommand<List<Reach
 
         return peaks;
     }
-
-    public static ICommand<List<ReachedPeak>> Create(CommandData data) {
-        return new CreateReachedPeaksCommand(data);
-    }
-
 }

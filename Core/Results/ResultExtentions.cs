@@ -15,13 +15,12 @@ public static class ResultExtentions
         Func<ResultError, TResult> mapError
     )
     {
-        return result.IsSuccessWithValue() ? mapValue(result.Value!) : mapError(result.Error!);
+        return result.IsSuccessWithValue()
+            ? mapValue(result.Value!)
+            : mapError(result.Error!);
     }
 
-    public static Result<TOut> Bind<TIn, TOut>(
-        this Result<TIn> result,
-        Func<TIn, Result<TOut>> func
-    )
+    public static Result<TOut> Bind<TIn, TOut>(this Result<TIn> result, Func<TIn, Result<TOut>> func)
     {
         return result.IsSuccessWithValue()
             ? func(result.Value!)

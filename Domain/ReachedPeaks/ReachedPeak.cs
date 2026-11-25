@@ -7,7 +7,8 @@ using Domain.Users.Root;
 
 namespace Domain.ReachedPeaks;
 
-public class ReachedPeak : IEntity<Guid> {
+public class ReachedPeak : IEntity<Guid>
+{
     public Guid Id { get; init; }
     public bool FirstTime { get; private set; }
     public DateTime? ReachedAtTime { get; private set; }
@@ -23,7 +24,8 @@ public class ReachedPeak : IEntity<Guid> {
     public User User { get; set; }
     public Peak Peak { get; set; }
 
-    public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null) {
+    public static ReachedPeak Create(Peak peak, Trip trip, User user, DateTime? reachTime = null)
+    {
         return Create(peak.Id, trip.Id, user.Id, reachTime);
     }
 
@@ -33,8 +35,10 @@ public class ReachedPeak : IEntity<Guid> {
         Guid UserId,
         DateTime? reachTime = null,
         bool firstTime = false
-    ) {
-        var reachedPeak = new ReachedPeak {
+    )
+    {
+        var reachedPeak = new ReachedPeak
+        {
             Id = Guid.NewGuid(),
             TripId = TripId,
             UserId = UserId,
@@ -42,19 +46,22 @@ public class ReachedPeak : IEntity<Guid> {
             FirstTime = firstTime,
         };
 
-        if (reachTime.HasValue) {
+        if (reachTime.HasValue)
+        {
             reachedPeak.AddReachTime(reachTime.Value);
         }
 
         return reachedPeak;
     }
 
-    public Result<ReachedPeak> MarkAsFirstTime(bool isFirstTime) {
+    public Result<ReachedPeak> MarkAsFirstTime(bool isFirstTime)
+    {
         FirstTime = isFirstTime;
         return this;
     }
 
-    public Result<ReachedPeak> AddReachTime(DateTime time) {
+    public Result<ReachedPeak> AddReachTime(DateTime time)
+    {
         return new DateValidator()
             .NotInTheFuture()
             .Validate(time)
@@ -62,7 +69,8 @@ public class ReachedPeak : IEntity<Guid> {
             .Map(t => this);
     }
 
-    public Result<ReachedPeak> AddReachedDistance(int distance) {
+    public Result<ReachedPeak> AddReachedDistance(int distance)
+    {
         ReachedAtDistanceMeters = distance.ToSafeUint();
         return this;
     }

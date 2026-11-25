@@ -1,18 +1,17 @@
-﻿using Application.Commons.Abstractions;
+﻿using System.Collections.Concurrent;
+using Application.Commons.Abstractions;
 using Domain.Common.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Concurrent;
 
 namespace Infrastructure.Commons.Events.Dispatchers;
 
-public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : IDomainEventDispatcher {
-    static readonly ConcurrentDictionary<Type, Type> HandlerTypeDictionary = new();
-    static readonly ConcurrentDictionary<Type, Type> WrapperTypeDictionary = new();
+public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : IDomainEventDispatcher
+{
+    private static readonly ConcurrentDictionary<Type, Type> HandlerTypeDictionary = new();
+    private static readonly ConcurrentDictionary<Type, Type> WrapperTypeDictionary = new();
 
-    public async Task DispatchAsync(
-        IDomainEvent domainEvent,
-        CancellationToken cancellationToken = default
-    ) {
+    public async Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
+    {
         Console.WriteLine(" Invoking event:" + domainEvent.ToString());
         using IServiceScope scope = serviceProvider.CreateScope();
 
@@ -25,8 +24,10 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : ID
 
         IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(handlerType);
 
-        foreach (object? handler in handlers) {
-            if (handler is null) {
+        foreach (object? handler in handlers)
+        {
+            if (handler is null)
+            {
                 continue;
             }
 
@@ -38,16 +39,18 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : ID
     public async Task DispatchAsync(
         IEnumerable<IDomainEvent> domainEvents,
         CancellationToken cancellationToken = default
-    ) {
-        foreach (IDomainEvent domainEvent in domainEvents) {
+    )
+    {
+        foreach (IDomainEvent domainEvent in domainEvents)
+        {
             await DispatchAsync(domainEvent, cancellationToken);
         }
     }
 
-    abstract class HandlerWrapper {
-        public abstract Task Handle(IDomainEvent domainEvent, CancellationToken cancellationToken);
-
-        public static HandlerWrapper Create(object handler, Type domainEventType) {
+    private abstract class HandlerWrapper
+    {
+        public static HandlerWrapper Create(object handler, Type domainEventType)
+        {
             Type wrapperType = WrapperTypeDictionary.GetOrAdd(
                 domainEventType,
                 et => typeof(HandlerWrapper<>).MakeGenericType(et)
@@ -55,16 +58,17 @@ public sealed class DomainEventDispatcher(IServiceProvider serviceProvider) : ID
 
             return (HandlerWrapper)Activator.CreateInstance(wrapperType, handler)!;
         }
+
+        public abstract Task Handle(IDomainEvent domainEvent, CancellationToken cancellationToken);
     }
 
-    sealed class HandlerWrapper<T>(object handler) : HandlerWrapper
-        where T : IDomainEvent {
-        readonly IDomainEventHandler<T> _handler = (IDomainEventHandler<T>)handler;
+    private sealed class HandlerWrapper<T>(object handler) : HandlerWrapper
+        where T : IDomainEvent
+    {
+        private readonly IDomainEventHandler<T> _handler = (IDomainEventHandler<T>)handler;
 
-        public override async Task Handle(
-            IDomainEvent domainEvent,
-            CancellationToken cancellationToken
-        ) {
+        public override async Task Handle(IDomainEvent domainEvent, CancellationToken cancellationToken)
+        {
             await _handler.Handle((T)domainEvent, cancellationToken);
         }
     }

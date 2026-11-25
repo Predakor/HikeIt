@@ -1,5 +1,6 @@
 using Domain.Common.Abstractions;
 using Domain.Trips.Root.Builders.GpxDataBuilder;
+
 namespace Domain.Trips.Analytics.Shared.Filters;
 
 // Exponential moving average. Targets says what it smooths; Time, Pinned and untargeted values are left alone.

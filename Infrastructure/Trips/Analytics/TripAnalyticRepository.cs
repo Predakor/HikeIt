@@ -5,7 +5,8 @@ using Infrastructure.Commons.Repositories;
 
 namespace Infrastructure.Trips.Analytics;
 
-public class TripAnalyticRepository : CrudRepository<TripAnalytic, Guid>, ITripAnalyticRepository {
+public class TripAnalyticRepository : CrudRepository<TripAnalytic, Guid>, ITripAnalyticRepository
+{
     public TripAnalyticRepository(TripDbContext context)
         : base(context) { }
 }

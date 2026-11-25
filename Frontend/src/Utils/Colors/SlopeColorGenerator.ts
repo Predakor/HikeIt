@@ -1,5 +1,6 @@
 import { haversineDistance } from "@/Utils/haversineDistance";
 import type { GpxEntry } from "@/types/Api/gpx.types";
+import type { ExpressionSpecification } from "maplibre-gl";
 
 // slope % -> color, roughly modeled after common cycling/hiking climb-steepness scales
 const SLOPE_COLOR_STOPS: Array<{ slope: number; color: [number, number, number] }> = [
@@ -57,7 +58,7 @@ function segmentSlope(prev: GpxEntry, curr: GpxEntry, planarDistance: number): n
  * slope (%) of each segment. Requires the layer's source to be created with
  * `lineMetrics: true`.
  */
-export function buildSlopeGradientExpression(points: GpxEntry[]): unknown[] {
+export function buildSlopeGradientExpression(points: GpxEntry[]): ExpressionSpecification {
   const flatColor = slopeToColor(0);
 
   if (points.length < 2) {
@@ -99,5 +100,6 @@ export function buildSlopeGradientExpression(points: GpxEntry[]): unknown[] {
     lastProgress = progress;
   }
 
-  return ["interpolate", ["linear"], ["line-progress"], ...stops];
+  // the spec types interpolate stops as a fixed tuple, so the variable-length list needs the cast
+  return ["interpolate", ["linear"], ["line-progress"], ...stops] as ExpressionSpecification;
 }

@@ -20,7 +20,10 @@ public readonly record struct GeoBounds(double MinLat, double MinLon, double Max
         double minLon = all.Min(p => p.Lon);
         double maxLon = all.Max(p => p.Lon);
 
-        double widestLatDeg = Math.Min(Math.Max(Math.Abs(minLat), Math.Abs(maxLat)) + marginM / MetersPerDegreeLat, MaxPaddingLatDeg);
+        double widestLatDeg = Math.Min(
+            Math.Max(Math.Abs(minLat), Math.Abs(maxLat)) + marginM / MetersPerDegreeLat,
+            MaxPaddingLatDeg
+        );
         double widestLatRad = widestLatDeg * Math.PI / 180d;
         double metersPerDegreeLon = MetersPerDegreeLat * Math.Cos(widestLatRad);
 

@@ -6,16 +6,16 @@ using Domain.Common.Geography.ValueObjects;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class CleanupStage(IPointsFilterRunner runner)
-    : FilterListStageBase<IPointFilterConfig>
+public sealed class CleanupStage(IPointsFilterRunner runner) : FilterListStageBase<IPointFilterConfig>
 {
     public override StageId Id => StageId.Cleanup;
 
     public override IReadOnlyList<StageId> DependsOn => [];
 
-    protected override IReadOnlyList<IPointFilterConfig>? RequestFilters(PipelineConfig config)
+    internal static AnalyticData CleanedDataFrom(Stage.Context context)
     {
-        return config.Cleanup?.Filters;
+        return context.Upstream[StageId.Cleanup].Data as AnalyticData
+            ?? throw new InvalidOperationException("Cleanup output is missing its cleaned points.");
     }
 
     public override Task<Result<Stage.Output>> RunAsync(
@@ -32,9 +32,8 @@ public sealed class CleanupStage(IPointsFilterRunner runner)
             .MapAsync(cleaned => new Stage.Output(new AnalyticData(cleaned), steps));
     }
 
-    internal static AnalyticData CleanedDataFrom(Stage.Context context)
+    protected override IReadOnlyList<IPointFilterConfig>? RequestFilters(PipelineConfig config)
     {
-        return context.Upstream[StageId.Cleanup].Data as AnalyticData
-            ?? throw new InvalidOperationException("Cleanup output is missing its cleaned points.");
+        return config.Cleanup?.Filters;
     }
 }

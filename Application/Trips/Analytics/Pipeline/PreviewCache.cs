@@ -1,9 +1,9 @@
+using System.Security.Cryptography;
+using System.Text;
 using Application.Trips.Analytics.Dtos;
 using Application.Trips.Analytics.Pipeline.Contracts;
 using Core.Serialization;
 using Microsoft.Extensions.Caching.Memory;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Application.Trips.Analytics.Pipeline;
 
@@ -11,6 +11,27 @@ namespace Application.Trips.Analytics.Pipeline;
 public sealed class PreviewCache(IMemoryCache cache, IPipelineSettingsService settings)
 {
     private static readonly TimeSpan Lifetime = TimeSpan.FromMinutes(5);
+
+    // The defaults are what an empty config resolves to, so a settings change gives a new key.
+    private static string KeyOf(
+        ComparisonTarget target,
+        Guid tripId,
+        PipelineConfig defaults,
+        IEnumerable<StageId> requested,
+        bool includeSteps
+    )
+    {
+        var material = string.Join(
+            "\n",
+            target,
+            tripId,
+            defaults.ToJson(),
+            string.Join(",", requested.Order()),
+            includeSteps
+        );
+
+        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(material)));
+    }
 
     public async Task<IReadOnlyDictionary<string, PipeStageDto.Result>> GetOrRunAsync(
         ComparisonTarget target,
@@ -42,26 +63,5 @@ public sealed class PreviewCache(IMemoryCache cache, IPipelineSettingsService se
         }
 
         return results;
-    }
-
-    // The defaults are what an empty config resolves to, so a settings change gives a new key.
-    private static string KeyOf(
-        ComparisonTarget target,
-        Guid tripId,
-        PipelineConfig defaults,
-        IEnumerable<StageId> requested,
-        bool includeSteps
-    )
-    {
-        var material = string.Join(
-            "\n",
-            target,
-            tripId,
-            defaults.ToJson(),
-            string.Join(",", requested.Order()),
-            includeSteps
-        );
-
-        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(material)));
     }
 }

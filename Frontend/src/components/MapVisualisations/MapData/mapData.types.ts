@@ -1,11 +1,12 @@
 import type { GpxEntry } from "@/types/Api/gpx.types";
 import type { FlatPosition } from "@/Utils/Maps/routeBounds";
 import type { Feature, LineString } from "geojson";
+import type { ExpressionSpecification } from "maplibre-gl";
 
 export interface RouteData {
   data: Feature<LineString>;
   points: GpxEntry[];
-  gradient: unknown[];
+  gradient: ExpressionSpecification;
   gradientEnabled: boolean;
   color: string;
   width: number;

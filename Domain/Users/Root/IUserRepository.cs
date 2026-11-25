@@ -6,7 +6,8 @@ using Domain.Users.Stats.ValueObjects;
 
 namespace Domain.Users.Root;
 
-public interface IUserRepository : ICrudResultRepository<User, Guid> {
+public interface IUserRepository : ICrudResultRepository<User, Guid>
+{
     Task<bool> Create(User newUser);
     Task<Result<bool>> UpdateStats(
         Guid userId,

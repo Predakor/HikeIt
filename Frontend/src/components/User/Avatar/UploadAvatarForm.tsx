@@ -3,18 +3,21 @@ import { PrimaryButton } from "@/components/ui/Buttons";
 import { MutationResult } from "@/components/ui/Results/MutationResult";
 import useUserMutations from "@/hooks/User/useUserMutations";
 import { Avatar, Field, Flex, Show, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function UploadAvatarForm() {
   const [avatarPreview, setAvatarPreview] = useState<string>();
   const [avatar, setAvatar] = useState<File>();
   const { updateAvatar } = useUserMutations();
 
-  useEffect(() => {
-    if (avatar) {
-      setAvatarPreview(URL.createObjectURL(avatar));
+  const handleFileChange = (file: File) => {
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview);
     }
-  }, [avatar]);
+
+    setAvatar(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
 
   const handleUpload = () => {
     if (updateAvatar.isPending || !avatar) {
@@ -30,7 +33,7 @@ export function UploadAvatarForm() {
           requestState={updateAvatar}
           errorMessage={{
             title: "Failed to upload avatar",
-            description: updateAvatar.error?.message!,
+            description: updateAvatar.error?.message ?? "",
           }}
         />
       </Show>
@@ -47,7 +50,7 @@ export function UploadAvatarForm() {
       <Field.Root>
         <DropFile
           allowedFiles={[".png", ".jpg", ".webp", ".avif"]}
-          onFileChange={setAvatar}
+          onFileChange={handleFileChange}
           label="Add user avatar"
         />
       </Field.Root>

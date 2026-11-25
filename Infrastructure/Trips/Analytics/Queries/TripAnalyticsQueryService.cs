@@ -20,6 +20,16 @@ public class TripAnalyticsQueryService : ITripAnalyticsQueryService
 
     private IQueryable<TripAnalytic> Analytics => _context.TripAnalytics.AsNoTracking();
 
+    private static Full MapToDto(TripAnalytic data, PeakAnalyticsDto? peakAnalyticsDto)
+    {
+        var elevationDto = data.ElevationProfile?.ToDto();
+        var peakAnalyticDto = peakAnalyticsDto ?? null;
+        var timeAnalyticDto = data.TimeAnalytics ?? null;
+        var routeAnalyticsDto = data.RouteAnalytics ?? null;
+
+        return new Full(routeAnalyticsDto, timeAnalyticDto, peakAnalyticDto, elevationDto, data.Id);
+    }
+
     public async Task<Result<Full>> GetCompleteAnalytics(Guid id)
     {
         var analytics = await Analytics
@@ -32,10 +42,11 @@ public class TripAnalyticsQueryService : ITripAnalyticsQueryService
             return Errors.NotFound($"analytics with id: {id}");
         }
 
-        var peakAnalytics = analytics.PeaksAnalytic is not null ? await GetPeakAnalytics(id) : null;
+        var peakAnalytics = analytics.PeaksAnalytic is not null
+            ? await GetPeakAnalytics(id)
+            : null;
 
-        if (analytics.PeaksAnalytic != null)
-        { }
+        if (analytics.PeaksAnalytic != null) { }
 
         return MapToDto(analytics, peakAnalytics?.Value);
     }
@@ -87,17 +98,5 @@ public class TripAnalyticsQueryService : ITripAnalyticsQueryService
         return analytics is null
             ? Errors.NotFound(nameof(RoutePath), "id", id)
             : analytics;
-
     }
-
-    private static Full MapToDto(TripAnalytic data, PeakAnalyticsDto? peakAnalyticsDto)
-    {
-        var elevationDto = data.ElevationProfile?.ToDto();
-        var peakAnalyticDto = peakAnalyticsDto ?? null;
-        var timeAnalyticDto = data.TimeAnalytics ?? null;
-        var routeAnalyticsDto = data.RouteAnalytics ?? null;
-
-        return new Full(routeAnalyticsDto, timeAnalyticDto, peakAnalyticDto, elevationDto, data.Id);
-    }
-
 }

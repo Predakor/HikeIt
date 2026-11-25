@@ -2,6 +2,7 @@
 using Domain.Common.Abstractions;
 
 namespace Domain.AppSettings.Interfaces;
+
 public interface IAppSettingsRepository : ICrudResultRepository<AppSetting, int>
 {
     Task<Result<AppSetting>> GetBySettingTypeAsync(AppSettingType settingType, CancellationToken ct);

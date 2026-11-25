@@ -1,8 +1,8 @@
-﻿using Api.Commons.Extentions;
+﻿using System.Text.Json;
+using Api.Commons.Extentions;
 using Application.AppSettings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace Api.Controllers.AppSettings;
 
@@ -21,18 +21,24 @@ public class AppSettingsController : ControllerBase
     [HttpGet]
     public Task<IActionResult> GetAll(CancellationToken ct)
     {
-        return service.GetAllAsync(ct).ToActionResultAsync();
+        return service
+            .GetAllAsync(ct)
+            .ToActionResultAsync();
     }
 
     [HttpDelete("{id}")]
     public Task<IActionResult> Remove(int id, CancellationToken ct)
     {
-        return service.DeleteSettingAsync(id, ct).ToActionResultAsync();
+        return service
+            .DeleteSettingAsync(id, ct)
+            .ToActionResultAsync();
     }
 
     [HttpPut("{id}")]
     public Task<IActionResult> Update(int id, JsonDocument jsonSetting, CancellationToken ct)
     {
-        return service.Update(id, jsonSetting, ct).ToActionResultAsync();
+        return service
+            .Update(id, jsonSetting, ct)
+            .ToActionResultAsync();
     }
 }

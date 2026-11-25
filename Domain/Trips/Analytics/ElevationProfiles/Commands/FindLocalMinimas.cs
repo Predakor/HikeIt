@@ -1,3 +1,3 @@
 ﻿namespace Domain.Trips.Analytics.ElevationProfiles.Commands;
-public class FindLocalMinimas {
-}
+
+public class FindLocalMinimas { }

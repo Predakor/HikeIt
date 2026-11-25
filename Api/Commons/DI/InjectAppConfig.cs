@@ -12,18 +12,13 @@ internal static partial class DIextentions
             .AddJsonFile("appsettings.json", true)
             .AddEnvironmentVariables();
 
-        builder.Services.Configure<SeedingOptions>(
-            builder.Configuration.GetSection(SeedingOptions.Seeding)
-        );
+        builder.Services.Configure<SeedingOptions>(builder.Configuration.GetSection(SeedingOptions.Seeding));
 
-        builder.Services.Configure<StorageOptions>(
-            builder.Configuration.GetSection(StorageOptions.Path)
-        );
+        builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(StorageOptions.Path));
 
         if (builder.Environment.IsDevelopment())
         {
             builder.Configuration.AddUserSecrets<Program>();
         }
     }
-
 }

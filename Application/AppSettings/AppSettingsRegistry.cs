@@ -1,13 +1,12 @@
-﻿using Core.Serialization;
+﻿using System.Text.Json.Nodes;
+using Core.Serialization;
 using Domain.AppSettings.Root;
 using Domain.AppSettings.Settings;
-using System.Text.Json.Nodes;
 
 namespace Application.AppSettings;
 
 public static class AppSettingsRegistry
 {
-
     private static readonly Dictionary<AppSettingType, Type> map = new()
     {
         { AppSettingType.GpxDataProcessing, typeof(GpxDataProcessingSetting) },

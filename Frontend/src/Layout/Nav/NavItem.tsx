@@ -24,8 +24,6 @@ export function NavItem({ path, label, options = defaultOptions }: Props) {
     transition: "scale 100ms",
   };
 
-  options?.preload ?? "onHover";
-
   useEffect(() => {
     if (options?.preload === "onRender") {
       preload(path);

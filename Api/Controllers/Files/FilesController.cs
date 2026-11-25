@@ -6,9 +6,11 @@ namespace Api.Controllers.Files;
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
-public class FilesController : ControllerBase {
+public class FilesController : ControllerBase
+{
     [HttpGet("demo/trip")]
-    public async Task<IActionResult> GetDemoTrip() {
+    public async Task<IActionResult> GetDemoTrip()
+    {
         await Task.CompletedTask;
         var fileUrl = Path.Combine("wwwroot", "demo", "wielka-sowa-trip.gpx");
         var bytes = await System.IO.File.ReadAllBytesAsync(fileUrl);

@@ -1,6 +1,6 @@
-﻿using Domain.AppSettings.Root;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Nodes;
+using Domain.AppSettings.Root;
 
 namespace Application.AppSettings.DTOs;
 
@@ -8,7 +8,9 @@ public sealed record UpdateAppSettingDto(int Id, JsonDocument Value);
 
 public sealed record AppSettingDto
 {
-    public static IList<AppSettingDto> FromAppSettingList(IEnumerable<AppSetting> setting) => [.. setting.Select(FromAppSetting)];
+    public static IList<AppSettingDto> FromAppSettingList(IEnumerable<AppSetting> setting) =>
+        [.. setting.Select(FromAppSetting)];
+
     public static AppSettingDto FromAppSetting(AppSetting setting)
     {
         return new()
@@ -17,7 +19,7 @@ public sealed record AppSettingDto
             Name = setting.Name,
             Type = setting.SettingType,
             Value = setting.JsonValue!,
-            Schema = AppSettingsRegistry.GetSchema(setting.SettingType)
+            Schema = AppSettingsRegistry.GetSchema(setting.SettingType),
         };
     }
 
@@ -26,6 +28,4 @@ public sealed record AppSettingDto
     public required JsonDocument Value { get; init; }
     public required JsonNode Schema { get; init; }
     public AppSettingType Type { get; init; }
-
 }
-

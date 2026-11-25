@@ -18,8 +18,17 @@ public sealed record PeakCandidate(GpxPointWithDistance Point, Peak? Peak = null
             return [];
         }
 
-        var gains = data.Gains ?? (data.Points.Count > 1 ? data.Points.ToGains() : []);
-        var candidates = new List<PeakCandidate>(data.Points.Count) { new(new GpxPointWithDistance(data.Points[0], 0)) };
+        var gains =
+            data.Gains
+            ?? (
+                data.Points.Count > 1
+                    ? data.Points.ToGains()
+                    : []
+            );
+        var candidates = new List<PeakCandidate>(data.Points.Count)
+        {
+            new(new GpxPointWithDistance(data.Points[0], 0)),
+        };
 
         double distanceFromStart = 0;
         for (int i = 1; i < data.Points.Count; i++)

@@ -2,14 +2,7 @@ import { IconDownload, IconExternal } from "@/Icons/Icons";
 import DropFile from "@/components/ui/Inputs/File/DropFile";
 import Divider from "@/components/ui/Divider/Divider";
 import { apiPath } from "@/data/apiPaths";
-import {
-  Button,
-  Card,
-  Field,
-  Link,
-  LinkOverlay,
-  SimpleGrid,
-} from "@chakra-ui/react";
+import { Button, Card, Field, Link, LinkOverlay, SimpleGrid } from "@chakra-ui/react";
 import type { ReactElement } from "react";
 
 const fileOptionDescription = `
@@ -31,25 +24,15 @@ interface Props {
 
 function AddTripInfo({ fileChangeHandler }: Props) {
   return (
-    <SimpleGrid
-      gridTemplateColumns={{ base: "", lg: "1fr auto 1fr" }}
-      gap={{ base: 4, lg: 24 }}
-    >
+    <SimpleGrid gridTemplateColumns={{ base: "", lg: "1fr auto 1fr" }} gap={{ base: 4, lg: 24 }}>
       <OptionCard title={"Use Gpx File"} description={fileOptionDescription}>
         <Field.Root flexGrow={1}>
-          <DropFile
-            allowedFiles={[".gpx"]}
-            onFileChange={fileChangeHandler}
-            label="Add Gpx file"
-          />
+          <DropFile allowedFiles={[".gpx"]} onFileChange={fileChangeHandler} label="Add Gpx file" />
         </Field.Root>
       </OptionCard>
       <Divider />
 
-      <OptionCard
-        title={"Create Mannualy"}
-        description={noFileOptionDescription}
-      >
+      <OptionCard title={"Create Mannualy"} description={noFileOptionDescription}>
         <SimpleGrid templateColumns={"1fr 1fr"} gap={4}>
           <Button colorPalette={"blue"} size={"2xl"} disabled>
             Manual Creation
@@ -62,12 +45,7 @@ function AddTripInfo({ fileChangeHandler }: Props) {
             <IconDownload />
           </Button>
           <Button colorPalette={"green"} gridColumn={"1 / span 2"} size={"2xl"}>
-            <LinkOverlay
-              asChild
-              href={createRouteLink}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <LinkOverlay asChild href={createRouteLink} target="_blank" rel="noopener noreferrer">
               <Link unstyled />
             </LinkOverlay>
             Generate route in external website

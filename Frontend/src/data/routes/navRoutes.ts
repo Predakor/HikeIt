@@ -1,10 +1,4 @@
-import {
-  BadgesPage,
-  LandingPage,
-  RegionsSummaries,
-  TripsPage,
-  UserStatsPage,
-} from "@/pages";
+import { BadgesPage, LandingPage, RegionsSummaries, TripsPage, UserStatsPage } from "@/pages";
 import type { RouteItem } from "./route.types";
 
 export const navRoutes: RouteItem[] = [

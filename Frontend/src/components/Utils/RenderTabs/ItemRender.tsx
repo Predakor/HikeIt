@@ -2,7 +2,7 @@ import type { EntryItem } from "@/types/Utils/order.types";
 import type { BaseProps } from "./typesRender";
 
 interface ItemRenderProps<T> extends BaseProps<T> {
-  entry: EntryItem<keyof T, T>;
+  entry: EntryItem<keyof T>;
 }
 
 export function ItemRender<T>({ entry, data, Renderer }: ItemRenderProps<T>) {

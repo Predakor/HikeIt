@@ -100,7 +100,9 @@ public class Trip : AggregateRoot<Guid, Trip>
 
     public Result<Trip> SetDate(DateOnly date)
     {
-        var validTripDay = new DateOnlyValidator().NotInTheFuture().Validate(date);
+        var validTripDay = new DateOnlyValidator()
+            .NotInTheFuture()
+            .Validate(date);
         if (validTripDay.HasErrors(out var error))
         {
             return error;

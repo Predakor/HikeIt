@@ -5,9 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Users.Stats;
 
-internal class UserStatsConfiguration : IEntityTypeConfiguration<UserStats> {
-    public void Configure(EntityTypeBuilder<UserStats> builder) {
+internal class UserStatsConfiguration : IEntityTypeConfiguration<UserStats>
+{
+    public void Configure(EntityTypeBuilder<UserStats> builder)
+    {
         builder.HasKey(x => x.Id);
-        builder.HasOne<User>().WithOne(u => u.Stats).HasForeignKey<UserStats>(s => s.Id);
+        builder
+            .HasOne<User>()
+            .WithOne(u => u.Stats)
+            .HasForeignKey<UserStats>(s => s.Id);
     }
 }

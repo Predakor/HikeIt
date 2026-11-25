@@ -1,8 +1,8 @@
-import type { Peak } from "@/types/Api/peak.types";
+import type { Peak as PeakDto } from "@/types/Api/peak.types";
 import { Flex, For, Heading, Stack, Text } from "@chakra-ui/react";
 import { PeakIcon } from "../Trip/Details/Common/PeakIcon";
 
-export default function Peak({ peak }: { peak: Peak }) {
+export default function Peak({ peak }: { peak: PeakDto }) {
   return (
     <Flex alignItems={"center"} gapX={4}>
       <PeakIcon />
@@ -14,6 +14,6 @@ export default function Peak({ peak }: { peak: Peak }) {
   );
 }
 
-export function PeakList({ peaks }: { peaks: Peak[] }) {
+export function PeakList({ peaks }: { peaks: PeakDto[] }) {
   return <For each={peaks}>{(peak) => <Peak peak={peak} key={peak.id} />}</For>;
 }

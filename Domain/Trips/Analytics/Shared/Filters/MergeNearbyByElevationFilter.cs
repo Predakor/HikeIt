@@ -13,7 +13,9 @@ public sealed class MergeNearbyByElevationFilter(MergeNearbyByElevationFilter.Co
 
     public override PeakChain Apply(PeakChain chain)
     {
-        chain.Candidates = chain.Candidates.ToList().MergeNearbyPeaksByElevation(config.ElevationDeltaM);
+        chain.Candidates = chain
+            .Candidates.ToList()
+            .MergeNearbyPeaksByElevation(config.ElevationDeltaM);
 
         return chain;
     }

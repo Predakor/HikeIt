@@ -21,7 +21,10 @@ public sealed class LocalMaximaFilter(LocalMaximaFilter.Config config) : SyncFil
     {
         List<PeakCandidate> maxima = [];
         bool hasRisenSinceLastPeak = false;
-        double lowestSinceLastPeak = points.Count > 0 ? points[0].Ele : 0;
+        double lowestSinceLastPeak =
+            points.Count > 0
+                ? points[0].Ele
+                : 0;
 
         for (int i = 1; i < points.Count - 1; i++)
         {

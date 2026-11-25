@@ -10,7 +10,7 @@ import { ElevationGainPerUnit } from "./ElevationGainPerUnit";
 export function SlopeSection({ data }: RouteAnalyticsProps) {
   const averageSlope = arrayUtils.average(
     [data.averageAscentSlopePercent, data.averageDescentSlopePercent],
-    Math.abs
+    Math.abs,
   );
 
   const slopes = {
@@ -22,23 +22,15 @@ export function SlopeSection({ data }: RouteAnalyticsProps) {
   const addons = {
     unit: "%",
     formatt: GenericFormatter,
-  } satisfies StatAddons<any>;
+  } satisfies StatAddons<number>;
 
   return (
     <SimpleCard title="Slopes">
       <Stack gapY={8}>
         <Flex>
-          <RowStat
-            value={slopes.descent}
-            label={"Average Descent"}
-            addons={addons}
-          />
+          <RowStat value={slopes.descent} label={"Average Descent"} addons={addons} />
 
-          <RowStat
-            value={slopes.ascent}
-            label={"Average Ascent"}
-            addons={addons}
-          />
+          <RowStat value={slopes.ascent} label={"Average Ascent"} addons={addons} />
         </Flex>
         <ElevationGainPerUnit base={slopes.average} />
       </Stack>

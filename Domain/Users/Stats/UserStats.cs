@@ -124,6 +124,5 @@ public class UserStats : IEntity<Guid>
         LastHikeDate = null;
         LongestTripMeters = 0;
         LongestTripMinutes = TimeSpan.Zero;
-
     }
 }

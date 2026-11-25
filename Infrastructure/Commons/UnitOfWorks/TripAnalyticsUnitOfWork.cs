@@ -14,8 +14,9 @@ using Infrastructure.Users.Root;
 
 namespace Infrastructure.Commons.UnitOfWorks;
 
-public class TripAnalyticsUnitOfWork : ITripAnalyticUnitOfWork {
-    readonly TripDbContext _dbContext;
+public class TripAnalyticsUnitOfWork : ITripAnalyticUnitOfWork
+{
+    private readonly TripDbContext _dbContext;
 
     public IPeakAnalyticRepository PeakAnalytics { get; }
     public IElevationProfileRepository Elevations { get; }
@@ -24,7 +25,8 @@ public class TripAnalyticsUnitOfWork : ITripAnalyticUnitOfWork {
     public ITripRepository TripRepository { get; }
     public IUserRepository UserRepository { get; }
 
-    public TripAnalyticsUnitOfWork(TripDbContext dbContext) {
+    public TripAnalyticsUnitOfWork(TripDbContext dbContext)
+    {
         _dbContext = dbContext;
         Elevations = new ElevationProfileRepository(_dbContext);
         TripAnalytics = new TripAnalyticRepository(_dbContext);
@@ -34,7 +36,8 @@ public class TripAnalyticsUnitOfWork : ITripAnalyticUnitOfWork {
         UserRepository = new UserRepository(_dbContext);
     }
 
-    public async Task<Result<bool>> SaveChangesAsync() {
+    public async Task<Result<bool>> SaveChangesAsync()
+    {
         var isSaved = await _dbContext.SaveChangesAsync() > 0;
 
         return isSaved

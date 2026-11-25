@@ -22,7 +22,10 @@ public static class PointFieldsExtensions
         bool selectsNothing = fields == PointFields.None;
         if (selectsNothing)
         {
-            throw new ArgumentException("At least one of Latitude, Longitude or Elevation must be selected.", paramName);
+            throw new ArgumentException(
+                "At least one of Latitude, Longitude or Elevation must be selected.",
+                paramName
+            );
         }
     }
 }

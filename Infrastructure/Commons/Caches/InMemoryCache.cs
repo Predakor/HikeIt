@@ -3,16 +3,20 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Infrastructure.Commons.Caches;
 
-internal class InMemoryCache : ICache {
-    readonly IMemoryCache _cache;
+internal class InMemoryCache : ICache
+{
+    private readonly IMemoryCache _cache;
 
-    public InMemoryCache(IMemoryCache cache) {
+    public InMemoryCache(IMemoryCache cache)
+    {
         _cache = cache;
     }
 
-    public async Task<Result<T>> GetAsync<T>(string key, CancellationToken ct = default) {
+    public async Task<Result<T>> GetAsync<T>(string key, CancellationToken ct = default)
+    {
         await Task.CompletedTask;
-        if (_cache.TryGetValue<T>(key, out var value)) {
+        if (_cache.TryGetValue<T>(key, out var value))
+        {
             return value!;
         }
         return Errors.NotFound(nameof(T), key);
@@ -23,24 +27,28 @@ internal class InMemoryCache : ICache {
         Func<Task<Result<T>>> factory,
         TimeSpan? ttl = null,
         CancellationToken ct = default
-    ) {
+    )
+    {
         await Task.CompletedTask;
         var result = await _cache.GetOrCreateAsync(
             key,
-            e => {
+            e =>
+            {
                 e.SetAbsoluteExpiration(ttl ?? TimeSpan.FromMinutes(5));
                 return factory();
             }
         );
 
-        if (result is null) {
+        if (result is null)
+        {
             return Errors.Unknown("Failed to use cache");
         }
 
         return result;
     }
 
-    public async Task<Result<bool>> RemoveAsync(string key, CancellationToken ct = default) {
+    public async Task<Result<bool>> RemoveAsync(string key, CancellationToken ct = default)
+    {
         _cache.Remove(key);
         return await Task.FromResult(true);
     }
@@ -50,7 +58,8 @@ internal class InMemoryCache : ICache {
         T value,
         TimeSpan? ttl = null,
         CancellationToken ct = default
-    ) {
+    )
+    {
         _cache.Set(key, value, ttl ?? TimeSpan.FromMinutes(5));
         return await Task.FromResult(true);
     }

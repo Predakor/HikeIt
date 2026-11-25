@@ -5,7 +5,8 @@ using Domain.Users.Root;
 
 namespace Domain.ReachedPeaks;
 
-public interface IReachedPeakService {
+public interface IReachedPeakService : IService
+{
     Task<Result<List<ReachedPeak>>> CreateReachedPeaks(AnalyticData data, Trip trip);
 
     Result<ReachedPeak> ToReachedPeak(Peak peak, Trip trip, User user);

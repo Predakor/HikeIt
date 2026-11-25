@@ -1,11 +1,11 @@
-﻿using Application.Commons.Abstractions;
+﻿using System.Collections.Immutable;
+using Application.Commons.Abstractions;
 using Application.Locations.Regions;
 using Domain.ReachedPeaks.ValueObjects;
 using Domain.Trips.Analytics.Peaks.Events;
 using Domain.Users.RegionProgressions.Factories;
 using Domain.Users.RegionProgressions.ValueObjects;
 using Domain.Users.Root;
-using System.Collections.Immutable;
 
 namespace Application.Users.RegionProgressions.EventHandlers;
 
@@ -14,19 +14,13 @@ internal class ReachedNewPeak_UpdateStatsHandler : IDomainEventHandler<ReachedNe
     private readonly IUserRepository _userRepository;
     private readonly IRegionQueryService _regionQueries;
 
-    public ReachedNewPeak_UpdateStatsHandler(
-        IUserRepository userRepository,
-        IRegionQueryService regionQueries
-    )
+    public ReachedNewPeak_UpdateStatsHandler(IUserRepository userRepository, IRegionQueryService regionQueries)
     {
         _userRepository = userRepository;
         _regionQueries = regionQueries;
     }
 
-    public async Task Handle(
-        ReachedNewPeak domainEvent,
-        CancellationToken cancellationToken = default
-    )
+    public async Task Handle(ReachedNewPeak domainEvent, CancellationToken cancellationToken = default)
     {
         var (UserId, _, NewPeaks) = domainEvent.Data;
 
@@ -45,9 +39,7 @@ internal class ReachedNewPeak_UpdateStatsHandler : IDomainEventHandler<ReachedNe
 
         foreach (var item in regionUpdates)
         {
-            var regionProgress = user.RegionProgresses.FirstOrDefault(rp =>
-                rp.RegionId == item.RegionId
-            );
+            var regionProgress = user.RegionProgresses.FirstOrDefault(rp => rp.RegionId == item.RegionId);
 
             if (regionProgress is null)
             {
@@ -67,11 +59,7 @@ internal class ReachedNewPeak_UpdateStatsHandler : IDomainEventHandler<ReachedNe
         await _regionQueries
             .GetPeakCount(progressUpdate.RegionId)
             .MapAsync(peaksInRegionCount =>
-                RegionProgressFactory.FromProgressUpdate(
-                    progressUpdate,
-                    user.Id,
-                    (short)peaksInRegionCount
-                )
+                RegionProgressFactory.FromProgressUpdate(progressUpdate, user.Id, (short)peaksInRegionCount)
             )
             .MapAsync(_userRepository.CreateRegionProgress);
     }

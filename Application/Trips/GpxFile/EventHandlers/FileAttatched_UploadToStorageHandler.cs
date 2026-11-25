@@ -23,10 +23,7 @@ internal class FileAttatched_UploadToStorageHandler : IDomainEventHandler<GpxFil
         _logger = logger;
     }
 
-    public async Task Handle(
-        GpxFileAttatchedEvent domainEvent,
-        CancellationToken cancellationToken = default
-    )
+    public async Task Handle(GpxFileAttatchedEvent domainEvent, CancellationToken cancellationToken = default)
     {
         (Guid FileId, Guid TripId) = domainEvent;
 

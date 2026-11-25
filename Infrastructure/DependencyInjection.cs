@@ -1,4 +1,6 @@
-﻿using Application.Commons.Abstractions;
+﻿using System.Collections.Immutable;
+using System.Reflection;
+using Application.Commons.Abstractions;
 using Application.FileReferences;
 using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Root.Interfaces;
@@ -10,13 +12,10 @@ using Infrastructure.Commons.Events.Publishers;
 using Infrastructure.Commons.Events.Queues;
 using Infrastructure.Commons.Events.Workers;
 using Infrastructure.Commons.Storage;
-using Infrastructure.Commons.Storage.Decorators;
 using Infrastructure.Commons.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Immutable;
-using System.Reflection;
 
 namespace Infrastructure;
 
@@ -32,34 +31,23 @@ public static class DependencyInjection
 
         return services
             .AddDatabase(configuration, isDevelopment)
-            .AddCache()
-            .AddStorages()
+            .AddMemoryCache()
+            .AddSingleton<ICache, InMemoryCache>()
+            .AddSingleton<IFileStorage, AzureBlobStorage>()
             .AddEvents()
             .AddRepositories(assemblies);
     }
 
     private static IServiceCollection AddEvents(this IServiceCollection services)
     {
-        services.AddSingleton<IBackgroundQueue, InMemoryBackgroundQueue>();
-        services.AddSingleton<IEventPublisher, EventPublisher>();
-
         services.AddTransient<IDomainEventDispatcher, DomainEventDispatcher>();
         services.Decorate<IDomainEventDispatcher, LoggedEventDispatcherDecorator>();
 
+        services.AddSingleton<IBackgroundQueue, InMemoryBackgroundQueue>();
+        services.AddSingleton<IEventPublisher, EventPublisher>();
+
         services.AddHostedService<BackgroundEventWorker>();
         return services;
-    }
-
-    private static IServiceCollection AddCache(this IServiceCollection services)
-    {
-        return services.AddMemoryCache().AddSingleton<ICache, InMemoryCache>();
-    }
-
-    private static IServiceCollection AddStorages(this IServiceCollection services)
-    {
-        return services
-            .AddSingleton<IFileStorage, AzureBlobStorage>()
-            .Decorate<IFileStorage, CachedFileStorageDecorator>();
     }
 
     private static IServiceCollection AddRepositories(
@@ -70,11 +58,9 @@ public static class DependencyInjection
         return services
             .AddScoped<ITripAnalyticUnitOfWork, TripAnalyticsUnitOfWork>()
             .Scan(scan =>
-                scan.FromAssemblies(assemblies)
-                    .AddClasses(
-                        classes => classes.AssignableTo(typeof(IRepository<,>)),
-                        publicOnly: false
-                    )
+                scan
+                    .FromAssemblies(assemblies)
+                    .AddClasses(classes => classes.AssignableTo(typeof(IRepository<,>)), publicOnly: false)
                     .AsImplementedInterfaces()
                     .WithScopedLifetime()
             );
@@ -87,12 +73,12 @@ public static class DependencyInjection
     )
     {
         string connectionString =
-            configuration.GetConnectionString("TripDbCS")
-            ?? throw new Exception("DbConnectionString is empty or null");
+            configuration.GetConnectionString("TripDbCS") ?? throw new Exception("DbConnectionString is empty or null");
 
         services.AddDbContext<TripDbContext>(options =>
         {
-            options.UseNpgsql(connectionString,
+            options.UseNpgsql(
+                connectionString,
                 builder =>
                 {
                     builder.UseNetTopologySuite();
@@ -102,7 +88,9 @@ public static class DependencyInjection
 
             if (isDevelopment)
             {
-                options.EnableSensitiveDataLogging().EnableDetailedErrors();
+                options
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors();
             }
         });
 

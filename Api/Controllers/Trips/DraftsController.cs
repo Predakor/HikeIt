@@ -18,13 +18,14 @@ namespace Api.Controllers.Trips;
 [Authorize]
 [ApiController]
 [Route("api/trips/[controller]/")]
-public class DraftsController {
-    readonly IGpxService _gpxService;
-    readonly IAuthService _authService;
-    readonly ITripService _tripService;
-    readonly IGpxFileService _fileService;
-    readonly IDraftService<TripDraft> _draftService;
-    readonly ITripAnalyticService _analyticService;
+public class DraftsController
+{
+    private readonly IGpxService _gpxService;
+    private readonly IAuthService _authService;
+    private readonly ITripService _tripService;
+    private readonly IGpxFileService _fileService;
+    private readonly IDraftService<TripDraft> _draftService;
+    private readonly ITripAnalyticService _analyticService;
 
     public DraftsController(
         IGpxService gpxService,
@@ -33,7 +34,8 @@ public class DraftsController {
         IGpxFileService fileService,
         IDraftService<TripDraft> draftService,
         ITripAnalyticService tripAnalyticService
-    ) {
+    )
+    {
         _gpxService = gpxService;
         _authService = authService;
         _fileService = fileService;
@@ -42,16 +44,39 @@ public class DraftsController {
         _analyticService = tripAnalyticService;
     }
 
-    async Task<Result<TripDraft>> GetDraft(Guid id) {
-        var draft = await _draftService.Get(id);
-        if (draft is null) {
-            return Errors.NotFound("draft", id);
-        }
-        return draft;
+    private static Task<Result<FileContent>> ValidateAndExtractGpxFile(IFormFile file)
+    {
+        return FileValidator
+            .ValidateGpx(file)
+            .MapAsync(f => f.ToFileContent());
+    }
+
+    private static Func<Trip, Task> PartialUpdate(UpdateTripDto update)
+    {
+        return async (trip) =>
+        {
+            if (update.TripName is not null)
+            {
+                trip.Name = update.TripName;
+            }
+
+            if (update.TripDay.HasValue)
+            {
+                trip.SetDate(update.TripDay.Value);
+            }
+
+            if (update.RegionId.HasValue)
+            {
+                trip.ChangeRegion(update.RegionId.Value);
+            }
+
+            await Task.CompletedTask;
+        };
     }
 
     [HttpGet("{draftId}/get")]
-    public async Task<IActionResult> Get(Guid draftId) {
+    public async Task<IActionResult> Get(Guid draftId)
+    {
         return await _authService
             .WithLoggedUser()
             .MapAsync(_ => _draftService.Get(draftId))
@@ -59,7 +84,8 @@ public class DraftsController {
     }
 
     [HttpPost("new")]
-    public async Task<IActionResult> Create() {
+    public async Task<IActionResult> Create()
+    {
         return await _authService
             .WithLoggedUserId()
             .MapAsync(TripDraft.Create)
@@ -69,14 +95,16 @@ public class DraftsController {
     }
 
     [HttpPatch("{draftId}")]
-    public async Task<IActionResult> UpdateDraft(Guid draftId, [FromBody] UpdateTripDto update) {
+    public async Task<IActionResult> UpdateDraft(Guid draftId, [FromBody] UpdateTripDto update)
+    {
         return await GetDraft(draftId)
             .MapAsync(draft => draft.AddTask(PartialUpdate(update)))
             .ToActionResultAsync();
     }
 
     [HttpPost("{draftId}/submit")]
-    public async Task<IActionResult> SubmitDraft(Guid draftId) {
+    public async Task<IActionResult> SubmitDraft(Guid draftId)
+    {
         return await GetDraft(draftId)
             .MapAsync(draft => draft.AwaitAll())
             .BindAsync(_tripService.CreateAsync)
@@ -85,7 +113,8 @@ public class DraftsController {
     }
 
     [HttpPost("{draftId}/file")]
-    public async Task<IActionResult> AttachFile(Guid draftId, IFormFile file) {
+    public async Task<IActionResult> AttachFile(Guid draftId, IFormFile file)
+    {
         var draft = await _draftService.Get(draftId);
 
         return await ValidateAndExtractGpxFile(file)
@@ -96,39 +125,34 @@ public class DraftsController {
             .ToActionResultAsync(ResultType.created);
     }
 
-    static Task<Result<FileContent>> ValidateAndExtractGpxFile(IFormFile file) {
-        return FileValidator.ValidateGpx(file).MapAsync(f => f.ToFileContent());
+    private async Task<Result<TripDraft>> GetDraft(Guid id)
+    {
+        var draft = await _draftService.Get(id);
+        if (draft is null)
+        {
+            return Errors.NotFound("draft", id);
+        }
+        return draft;
     }
 
-    Task<Result<CreateTripContext>> CreateContext(TripDraft draft, FileContent file) {
-        var ctx = CreateTripContext.Create(draft.Id).WithFile(file).WithTrip(draft.Trip);
+    private Task<Result<CreateTripContext>> CreateContext(TripDraft draft, FileContent file)
+    {
+        var ctx = CreateTripContext
+            .Create(draft.Id)
+            .WithFile(file)
+            .WithTrip(draft.Trip);
 
-        return _authService.WithLoggedUser().MapAsync(ctx.WithUser);
+        return _authService
+            .WithLoggedUser()
+            .MapAsync(ctx.WithUser);
     }
 
-    Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx) {
+    private Task<Result<CreateTripContext>> ProccesGpxFile(CreateTripContext ctx)
+    {
         return _fileService
             .CreateTemporrary(ctx.File, ctx.User.Id, ctx.Id)
             .TapAsync(file => ctx.Trip.AddGpxFile(file))
             .BindAsync(file => _gpxService.ExtractGpxData(ctx.File))
             .MapAsync(ctx.WithAnalyticData);
-    }
-
-    static Func<Trip, Task> PartialUpdate(UpdateTripDto update) {
-        return async (trip) => {
-            if (update.TripName is not null) {
-                trip.Name = update.TripName;
-            }
-
-            if (update.TripDay.HasValue) {
-                trip.SetDate(update.TripDay.Value);
-            }
-
-            if (update.RegionId.HasValue) {
-                trip.ChangeRegion(update.RegionId.Value);
-            }
-
-            await Task.CompletedTask;
-        };
     }
 }

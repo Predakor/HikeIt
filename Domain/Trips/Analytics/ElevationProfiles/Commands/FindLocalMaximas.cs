@@ -17,17 +17,16 @@ public static class AnalyticDataExtentions
     public static List<GpxPointWithDistance> ToLocalMaximaWithDistance(this AnalyticData data)
     {
         return LocalMaximaIndicesWithDistance(data.Points, data.Gains)
-            .Select(result => new GpxPointWithDistance(
-                data.Points[result.index],
-                (float)result.distanceFromStart
-            ))
+            .Select(result => new GpxPointWithDistance(data.Points[result.index], (float)result.distanceFromStart))
             .ToList();
     }
 
     public static List<T> WithProximityMerge<T>(this List<T> points)
         where T : IGeoPoint
     {
-        return points.MergeNearbyPeakByDistance().MergeNearbyPeaksByElevation();
+        return points
+            .MergeNearbyPeakByDistance()
+            .MergeNearbyPeaksByElevation();
     }
 
     internal static List<T> MergeNearbyPeaksByElevation<T>(this List<T> peaks, double minDistance = 50)
@@ -54,10 +53,10 @@ public static class AnalyticDataExtentions
         return peaks.GroupByDynamicWindow(minDistanceDelta, Select.Highest);
     }
 
-    internal static IEnumerable<(
-        int index,
-        double distanceFromStart
-    )> LocalMaximaIndicesWithDistance(List<GpxPoint> points, List<GpxGain>? gains)
+    internal static IEnumerable<(int index, double distanceFromStart)> LocalMaximaIndicesWithDistance(
+        List<GpxPoint> points,
+        List<GpxGain>? gains
+    )
     {
         gains ??= points.ToGains();
 
@@ -94,5 +93,10 @@ internal static class Select
         where T : IGeoPoint => groupedPoints.ElementAt((groupedPoints.Count - 1) / 2);
 
     public static T Median<T>(List<T> groupedPoints)
-        where T : IGeoPoint => Center(groupedPoints.OrderBy(p => p.Ele).ToList());
+        where T : IGeoPoint =>
+        Center(
+            groupedPoints
+                .OrderBy(p => p.Ele)
+                .ToList()
+        );
 }

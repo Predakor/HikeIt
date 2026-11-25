@@ -13,7 +13,7 @@ export type Item = {
 
 export interface Props<T> {
   items: Item[];
-  styles?: {};
+  styles?: Record<string, unknown>;
   formatValue?: Func<T, string | string>;
   unit?: UnitTypes;
 }

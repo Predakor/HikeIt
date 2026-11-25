@@ -7,14 +7,25 @@ using Domain.Trips.Analytics.Shared;
 
 namespace Application.Trips.Analytics.Pipeline.Stages;
 
-public sealed class PeakMatchingStage(IPeaksFilterRunner runner)
-    : FilterListStageBase<IPeakFilterConfig>
+public sealed class PeakMatchingStage(IPeaksFilterRunner runner) : FilterListStageBase<IPeakFilterConfig>
 {
     public override StageId Id => StageId.PeakMatching;
 
-    protected override IReadOnlyList<IPeakFilterConfig>? RequestFilters(PipelineConfig config)
+    private static Stage.Output ToOutput(PeakChain chain, List<PipeStageDto.StepTiming> steps)
     {
-        return config.PeakMatching?.Filters;
+        var matched = chain
+            .Matched.Select(ToMatchedPeak)
+            .ToList();
+
+        return new Stage.Output(new StageData.PeakMatching(chain.CandidatesBeforeLookup, matched), steps);
+    }
+
+    private static StageData.MatchedPeak ToMatchedPeak(PeakCandidate candidate)
+    {
+        var peak = candidate.Peak!;
+        var distanceM = DistanceHelpers.Distance2D(peak, candidate);
+
+        return new StageData.MatchedPeak(peak.Id, peak.Name, distanceM, peak.Height);
     }
 
     public override Task<Result<Stage.Output>> RunAsync(
@@ -31,21 +42,8 @@ public sealed class PeakMatchingStage(IPeaksFilterRunner runner)
             .MapAsync(chain => ToOutput(chain, steps));
     }
 
-    private static Stage.Output ToOutput(PeakChain chain, List<PipeStageDto.StepTiming> steps)
+    protected override IReadOnlyList<IPeakFilterConfig>? RequestFilters(PipelineConfig config)
     {
-        var matched = chain
-            .Matched
-            .Select(ToMatchedPeak)
-            .ToList();
-
-        return new Stage.Output(new StageData.PeakMatching(chain.CandidatesBeforeLookup, matched), steps);
-    }
-
-    private static StageData.MatchedPeak ToMatchedPeak(PeakCandidate candidate)
-    {
-        var peak = candidate.Peak!;
-        var distanceM = DistanceHelpers.Distance2D(peak, candidate);
-
-        return new StageData.MatchedPeak(peak.Id, peak.Name, distanceM, peak.Height);
+        return config.PeakMatching?.Filters;
     }
 }

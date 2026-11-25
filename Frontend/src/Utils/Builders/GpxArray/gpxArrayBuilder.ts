@@ -1,10 +1,6 @@
 import type { GpxArray, GpxArrayWithGains } from "@/types/Api/gpx.types";
 import { calculateStats, downsampleToMaxSize } from "../../arrayUtils";
-import {
-  calculatePointToPointGains,
-  mapFromFileToGpxArray,
-  smoothWithMedian,
-} from "./methods";
+import { calculatePointToPointGains, mapFromFileToGpxArray, smoothWithMedian } from "./methods";
 
 export class GpxArrayBuilder {
   private gpxArray: GpxArray = [];

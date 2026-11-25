@@ -6,6 +6,11 @@ namespace Domain.Tests.Pipeline;
 
 public class PointFilterTests
 {
+    private static List<MutableGpxPoint> Track(params double[] elevations) =>
+        [.. elevations.Select((ele, i) => new MutableGpxPoint(50 + i * 0.0001, 20, ele))];
+
+    private static List<double> Elevations(IEnumerable<MutableGpxPoint> points) => [.. points.Select(p => p.Ele)];
+
     [Fact]
     public void MaxSpike_ClampsEachStepToTheLimit()
     {
@@ -50,17 +55,26 @@ public class PointFilterTests
     public void MedianSmoothing_DefaultTargets_LeaveCoordinatesAlone()
     {
         var points = Track(10, 500, 10);
-        var latitudes = points.Select(p => p.Lat).ToList();
+        var latitudes = points
+            .Select(p => p.Lat)
+            .ToList();
 
         new MedianSmoothingFilter(new MedianSmoothingFilter.Config(3)).Apply(points);
 
-        Assert.Equal(latitudes, points.Select(p => p.Lat).ToList());
+        Assert.Equal(
+            latitudes,
+            points
+                .Select(p => p.Lat)
+                .ToList()
+        );
     }
 
     [Fact]
     public void MedianSmoothing_NoTargets_Throws()
     {
-        Assert.ThrowsAny<ArgumentException>(() => new MedianSmoothingFilter(new MedianSmoothingFilter.Config(3, PointFields.None)));
+        Assert.ThrowsAny<ArgumentException>(() =>
+            new MedianSmoothingFilter(new MedianSmoothingFilter.Config(3, PointFields.None))
+        );
     }
 
     [Fact]
@@ -90,7 +104,9 @@ public class PointFilterTests
     [Fact]
     public void Rounding_NoTargets_Throws()
     {
-        Assert.ThrowsAny<ArgumentException>(() => new RoundingPrecisionFilter(new RoundingPrecisionFilter.Config(1, PointFields.None)));
+        Assert.ThrowsAny<ArgumentException>(() =>
+            new RoundingPrecisionFilter(new RoundingPrecisionFilter.Config(1, PointFields.None))
+        );
     }
 
     [Fact]
@@ -122,9 +138,4 @@ public class PointFilterTests
         Assert.IsType<PinLocalMaximaFilter>(new PinLocalMaximaFilter.Config(true).CreateFilter());
         Assert.IsType<SimplifyFilter>(new SimplifyFilter.Config(3).CreateFilter());
     }
-
-    private static List<MutableGpxPoint> Track(params double[] elevations) =>
-        [.. elevations.Select((ele, i) => new MutableGpxPoint(50 + i * 0.0001, 20, ele))];
-
-    private static List<double> Elevations(IEnumerable<MutableGpxPoint> points) => [.. points.Select(p => p.Ele)];
 }

@@ -1,6 +1,7 @@
 ﻿namespace Application.Commons.Options;
 
-public class StorageOptions {
+public class StorageOptions
+{
     public const string Path = "Storage";
 
     public string Account { get; set; } = string.Empty;

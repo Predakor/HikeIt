@@ -10,8 +10,7 @@ const baseKey = "trips";
 
 export const useTripConfig = {
   queryKey: (id?: string) => [baseKey, id],
-  fetchTrip: (id: string) =>
-    api.get<TripWithBasicAnalytics>(`${baseKey}/${id}`),
+  fetchTrip: (id: string) => api.get<TripWithBasicAnalytics>(`${baseKey}/${id}`),
 };
 
 export function useTrip() {

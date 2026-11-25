@@ -9,10 +9,7 @@ public static class GpxBuilderMethods
 
     public static MutableGpxPoint ToMutable(this GpxPoint p) => new(p.Lat, p.Lon, p.Ele, p.Time);
 
-    public static List<MutableGpxPoint> SmoothWithEma(
-        this List<MutableGpxPoint> points,
-        float alpha
-    )
+    public static List<MutableGpxPoint> SmoothWithEma(this List<MutableGpxPoint> points, float alpha)
     {
         new EmaSmoothingFilter(new EmaSmoothingFilter.Config(alpha)).Apply(points);
 
@@ -26,10 +23,7 @@ public static class GpxBuilderMethods
         return data;
     }
 
-    public static List<MutableGpxPoint> ClampSpikes(
-        this List<MutableGpxPoint> points,
-        double maxChange
-    )
+    public static List<MutableGpxPoint> ClampSpikes(this List<MutableGpxPoint> points, double maxChange)
     {
         new MaxSpikeFilter(new MaxSpikeFilter.Config(maxChange)).Apply(points);
 
@@ -38,6 +32,8 @@ public static class GpxBuilderMethods
 
     public static List<MutableGpxPoint> DownSample(this List<MutableGpxPoint> points, int amount)
     {
-        return points.Where((p, i) => i % amount == 0).ToList();
+        return points
+            .Where((p, i) => i % amount == 0)
+            .ToList();
     }
 }

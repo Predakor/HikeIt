@@ -21,6 +21,7 @@ public class Result<TResult>
     }
 
     public static Result<TResult> Success<TResult>(TResult value) => new(value);
+
     public static Result<TResult> Failure(ResultError error) => new(error);
 
     public static implicit operator Result<TResult>(TResult value) => new(value);
@@ -40,6 +41,8 @@ public class Result<TResult>
 
     public TReturn Match<TReturn>(Func<TResult, TReturn> onSuccess, Func<ResultError, TReturn> onFailure)
     {
-        return IsSuccess && Value is not null ? onSuccess(Value) : onFailure(Error!);
+        return IsSuccess && Value is not null
+            ? onSuccess(Value)
+            : onFailure(Error!);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Application.AppSettings;
-using Application.AppSettings.Decorators;
-using Application.Commons.Abstractions;
+﻿using Application.Commons.Abstractions;
 using Application.Commons.Drafts;
 using Application.Trips.Analytics.Pipeline;
 using Application.Trips.Analytics.Pipeline.Contracts;
@@ -16,8 +14,7 @@ public static class DependencyInjection
         return services
             .AddDomainEvents()
             .AddDrafts()
-            .AddPipeline()
-            .DecorateAppSettings();
+            .AddPipeline();
     }
 
     // PipelinePreviewService is picked up by InjectServices (name ends with "Service"), so only the source and stages are listed here.
@@ -31,11 +28,9 @@ public static class DependencyInjection
             .AddScoped<ITerrainRunner, TerrainRunner>()
             .AddScoped<IPaceRunner, PaceRunner>()
             .Scan(scan =>
-                scan.FromAssembliesOf(typeof(DependencyInjection))
-                    .AddClasses(
-                        classes => classes.AssignableTo<IPipelineStage>(),
-                        publicOnly: false
-                    )
+                scan
+                    .FromAssembliesOf(typeof(DependencyInjection))
+                    .AddClasses(classes => classes.AssignableTo<IPipelineStage>(), publicOnly: false)
                     .As<IPipelineStage>()
                     .WithScopedLifetime()
             );
@@ -44,11 +39,9 @@ public static class DependencyInjection
     private static IServiceCollection AddDomainEvents(this IServiceCollection services)
     {
         return services.Scan(scan =>
-            scan.FromAssembliesOf(typeof(DependencyInjection))
-                .AddClasses(
-                    classes => classes.AssignableTo(typeof(IDomainEventHandler<>)),
-                    publicOnly: false
-                )
+            scan
+                .FromAssembliesOf(typeof(DependencyInjection))
+                .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
         );
@@ -58,10 +51,4 @@ public static class DependencyInjection
     {
         return services.AddSingleton(typeof(IDraftService<>), typeof(MemoryDraftService<>));
     }
-
-    private static IServiceCollection DecorateAppSettings(this IServiceCollection services)
-    {
-        return services.Decorate<IAppSettingsService, CachedAppSettingsServiceDecorator>();
-    }
-
 }

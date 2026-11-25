@@ -78,10 +78,7 @@ public sealed class AnalyticsController : ControllerBase
     [Authorize(Roles = "Admin")]
     [HttpPost("elevations/preview")]
     [ProducesResponseType(typeof(ElevationProfileDto), 200)]
-    public async Task<IActionResult> DevAnalyticPreview(
-        Guid id,
-        [FromBody] DataProccesConfig.Partial config
-    )
+    public async Task<IActionResult> DevAnalyticPreview(Guid id, [FromBody] DataProccesConfig.Partial config)
     {
         return await _tripSource
             .GetStoredAsync(id, HttpContext.RequestAborted)
@@ -100,7 +97,5 @@ public sealed class AnalyticsController : ControllerBase
             .GetStoredAsync(id, HttpContext.RequestAborted)
             .BindAsync(d => _routeVisualizationService.GetRouteVisualizationAsync(d.Points, configs.ToList()))
             .ToActionResultAsync();
-
     }
-
 }

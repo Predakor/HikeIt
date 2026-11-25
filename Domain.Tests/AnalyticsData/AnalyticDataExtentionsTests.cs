@@ -3,13 +3,15 @@ using Domain.Trips.Analytics.ElevationProfiles.Commands;
 
 namespace Domain.Tests.AnalyticsData;
 
-public class AnalyticsProcesing {
-    static readonly int distanceTreshold = 10;
+public class AnalyticsProcesing
+{
+    private static readonly int distanceTreshold = 10;
 
-    static GpxPoint Pt(double ele) => new(0, 0, ele);
+    private static GpxPoint Pt(double ele) => new(0, 0, ele);
 
     [Fact]
-    public void ReturnsOriginal_WhenLessThanTwoPeaks() {
+    public void ReturnsOriginal_WhenLessThanTwoPeaks()
+    {
         var input = new List<GpxPoint> { Pt(100) };
         var result = input.MergeNearbyPeaksByElevation(distanceTreshold);
 
@@ -18,7 +20,8 @@ public class AnalyticsProcesing {
     }
 
     [Fact]
-    public void MergesTwoClosePeaks() {
+    public void MergesTwoClosePeaks()
+    {
         var input = new List<GpxPoint> { Pt(100), Pt(101), Pt(102) };
 
         var result = input.MergeNearbyPeaksByElevation(distanceTreshold);
@@ -27,7 +30,8 @@ public class AnalyticsProcesing {
     }
 
     [Fact]
-    public void SeparatesDistantPeaks() {
+    public void SeparatesDistantPeaks()
+    {
         var input = new List<GpxPoint> { Pt(100), Pt(130), Pt(100) };
         var result = input.MergeNearbyPeaksByElevation(distanceTreshold);
 
@@ -35,7 +39,8 @@ public class AnalyticsProcesing {
     }
 
     [Fact]
-    public void HandlesMultipleWindows() {
+    public void HandlesMultipleWindows()
+    {
         var input = new List<GpxPoint>
         {
             Pt(100),
@@ -52,7 +57,8 @@ public class AnalyticsProcesing {
     }
 
     [Fact]
-    public void HandlesUnclosedFinalWindow() {
+    public void HandlesUnclosedFinalWindow()
+    {
         var input = new List<GpxPoint> { Pt(100), Pt(101), Pt(102), Pt(103) };
         var result = input.MergeNearbyPeaksByElevation(distanceTreshold * 2);
 

@@ -1,8 +1,8 @@
-﻿using Core.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Core.Serialization;
 using Domain.AppSettings.Interfaces;
 using Domain.Common.AggregateRoot;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Domain.AppSettings.Root;
 
@@ -23,6 +23,18 @@ public class AppSetting : AggregateRoot<int, AppSetting>
     public JsonDocument? JsonValue { get; protected set; }
     public AppSettingType SettingType { get; protected set; }
 
+    public static AppSetting Create<TSetting>(TSetting setting)
+        where TSetting : IAppSetting
+    {
+        return new AppSetting()
+        {
+            Id = 0,
+            Name = typeof(TSetting).Name,
+            JsonValue = setting.ToJsonDocument(),
+            SettingType = TSetting.SettingFor,
+        };
+    }
+
     public Result<AppSetting> SetSetting<TSetting>(TSetting setting)
         where TSetting : IAppSetting
     {
@@ -31,7 +43,9 @@ public class AppSetting : AggregateRoot<int, AppSetting>
             return Errors.Unknown("setting type doesn't match");
         }
 
-        var validationErrors = setting.Validate().ToList();
+        var validationErrors = setting
+            .Validate()
+            .ToList();
         if (validationErrors.Count > 0)
         {
             return Errors.BadRequest(string.Join(" ", validationErrors));
@@ -54,7 +68,9 @@ public class AppSetting : AggregateRoot<int, AppSetting>
             return Errors.BadRequest("setting type doesn't match");
         }
 
-        var validationErrors = st.Validate().ToList();
+        var validationErrors = st
+            .Validate()
+            .ToList();
         if (validationErrors.Count > 0)
         {
             return Errors.BadRequest(string.Join(" ", validationErrors));
@@ -68,22 +84,12 @@ public class AppSetting : AggregateRoot<int, AppSetting>
     public Result<TSetting> GetSetting<TSetting>()
         where TSetting : IAppSetting
     {
-        var parsedSetting = JsonValue.RootElement.GetRawText().FromJson<TSetting>();
+        var parsedSetting = JsonValue
+            .RootElement.GetRawText()
+            .FromJson<TSetting>();
 
         return parsedSetting is null
             ? Errors.ParsingError<TSetting>(JsonValue.RootElement.GetRawText())
             : parsedSetting;
-    }
-
-    public static AppSetting Create<TSetting>(TSetting setting)
-        where TSetting : IAppSetting
-    {
-        return new AppSetting()
-        {
-            Id = 0,
-            Name = typeof(TSetting).Name,
-            JsonValue = setting.ToJsonDocument(),
-            SettingType = TSetting.SettingFor,
-        };
     }
 }

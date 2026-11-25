@@ -24,8 +24,7 @@ export function useTripCreate() {
   };
 
   return useMutation({
-    mutationFn: (data: object) =>
-      api.post(`${basePath}/form`, data, resolveCreated),
+    mutationFn: (data: object) => api.post(`${basePath}/form`, data, resolveCreated),
     onSuccess: async ({ location }) => {
       queryClient.invalidateQueries({ queryKey: ["user-stats"] });
       queryClient.invalidateQueries({ queryKey: [basePath] });

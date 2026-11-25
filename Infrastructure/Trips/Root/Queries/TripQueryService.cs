@@ -8,6 +8,43 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Trips.Root.Queries;
 
+internal static class Helpers
+{
+    public static TripDto.Summary ToSummaryDto(this Trip trip)
+    {
+        return new(trip.Id, trip.Name, trip.TripDay, trip.Region)
+        {
+            Distance = (int?)trip?.Analytics?.RouteAnalytics?.TotalDistanceMeters,
+            Duration = trip?.Analytics?.TimeAnalytics?.Duration,
+        };
+    }
+
+    public static TripDto.WithBasicAnalytics ToWithBasicAnalyticsDto(this Trip trip)
+    {
+        if (trip.Analytics is null)
+        {
+            throw new Exception("trip has no analytics");
+        }
+
+        return new(trip.Id, trip.Name, trip.TripDay, trip.Analytics.ToBasicDto());
+    }
+
+    public static TripDto.Request.ResponseBasic ToBasicDto(this Trip trip)
+    {
+        return new(trip.Id, trip.RegionId, new(trip.Name, trip.TripDay));
+    }
+
+    public static TripDto.Partial ToPartialDto(this Trip trip)
+    {
+        return new(trip.Id, trip.Analytics, trip.GpxFile, trip.Region, new(trip.Name, trip.TripDay));
+    }
+
+    public static List<TripDto.Request.ResponseBasic> CollectionToDtos(IEnumerable<Trip> trips)
+    {
+        return [.. trips.Select(p => p.ToBasicDto())];
+    }
+}
+
 public class TripQueryService : ITripQueryService
 {
     private readonly TripDbContext _context;
@@ -18,10 +55,7 @@ public class TripQueryService : ITripQueryService
         _context = context;
     }
 
-    public async Task<Result<TripDto.WithBasicAnalytics>> GetWithBasicAnalytics(
-        Guid id,
-        Guid userId
-    )
+    public async Task<Result<TripDto.WithBasicAnalytics>> GetWithBasicAnalytics(Guid id, Guid userId)
     {
         var trip = await Trips
             .Include(t => t.Analytics)
@@ -38,18 +72,19 @@ public class TripQueryService : ITripQueryService
 
     public async Task<Result<List<TripDto.Summary>>> GetSummariesAsync(Guid userId)
     {
-        return await Trips.
-             Where(t => t.UserId == userId)
+        return await Trips
+            .Where(t => t.UserId == userId)
             .Include(t => t.Region)
             .Include(t => t.Analytics)
             .Select(q => q.ToSummaryDto())
             .ToListAsync();
-
     }
 
     public async Task<Result<TripDto.Partial>> GetByIdAsync(Guid id, Guid userId)
     {
-        var query = await Trips.Where(t => t.UserId == userId).FirstOrDefaultAsync(t => t.Id == id);
+        var query = await Trips
+            .Where(t => t.UserId == userId)
+            .FirstOrDefaultAsync(t => t.Id == id);
 
         if (query == null)
         {
@@ -75,7 +110,8 @@ public class TripQueryService : ITripQueryService
             .Select(t => new TripDto.AdminSearchResult(
                 Id: t.Id,
                 Name: t.Name,
-                Owner: $"{t.User!.FirstName} {t.User!.LastName}"))
+                Owner: $"{t.User!.FirstName} {t.User!.LastName}"
+            ))
             .ToListAsync();
     }
 
@@ -86,7 +122,8 @@ public class TripQueryService : ITripQueryService
             .Select(t => new TripDto.AdminSearchResult(
                 Id: t.Id,
                 Name: t.Name,
-                Owner: $"{t.User!.FirstName} {t.User!.LastName}"))
+                Owner: $"{t.User!.FirstName} {t.User!.LastName}"
+            ))
             .FirstOrDefaultAsync();
 
         if (trip is null)
@@ -95,48 +132,5 @@ public class TripQueryService : ITripQueryService
         }
 
         return trip;
-    }
-}
-
-internal static class Helpers
-{
-    public static TripDto.Summary ToSummaryDto(this Trip trip)
-    {
-        return new(trip.Id, trip.Name, trip.TripDay, trip.Region)
-        {
-            Distance = (int?)trip?.Analytics?.RouteAnalytics?.TotalDistanceMeters,
-            Duration = trip?.Analytics?.TimeAnalytics?.Duration
-        };
-    }
-
-    public static TripDto.WithBasicAnalytics ToWithBasicAnalyticsDto(this Trip trip)
-    {
-        if (trip.Analytics is null)
-        {
-            throw new Exception("trip has no analytics");
-        }
-
-        return new(trip.Id, trip.Name, trip.TripDay, trip.Analytics.ToBasicDto());
-    }
-
-    public static TripDto.Request.ResponseBasic ToBasicDto(this Trip trip)
-    {
-        return new(trip.Id, trip.RegionId, new(trip.Name, trip.TripDay));
-    }
-
-    public static TripDto.Partial ToPartialDto(this Trip trip)
-    {
-        return new(
-            trip.Id,
-            trip.Analytics,
-            trip.GpxFile,
-            trip.Region,
-            new(trip.Name, trip.TripDay)
-        );
-    }
-
-    public static List<TripDto.Request.ResponseBasic> CollectionToDtos(IEnumerable<Trip> trips)
-    {
-        return [.. trips.Select(p => p.ToBasicDto())];
     }
 }

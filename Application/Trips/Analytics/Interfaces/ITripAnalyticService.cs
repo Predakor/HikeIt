@@ -3,6 +3,7 @@ using Domain.Trips.Analytics.Root;
 
 namespace Application.Trips.Analytics.Interfaces;
 
-public interface ITripAnalyticService {
+public interface ITripAnalyticService : IService
+{
     Task<Result<TripAnalytic>> GenerateAnalytic(CreateTripContext ctx);
 }

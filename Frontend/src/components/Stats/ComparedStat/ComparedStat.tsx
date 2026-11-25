@@ -13,13 +13,7 @@ interface Props {
   };
 }
 
-export function ComparedStat({
-  title,
-  helperText,
-  stat,
-  unit,
-  options,
-}: Props) {
+export function ComparedStat({ title, helperText, stat, unit, options }: Props) {
   const ratio = unit?.ratio ?? 1;
   const rawValue = stat / ratio;
   const valueInUnits = transformers[options?.valueIn || "rounded"](rawValue);
@@ -31,12 +25,7 @@ export function ComparedStat({
         <Span fontSize={"smaller"}> {unit.name}</Span>
       </Heading>
       <Show when={helperText}>
-        <Text
-          color={"gray.400"}
-          fontSize={"sm"}
-          textAlign={"center"}
-          lineHeight={"1"}
-        >
+        <Text color={"gray.400"} fontSize={"sm"} textAlign={"center"} lineHeight={"1"}>
           {helperText}
         </Text>
       </Show>

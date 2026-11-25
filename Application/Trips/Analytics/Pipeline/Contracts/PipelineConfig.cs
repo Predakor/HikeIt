@@ -1,5 +1,5 @@
-using Domain.Common.Abstractions;
 using System.Text.Json.Serialization;
+using Domain.Common.Abstractions;
 
 namespace Application.Trips.Analytics.Pipeline.Contracts;
 

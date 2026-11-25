@@ -44,7 +44,6 @@ public static class AnalyticExtentions
 
 internal static class Helpers
 {
-
     private const uint Max = uint.MaxValue;
     private const uint Min = uint.MinValue;
 

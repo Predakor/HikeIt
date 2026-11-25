@@ -9,16 +9,17 @@ interface RenderListProps<T> {
   }>;
 }
 
-function MapWrapper<T>({
-  items,
-  renderItem,
-  fallback = null,
-  Wrapper,
-}: RenderListProps<T>) {
+function MapWrapper<T>({ items, renderItem, fallback = null, Wrapper }: RenderListProps<T>) {
   if (!items.length) return <>{fallback}</>;
 
   const content = items.map(renderItem);
-  return <>{Wrapper ? <Wrapper>{content}</Wrapper> : content}</>;
+  return (
+    <>
+      {Wrapper ?
+        <Wrapper>{content}</Wrapper>
+      : content}
+    </>
+  );
 }
 
 export default MapWrapper;

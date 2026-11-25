@@ -8,13 +8,21 @@ namespace Domain.Tests.Pipeline;
 public class RouteAnalyticFilterTests
 {
     private static GpxGain Gain(float distance, float elevation) =>
-        new(distance, elevation, distance == 0 ? 0 : elevation / distance * 100);
+        new(
+            distance,
+            elevation,
+            distance == 0
+                ? 0
+                : elevation / distance * 100
+        );
 
     private static async Task<RouteAnalyticContext> Run(ITerrainFilterConfig config, params GpxGain[] gains)
     {
         var context = new RouteAnalyticContext([], gains);
 
-        return await config.CreateFilter().ApplyAsync(context);
+        return await config
+            .CreateFilter()
+            .ApplyAsync(context);
     }
 
     [Fact]
@@ -22,7 +30,12 @@ public class RouteAnalyticFilterTests
     {
         var context = await Run(
             new SteepestSegmentFilter.Config(100),
-            Gain(50, 0), Gain(50, 10), Gain(50, 10), Gain(50, 0), Gain(50, -5), Gain(50, -5)
+            Gain(50, 0),
+            Gain(50, 10),
+            Gain(50, 10),
+            Gain(50, 0),
+            Gain(50, -5),
+            Gain(50, -5)
         );
 
         Assert.Equal(20, context.SteepestClimbPercent!.Value, 3);
@@ -41,7 +54,17 @@ public class RouteAnalyticFilterTests
     [Fact]
     public async Task ElevationGain_IgnoresWobbleSmallerThanTheThreshold()
     {
-        var wobble = Enumerable.Range(0, 10).Select(i => Gain(10, i % 2 == 0 ? 0.3f : -0.3f)).ToArray();
+        var wobble = Enumerable
+            .Range(0, 10)
+            .Select(i =>
+                Gain(
+                    10,
+                    i % 2 == 0
+                        ? 0.3f
+                        : -0.3f
+                )
+            )
+            .ToArray();
 
         var context = await Run(new ElevationGainFilter.Config(1), wobble);
 
@@ -54,7 +77,10 @@ public class RouteAnalyticFilterTests
     {
         var context = await Run(
             new ElevationGainFilter.Config(1),
-            Gain(10, 1.5f), Gain(10, 1.5f), Gain(10, -2f), Gain(10, -2f)
+            Gain(10, 1.5f),
+            Gain(10, 1.5f),
+            Gain(10, -2f),
+            Gain(10, -2f)
         );
 
         Assert.Equal(3, context.TotalAscentMeters, 3);
@@ -64,7 +90,17 @@ public class RouteAnalyticFilterTests
     [Fact]
     public void PlainTotals_CountEveryRiseAndFall()
     {
-        var wobble = Enumerable.Range(0, 10).Select(i => Gain(10, i % 2 == 0 ? 0.3f : -0.3f)).ToArray();
+        var wobble = Enumerable
+            .Range(0, 10)
+            .Select(i =>
+                Gain(
+                    10,
+                    i % 2 == 0
+                        ? 0.3f
+                        : -0.3f
+                )
+            )
+            .ToArray();
 
         var context = new RouteAnalyticContext([], wobble);
 
@@ -77,7 +113,9 @@ public class RouteAnalyticFilterTests
     {
         var context = await Run(
             new LongestClimbFilter.Config(1),
-            Gain(100, 5), Gain(100, 5), Gain(100, 5),
+            Gain(100, 5),
+            Gain(100, 5),
+            Gain(100, 5),
             Gain(50, -10),
             Gain(20, 8)
         );

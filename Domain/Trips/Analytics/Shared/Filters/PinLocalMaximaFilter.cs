@@ -29,7 +29,9 @@ public sealed class PinLocalMaximaFilter(PinLocalMaximaFilter.Config config) : S
             return values;
         }
 
-        var gpxPoints = values.Select(p => p.ToGpxPoint()).ToList();
+        var gpxPoints = values
+            .Select(p => p.ToGpxPoint())
+            .ToList();
 
         foreach (var localMaximum in AnalyticDataExtentions.LocalMaximaIndicesWithDistance(gpxPoints, null))
         {

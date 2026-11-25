@@ -4,26 +4,15 @@ import type { StatAddons } from "@/types/Utils/stat.types";
 import StatsCard from "../Shared/StatsCard";
 import { formatter } from "../Utils/formatter";
 import type { Totals } from "../Utils/statTypes";
-import {
-  IconArrowDown,
-  IconArrowUp,
-  IconJourney,
-  IconTrendDown,
-  IconTrendUp,
-} from "@/Icons/Icons";
+import { IconArrowDown, IconArrowUp, IconJourney, IconTrendDown, IconTrendUp } from "@/Icons/Icons";
 
 interface Props {
   totals: Totals;
 }
 
 export function AverageTrip({ totals }: Props) {
-  const {
-    totalAscentMeters,
-    totalDescentMeters,
-    totalDistanceMeters,
-    totalDuration,
-    totalTrips,
-  } = totals;
+  const { totalAscentMeters, totalDescentMeters, totalDistanceMeters, totalDuration, totalTrips } =
+    totals;
 
   const __mockupAscentTime = "07:12:10";
   const __mockupDescentTime = "05:12:10";
@@ -81,5 +70,5 @@ const durationAddons = {
 } satisfies StatAddons<number>;
 
 const toMinutes = (duration: string) => {
-  return Number(formatDuration.toMinutes(duration)) ?? 0;
+  return Number(formatDuration.toMinutes(duration)) || 0;
 };

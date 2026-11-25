@@ -1,0 +1,13 @@
+diff --git a/index.js b/index.js
+index 3a31446c76a7953ad62fa1cc46a02b34bd89cc6c..e63a7184d22da5613b2b656731e58ad4ac6ca060 100644
+--- a/index.js
++++ b/index.js
+@@ -2,7 +2,7 @@
+ 
+ 
+ import { createContext, forwardRef, memo, useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
+-import maplibregl from "maplibre-gl";
++import * as maplibregl from "maplibre-gl";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ import { createPortal } from "react-dom";
+ 

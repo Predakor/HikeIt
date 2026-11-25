@@ -24,6 +24,7 @@ public static class RegionsEndpoints
             .BindAsync(queries.AllPeaksFromRegion)
             .ToApiResultAsync();
     }
+
     private static async Task<IResult> GetDetailedFromRegion(IRegionQueryService queries, int id)
     {
         return await queries
@@ -34,11 +35,15 @@ public static class RegionsEndpoints
 
     private static async Task<IResult> GetAll(IRegionQueryService service)
     {
-        return await service.GetAllAsync().ToApiResultAsync();
+        return await service
+            .GetAllAsync()
+            .ToApiResultAsync();
     }
 
     private static async Task<IResult> GetById(IRegionQueryService service, int id)
     {
-        return await service.GetById(id).ToApiResultAsync();
+        return await service
+            .GetById(id)
+            .ToApiResultAsync();
     }
 }

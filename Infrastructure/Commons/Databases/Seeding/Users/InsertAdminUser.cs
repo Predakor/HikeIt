@@ -4,17 +4,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Commons.Databases.Seeding.Users;
 
-internal class InsertAdminUser : ISeeder {
-    readonly UserManager<User> _userManager;
-    readonly User _defaultAdminUser;
-    readonly string _password;
+internal class InsertAdminUser : ISeeder
+{
+    private readonly UserManager<User> _userManager;
+    private readonly User _defaultAdminUser;
+    private readonly string _password;
 
-    public InsertAdminUser(UserManager<User> manager, SeedingOptions options) {
+    public InsertAdminUser(UserManager<User> manager, SeedingOptions options)
+    {
         _userManager = manager;
 
         var admin = options.Users.GetAdmin;
 
-        _defaultAdminUser = new User() {
+        _defaultAdminUser = new User()
+        {
             Id = Guid.Parse(admin.Id.ToString()),
             UserName = admin.UserName,
             FirstName = admin.FirstName,
@@ -26,24 +29,24 @@ internal class InsertAdminUser : ISeeder {
         _password = admin.Password;
     }
 
-    public async Task Seed(TripDbContext dbContext) {
+    public async Task Seed(TripDbContext dbContext)
+    {
         var userExists = await _userManager.FindByIdAsync(_defaultAdminUser.Id.ToString());
-        if (userExists is not null) {
+        if (userExists is not null)
+        {
             return;
         }
 
         var result = await _userManager.CreateAsync(_defaultAdminUser, _password);
-        if (result.Errors.Any()) {
-            throw new Exception(
-                "Failed to create admin user reason" + result.Errors.First().Description
-            );
+        if (result.Errors.Any())
+        {
+            throw new Exception("Failed to create admin user reason" + result.Errors.First().Description);
         }
 
         var assignRoleResult = await _userManager.AddToRoleAsync(_defaultAdminUser, "Admin");
-        if (assignRoleResult.Errors.Any()) {
-            throw new Exception(
-                "Failed to assign to adming role reason: " + result.Errors.First().Description
-            );
+        if (assignRoleResult.Errors.Any())
+        {
+            throw new Exception("Failed to assign to adming role reason: " + result.Errors.First().Description);
         }
     }
 }

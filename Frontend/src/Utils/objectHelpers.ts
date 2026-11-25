@@ -1,7 +1,4 @@
-export function diffObjects<T extends object>(
-  original: T,
-  updated: Partial<T>
-): Partial<T> {
+export function diffObjects<T extends object>(original: T, updated: Partial<T>): Partial<T> {
   const diff: Partial<T> = {};
 
   for (const key in updated) {
@@ -13,9 +10,6 @@ export function diffObjects<T extends object>(
   return diff;
 }
 
-export function applyChanges<T extends object>(
-  original: T,
-  updated: Partial<T>
-) {
+export function applyChanges<T extends object>(original: T, updated: Partial<T>) {
   return { ...original, ...updated };
 }

@@ -11,11 +11,27 @@ public sealed class MedianSmoothingFilter : SyncFilter<IList<MutableGpxPoint>>
         public IFilter<IList<MutableGpxPoint>> CreateFilter() => new MedianSmoothingFilter(this);
     }
 
-    private static readonly (PointFields Field, Func<MutableGpxPoint, double> Get, Action<MutableGpxPoint, double> Set)[] Accessors =
+    private static readonly (
+        PointFields Field,
+        Func<MutableGpxPoint, double> Get,
+        Action<MutableGpxPoint, double> Set
+    )[] Accessors =
     [
-        (PointFields.Elevation, p => p.Ele, (p, v) => p.Ele = v),
-        (PointFields.Latitude, p => p.Lat, (p, v) => p.Lat = v),
-        (PointFields.Longitude, p => p.Lon, (p, v) => p.Lon = v),
+        (
+            PointFields.Elevation,
+            p => p.Ele,
+            (p, v) => p.Ele = v
+        ),
+        (
+            PointFields.Latitude,
+            p => p.Lat,
+            (p, v) => p.Lat = v
+        ),
+        (
+            PointFields.Longitude,
+            p => p.Lon,
+            (p, v) => p.Lon = v
+        ),
     ];
 
     private readonly int _half;
@@ -27,6 +43,21 @@ public sealed class MedianSmoothingFilter : SyncFilter<IList<MutableGpxPoint>>
 
         _half = config.WindowSize / 2;
         _targets = config.Targets;
+    }
+
+    private static double GetMedian(IList<MutableGpxPoint> values, int i, int half, Func<MutableGpxPoint, double> get)
+    {
+        int start = Math.Max(i - half, 0);
+        int end = Math.Min(i + half, values.Count - 1);
+
+        List<double> window = values
+            .Skip(start)
+            .Take(end - start + 1)
+            .Select(get)
+            .Order()
+            .ToList();
+
+        return window[window.Count / 2];
     }
 
     // Centred window of up to 2 * half + 1 points, clipped at both ends. Values are overwritten in place,
@@ -47,20 +78,5 @@ public sealed class MedianSmoothingFilter : SyncFilter<IList<MutableGpxPoint>>
         }
 
         return values;
-    }
-
-    private static double GetMedian(IList<MutableGpxPoint> values, int i, int half, Func<MutableGpxPoint, double> get)
-    {
-        int start = Math.Max(i - half, 0);
-        int end = Math.Min(i + half, values.Count - 1);
-
-        List<double> window = values
-            .Skip(start)
-            .Take(end - start + 1)
-            .Select(get)
-            .Order()
-            .ToList();
-
-        return window[window.Count / 2];
     }
 }

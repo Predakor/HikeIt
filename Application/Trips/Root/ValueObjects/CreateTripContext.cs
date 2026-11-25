@@ -6,7 +6,8 @@ using static Application.Trips.Root.Dtos.TripDto;
 
 namespace Application.Trips.Root.ValueObjects;
 
-public class CreateTripContext(Guid id) {
+public class CreateTripContext(Guid id)
+{
     public Guid Id { get; } = id;
     public User User { get; private set; }
     public FileContent File { get; private set; }
@@ -16,32 +17,38 @@ public class CreateTripContext(Guid id) {
 
     public AnalyticData AnalyticData { get; private set; }
 
-    public CreateTripContext WithUser(User user) {
+    public static CreateTripContext Create(Guid? id = null)
+    {
+        return new(id ?? Guid.NewGuid());
+    }
+
+    public CreateTripContext WithUser(User user)
+    {
         User = user;
         return this;
     }
 
-    public CreateTripContext WithFile(FileContent file) {
+    public CreateTripContext WithFile(FileContent file)
+    {
         File = file;
         return this;
     }
 
-    public CreateTripContext WithRequest(Request.Create request) {
+    public CreateTripContext WithRequest(Request.Create request)
+    {
         Request = request;
         return this;
     }
 
-    public CreateTripContext WithTrip(Trip trip) {
+    public CreateTripContext WithTrip(Trip trip)
+    {
         Trip = trip;
         return this;
     }
 
-    public CreateTripContext WithAnalyticData(AnalyticData data) {
+    public CreateTripContext WithAnalyticData(AnalyticData data)
+    {
         AnalyticData = data;
         return this;
-    }
-
-    public static CreateTripContext Create(Guid? id = null) {
-        return new(id ?? Guid.NewGuid());
     }
 }

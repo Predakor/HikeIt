@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Users.Root;
 
-internal class UserConfiguration : IEntityTypeConfiguration<User> {
-    public void Configure(EntityTypeBuilder<User> builder) {
+internal class UserConfiguration : IEntityTypeConfiguration<User>
+{
+    public void Configure(EntityTypeBuilder<User> builder)
+    {
         builder
             .HasOne(u => u.Stats)
             .WithOne()

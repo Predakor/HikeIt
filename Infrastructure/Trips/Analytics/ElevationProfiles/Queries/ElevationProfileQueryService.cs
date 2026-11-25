@@ -6,24 +6,26 @@ using Infrastructure.Commons.Databases;
 
 namespace Infrastructure.Trips.Analytics.ElevationProfiles.Queries;
 
-public class ElevationProfileQueryService : IElevationProfileQueryService {
-    readonly TripDbContext _tripDbContext;
+public class ElevationProfileQueryService : IElevationProfileQueryService
+{
+    private readonly TripDbContext _tripDbContext;
 
-    public ElevationProfileQueryService(TripDbContext tripDbContext) {
+    public ElevationProfileQueryService(TripDbContext tripDbContext)
+    {
         _tripDbContext = tripDbContext;
     }
 
-    public Task<Result<ElevationProfileDto?>> DevAnalyticPreview(
-        Guid id,
-        DataProccesConfig.Partial config
-    ) {
+    public Task<Result<ElevationProfileDto?>> DevAnalyticPreview(Guid id, DataProccesConfig.Partial config)
+    {
         throw new NotImplementedException();
     }
 
-    public async Task<Result<ElevationProfileDto>> GetElevationProfile(Guid id) {
+    public async Task<Result<ElevationProfileDto>> GetElevationProfile(Guid id)
+    {
         var query = await _tripDbContext.ElevationProfiles.FindAsync(id);
 
-        if (query == null) {
+        if (query == null)
+        {
             return Errors.NotFound("Elevation profile with id: " + id);
         }
 
@@ -34,16 +36,15 @@ public class ElevationProfileQueryService : IElevationProfileQueryService {
         return new ElevationProfileDto(query.Start, gains);
     }
 
-    static class Helpers {
-        public static GainDto FromScaledGain(ScaledGain scaledGain) {
-            return new GainDto(
-                scaledGain.DistanceDelta,
-                scaledGain.ElevationDelta,
-                scaledGain.TimeDelta
-            );
+    private static class Helpers
+    {
+        public static GainDto FromScaledGain(ScaledGain scaledGain)
+        {
+            return new GainDto(scaledGain.DistanceDelta, scaledGain.ElevationDelta, scaledGain.TimeDelta);
         }
 
-        public static GainDto[] ToUnscaledGains(IEnumerable<ScaledGain> scaledGains) {
+        public static GainDto[] ToUnscaledGains(IEnumerable<ScaledGain> scaledGains)
+        {
             return [.. scaledGains.Select(FromScaledGain)];
         }
     }
