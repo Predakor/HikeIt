@@ -9,7 +9,10 @@ import {
   YAxis,
 } from "recharts";
 
+// The chart is generic over caller data, so the item type is intentionally open.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface Props extends Partial<ChartRootProps<any>> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: UseChartProps<any>;
 }
 
@@ -36,12 +39,7 @@ function ElevationChart({ config, ...rest }: Props) {
             domain={["auto", "auto"]}
             stroke={chart.color("border")}
           />
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            tickMargin={10}
-            domain={["auto", "auto"]}
-          />
+          <YAxis axisLine={false} tickLine={false} tickMargin={10} domain={["auto", "auto"]} />
           <Tooltip animationDuration={100} cursor={false} content={<Chart.Tooltip />} />
           {chart.series.map((item) => (
             <Line

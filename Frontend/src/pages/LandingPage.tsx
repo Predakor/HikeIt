@@ -1,15 +1,8 @@
 import { PrimaryButton, SecondaryButton } from "@/components/ui/Buttons";
 import PageTitle from "@/components/ui/Titles/PageTitle";
 import SubTitle from "@/components/ui/Titles/SubTitle";
-import {
-  Card,
-  Center,
-  Heading,
-  Icon,
-  SimpleGrid,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Card, Center, Heading, Icon, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import type { IconType } from "react-icons";
 import { FaChartLine, FaHiking, FaMapMarkedAlt } from "react-icons/fa";
 import { useNavigate } from "react-router";
 
@@ -22,9 +15,7 @@ function LandingPage() {
     <Stack gap={16}>
       <PageTitle title={"Plan. Track. Conquer."} />
 
-      <Text fontSize="xl">
-        HikeIt helps you plan and analyze your hiking adventures with ease.
-      </Text>
+      <Text fontSize="xl">HikeIt helps you plan and analyze your hiking adventures with ease.</Text>
 
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={16}>
         <Feature
@@ -49,15 +40,9 @@ function LandingPage() {
           <Heading as="h2" size="xl">
             Ready to start your next adventure?
           </Heading>
-          <Stack
-            direction={{ base: "column", sm: "row" }}
-            gap={4}
-            justify="center"
-          >
+          <Stack direction={{ base: "column", sm: "row" }} gap={4} justify="center">
             <PrimaryButton onClick={goToLoginPage}>Get Started</PrimaryButton>
-            <SecondaryButton onClick={goToLoginPage}>
-              Try our demo
-            </SecondaryButton>
+            <SecondaryButton onClick={goToLoginPage}>Try our demo</SecondaryButton>
           </Stack>
         </Stack>
       </Center>
@@ -65,22 +50,9 @@ function LandingPage() {
   );
 }
 
-function Feature({
-  icon,
-  title,
-  text,
-}: {
-  icon: any;
-  title: string;
-  text: string;
-}) {
+function Feature({ icon, title, text }: { icon: IconType; title: string; text: string }) {
   return (
-    <Card.Root
-      className="group"
-      alignItems={"center"}
-      justifyItems={"center"}
-      padding={8}
-    >
+    <Card.Root className="group" alignItems={"center"} justifyItems={"center"} padding={8}>
       <Icon as={icon} w={10} h={10} color={"blue.500"} />
 
       <Card.Header>

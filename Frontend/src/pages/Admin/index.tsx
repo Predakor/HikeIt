@@ -1,4 +1,4 @@
-import { lazyWithPreload } from "..";
+import { lazyWithPreload } from "../lazyWithPreload";
 
 export default {
   ManageRegions: lazyWithPreload(() => import("./Regions/ManageRegionsAdminPage")),

@@ -1,5 +1,6 @@
 import { IconSettings } from "@/Icons/Icons";
 import { Drawer, For } from "@chakra-ui/react";
+import type { ExpressionSpecification } from "maplibre-gl";
 import { RLayer, RMap, RSource, RTerrain } from "maplibre-react-components";
 import { memo } from "react";
 import { SecondaryButton } from "../ui/Buttons";
@@ -82,7 +83,9 @@ const RouteLayers = memo(function RouteLayers({ route }: { route: RouteData }) {
   }
 
   const paint = {
-    "line-gradient": route.gradientEnabled ? (route.gradient as any) : route.color,
+    // a constant color works at runtime, but the maplibre types only allow expressions here
+    "line-gradient":
+      route.gradientEnabled ? route.gradient : (route.color as unknown as ExpressionSpecification),
     "line-width": width,
     "line-opacity": opacity,
   };
@@ -90,12 +93,7 @@ const RouteLayers = memo(function RouteLayers({ route }: { route: RouteData }) {
   return (
     <>
       <RSource id={`hike-path-${index}`} type="geojson" data={route.data} lineMetrics />
-      <RLayer
-        type="line"
-        source={`hike-path-${index}`}
-        id={`hike-line-${index}`}
-        paint={paint}
-      />
+      <RLayer type="line" source={`hike-path-${index}`} id={`hike-line-${index}`} paint={paint} />
       {/* layers stack in the order they were added, so a copy mounted on hover draws above every route */}
       {isHovered && route.visible && (
         <RLayer

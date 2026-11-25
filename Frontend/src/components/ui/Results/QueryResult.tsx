@@ -8,7 +8,7 @@ interface Props {
       location: string;
     },
     Error,
-    any,
+    void,
     unknown
   >;
 }
@@ -39,13 +39,11 @@ function QueryResult({ mutation }: Props) {
         <Alert.Content>
           <Alert.Title>{alertTitle}</Alert.Title>
           <Alert.Description>
-            {data ? (
+            {data ?
               <LinkBox asChild>
                 <Link to={data.location}>click me to view created trip</Link>
               </LinkBox>
-            ) : (
-              <>{error.message ?? "unknow reason"}</>
-            )}
+            : <>{error.message ?? "unknow reason"}</>}
           </Alert.Description>
         </Alert.Content>
       </Alert.Root>

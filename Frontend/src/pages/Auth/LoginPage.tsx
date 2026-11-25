@@ -8,10 +8,7 @@ import useLogin, { type LoginForm } from "@/hooks/Auth/useLogin";
 import { Fieldset, Separator, Stack, Text } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
-const loginFormConfig: InputsConfig = [
-  schemas.login,
-  schemas.password,
-] as InputsConfig;
+const loginFormConfig: InputsConfig = [schemas.login, schemas.password] as InputsConfig;
 
 function LoginPage() {
   const formHook = useForm<LoginForm>();
@@ -26,9 +23,7 @@ function LoginPage() {
     <Stack flexGrow={1} alignItems={"center"} paddingTop={8}>
       <Fieldset.Root maxW={"lg"} gapY={8}>
         <Stack gapY={6}>
-          <Fieldset.HelperText fontSize={"md"}>
-            Ready for a new journey
-          </Fieldset.HelperText>
+          <Fieldset.HelperText fontSize={"md"}>Ready for a new journey</Fieldset.HelperText>
           <Fieldset.Legend fontWeight={"bold"} fontSize={"4xl"}>
             Welcome back
           </Fieldset.Legend>
@@ -38,11 +33,11 @@ function LoginPage() {
           requestState={login}
           errorMessage={{
             title: "Failed to login",
-            description: login.error?.message!,
+            description: login.error?.message ?? "",
           }}
         />
 
-        <form onSubmit={formHook.handleSubmit(login.mutate as any)}>
+        <form onSubmit={formHook.handleSubmit((form) => login.mutate(form))}>
           <Fieldset.Content gapY={6}>
             <RenderInputs
               config={loginFormConfig}

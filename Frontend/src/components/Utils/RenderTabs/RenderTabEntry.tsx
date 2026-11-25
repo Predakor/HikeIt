@@ -3,7 +3,7 @@ import type { BaseProps } from "./typesRender";
 import { GroupRender } from "./GroupRender";
 import { ItemRender } from "./ItemRender";
 
-interface Props<T> extends BaseProps<T> {
+interface Props<T extends object> extends BaseProps<T> {
   entry: EntryType<T>;
 }
 
