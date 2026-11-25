@@ -7,10 +7,7 @@ interface TripAddedSuccesProps {
   tripLocation: string;
   resetForm: () => void;
 }
-export function TripAddedSucces({
-  tripLocation,
-  resetForm,
-}: TripAddedSuccesProps) {
+export function TripAddedSucces({ tripLocation, resetForm }: TripAddedSuccesProps) {
   const navigation = useNavigate();
 
   const navigateToTrip = () => navigation(tripLocation);
@@ -36,21 +33,13 @@ export function TripAddedSucces({
           direction={{ base: "column", lg: "row" }}
           gap={4}
         >
-          <Button
-            size={{ base: "md", lg: "xl" }}
-            colorPalette="blue"
-            onClick={resetForm}
-          >
+          <Button size={{ base: "md", lg: "xl" }} colorPalette="blue" onClick={resetForm}>
             Add New Trip <IconPlus />
           </Button>
 
           <Divider />
 
-          <Button
-            size={{ base: "md", lg: "xl" }}
-            colorPalette={"green"}
-            onClick={navigateToTrip}
-          >
+          <Button size={{ base: "md", lg: "xl" }} colorPalette={"green"} onClick={navigateToTrip}>
             View Your Trip <IconArrowRight />
           </Button>
         </Stack>

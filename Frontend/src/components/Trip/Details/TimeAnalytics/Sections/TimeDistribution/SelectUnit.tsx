@@ -3,10 +3,7 @@ import type { Action } from "@/types/Utils/func.types";
 import { ButtonGroup } from "@chakra-ui/react";
 import type { AllowedUnit } from "./TimeDistributionSection";
 
-export function SelectUnit(props: {
-  onChange: Action<AllowedUnit>;
-  selectedItem: AllowedUnit;
-}) {
+export function SelectUnit(props: { onChange: Action<AllowedUnit>; selectedItem: AllowedUnit }) {
   return (
     <ButtonGroup>
       <RadioButtons

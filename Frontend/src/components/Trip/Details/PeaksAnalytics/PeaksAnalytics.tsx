@@ -1,10 +1,7 @@
 import FetchWrapper from "@/components/Utils/Fetching/FetchWrapper";
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import useResourceLink from "@/hooks/Api/useResourceLink";
-import type {
-  PeakSummaryData,
-  PeaksAnalytics,
-} from "@/types/Api/analytics.types";
+import type { PeakSummaryData, PeaksAnalytics } from "@/types/Api/analytics.types";
 import type { ResourceUrl } from "@/types/Api/types";
 import { GridItem, Show, SimpleGrid, Stack } from "@chakra-ui/react";
 import { PeakBadge } from "../Common/PeakBadge";
@@ -16,11 +13,7 @@ import extraPeaksData from "./extraPeaksData";
 
 export default function PeaksAnalytics({ data }: { data: ResourceUrl }) {
   const getAnalytics = useResourceLink<PeaksAnalytics>(data);
-  return (
-    <FetchWrapper request={getAnalytics}>
-      {(d) => <Analytics data={d} />}
-    </FetchWrapper>
-  );
+  return <FetchWrapper request={getAnalytics}>{(d) => <Analytics data={d} />}</FetchWrapper>;
 }
 
 function Analytics({ data }: { data: PeaksAnalytics }) {
@@ -49,10 +42,7 @@ function Analytics({ data }: { data: PeaksAnalytics }) {
           bodyStyles={{ gap: 16 }}
         >
           <HighestPeak highest={highest} />
-          <PeakRanking
-            regionRank={{ place: 3, from: 5 }}
-            userRank={{ place: 4, from: 6 }}
-          />
+          <PeakRanking regionRank={{ place: 3, from: 5 }} userRank={{ place: 4, from: 6 }} />
         </SimpleCard>
       </GridItem>
 
@@ -86,16 +76,8 @@ interface Props {
 function PeakRanking({ regionRank, userRank }: Props) {
   return (
     <Stack justifyItems={"start"} direction={"row"}>
-      <RankStat
-        value={regionRank.place}
-        maxValue={regionRank.from}
-        label={"in the region"}
-      />
-      <RankStat
-        value={userRank.place}
-        maxValue={userRank.from}
-        label={"in your history"}
-      />
+      <RankStat value={regionRank.place} maxValue={regionRank.from} label={"in the region"} />
+      <RankStat value={userRank.place} maxValue={userRank.from} label={"in your history"} />
     </Stack>
   );
 }

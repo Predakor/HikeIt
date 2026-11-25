@@ -41,7 +41,7 @@ export default function usePeakMutations() {
   });
 
   const update = useMutation({
-    mutationFn: ({ data, peakId }: UpdatePeak) => api.patch<{}>(`${basePath}/${peakId}`, data),
+    mutationFn: ({ data, peakId }: UpdatePeak) => api.patch<unknown>(`${basePath}/${peakId}`, data),
     onSuccess: (_, { data: changes, peakId }) => {
       queryClient.setQueryData(keys, (prev: RegionWithDetailedPeaks) => {
         if (!prev) {

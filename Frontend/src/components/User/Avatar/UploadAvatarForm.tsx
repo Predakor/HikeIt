@@ -30,7 +30,7 @@ export function UploadAvatarForm() {
           requestState={updateAvatar}
           errorMessage={{
             title: "Failed to upload avatar",
-            description: updateAvatar.error?.message!,
+            description: updateAvatar.error?.message ?? "",
           }}
         />
       </Show>

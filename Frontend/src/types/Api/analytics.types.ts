@@ -5,7 +5,7 @@ export interface TripAnalytic {
   routeAnalytics: RouteAnalytic;
   timeAnalytics?: TimeAnalytic;
   peakAnalytics?: PeaksAnalytics;
-  elevationProfile?: {};
+  elevationProfile?: unknown;
 }
 
 export interface BasicAnalytics {
@@ -13,7 +13,7 @@ export interface BasicAnalytics {
   time?: TimeAnalytic;
   peaks: string | null;
   elevation: string | null;
-  visualisation: {};
+  visualisation: unknown;
 }
 
 export interface RouteAnalytic {

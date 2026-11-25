@@ -1,6 +1,6 @@
 import { Button, type ButtonProps } from "@chakra-ui/react/button";
 
-interface Props extends ButtonProps {}
+type Props = ButtonProps;
 
 export function PrimaryButton(props: Props) {
   return (

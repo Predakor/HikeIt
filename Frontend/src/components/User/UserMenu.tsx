@@ -33,12 +33,7 @@ export function UserMenu({ userName }: Props) {
         <Menu.Content minWidth={"44"} fontSize={"xl"}>
           <For each={userRoutes.pages}>
             {(route) => (
-              <Menu.Item
-                asChild
-                fontSize={"inherit"}
-                cursor={"pointer"}
-                value={route.label}
-              >
+              <Menu.Item asChild fontSize={"inherit"} cursor={"pointer"} value={route.label}>
                 <NavLink to={basePath + route.path}>{route.label}</NavLink>
               </Menu.Item>
             )}

@@ -4,11 +4,7 @@ import { formatDate } from "@/Utils/Formatters";
 import { diffObjects } from "@/Utils/objectHelpers";
 import RenderInputs from "@/components/Utils/RenderInputs/RenderInputs";
 import type { InputsConfig } from "@/components/Utils/RenderInputs/inputTypes";
-import {
-  DangerButton,
-  PrimaryButton,
-  SecondaryButton,
-} from "@/components/ui/Buttons";
+import { DangerButton, PrimaryButton, SecondaryButton } from "@/components/ui/Buttons";
 import GoBackButton from "@/components/ui/Buttons/GoBackButton";
 import { Dialog } from "@/components/ui/Dialog";
 import PageTitle from "@/components/ui/Titles/PageTitle";
@@ -61,10 +57,7 @@ export default function TripDetailsHeader({ trip }: Props) {
           </Heading>
         </Flex>
         <Flex gap={2} align={"center"}>
-          <PrimaryButton
-            variant={"outline"}
-            onClick={() => setShowTripEdit(true)}
-          >
+          <PrimaryButton variant={"outline"} onClick={() => setShowTripEdit(true)}>
             <IconEdit />
             Edit
           </PrimaryButton>

@@ -13,11 +13,6 @@ export function GroupRender<T extends object>(props: GroupRenderProps<T>) {
   const dataBase = data[base] || data;
 
   return items.map((e, index) => (
-    <RenderTabEntry
-      {...props}
-      data={dataBase}
-      entry={e as EntryType<T>}
-      key={index}
-    />
+    <RenderTabEntry {...props} data={dataBase} entry={e as EntryType<T>} key={index} />
   ));
 }

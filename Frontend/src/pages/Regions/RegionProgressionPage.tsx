@@ -51,7 +51,7 @@ export default function RegionProgressionsPage() {
           <Tabs.List display={"flex"} maxW={"100vw"} overflowX={{ base: "scroll", lg: "clip" }}>
             <For each={config}>
               {({ key, label }) => (
-                <Tabs.Trigger value={key} disabled={false && !data[key]} key={key}>
+                <Tabs.Trigger value={key} key={key}>
                   {ToTitleCase(label || KeyToLabelFormatter(key))}
                 </Tabs.Trigger>
               )}

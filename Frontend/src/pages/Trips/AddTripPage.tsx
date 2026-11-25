@@ -1,8 +1,6 @@
 import GpxArrayBuilder from "@/Utils/Builders/GpxArray";
 import GoBackButton from "@/components/ui/Buttons/GoBackButton";
-import AddTripForm, {
-  type TripFormInitData,
-} from "@/components/Forms/AddTripForm/AddTripForm";
+import AddTripForm, { type TripFormInitData } from "@/components/Forms/AddTripForm/AddTripForm";
 import PageTitle from "@/components/ui/Titles/PageTitle";
 import AddTripInstructions from "@/components/Trip/AddTripInfo/AddTripInfo";
 import { Flex, Stack } from "@chakra-ui/react";
@@ -24,8 +22,7 @@ function AddTripPage() {
     const initStats = initStatsRef.current;
 
     const fileName = newFile.name.split(".");
-    initStats.name =
-      fileName.length > 1 ? fileName.slice(0, -1).join(".") : fileName[0];
+    initStats.name = fileName.length > 1 ? fileName.slice(0, -1).join(".") : fileName[0];
 
     if (tripDate) {
       initStats.tripDay = tripDate;
@@ -44,15 +41,13 @@ function AddTripPage() {
       </Flex>
 
       <Stack alignSelf={"center"} gapY={12}>
-        {showForm ? (
+        {showForm ?
           <AddTripForm
             initData={initStatsRef.current}
             file={fileRef.current}
             resetForm={() => setShowForm(false)}
           />
-        ) : (
-          <AddTripInstructions fileChangeHandler={fileChangeHandler} />
-        )}
+        : <AddTripInstructions fileChangeHandler={fileChangeHandler} />}
       </Stack>
     </Stack>
   );

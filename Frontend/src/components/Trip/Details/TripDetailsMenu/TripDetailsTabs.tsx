@@ -12,14 +12,13 @@ export function TripDetailsMenu({ data }: { data: BasicAnalytics }) {
       <Tabs.List display={"flex"} maxW={"100vw"} overflowX={{ base: "scroll", lg: "clip" }}>
         <For each={config}>
           {({ key, label }) => (
-            <Tabs.Trigger value={key} disabled={false && !data[key]} key={key}>
+            <Tabs.Trigger value={key} key={key}>
               {ToTitleCase(label || KeyToLabelFormatter(key))}
             </Tabs.Trigger>
           )}
         </For>
         <Tabs.Indicator bg={"bg.emphasized"} rounded="12" />
       </Tabs.List>
-
 
       <Tabs.ContentGroup asChild gap={8} padding={0}>
         <Stack w={"full"} paddingX={4} justifyItems={"center"} gap={8}>

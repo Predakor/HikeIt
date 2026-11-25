@@ -51,7 +51,7 @@ export interface TripDtoFull extends TripDto {
   trackAnalytic: TripAnalytic | null;
   trackGraph?: GraphData[];
   reachedPeaks?: ReachedPeak[];
-  gpxFile?: {};
+  gpxFile?: unknown;
 }
 
 export interface FieldEntry {

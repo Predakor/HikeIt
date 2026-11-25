@@ -1,10 +1,4 @@
-import {
-  IconArrowDown,
-  IconArrowUp,
-  IconHiking,
-  IconTrendDown,
-  IconTrendUp,
-} from "@/Icons/Icons";
+import { IconArrowDown, IconArrowUp, IconHiking, IconTrendDown, IconTrendUp } from "@/Icons/Icons";
 import RowStat from "@/components/Stats/RowStat";
 import SimpleCard from "@/components/ui/Cards/SimpleCard";
 import type { TimeAnalytic } from "@/types/Api/analytics.types";

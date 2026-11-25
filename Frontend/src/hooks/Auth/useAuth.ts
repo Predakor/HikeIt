@@ -30,7 +30,9 @@ export function useAuth() {
       api.post("auth/logout", resolveAuthResponse);
       removeUserQueries();
       navigate("/auth/login");
-    } catch (error) {}
+    } catch {
+      // logout is best effort
+    }
   };
 
   const login = async (username: string, password: string) => {
@@ -40,7 +42,7 @@ export function useAuth() {
         username,
         password,
       },
-      resolveAuthResponse
+      resolveAuthResponse,
     );
 
     const errors = response?.errors;
@@ -55,11 +57,7 @@ export function useAuth() {
   };
 
   const register = async (data: RegisterForm) => {
-    const request = await api.post<AuthResponse<null>>(
-      "auth/register",
-      data,
-      resolveAuthResponse
-    );
+    const request = await api.post<AuthResponse<null>>("auth/register", data, resolveAuthResponse);
 
     const errors = request?.errors;
     if (errors) {
@@ -72,9 +70,7 @@ export function useAuth() {
   return { login, logout, register };
 }
 
-const resolveAuthResponse = async <T>(
-  response: Response
-): Promise<AuthResponse<T>> => {
+const resolveAuthResponse = async <T>(response: Response): Promise<AuthResponse<T>> => {
   if (!response.ok) {
     const result = await response.json();
     return { errors: result };

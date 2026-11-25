@@ -66,7 +66,7 @@ export function PeaksTable({ peaks }: { peaks: PeakWithLocation[] }) {
         <UpdatePeakForm
           peak={peakToUpdate}
           requestState={update as UseMutationResult}
-          onSubmit={(d) => update.mutate({ peakId: peakToUpdate?.id!, data: d })}
+          onSubmit={(d) => update.mutate({ peakId: peakToUpdate!.id, data: d })}
         />
       </Dialog>
     </>

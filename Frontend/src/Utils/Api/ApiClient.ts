@@ -7,7 +7,7 @@ console.log(apiPath);
 async function apiClient<T>(
   path: string,
   options: RequestInit = {},
-  resolveWith?: ResponseResolver<T>
+  resolveWith?: ResponseResolver<T>,
 ): Promise<T> {
   const finalOptions: RequestInit = {
     headers: {

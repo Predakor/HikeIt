@@ -1,5 +1,11 @@
-import type { PipeStageResult, PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
-import type { ComparisonTarget, PipelineConfig } from "@/modules/PipelineBench/shared/types/PipelineConfig";
+import type {
+  PipeStageResult,
+  PipeStageResults,
+} from "@/modules/PipelineBench/shared/types/PipeStageDto";
+import type {
+  ComparisonTarget,
+  PipelineConfig,
+} from "@/modules/PipelineBench/shared/types/PipelineConfig";
 import { allStageIds, type StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePipelinePreview } from "../api/usePipelinePreview";
@@ -209,8 +215,7 @@ export function usePipelineBench(
     previousTargetRef.current = target;
     const missing = allStageIds.filter(
       (stage) =>
-        stage !== "peakMatching" &&
-        stateRef.current.comparisons[target][stage] === undefined,
+        stage !== "peakMatching" && stateRef.current.comparisons[target][stage] === undefined,
     );
 
     void runStages(missing);

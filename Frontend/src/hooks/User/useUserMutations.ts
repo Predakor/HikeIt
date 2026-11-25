@@ -1,9 +1,5 @@
 import api from "@/Utils/Api/apiRequest";
-import type {
-  UserPersonal,
-  UserProfile,
-  UserType,
-} from "@/types/User/user.types";
+import type { UserPersonal, UserProfile, UserType } from "@/types/User/user.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const requestBase = "users/me/data";
@@ -38,8 +34,7 @@ function useUserMutations() {
 
   const personalInfo = useMutation({
     mutationKey: ["user", "personal"],
-    mutationFn: (data: PersonalInfoUpdate) =>
-      api.patch(`${requestBase}/personal`, data),
+    mutationFn: (data: PersonalInfoUpdate) => api.patch(`${requestBase}/personal`, data),
     onSuccess: (_, request) => {
       queryClient.setQueryData(["user", "profile"], (profile: UserProfile) => {
         console.log({ request, profile });

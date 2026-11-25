@@ -1,8 +1,7 @@
 import type { Action } from "@/types/Utils/func.types";
 import { Button, For, type ButtonProps } from "@chakra-ui/react";
 
-export interface RadioButtonProps<T>
-  extends Pick<ButtonProps, "size" | "colorPalette"> {
+export interface RadioButtonProps<T> extends Pick<ButtonProps, "size" | "colorPalette"> {
   onChange: Action<T>;
   selectedItem: T;
   items: { label: string; value: T }[];

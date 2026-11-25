@@ -56,13 +56,7 @@ function ManageRegions({ regions, filter }: Props) {
   return (
     <SimpleGrid columns={{ base: 1, lg: 3 }} gap={4}>
       <For each={filteredRegions}>
-        {(region) => (
-          <LinkCard
-            to={`${region.id}`}
-            Header={region.id}
-            Description={region.name}
-          />
-        )}
+        {(region) => <LinkCard to={`${region.id}`} Header={region.id} Description={region.name} />}
       </For>
     </SimpleGrid>
   );

@@ -19,11 +19,7 @@ export default function TimeAnalytics({ data }: { data: TimeAnalytic }) {
   };
 
   return (
-    <SimpleGrid
-      templateColumns={{ lg: "2fr 2fr" }}
-      templateRows={{ lg: "2fr 3fr" }}
-      gap={8}
-    >
+    <SimpleGrid templateColumns={{ lg: "2fr 2fr" }} templateRows={{ lg: "2fr 3fr" }} gap={8}>
       <GridItem colStart={{ lg: 2 }}>
         <TimeAnalyticSection.Duration duration={duration} />
       </GridItem>

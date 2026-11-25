@@ -22,11 +22,7 @@ export default function User() {
   return (
     <FetchWrapper LoadingComponent={UserSkeleton} request={getUser}>
       {(user) => (
-        <Stack
-          direction={{ base: "column", lg: "row" }}
-          alignItems={"center"}
-          gap={8}
-        >
+        <Stack direction={{ base: "column", lg: "row" }} alignItems={"center"} gap={8}>
           {IsAdminUser(user) && (
             <Box pr={4}>
               <NavItem path={"/admin"} label={"Admin Center"} />
@@ -39,11 +35,9 @@ export default function User() {
               <Avatar.Image src={user.avatar}></Avatar.Image>
             </Avatar.Root>
 
-            {isMobile ? (
+            {isMobile ?
               <NavLink to={"user/profile"}>{user.userName}</NavLink>
-            ) : (
-              <UserMenu userName={user.userName} />
-            )}
+            : <UserMenu userName={user.userName} />}
           </Flex>
         </Stack>
       )}

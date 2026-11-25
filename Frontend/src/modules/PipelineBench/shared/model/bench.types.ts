@@ -1,6 +1,9 @@
 // Shared UI contract of the pipeline bench. FROZEN: FE-2a builds the state and blocks, FE-2b builds the views.
 import type { PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
-import type { ComparisonTarget, PipelineConfig } from "@/modules/PipelineBench/shared/types/PipelineConfig";
+import type {
+  ComparisonTarget,
+  PipelineConfig,
+} from "@/modules/PipelineBench/shared/types/PipelineConfig";
 import type {
   ElevationProfileStageData,
   PeakMatchingStageData,

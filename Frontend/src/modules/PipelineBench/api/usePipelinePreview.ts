@@ -1,6 +1,9 @@
 import api from "@/Utils/Api/apiRequest";
 import type { PipeStageResults } from "@/modules/PipelineBench/shared/types/PipeStageDto";
-import type { ComparisonTarget, PipelineConfig } from "@/modules/PipelineBench/shared/types/PipelineConfig";
+import type {
+  ComparisonTarget,
+  PipelineConfig,
+} from "@/modules/PipelineBench/shared/types/PipelineConfig";
 import type { StageId } from "@/modules/PipelineBench/shared/types/StageId";
 import { useMutation } from "@tanstack/react-query";
 

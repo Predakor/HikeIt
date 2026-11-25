@@ -1,10 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  EmptyState,
-  GridItem,
-  VStack,
-} from "@chakra-ui/react";
+import { Button, ButtonGroup, EmptyState, GridItem, VStack } from "@chakra-ui/react";
 import { HiColorSwatch } from "react-icons/hi";
 import { Link } from "react-router";
 
@@ -18,9 +12,7 @@ export function NoTrips() {
           </EmptyState.Indicator>
           <VStack textAlign="center">
             <EmptyState.Title>You have no trips yet</EmptyState.Title>
-            <EmptyState.Description>
-              Add your first trip to continue
-            </EmptyState.Description>
+            <EmptyState.Description>Add your first trip to continue</EmptyState.Description>
           </VStack>
           <ButtonGroup>
             <Link to="/trips/add">

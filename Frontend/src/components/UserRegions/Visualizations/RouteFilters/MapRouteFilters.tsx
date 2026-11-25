@@ -35,9 +35,7 @@ export default function MapRouteFilters({ controlButton }: Props) {
 
         <GridItem colSpan={2} asChild>
           <Stack>
-            <For each={routes}>
-              {(route) => <RouteFilter route={route} key={route.index} />}
-            </For>
+            <For each={routes}>{(route) => <RouteFilter route={route} key={route.index} />}</For>
           </Stack>
         </GridItem>
 

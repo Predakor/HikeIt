@@ -4,7 +4,7 @@ import type { PeaksAnalytics } from "@/types/Api/analytics.types";
 
 export default function extraPeaksData(data: PeaksAnalytics) {
   let highest = data.reached.reduce((max, item) =>
-    item.height > max.height ? item : max
+    item.height > max.height ? item : max,
   ) as ReachedPeakWithBadges;
 
   const peaks: ReachedPeakWithBadges[] = data.reached.map((p) => ({

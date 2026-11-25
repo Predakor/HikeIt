@@ -1,13 +1,7 @@
 import { PrimaryButton } from "@/components/ui/Buttons";
 import NavButton from "@/components/ui/Buttons/NavButton";
 import useUser from "@/hooks/Auth/useUser";
-import {
-  Flex,
-  LinkBox,
-  Show,
-  Spacer,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import { Flex, LinkBox, Show, Spacer, useBreakpointValue } from "@chakra-ui/react";
 import { NavLink } from "react-router";
 import MobileNav from "../Nav/MobileNav";
 import NavContent from "../Nav/NavContent";
@@ -26,13 +20,11 @@ export default function Header() {
         </LinkBox>
 
         <Show when={isLogged}>
-          {isMobile ? (
+          {isMobile ?
             <MobileNav>
               <NavContent />
             </MobileNav>
-          ) : (
-            <NavContent />
-          )}
+          : <NavContent />}
         </Show>
         <Show when={!isLogged}>
           <Spacer />

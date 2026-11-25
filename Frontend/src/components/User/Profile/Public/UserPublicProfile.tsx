@@ -8,12 +8,7 @@ import { formatter } from "../../Stats/Utils/formatter";
 export function UserPublicProfile({ user }: { user: UserBaseProfile }) {
   return (
     <Card.Root>
-      <Stack
-        asChild
-        direction={{ base: "column", lg: "row" }}
-        gap={4}
-        align={"center"}
-      >
+      <Stack asChild direction={{ base: "column", lg: "row" }} gap={4} align={"center"}>
         <Card.Body>
           <EditableAvatar user={user} />
 

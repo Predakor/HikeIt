@@ -18,10 +18,9 @@ export default function SimpleCard({
   return (
     <Card.Root as={"article"} height={"full"}>
       <Card.Header as={"header"}>
-        {header ? (
+        {header ?
           header
-        ) : (
-          <Flex>
+        : <Flex>
             <Show when={title}>
               <Card.Title asChild>
                 <SubTitle title={title!} />
@@ -32,7 +31,7 @@ export default function SimpleCard({
               {headerCta}
             </Show>
           </Flex>
-        )}
+        }
       </Card.Header>
       <Card.Body asChild p={{ base: 4, lg: 8 }}>
         <Stack justify={"space-around"} gapY={8} {...bodyStyles}>

@@ -37,10 +37,7 @@ export function TimeDistributionSection({ duration }: { duration: Duration }) {
       title="Time distrubution"
       headerCta={<SelectUnit selectedItem={unit} onChange={setUnit} />}
     >
-      <Stack
-        direction={{ base: "column", lg: "row" }}
-        align={{ base: "center" }}
-      >
+      <Stack direction={{ base: "column", lg: "row" }} align={{ base: "center" }}>
         <For each={Object.entries(timeDistribution)}>
           {([key, item]) => (
             <RowStat
