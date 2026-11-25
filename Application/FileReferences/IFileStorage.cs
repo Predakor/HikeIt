@@ -2,7 +2,7 @@
 
 namespace Application.FileReferences;
 
-public interface IFileStorage : ISingletonService
+public interface IFileStorage
 {
     Task<Result<Stream>> DownloadAsync(string path, BlobContainer type);
     Task<Result<SaveFileResponse>> UploadAsync(FileContent file, string path, BlobContainer type);

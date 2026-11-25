@@ -6,7 +6,7 @@ using Domain.AppSettings.Root;
 
 namespace Application.AppSettings.Decorators;
 
-internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService
+internal sealed class CachedAppSettingsServiceDecorator : IAppSettingsService, ICacheable<IAppSettingsService>
 {
     public const string GetAllKey = $"{nameof(CachedAppSettingsServiceDecorator)}-All";
 

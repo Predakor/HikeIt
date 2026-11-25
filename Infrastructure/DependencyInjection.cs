@@ -1,11 +1,13 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
+using Application.FileReferences;
 using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Root.Interfaces;
 using Infrastructure.Commons.Databases;
 using Infrastructure.Commons.Events.Dispatchers;
 using Infrastructure.Commons.Events.Dispatchers.Decorators;
 using Infrastructure.Commons.Events.Workers;
+using Infrastructure.Commons.Storage;
 using Infrastructure.Commons.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +28,7 @@ public static class DependencyInjection
         return services
             .AddDatabase(configuration, isDevelopment)
             .AddMemoryCache()
+            .AddSingleton<IFileStorage, AzureBlobStorage>()
             .AddEvents()
             .AddRepositories(assemblies);
     }

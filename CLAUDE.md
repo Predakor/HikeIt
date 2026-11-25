@@ -15,7 +15,7 @@ dotnet test Domain.Tests --filter "FullyQualifiedName~PeakFilterTests"   # singl
 dotnet run --project Api
 ```
 
-Frontend (`Frontend/`, pnpm, Node >= 20):
+Frontend (`Frontend/`, pnpm, Node >= 22.22):
 
 ```
 pnpm install
