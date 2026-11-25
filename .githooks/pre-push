@@ -1,0 +1,24 @@
+#!/bin/sh
+# Builds (analyzers run as part of the build), runs the tests, and checks the frontend when it changed.
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null || echo origin/master)
+changed=$(git diff --name-only "$upstream"...HEAD)
+
+if echo "$changed" | grep -qE '\.(cs|csproj|props)$'; then
+  echo "pre-push: dotnet build + test"
+  dotnet build HikeIt.sln --no-restore --nologo -v q
+  dotnet test HikeIt.sln --no-build --nologo -v q
+fi
+
+if echo "$changed" | grep -q '^Frontend/'; then
+  echo "pre-push: frontend typecheck + lint"
+  (cd Frontend && pnpm exec tsc --b && pnpm lint)
+fi
+
+cr=$(printf '\r')
+if git diff "$upstream"...HEAD -- . ':!*.bat' ':!*.cmd' | grep -q "^+.*$cr"; then
+  echo "pre-push: CRLF found in pushed changes (the repo is LF). Normalize with 'git add --renormalize .' and amend."
+  exit 1
+fi
