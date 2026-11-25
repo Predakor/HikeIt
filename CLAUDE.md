@@ -10,7 +10,7 @@ Backend (solution `HikeIt.sln`, run from the repo root):
 
 ```
 dotnet build
-dotnet test                                                    # Core.Tests + Domain.Tests
+dotnet test                                                    # Core.Tests + Domain.Tests + Architecture.Tests
 dotnet test Domain.Tests --filter "FullyQualifiedName~PeakFilterTests"   # single class / method
 dotnet run --project Api
 ```
@@ -78,4 +78,4 @@ Full rules and rationale: `docs/conventions.md`. Architecture detail (pipeline, 
 - Prefer handler maps (object/dictionary) over `switch` when dispatching on a key to behavior; a plain `switch` is fine for simple cases. Name complex `if` conditions in a clearly named `const`/local; `if` always has braces.
 - Comments: one short line max, only for a non-obvious why. No class-level doc paragraphs. Public members get a one-line `/// <summary>Short sentence.</summary>`.
 - Frontend: no `for-of`, no `delete`; use `<Show>` / `&&` for conditional rendering; reuse existing helpers before writing new ones.
-- Tests cover core business logic (filter outputs, analytics), not casing, DI wiring or config plumbing.
+- Tests cover core business logic (filter outputs, analytics), not casing, DI wiring or config plumbing. The one exception is `Architecture.Tests`: layer flow, marker/decorator rules and that every service resolves from the real container.

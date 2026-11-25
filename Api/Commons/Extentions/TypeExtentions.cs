@@ -9,21 +9,42 @@ internal static class TypeExtentions
     public static bool IsDecorator(this Type type)
     {
         return type
-            .GetInterfaces()
-            .Where(@interface => @interface.IsGenericType)
-            .Any(@interface => @interface.GetGenericTypeDefinition() == typeof(IDecorator<>));
+            .GetDecoratorInterfaces()
+            .Any();
     }
 
-    public static IImplementationTypeFilter WithoutDecorators(this IImplementationTypeFilter filter)
+    // The service a decorator wraps.
+    internal static Type GetDecoratedService(this Type decorator)
+    {
+        return decorator
+            .GetDecoratorInterfaces()
+            .Single()
+            .GetGenericArguments()[0];
+    }
+
+    internal static bool HasServiceMarker(this Type type)
+    {
+        return typeof(IService).IsAssignableFrom(type) || typeof(ISingletonService).IsAssignableFrom(type);
+    }
+
+    internal static IImplementationTypeFilter WithoutDecorators(this IImplementationTypeFilter filter)
     {
         return filter.Where(type => !type.IsDecorator());
     }
 
     // A service is registered under every interface it implements (a class can serve a Domain interface too), minus the lifetime markers.
-    public static IEnumerable<Type> GetServiceInterfaces(this Type type)
+    internal static IEnumerable<Type> GetServiceInterfaces(this Type type)
     {
         return type
             .GetInterfaces()
             .Where(@interface => @interface != typeof(IService) && @interface != typeof(ISingletonService));
+    }
+
+    private static IEnumerable<Type> GetDecoratorInterfaces(this Type type)
+    {
+        return type
+            .GetInterfaces()
+            .Where(@interface => @interface.IsGenericType)
+            .Where(@interface => @interface.GetGenericTypeDefinition() == typeof(IDecorator<>));
     }
 }

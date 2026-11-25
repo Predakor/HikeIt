@@ -75,7 +75,11 @@ CSharpier (a local fork, `1.0.1-expanded.3`, pinned in `.config/dotnet-tools.jso
 
 ## Tests
 
-Test business logic: filter outputs, analytics, pipeline results (`Domain.Tests`). Don't test casing, DI wiring, serialization naming or config plumbing. Pipeline filters get a test with a small hand-built input and an exact expected output.
+Test business logic: filter outputs, analytics, pipeline results (`Domain.Tests`). Don't test casing, serialization naming or config plumbing. Pipeline filters get a test with a small hand-built input and an exact expected output.
+
+### Architecture tests
+
+`Architecture.Tests` is the one place DI wiring is tested, with reflection over the production assemblies and the real container built like `Program.cs` does. It checks that layers don't reference the ones above them, that every service interface has exactly one implementation (the scan registers all of them and the last wins), that scoped implementations end with `Service`, that decorators implement and wrap the service they are marked for, and that every service interface resolves from the container without hanging. An unmarked decorator is scanned as a plain implementation and wraps itself, which hangs resolution; the tests catch it. When one fails, fix the registration or the marker rather than the test.
 
 ### CSharpier fork
 

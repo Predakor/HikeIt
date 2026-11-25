@@ -315,5 +315,5 @@ dotnet_diagnostic.S2326.severity = none
 
 
 # Test names use underscores (Method_Should_Do); production code keeps CA1707.
-[{Core.Tests,Domain.Tests}/**.cs]
+[{Core.Tests,Domain.Tests,Architecture.Tests}/**.cs]
 dotnet_diagnostic.CA1707.severity = none

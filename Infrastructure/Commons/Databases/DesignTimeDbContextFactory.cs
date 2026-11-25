@@ -33,17 +33,18 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<TripDbCont
 
         return new TripDbContext(optionsBuilder.Options, new NullDomainEventDispatcher());
     }
-}
 
-internal class NullDomainEventDispatcher : IEventPublisher
-{
-    public Task PublishAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default)
+    //used to only satisfy ef DesignTimeDbContext
+    private sealed class NullDomainEventDispatcher : IEventPublisher
     {
-        return Task.CompletedTask;
-    }
+        public Task PublishAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
-    public Task PublishAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
+        public Task PublishAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,11 +1,15 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
+using Application.Commons.Abstractions;
 using Application.FileReferences;
 using Domain.Common.Abstractions;
 using Domain.Trips.Analytics.Root.Interfaces;
+using Infrastructure.Commons.Caches;
 using Infrastructure.Commons.Databases;
 using Infrastructure.Commons.Events.Dispatchers;
 using Infrastructure.Commons.Events.Dispatchers.Decorators;
+using Infrastructure.Commons.Events.Publishers;
+using Infrastructure.Commons.Events.Queues;
 using Infrastructure.Commons.Events.Workers;
 using Infrastructure.Commons.Storage;
 using Infrastructure.Commons.UnitOfWorks;
@@ -28,6 +32,7 @@ public static class DependencyInjection
         return services
             .AddDatabase(configuration, isDevelopment)
             .AddMemoryCache()
+            .AddSingleton<ICache, InMemoryCache>()
             .AddSingleton<IFileStorage, AzureBlobStorage>()
             .AddEvents()
             .AddRepositories(assemblies);
@@ -37,6 +42,9 @@ public static class DependencyInjection
     {
         services.AddTransient<IDomainEventDispatcher, DomainEventDispatcher>();
         services.Decorate<IDomainEventDispatcher, LoggedEventDispatcherDecorator>();
+
+        services.AddSingleton<IBackgroundQueue, InMemoryBackgroundQueue>();
+        services.AddSingleton<IEventPublisher, EventPublisher>();
 
         services.AddHostedService<BackgroundEventWorker>();
         return services;

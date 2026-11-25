@@ -2,7 +2,7 @@
 
 namespace Application.Commons.Abstractions;
 
-public interface IBackgroundQueue : ISingletonService
+public interface IBackgroundQueue
 {
     ValueTask EnqueueAsync(IEvent @event);
     ValueTask<IEvent> DequeueAsync(CancellationToken ct);
